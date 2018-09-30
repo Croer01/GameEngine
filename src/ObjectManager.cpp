@@ -8,6 +8,6 @@ void ObjectManager::registerComponentBuilder(const std::string &idType, Componen
     componentFactory_.AddBuilder(idType,builder);
 }
 
-Component *ObjectManager::createComponent(const std::string &idType) {
+std::shared_ptr<Component> ObjectManager::createComponent(const std::string &idType) {
     return componentFactory_.Create(idType);
 }

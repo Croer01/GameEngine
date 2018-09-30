@@ -10,6 +10,7 @@
 #include "Factory.hpp"
 #include "Component.hpp"
 #include "Builder.hpp"
+#include <memory>
 
 //declarations of the global methods generated to use in the ObjectManager
 void RegisterComponents();
@@ -19,7 +20,7 @@ private:
     Factory<Component,ComponentBuilder,std::string> componentFactory_;
 public:
     void registerComponentBuilder(const std::string &idType, ComponentBuilder* builder);
-    Component *createComponent(const std::string &idType);
+    std::shared_ptr<Component> createComponent(const std::string &idType);
 };
 
 

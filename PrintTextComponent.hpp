@@ -14,7 +14,7 @@ class PrintTextComponent : public Component {
 public:
     void Update(float elapsedTime) override;
 
-    Component *Clone() override;
+    std::shared_ptr<Component> Clone() override;
 };
 
 

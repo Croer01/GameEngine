@@ -8,6 +8,7 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 
 class Component;
 
@@ -15,7 +16,7 @@ class GameObject {
     static int ID_GENERATOR;
     int id_;
     std::string name_;
-    std::vector<Component *> components_;
+    std::vector<std::shared_ptr<Component>> components_;
 public:
     explicit GameObject(std::string name);
     ~GameObject();
@@ -26,11 +27,11 @@ public:
 
     std::string GetName() const { return name_; };
 
-    void addComponent(Component *component);
+    void addComponent(std::shared_ptr<Component> component);
 
     void fromFile(const std::string &filename);
 
-    GameObject * Clone() const;
+    std::shared_ptr<GameObject> Clone() const;
 };
 
 

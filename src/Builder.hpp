@@ -7,18 +7,19 @@
 
 
 #include "Component.hpp"
+#include <memory>
 
 class ComponentBuilder {
 public:
     virtual ~ComponentBuilder() = default;
-    virtual Component* Create() = 0;
+    virtual std::shared_ptr<Component> Create() = 0;
 };
 
 template <typename ComponentType>
 class ComponentTBuilder : public ComponentBuilder{
 public:
-    virtual Component* Create(){
-        return new ComponentType();
+    virtual std::shared_ptr<Component> Create(){
+        return std::make_shared<ComponentType>();
     };
 };
 

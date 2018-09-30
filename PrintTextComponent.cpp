@@ -9,6 +9,6 @@ void PrintTextComponent::Update(float elapsedTime) {
 std::cout << "parent name " << parent_->GetName() << std::endl;
 }
 
-Component *PrintTextComponent::Clone() {
-    return new PrintTextComponent();
+std::shared_ptr<Component> PrintTextComponent::Clone() {
+    return std::make_shared<PrintTextComponent>();
 }

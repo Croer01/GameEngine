@@ -6,6 +6,7 @@
 #define SPACEINVADERS_FACTORY_HPP
 
 #include <unordered_map>
+#include <memory>
 
 template <typename ReturnType, typename BuilderType, typename IdType>
 class Factory {
@@ -29,7 +30,7 @@ public:
         delete it->second;
         builders_.erase(type);
     };
-    ReturnType* Create(IdType type){
+    std::shared_ptr<ReturnType> Create(IdType type){
         auto it = builders_.find(type);
 
         if(it == builders_.end())

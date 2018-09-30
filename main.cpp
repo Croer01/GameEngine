@@ -7,7 +7,7 @@
 int main() {
     try {
         Game::GetInstance().init();
-        GameObject *gameObject = new GameObject("Player");
+        std::shared_ptr<GameObject> gameObject = std::make_shared<GameObject>("Player");
         gameObject->fromFile("data/test.ini");
         gameObject->addComponent(ObjectManager::GetInstance().createComponent("PrintTextComponent"));
         gameObject->Init();
@@ -16,7 +16,6 @@ int main() {
             gameObject->Update(0);
         }
 
-        delete gameObject;
         return 0;
     }
     catch (const std::exception &e){

@@ -26,7 +26,7 @@ void GameObject::Update(float elapsedTime){
     }
 }
 
-void GameObject::addComponent(Component *component) {
+void GameObject::addComponent(std::shared_ptr<Component> component) {
     auto it = std::find(components_.begin(),components_.end(),component);
     if(it != components_.end())
         return;
@@ -41,12 +41,12 @@ GameObject::~GameObject() {
     components_.clear();
 }
 
-GameObject *GameObject::Clone() const {
-    GameObject *cloned = new GameObject(name_);
+std::shared_ptr<GameObject> GameObject::Clone() const {
+    auto cloned = std::make_shared<GameObject>(name_);
     //TODO: register clone to the ObjectManager
 
     for (auto &component : components_) {
-        Component *clonedComponent = component->Clone();
+        std::shared_ptr<Component> clonedComponent = component->Clone();
         cloned->addComponent(clonedComponent);
         //TODO: register clone to the ObjectManager
     }
@@ -67,7 +67,7 @@ void GameObject::fromFile(const std::string &filename) {
     std::string componentType;
     while(std::getline(ss, componentType, ' '))
     {
-        Component *component = ObjectManager::GetInstance().createComponent(componentType);
+        std::shared_ptr<Component> component = ObjectManager::GetInstance().createComponent(componentType);
         component->fromFile(&reader);
         addComponent(component);
     }
