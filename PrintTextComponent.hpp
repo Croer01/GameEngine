@@ -11,10 +11,13 @@
 
 COMPONENT(PrintTextComponent)
 class PrintTextComponent : public Component {
+    std::string text_;
 public:
     void Update(float elapsedTime) override;
 
     std::shared_ptr<Component> Clone() override;
+
+    virtual void fromFile(const INIReader &iniFile);
 };
 
 
