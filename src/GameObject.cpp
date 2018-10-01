@@ -12,12 +12,12 @@
 int GameObject::ID_GENERATOR = 0;
 
 GameObject::GameObject(std::string name) :
-        name_(name),
+        nameType_(name),
         id_(ID_GENERATOR++) {
 }
 
 void GameObject::Init() {
-    std::cout << "Object " << name_.c_str() << " initialized" << std::endl;
+    std::cout << "Object " << nameType_.c_str() << " initialized" << std::endl;
 }
 
 void GameObject::Update(float elapsedTime){
@@ -42,7 +42,7 @@ GameObject::~GameObject() {
 }
 
 std::shared_ptr<GameObject> GameObject::Clone() const {
-    auto cloned = std::make_shared<GameObject>(name_);
+    auto cloned = std::make_shared<GameObject>(nameType_);
     //TODO: register clone to the ObjectManager
 
     for (auto &component : components_) {
@@ -60,7 +60,6 @@ void GameObject::fromFile(const std::string &filename) {
         throw std::runtime_error("Can't load '" + filename + "'");
     }
 
-    name_ = reader.Get("","name","");
     std::string components = reader.Get("","components","");
 
     std::stringstream ss(components);
@@ -68,7 +67,7 @@ void GameObject::fromFile(const std::string &filename) {
     while(std::getline(ss, componentType, ' '))
     {
         std::shared_ptr<Component> component = ObjectManager::GetInstance().createComponent(componentType);
-        component->fromFile(&reader);
+        component->fromFile(reader);
         addComponent(component);
     }
 }

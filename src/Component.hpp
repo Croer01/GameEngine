@@ -18,7 +18,7 @@ public:
     virtual ~Component() = default;
     virtual void Update(float elapsedTime) = 0;
     virtual std::shared_ptr<Component> Clone() = 0;
-    virtual void fromFile(INIReader *iniFile);
+    virtual void fromFile(const INIReader &iniFile);
     void SetParent(GameObject *parent);
 
 };

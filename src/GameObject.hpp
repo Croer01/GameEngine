@@ -15,7 +15,7 @@ class Component;
 class GameObject {
     static int ID_GENERATOR;
     int id_;
-    std::string name_;
+    std::string nameType_;
     std::vector<std::shared_ptr<Component>> components_;
 public:
     explicit GameObject(std::string name);
@@ -25,7 +25,7 @@ public:
 
     void Update(float elapsedTime);
 
-    std::string GetName() const { return name_; };
+    std::string getType() const { return nameType_; };
 
     void addComponent(std::shared_ptr<Component> component);
 

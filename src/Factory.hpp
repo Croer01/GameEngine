@@ -16,7 +16,7 @@ public:
         auto it = builders_.find(type);
 
         if(it != builders_.end())
-            throw new std::exception("builder already exist");
+            throw std::exception("builder already exist");
 
         builders_.insert(std::pair<IdType, BuilderType*>(type, builder));
 
@@ -25,7 +25,7 @@ public:
         auto it = builders_.find(type);
 
         if(it == builders_.end())
-            throw new std::exception("builder doesn't exist");
+            throw std::exception("builder doesn't exist");
 
         delete it->second;
         builders_.erase(type);
@@ -34,7 +34,7 @@ public:
         auto it = builders_.find(type);
 
         if(it == builders_.end())
-            throw new std::exception("builder doesn't exist");
+            throw std::exception("builder doesn't exist");
 
         return it->second->Create();
     };

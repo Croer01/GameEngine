@@ -18,9 +18,12 @@ void RegisterComponents();
 class ObjectManager : public Singleton<ObjectManager> {
 private:
     Factory<Component,ComponentBuilder,std::string> componentFactory_;
+    std::unordered_map<std::string, std::unique_ptr<GameObject>> prototypes_;
 public:
     void registerComponentBuilder(const std::string &idType, ComponentBuilder* builder);
     std::shared_ptr<Component> createComponent(const std::string &idType);
+    void registerPrototype(const std::string &objectType, const std::string &filename);
+    std::shared_ptr<GameObject> createGameObject(const std::string &objectType);
 };
 
 
