@@ -18,7 +18,7 @@ include_directories(${SDL2_ROOT}/include)
 # source files
 set(ENGINE_SOURCES src/Game.cpp
         src/GameObject.cpp
-        src/Component.cpp src/ObjectManager.cpp src/Builder.cpp src/Builder.hpp)
+        src/Component.cpp src/ObjectManager.cpp src/Builder.cpp src/SceneManager.cpp src/Scene.cpp)
 
 set(GAME_SOURCES main.cpp PrintTextComponent.cpp)
 
