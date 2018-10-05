@@ -3,6 +3,7 @@
 #include "src/GameObject.hpp"
 #include "PrintTextComponent.hpp"
 #include "src/Factory.hpp"
+#include "src/SceneManager.hpp"
 
 int main() {
     try {
@@ -11,15 +12,14 @@ int main() {
         ObjectManager::GetInstance().registerPrototype("Player", "data/test.ini");
         ObjectManager::GetInstance().registerPrototype("Player2", "data/test2.ini");
 
-        //instantiate new object
-        std::shared_ptr<GameObject> gameObject = ObjectManager::GetInstance().createGameObject("Player");
-        std::shared_ptr<GameObject> gameObject2 = ObjectManager::GetInstance().createGameObject("Player2");
-        gameObject->Init();
-        gameObject2->Init();
+        //register scene
+        SceneManager::GetInstance().registerScene("Scene0","data/scene0.ini");
+
+        std::shared_ptr<Scene> scene = SceneManager::GetInstance().getScene("Scene0");
+        scene->init();
 
         for (;;) {
-            gameObject->Update(0);
-            gameObject2->Update(0);
+            scene->update(0);
         }
 
         return 0;
