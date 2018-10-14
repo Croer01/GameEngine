@@ -7,8 +7,10 @@
 
 
 #include "../Component.hpp"
+#include "../graphics/Graphic.hpp"
 
 class SpriteComponent : public Component {
+    std::shared_ptr<Graphic> graphic_;
 public:
     void Update(float elapsedTime) override;
 
