@@ -11,14 +11,27 @@ find_path(INIH_INCLUDE ini.h)
 find_library(INIH_LIBRARY inih)
 
 find_package(SDL2 CONFIG REQUIRED)
+find_package(GLEW REQUIRED)
+find_package(glm CONFIG REQUIRED)
+find_package(OpenGL REQUIRED)
 
-include_directories(${SDL2_INCLUDE_DIR} ${SDL2_IMAGE_INCLUDE} ${INIH_INCLUDE})
+include_directories(${OPENGL_INCLUDE_DIRS})
+include_directories(${SDL2_INCLUDE_DIR} ${SDL2_IMAGE_INCLUDE} ${INIH_INCLUDE} ${GLEW_INCLUDE_DIR} ${glm_INCLUDE_DIR})
 include_directories(${SDL2_ROOT}/include)
 
 # source files
 set(ENGINE_SOURCES src/Game.cpp
         src/GameObject.cpp
-        src/Component.cpp src/ObjectManager.cpp src/Builder.cpp src/SceneManager.cpp src/Scene.cpp)
+        src/Component.cpp
+        src/ObjectManager.cpp
+        src/Builder.cpp
+        src/SceneManager.cpp
+        src/Scene.cpp
+        src/utils.cpp
+        src/components/SpriteComponent.cpp
+        src/graphics/GraphicsEngine.cpp
+        src/graphics/Graphic.cpp
+        src/graphics/Shader.cpp)
 
 set(GAME_SOURCES main.cpp PrintTextComponent.cpp)
 
@@ -39,6 +52,9 @@ target_link_libraries(SpaceInvaders PRIVATE
         SDL2::SDL2main
         SDL2::SDL2
         ${SDL2_IMAGE_LIBRARY}
-        ${INIH_LIBRARY})
+        ${INIH_LIBRARY}
+        GLEW::GLEW
+        glm
+        ${OPENGL_LIBRARIES})
 
 ADD_CUSTOM_TARGET(do_always ALL COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/data ${CMAKE_BINARY_DIR}/data)
