@@ -10,8 +10,9 @@
 #include <memory>
 #include "Graphic.hpp"
 #include "Shader.h"
+#include "../Singleton.hpp"
 
-class GraphicsEngine {
+class GraphicsEngine : public Singleton<GraphicsEngine>{
     struct InternalMesh {
         unsigned int VAO;
         unsigned int vbo;
@@ -22,9 +23,10 @@ class GraphicsEngine {
     InternalMesh mesh_;
     std::shared_ptr<Shader> spriteShader_;
 public:
-    ~GraphicsEngine();
+    ~GraphicsEngine() override;
     void init();
     void draw();
+    void registerGraphic(std::shared_ptr<Graphic> graphic);
 
 };
 

@@ -74,7 +74,6 @@ void GraphicsEngine::init() {
 void GraphicsEngine::draw() {
     spriteShader_->bind();
 
-
     spriteShader_->setUniform("projView", glm::mat4(1));
 
     spriteShader_->setAttribute(Shader::Attributes::Vertex, mesh_.vbo);
@@ -93,5 +92,9 @@ GraphicsEngine::~GraphicsEngine() {
     glDeleteBuffers(1, &mesh_.ibo);
     glDeleteBuffers(1, &mesh_.vbo);
     glDeleteVertexArrays(1, &mesh_.VAO);
+}
+
+void GraphicsEngine::registerGraphic(std::shared_ptr<Graphic> graphic) {
+    graphics_.push_back(graphic);
 }
 
