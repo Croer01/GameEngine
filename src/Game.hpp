@@ -15,13 +15,14 @@ class Game : public Singleton<Game> {
     int height_;
     std::shared_ptr<SDL_Window> mainWindow_;
     SDL_GLContext mainContext_;
-
+    bool running_;
     void initSDLWindow();
 
     void makeCurrentContext();
 public:
     void init();
     void loop();
+    void shutdown();
 };
 
 

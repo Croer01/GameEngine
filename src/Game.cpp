@@ -10,11 +10,13 @@
 #include "graphics/GraphicsEngine.hpp"
 #include "Scene.hpp"
 #include "SceneManager.hpp"
+#include "InputManager.hpp"
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
 
 
 void Game::init() {
+    running_ = true;
     // Initialize SDL's Video subsystem
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         CheckSDLError();
@@ -95,10 +97,20 @@ void Game::loop() {
     std::shared_ptr<Scene> scene = SceneManager::GetInstance().getScene("Scene0");
     scene->init();
 
-    for (;;) {
+    while (running_){
+        InputManager::GetInstance().update();
+        if (InputManager::GetInstance().isQuitDown()) {
+            shutdown();
+            continue;
+        }
         scene->update(0);
         glClear(GL_COLOR_BUFFER_BIT);
         GraphicsEngine::GetInstance().draw();
         SDL_GL_SwapWindow(mainWindow_.get());
     }
+}
+
+
+void Game::shutdown() {
+    running_ = false;
 }

@@ -31,7 +31,8 @@ set(ENGINE_SOURCES src/Game.cpp
         src/components/SpriteComponent.cpp
         src/graphics/GraphicsEngine.cpp
         src/graphics/Graphic.cpp
-        src/graphics/Shader.cpp)
+        src/graphics/Shader.cpp
+        src/InputManager.cpp)
 
 set(GAME_SOURCES main.cpp PrintTextComponent.cpp)
 
