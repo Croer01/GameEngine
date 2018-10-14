@@ -7,6 +7,9 @@
 #include "ObjectManager.hpp"
 #include "utils.hpp"
 #include "components/SpriteComponent.hpp"
+#include "graphics/GraphicsEngine.hpp"
+#include "Scene.hpp"
+#include "SceneManager.hpp"
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
 
@@ -18,6 +21,7 @@ void Game::init() {
     }
 
     initSDLWindow();
+    GraphicsEngine::GetInstance().init();
 
     //Register engine default components
     ObjectManager::GetInstance().registerComponentBuilder("SpriteComponent", new ComponentTBuilder<SpriteComponent>());
@@ -64,7 +68,7 @@ void Game::initSDLWindow() {
     mainContext_ = SDL_GL_CreateContext(mainWindow_.get());
     makeCurrentContext();
 
-    // This makes our buffer swap syncronized with the monitor's vertical refresh
+    // This makes our buffer swap synchronized with the monitor's vertical refresh
     // Enable vsync
     SDL_GL_SetSwapInterval(1);
 
@@ -85,4 +89,16 @@ void Game::initSDLWindow() {
 
 void Game::makeCurrentContext() {
     SDL_GL_MakeCurrent(mainWindow_.get(), mainContext_);
+}
+
+void Game::loop() {
+    std::shared_ptr<Scene> scene = SceneManager::GetInstance().getScene("Scene0");
+    scene->init();
+
+    for (;;) {
+        scene->update(0);
+        glClear(GL_COLOR_BUFFER_BIT);
+        GraphicsEngine::GetInstance().draw();
+        SDL_GL_SwapWindow(mainWindow_.get());
+    }
 }

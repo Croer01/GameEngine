@@ -21,6 +21,7 @@ class Game : public Singleton<Game> {
     void makeCurrentContext();
 public:
     void init();
+    void loop();
 };
 
 
