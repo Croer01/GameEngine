@@ -15,12 +15,7 @@ int main() {
         //register scene
         SceneManager::GetInstance().registerScene("Scene0","data/scene0.ini");
 
-        std::shared_ptr<Scene> scene = SceneManager::GetInstance().getScene("Scene0");
-        scene->init();
-
-        for (;;) {
-            scene->update(0);
-        }
+        Game::GetInstance().loop();
 
         return 0;
     }
