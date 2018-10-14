@@ -11,7 +11,7 @@ for var in "${components[@]}"
 do
 read -ra ADDR <<< "$var"
 INCLUDES="$INCLUDES#include \"${ADDR[0]}\"$NEWLINE"
-REGISTERS="$REGISTERS    ObjectManager::GetInstance().registerComponentBuilder(\"${ADDR[1]}\", new ComponentTBuilder<${ADDR[1]}>());$NEWLINE"
+REGISTERS="$REGISTERS ObjectManager::GetInstance().registerComponentBuilder(\"${ADDR[1]}\", new ComponentTBuilder<${ADDR[1]}>());$NEWLINE"
 done
 IFS=$OIFS
 
@@ -23,7 +23,7 @@ echo " * This file has been generated. To register a component use macro COMPONE
 echo " * in the definition of the class" 
 echo " */" 
 echo "void RegisterComponents() {"
-echo  $REGISTERS
+echo      $REGISTERS
 echo "}"
 
 

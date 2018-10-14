@@ -28,7 +28,7 @@ std::shared_ptr<GameObject> ObjectManager::createGameObject(const std::string &o
     auto it = prototypes_.find(objectType);
 
     if(it == prototypes_.end())
-        throw std::exception(("prototype " + objectType + " already registered").c_str());
+        throw std::exception(("prototype " + objectType + " not found").c_str());
 
 
     return it->second->Clone();
