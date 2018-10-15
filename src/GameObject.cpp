@@ -8,12 +8,18 @@
 #include "Component.hpp"
 #include "ObjectManager.hpp"
 #include <INIReader.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 int GameObject::ID_GENERATOR = 0;
 
-GameObject::GameObject(std::string name) :
+GameObject::GameObject(const std::string &name) : Subject<GameObjectEvent>(),
         nameType_(name),
-        id_(ID_GENERATOR++) {
+        id_(ID_GENERATOR++),
+        position_(glm::vec3(0.f)),
+        rotation_(glm::vec3(0.f)),
+        scale_(glm::vec3(1.f)) {
 }
 
 void GameObject::Init() {
@@ -70,4 +76,36 @@ void GameObject::fromFile(const std::string &filename) {
         component->fromFile(reader);
         addComponent(component);
     }
+}
+
+const glm::vec3 &GameObject::getPosition() const {
+    return position_;
+}
+
+void GameObject::setPosition(const glm::vec3 &position) {
+    position_ = position;
+    notify(GameObjectEvent::TransformChanged);
+}
+
+const glm::vec3 &GameObject::getRotation() const {
+    return rotation_;
+}
+
+void GameObject::setRotation(const glm::vec3 &rotation) {
+    rotation_ = rotation;
+    notify(GameObjectEvent::TransformChanged);
+}
+
+const glm::vec3 &GameObject::getScale() const {
+    return scale_;
+}
+
+void GameObject::setScale(const glm::vec3 &scale) {
+    scale_ = scale;
+    notify(GameObjectEvent::TransformChanged);
+}
+
+glm::mat4 GameObject::getTransform() {
+    //remember the order of matrix multiplication is from right to left
+    return glm::scale(glm::mat4(1),scale_) * glm::translate(glm::mat4(1),position_) * glm::mat4_cast(glm::quat(rotation_));
 }
