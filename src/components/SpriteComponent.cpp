@@ -22,3 +22,11 @@ void SpriteComponent::fromFile(const INIReader &iniFile) {
     //TODO: change this if the graphic is cloned, currently this doesn't happened
     GraphicsEngine::GetInstance().registerGraphic(graphic_);
 }
+
+void SpriteComponent::SetParent(GameObject *parent) {
+    Component::SetParent(parent);
+    graphic_->setModelTransform(parent_->getTransform());
+    parent_->registerObserver(GameObjectEvent::TransformChanged,[&]{
+        graphic_->setModelTransform(parent_->getTransform());
+    });
+}

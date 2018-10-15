@@ -13,12 +13,12 @@
 
 class Graphic {
     unsigned int textureID_;
-
+    glm::mat4 modelTransform_;
 public:
     explicit Graphic(std::string filename);
     ~Graphic();
     void draw(std::shared_ptr<Shader> shader);
-    glm::mat4 getTransform();
+    void setModelTransform(const glm::mat4 &transform);
 };
 
 
