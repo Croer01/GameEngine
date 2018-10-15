@@ -97,17 +97,28 @@ void Game::loop() {
     std::shared_ptr<Scene> scene = SceneManager::GetInstance().getScene("Scene0");
     scene->init();
 
+    unsigned int lastTime = 0, currentTime;
+
     while (running_){
         InputManager::GetInstance().update();
         if (InputManager::GetInstance().isQuitDown()) {
             shutdown();
             continue;
         }
-        scene->update(0);
+
+        //calculate elapsed time
+        currentTime = SDL_GetTicks();
+        float elapsedTime = (currentTime - lastTime) / 1000.f;
+
+        scene->update(elapsedTime);
         glClear(GL_COLOR_BUFFER_BIT);
         GraphicsEngine::GetInstance().draw();
         SDL_GL_SwapWindow(mainWindow_.get());
+        lastTime = currentTime;
     }
+
+    // Shutdown SDL 2
+    SDL_Quit();
 }
 
 
