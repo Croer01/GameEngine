@@ -23,7 +23,7 @@ void Game::init() {
     }
 
     initSDLWindow();
-    GraphicsEngine::GetInstance().init();
+    GraphicsEngine::GetInstance().init(width_, height_);
 
     //Register engine default components
     ObjectManager::GetInstance().registerComponentBuilder("SpriteComponent", new ComponentTBuilder<SpriteComponent>());

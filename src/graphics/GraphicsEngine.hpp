@@ -22,9 +22,10 @@ class GraphicsEngine : public Singleton<GraphicsEngine>{
     std::vector<std::shared_ptr<Graphic>> graphics_;
     InternalMesh mesh_;
     std::shared_ptr<Shader> spriteShader_;
+    glm::mat4 projMatrix_;
 public:
     ~GraphicsEngine() override;
-    void init();
+    void init(int width, int height);
     void draw();
     void registerGraphic(std::shared_ptr<Graphic> graphic);
 

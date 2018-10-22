@@ -4,21 +4,27 @@
 
 #include <GL/glew.h>
 #include <glm/detail/type_mat.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include "GraphicsEngine.hpp"
+#include "../utils.hpp"
 
-void GraphicsEngine::init() {
+void GraphicsEngine::init(int width, int height) {
+
+    //set alpha blending
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     //VBO data
-    std::vector<float> vertices = std::vector<float>({ //vertex(3) | color(2)
-                                                              -0.5f, -0.5f, 0.5f,   0.f, 1.f,
-                                                              0.5f, -0.5f, 0.5f,    1.f, 1.f,
-                                                              -0.5f, 0.5f, 0.5f,    0.f, 0.f,
-                                                              0.5f, 0.5f, 0.5f,     1.f, 0.f
+    std::vector<float> vertices = std::vector<float>({ //vertex(3) | uv(2)
+                                                              -0.5f,  0.5f, 0.f,   0.f, 1.f,
+                                                              -0.5f, -0.5f, 0.f,   0.f, 0.f,
+                                                               0.5f, -0.5f, 0.f,   1.f, 0.f,
+                                                               0.5f,  0.5f, 0.f,   1.f, 1.f
                                                       });
     //IBO data
     std::vector<unsigned int> indices = std::vector<unsigned int>({
                                                                            0, 1, 2,
-                                                                           2, 1, 3,
+                                                                           0, 2, 3
                                                                    });
 
 
@@ -37,6 +43,7 @@ void GraphicsEngine::init() {
     glGenBuffers(1, &mesh_.ibo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_.ibo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), &indices.front(), GL_STREAM_DRAW);
+    CheckGlError();
 
     spriteShader_ = std::make_shared<Shader>("Basic");
     spriteShader_->setVertexShader(R"EOF(
@@ -65,16 +72,29 @@ void GraphicsEngine::init() {
         uniform vec4 Color;
 
         void main() {
-            FragColor = texture(Texture, TexCoord) * Color;
+            vec4 texColor = texture(Texture, TexCoord);
+            FragColor = vec4(texColor.rgb * Color.rgb, texColor.a);
         }
         )EOF");
     spriteShader_->build();
+    CheckGlError();
+
+    //init projection matrix
+    projMatrix_ = glm::ortho(0.0f, (float) width, (float) height, 0.0f, 0.f,1.f) * glm::mat4(1);
+                  //          glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f)
+//                  * glm::lookAt(
+//            glm::vec3(0, 0, 1), // Camera is at (4,3,3), in World Space
+//            glm::vec3(0, 0, 0), // and looks at the origin
+//            glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
+//    );
+    CheckGlError();
+
 }
 
 void GraphicsEngine::draw() {
     spriteShader_->bind();
 
-    spriteShader_->setUniform("projView", glm::mat4(1));
+    spriteShader_->setUniform("projView", projMatrix_);
 
     spriteShader_->setAttribute(Shader::Attributes::Vertex, mesh_.vbo);
     spriteShader_->setAttribute(Shader::Attributes::UV, mesh_.vbo);
