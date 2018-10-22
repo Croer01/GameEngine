@@ -107,5 +107,5 @@ void GameObject::setScale(const glm::vec3 &scale) {
 
 glm::mat4 GameObject::getTransform() {
     //remember the order of matrix multiplication is from right to left
-    return glm::scale(glm::mat4(1),scale_) * glm::translate(glm::mat4(1),position_) * glm::mat4_cast(glm::quat(rotation_));
+    return glm::translate(glm::mat4(1),position_) * glm::mat4_cast(glm::quat(rotation_)) * glm::scale(glm::mat4(1),scale_);
 }
