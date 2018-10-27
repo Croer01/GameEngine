@@ -114,7 +114,7 @@ GraphicsEngine::~GraphicsEngine() {
     glDeleteVertexArrays(1, &mesh_.VAO);
 }
 
-void GraphicsEngine::registerGraphic(std::shared_ptr<Graphic> graphic) {
+void GraphicsEngine::registerGraphic(const std::shared_ptr<GraphicHolder> &graphic) {
     graphics_.push_back(graphic);
 }
 

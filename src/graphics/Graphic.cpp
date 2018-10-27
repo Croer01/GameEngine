@@ -8,7 +8,6 @@
 #include "../utils.hpp"
 
 Graphic::Graphic(std::string filename) {
-    modelTransform_ = glm::mat4(1);
     // Load texture
     textureID_ = 0;
     // You should probably use CSurface::OnLoad ... ;)
@@ -51,12 +50,7 @@ Graphic::~Graphic() {
 void Graphic::draw(std::shared_ptr<Shader> shader) {
     glBindTexture(GL_TEXTURE_2D, textureID_);
 
-    shader->setUniform("transform", modelTransform_);
     shader->draw();
 
     CheckGlError();
-}
-
-void Graphic::setModelTransform(const glm::mat4 &transform) {
-    modelTransform_ = transform;
 }

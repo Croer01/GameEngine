@@ -8,7 +8,7 @@
 
 #include <vector>
 #include <memory>
-#include "Graphic.hpp"
+#include "GraphicHolder.hpp"
 #include "Shader.h"
 #include "../Singleton.hpp"
 
@@ -19,7 +19,7 @@ class GraphicsEngine : public Singleton<GraphicsEngine>{
         unsigned int ibo;
     };
 
-    std::vector<std::shared_ptr<Graphic>> graphics_;
+    std::vector<std::shared_ptr<GraphicHolder>> graphics_;
     InternalMesh mesh_;
     std::shared_ptr<Shader> spriteShader_;
     glm::mat4 projMatrix_;
@@ -27,7 +27,7 @@ public:
     ~GraphicsEngine() override;
     void init(int width, int height);
     void draw();
-    void registerGraphic(std::shared_ptr<Graphic> graphic);
+    void registerGraphic(const std::shared_ptr<GraphicHolder> &graphic);
 
 };
 

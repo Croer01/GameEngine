@@ -8,9 +8,11 @@
 
 #include "../Component.hpp"
 #include "../graphics/Graphic.hpp"
+#include "../graphics/GraphicHolder.hpp"
 
 class SpriteComponent : public Component {
-    std::shared_ptr<Graphic> graphic_;
+    std::shared_ptr<Graphic> graphicLoaded_;
+    std::shared_ptr<GraphicHolder> graphic_;
 public:
     void Update(float elapsedTime) override;
 
