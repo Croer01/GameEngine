@@ -7,10 +7,10 @@
 #include "GameObject.hpp"
 #include "Component.hpp"
 #include "ObjectManager.hpp"
-#include <INIReader.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <yaml-cpp/yaml.h>
 
 int GameObject::ID_GENERATOR = 0;
 
@@ -61,20 +61,22 @@ std::shared_ptr<GameObject> GameObject::Clone() const {
 }
 
 void GameObject::fromFile(const std::string &filename) {
-    INIReader reader(filename);
-    if (reader.ParseError() < 0) {
-        throw std::runtime_error("Can't load '" + filename + "'");
-    }
+    try {
+        YAML::Node gameObjectConfig = YAML::LoadFile(filename);
+        if(!gameObjectConfig.IsDefined())
+            throw std::runtime_error("file not exist or is empty");
 
-    std::string components = reader.Get("","components","");
+        YAML::Node components = gameObjectConfig["components"];
+        for (auto i = 0; i < components.size(); ++i) {
+            YAML::Node componentConfig = components[i];
+            std::shared_ptr<Component> component = ObjectManager::GetInstance().createComponent(
+                    componentConfig["type"].as<std::string>());
+            component->fromFile(componentConfig);
+            addComponent(component);
+        }
 
-    std::stringstream ss(components);
-    std::string componentType;
-    while(std::getline(ss, componentType, ' '))
-    {
-        std::shared_ptr<Component> component = ObjectManager::GetInstance().createComponent(componentType);
-        component->fromFile(reader);
-        addComponent(component);
+    } catch (const YAML::Exception &e) {
+        throw std::runtime_error("Can't load '" + filename + "'. cause: " + e.what());
     }
 }
 

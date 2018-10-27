@@ -2,17 +2,17 @@
 // Created by adria on 01/10/2018.
 //
 
-#include <INIReader.h>
+#include <yaml-cpp/yaml.h>
 #include <sstream>
 #include "Scene.hpp"
 #include "ObjectManager.hpp"
 
-glm::vec3 readVector3(const INIReader &iniFile,const std::string &prototype, const std::string &vectorName, double defaultValue){
-    float x = static_cast<float>(iniFile.GetReal(prototype, vectorName + "_x", defaultValue));
-    float y = static_cast<float>(iniFile.GetReal(prototype, vectorName + "_y", defaultValue));
-    float z = static_cast<float>(iniFile.GetReal(prototype, vectorName + "_z", defaultValue));
+glm::vec3 readVector3(const YAML::Node &node, float defaultValue){
+    if(!node.IsSequence() || node.size() != 3) {
+        return glm::vec3(defaultValue, defaultValue, defaultValue);
+    }
 
-    return glm::vec3(x,y,z);
+    return glm::vec3(node[0].as<double>(), node[1].as<double>(), node[2].as<double>());
 }
 
 Scene::Scene(const std::string &filename) : filename_(filename){
@@ -33,24 +33,24 @@ void Scene::update(float elapsedTime) {
 }
 
 void Scene::loadFile() {
-    INIReader reader(filename_);
-    if (reader.ParseError() < 0) {
-        throw std::runtime_error("Can't load '" + filename_ + "'");
-    }
+    try {
+        YAML::Node sceneConfig = YAML::LoadFile(filename_);
 
-    std::string prototypes = reader.Get("","prototypes","");
+        YAML::Node prototypes = sceneConfig["prototypes"];
 
-    std::stringstream ss(prototypes);
-    std::string prototypeName;
-    while(std::getline(ss, prototypeName, ' '))
-    {
-        std::shared_ptr<GameObject> gameObject = ObjectManager::GetInstance().createGameObject(prototypeName);
+        for (auto i = 0; i < prototypes.size(); ++i) {
+            YAML::Node prototype = prototypes[i];
+            std::shared_ptr<GameObject> gameObject = ObjectManager::GetInstance().createGameObject(prototype["name"].as<std::string>());
 
-        //object properties
-        gameObject->setPosition(readVector3(reader,prototypeName,"position",0));
-        gameObject->setRotation(readVector3(reader,prototypeName,"rotation",0));
-        gameObject->setScale(readVector3(reader,prototypeName,"scale",1));
+            //object properties
+            gameObject->setPosition(readVector3(prototype["position"],0));
+            gameObject->setRotation(readVector3(prototype["rotation"],0));
+            gameObject->setScale(readVector3(prototype["scale"],1));
 
-        gameobjects_.push_back(gameObject);
+            gameobjects_.push_back(gameObject);
+        }
+
+    } catch (const YAML::Exception &e){
+        throw std::runtime_error("Can't load '" + filename_ + "'. cause: " + e.what());
     }
 }

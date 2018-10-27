@@ -16,9 +16,10 @@ std::shared_ptr<Component> SpriteComponent::Clone() {
     return clone;
 }
 
-void SpriteComponent::fromFile(const INIReader &iniFile) {
-    std::string filePath = iniFile.Get("SpriteComponent","filePath","[Text not found]");
-    graphic_ = std::make_shared<Graphic>(filePath);
+void SpriteComponent::fromFile(const YAML::Node &componentConfig) {
+    if(!componentConfig["filePath"])
+        throw std::logic_error("property filePath not defined");
+    graphic_ = std::make_shared<Graphic>(componentConfig["filePath"].as<std::string>());
 }
 
 void SpriteComponent::SetParent(GameObject *parent) {

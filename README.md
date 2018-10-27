@@ -10,7 +10,7 @@ Also I will do test to check all parts of the engine works properly and it will 
  - SDL2 (core and image)
  - GLEW
  - GLM
- - inih (to read .ini files, this I will have changed when I find a better file format)
+ - Yaml cpp
  
  ## Environment
  Currently, I use vcpkg to manage dependencies, It's a cross platform package manager (developed by Microsoft).  
@@ -19,7 +19,7 @@ Also I will do test to check all parts of the engine works properly and it will 
  After you will have set up vcpkg, execute the next command 
  
  ~~~ bash
- vcpkg install --triplet x64-windows glew glm sdl2-image sdl2 inih
+ vcpkg install --triplet x64-windows glew glm sdl2-image sdl2 yaml-cpp
  ~~~
  
  _Note: Before you execute this command, you must check your target architecture to ensure install proper version of packages (the --triplet option)_
@@ -29,7 +29,7 @@ Also I will do test to check all parts of the engine works properly and it will 
  ~~~ bash
  # inside project root
  mkdir outd && cd outd
- cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=[root_vcpkg_directory]/scripts/buildsystems/vcpkg.cmake
+ cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=[root_vcpkg_directory]/scripts/buildsystems/vcpkg.cmake
  cmake --build .
  ~~~
  

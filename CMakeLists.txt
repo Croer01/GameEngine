@@ -6,17 +6,16 @@ set(CMAKE_CXX_STANDARD 11)
 #SDL2_image
 find_path(SDL2_IMAGE_INCLUDE SDL2/SDL_image.h)
 find_library(SDL2_IMAGE_LIBRARY SDL2_image)
-#Inih
-find_path(INIH_INCLUDE ini.h)
-find_library(INIH_LIBRARY inih)
+
 
 find_package(SDL2 CONFIG REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glm CONFIG REQUIRED)
 find_package(OpenGL REQUIRED)
+find_package(yaml-cpp CONFIG REQUIRED)
 
 include_directories(${OPENGL_INCLUDE_DIRS})
-include_directories(${SDL2_INCLUDE_DIR} ${SDL2_IMAGE_INCLUDE} ${INIH_INCLUDE} ${GLEW_INCLUDE_DIR} ${glm_INCLUDE_DIR})
+include_directories(${SDL2_INCLUDE_DIR} ${SDL2_IMAGE_INCLUDE} ${GLEW_INCLUDE_DIR} ${glm_INCLUDE_DIR})
 include_directories(${SDL2_ROOT}/include)
 
 # source files
@@ -54,7 +53,7 @@ target_link_libraries(SpaceInvaders PRIVATE
         SDL2::SDL2main
         SDL2::SDL2
         ${SDL2_IMAGE_LIBRARY}
-        ${INIH_LIBRARY}
+        yaml-cpp
         GLEW::GLEW
         glm
         ${OPENGL_LIBRARIES})

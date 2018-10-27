@@ -16,7 +16,7 @@ public:
 
     std::shared_ptr<Component> Clone() override;
 
-    void fromFile(const INIReader &iniFile) override;
+    void fromFile(const YAML::Node &componentConfig) override;
 
     void SetParent(GameObject *parent) override;
 };

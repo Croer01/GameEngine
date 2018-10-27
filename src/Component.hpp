@@ -6,7 +6,7 @@
 #define SPACEINVADERS_COMPONENT_HPP
 
 
-#include <INIReader.h>
+#include <yaml-cpp/yaml.h>
 #include "GameObject.hpp"
 
 #define COMPONENT(x) //the #x component has been registered
@@ -18,7 +18,7 @@ public:
     virtual ~Component() = default;
     virtual void Update(float elapsedTime) = 0;
     virtual std::shared_ptr<Component> Clone() = 0;
-    virtual void fromFile(const INIReader &iniFile);
+    virtual void fromFile(const YAML::Node &componentConfig);
 
     virtual void SetParent(GameObject *parent);
 
