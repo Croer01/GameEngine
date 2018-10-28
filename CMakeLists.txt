@@ -60,5 +60,11 @@ target_link_libraries(SpaceInvaders PRIVATE
         glm
         ${OPENGL_LIBRARIES})
 
-ADD_CUSTOM_TARGET(copyData ALL COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/data ${CMAKE_BINARY_DIR}/data)
-ADD_CUSTOM_TARGET(copyConf ALL COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/conf ${CMAKE_BINARY_DIR}/conf)
+ADD_CUSTOM_TARGET(copyData ALL
+        COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/data
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/data ${CMAKE_BINARY_DIR}/data
+        )
+ADD_CUSTOM_TARGET(copyConf ALL
+        COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/conf
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/conf ${CMAKE_BINARY_DIR}/conf
+        )
