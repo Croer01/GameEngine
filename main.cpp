@@ -1,19 +1,18 @@
 #include <iostream>
 #include "src/Game.hpp"
 #include "src/GameObject.hpp"
-#include "PrintTextComponent.hpp"
 #include "src/Factory.hpp"
 #include "src/SceneManager.hpp"
+#include "src/ObjectManager.hpp"
 
 int main() {
     try {
-        Game::GetInstance().init();
+        Game::GetInstance().init("conf");
         //load object from file
-        ObjectManager::GetInstance().registerPrototype("Player", "data/test.ini");
-        ObjectManager::GetInstance().registerPrototype("Player2", "data/test2.ini");
+        ObjectManager::GetInstance().registerPrototype("Alien1", "data/alien1.yaml");
 
         //register scene
-        SceneManager::GetInstance().registerScene("Scene0","data/scene0.ini");
+        SceneManager::GetInstance().registerScene("Scene0","data/gameplayScene.yaml");
 
         Game::GetInstance().loop();
 

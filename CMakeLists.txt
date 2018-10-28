@@ -36,7 +36,7 @@ set(ENGINE_SOURCES src/Game.cpp
         src/graphics/GraphicHolder.cpp
         src/Screen.cpp)
 
-set(GAME_SOURCES main.cpp PrintTextComponent.cpp)
+set(GAME_SOURCES main.cpp EnemyComponent.cpp)
 
 # auto-generated files
 set(COMPONENTS_REGISTERED_CPP ${CMAKE_SOURCE_DIR}/componentsRegistered.cpp)

@@ -1,6 +1,5 @@
 #include "src/ObjectManager.hpp"
-#include "PrintTextComponent.hpp"
-#include "PrintTextComponent2.hpp"
+#include "EnemyComponent.hpp"
 
 
 /*
@@ -8,7 +7,6 @@
  * in the definition of the class
  */
 void RegisterComponents() {
-    ObjectManager::GetInstance().registerComponentBuilder("PrintTextComponent", new ComponentTBuilder<PrintTextComponent>());
-    ObjectManager::GetInstance().registerComponentBuilder("PrintTextComponent2", new ComponentTBuilder<PrintTextComponent2>());
+    ObjectManager::GetInstance().registerComponentBuilder("EnemyComponent", new ComponentTBuilder<EnemyComponent>());
 
 }
