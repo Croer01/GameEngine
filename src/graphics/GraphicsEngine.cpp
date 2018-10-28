@@ -16,10 +16,10 @@ void GraphicsEngine::init(const Screen &screen) {
 
     //VBO data
     std::vector<float> vertices = std::vector<float>({ //vertex(3) | uv(2)
-                                                              -0.5f,  0.5f, 0.f,   0.f, 1.f,
-                                                              -0.5f, -0.5f, 0.f,   0.f, 0.f,
-                                                               0.5f, -0.5f, 0.f,   1.f, 0.f,
-                                                               0.5f,  0.5f, 0.f,   1.f, 1.f
+                                                               0.f, 1.f, 0.f,   0.f, 1.f,
+                                                               0.f, 0.f, 0.f,   0.f, 0.f,
+                                                               1.f, 0.f, 0.f,   1.f, 0.f,
+                                                               1.f, 1.f, 0.f,   1.f, 1.f
                                                       });
     //IBO data
     std::vector<unsigned int> indices = std::vector<unsigned int>({

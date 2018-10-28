@@ -21,6 +21,9 @@ public:
     void fromFile(const YAML::Node &componentConfig) override;
 
     void SetParent(GameObject *parent) override;
+
+    int getWidth() const;
+    int getHeight() const;
 };
 
 

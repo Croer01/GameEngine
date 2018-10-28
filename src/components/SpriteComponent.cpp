@@ -33,3 +33,11 @@ void SpriteComponent::SetParent(GameObject *parent) {
         });
     }
 }
+
+int SpriteComponent::getWidth() const {
+    return graphicLoaded_->getWidth();
+}
+
+int SpriteComponent::getHeight() const {
+    return graphicLoaded_->getHeight();
+}

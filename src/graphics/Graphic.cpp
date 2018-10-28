@@ -14,6 +14,8 @@ Graphic::Graphic(std::string filename) {
     //-- and make sure the Surface pointer is good!
     //    SDL_Surface* Surface = IMG_Load(filename);
     SDL_Surface *surface = IMG_Load(filename.c_str());
+    width_ = surface->w;
+    height_ = surface->h;
 
     CheckSDLError();
 
@@ -41,6 +43,7 @@ Graphic::Graphic(std::string filename) {
     CheckGlError();
 
     SDL_FreeSurface(surface);
+    CheckSDLError();
 }
 
 Graphic::~Graphic() {
@@ -53,4 +56,12 @@ void Graphic::draw(std::shared_ptr<Shader> shader) {
     shader->draw();
 
     CheckGlError();
+}
+
+int Graphic::getWidth() const {
+    return width_;
+}
+
+int Graphic::getHeight() const {
+    return height_;
 }
