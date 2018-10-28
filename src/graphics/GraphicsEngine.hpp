@@ -24,12 +24,13 @@ class GraphicsEngine : public Singleton<GraphicsEngine>{
     InternalMesh mesh_;
     std::shared_ptr<Shader> spriteShader_;
     glm::mat4 projMatrix_;
+    bool pixelPerfect_;
 public:
     ~GraphicsEngine() override;
     void init(const Screen &screen);
     void draw();
     void registerGraphic(const std::shared_ptr<GraphicHolder> &graphic);
-
+    bool isPixelPerfect() const;
 };
 
 

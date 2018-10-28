@@ -26,10 +26,10 @@ void SpriteComponent::fromFile(const YAML::Node &componentConfig) {
 void SpriteComponent::SetParent(GameObject *parent) {
     Component::SetParent(parent);
     if(graphic_){
-        graphic_->setModelTransform(parent_->getTransform());
+        graphic_->setModelTransform(parent_->getPosition(), parent_->getRotation(), parent_->getScale());
 
         parent_->registerObserver(GameObjectEvent::TransformChanged,[&]{
-            graphic_->setModelTransform(parent_->getTransform());
+            graphic_->setModelTransform(parent_->getPosition(), parent_->getRotation(), parent_->getScale());
         });
     }
 }

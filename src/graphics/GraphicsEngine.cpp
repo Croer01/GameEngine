@@ -83,6 +83,7 @@ void GraphicsEngine::init(const Screen &screen) {
     projMatrix_ = glm::ortho(0.0f, (float)screen.getVirtualWidth(), (float)screen.getVirtualHeight(), 0.0f, 0.f,1.f);
     CheckGlError();
 
+    pixelPerfect_ = screen.isPixelPerfect();
 }
 
 void GraphicsEngine::draw() {
@@ -110,5 +111,9 @@ GraphicsEngine::~GraphicsEngine() {
 
 void GraphicsEngine::registerGraphic(const std::shared_ptr<GraphicHolder> &graphic) {
     graphics_.push_back(graphic);
+}
+
+bool GraphicsEngine::isPixelPerfect() const {
+    return pixelPerfect_;
 }
 
