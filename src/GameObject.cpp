@@ -63,8 +63,6 @@ std::shared_ptr<GameObject> GameObject::Clone() const {
 void GameObject::fromFile(const std::string &filename) {
     try {
         YAML::Node gameObjectConfig = YAML::LoadFile(filename);
-        if(!gameObjectConfig.IsDefined())
-            throw std::runtime_error("file not exist or is empty");
 
         YAML::Node components = gameObjectConfig["components"];
         for (auto i = 0; i < components.size(); ++i) {

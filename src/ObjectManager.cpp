@@ -10,7 +10,12 @@ void ObjectManager::registerComponentBuilder(const std::string &idType, Componen
 }
 
 std::shared_ptr<Component> ObjectManager::createComponent(const std::string &idType) {
-    return componentFactory_.Create(idType);
+    try{
+        return componentFactory_.Create(idType);
+    }
+    catch (const std::exception &e){
+        throw std::exception(("error instantiating component " + idType + ". cause: object not registered").c_str());
+    }
 }
 
 void ObjectManager::registerPrototype(const std::string &objectType, const std::string &filename) {
