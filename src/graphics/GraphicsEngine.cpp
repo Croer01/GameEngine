@@ -8,7 +8,7 @@
 #include "GraphicsEngine.hpp"
 #include "../utils.hpp"
 
-void GraphicsEngine::init(int width, int height) {
+void GraphicsEngine::init(const Screen &screen) {
 
     //set alpha blending
     glEnable(GL_BLEND);
@@ -80,13 +80,7 @@ void GraphicsEngine::init(int width, int height) {
     CheckGlError();
 
     //init projection matrix
-    projMatrix_ = glm::ortho(0.0f, (float) width, (float) height, 0.0f, 0.f,1.f) * glm::mat4(1);
-                  //          glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f)
-//                  * glm::lookAt(
-//            glm::vec3(0, 0, 1), // Camera is at (4,3,3), in World Space
-//            glm::vec3(0, 0, 0), // and looks at the origin
-//            glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
-//    );
+    projMatrix_ = glm::ortho(0.0f, (float)screen.getVirtualWidth(), (float)screen.getVirtualHeight(), 0.0f, 0.f,1.f);
     CheckGlError();
 
 }

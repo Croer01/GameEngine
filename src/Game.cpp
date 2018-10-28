@@ -15,15 +15,14 @@
 #include <GL/glew.h>
 
 
-void Game::init() {
+void Game::init(const std::string &configRoot) {
     running_ = true;
     // Initialize SDL's Video subsystem
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         CheckSDLError();
     }
-
+    screen_ = std::make_unique<Screen>(configRoot + "/screen.yaml");
     initSDLWindow();
-    GraphicsEngine::GetInstance().init(width_, height_);
 
     //Register engine default components
     ObjectManager::GetInstance().registerComponentBuilder("SpriteComponent", new ComponentTBuilder<SpriteComponent>());
@@ -31,19 +30,16 @@ void Game::init() {
 }
 
 void Game::initSDLWindow() {
-    //initialize SDL window
-    //TODO: set this options from global configuration
-    width_ = 512;
-    height_ = 512;
 
     //TODO: set the title of the window from global configuration
-    mainWindow_.reset(SDL_CreateWindow("GameMain", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                                       width_, height_, SDL_WINDOW_OPENGL),
+    mainWindow_.reset(SDL_CreateWindow(screen_->getTitle().c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                                       screen_->getWindowWidth(), screen_->getWindowHeight(), SDL_WINDOW_OPENGL),
                       [](SDL_Window *wind) { SDL_DestroyWindow(wind); });
     CheckSDLError();
 
     //configure Gl context from the SDL window
-    glViewport(0, 0, width_, height_);
+
+    glViewport(screen_->getCalculatedX(), screen_->getCalculatedY(), screen_->getCalculatedWidth(), screen_->getCalculatedHeight());
 
     // Decide GL+GLSL versions
 #if __APPLE__
@@ -82,11 +78,15 @@ void Game::initSDLWindow() {
 #endif
 
     //Initialize clear color
-    //TODO: set the title of the window from global configuration
-    glClearColor(0.39f, 0.58f, 0.93f, 1.f);
+    glm::vec3 backgroundColor = screen_->getBackgroundColor();
+    glClearColor(backgroundColor[0], backgroundColor[1], backgroundColor[2], 1.f);
 
     CheckGlError();
     CheckSDLError();
+
+    //TODO: move this outside the creation of the window?
+    GraphicsEngine::GetInstance().init(*screen_);
+
 }
 
 void Game::makeCurrentContext() {
@@ -112,6 +112,7 @@ void Game::loop() {
 
         scene->update(elapsedTime);
         glClear(GL_COLOR_BUFFER_BIT);
+        glViewport(screen_->getCalculatedX(), screen_->getCalculatedY(), screen_->getCalculatedWidth(), screen_->getCalculatedHeight());
         GraphicsEngine::GetInstance().draw();
         SDL_GL_SwapWindow(mainWindow_.get());
         lastTime = currentTime;

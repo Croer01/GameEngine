@@ -11,6 +11,7 @@
 #include "GraphicHolder.hpp"
 #include "Shader.h"
 #include "../Singleton.hpp"
+#include "../Screen.hpp"
 
 class GraphicsEngine : public Singleton<GraphicsEngine>{
     struct InternalMesh {
@@ -25,7 +26,7 @@ class GraphicsEngine : public Singleton<GraphicsEngine>{
     glm::mat4 projMatrix_;
 public:
     ~GraphicsEngine() override;
-    void init(int width, int height);
+    void init(const Screen &screen);
     void draw();
     void registerGraphic(const std::shared_ptr<GraphicHolder> &graphic);
 

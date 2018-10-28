@@ -9,18 +9,21 @@
 #include <SDL2/SDL_video.h>
 #include <memory>
 #include "Singleton.hpp"
+#include "Screen.hpp"
+#include <string>
 
 class Game : public Singleton<Game> {
-    int width_;
-    int height_;
     std::shared_ptr<SDL_Window> mainWindow_;
     SDL_GLContext mainContext_;
     bool running_;
+
+    std::unique_ptr<Screen> screen_;
+
     void initSDLWindow();
 
     void makeCurrentContext();
 public:
-    void init();
+    void init(const std::string &configRoot);
     void loop();
     void shutdown();
 };

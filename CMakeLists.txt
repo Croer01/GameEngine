@@ -33,7 +33,8 @@ set(ENGINE_SOURCES src/Game.cpp
         src/graphics/Shader.cpp
         src/InputManager.cpp
         src/events/Subject.hpp
-        src/graphics/GraphicHolder.cpp)
+        src/graphics/GraphicHolder.cpp
+        src/Screen.cpp)
 
 set(GAME_SOURCES main.cpp PrintTextComponent.cpp)
 
@@ -59,4 +60,5 @@ target_link_libraries(SpaceInvaders PRIVATE
         glm
         ${OPENGL_LIBRARIES})
 
-ADD_CUSTOM_TARGET(do_always ALL COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/data ${CMAKE_BINARY_DIR}/data)
+ADD_CUSTOM_TARGET(copyData ALL COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/data ${CMAKE_BINARY_DIR}/data)
+ADD_CUSTOM_TARGET(copyConf ALL COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/conf ${CMAKE_BINARY_DIR}/conf)
