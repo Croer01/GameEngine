@@ -56,6 +56,16 @@ public:
     void setScale(const glm::vec3 &scale);
 
     glm::mat4 getTransform();
+
+    template <typename T>
+    std::shared_ptr<T> getComponent() const{
+        for(auto component : components_){
+            if(auto desiredComponent = std::dynamic_pointer_cast<T>(component))
+                return desiredComponent;
+        }
+
+        return std::shared_ptr<T>();
+    }
 };
 
 
