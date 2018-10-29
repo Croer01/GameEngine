@@ -22,8 +22,10 @@ Scene::Scene(const std::string &filename) : filename_(filename){
 void Scene::init() {
     gameobjects_.clear();
     loadFile();
-    for (auto &gameobject : gameobjects_) {
-        gameobject->Init();
+
+    auto size = gameobjects_.size();
+    for(auto i = 0; i < size;i++) {
+        gameobjects_[i]->Init();
     }
 }
 
