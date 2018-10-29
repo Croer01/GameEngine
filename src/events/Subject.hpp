@@ -28,8 +28,11 @@ public:
 
     void notify(const EventType& event) const
     {
-        for (const auto& observer : observers_.at(event)) {
-            observer();
+        auto it = observers_.find(event);
+        if(it != observers_.end()) {
+            for (const auto &observer : it->second) {
+                observer();
+            }
         }
     }
 };
