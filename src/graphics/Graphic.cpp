@@ -14,10 +14,9 @@ Graphic::Graphic(std::string filename) {
     //-- and make sure the Surface pointer is good!
     //    SDL_Surface* Surface = IMG_Load(filename);
     SDL_Surface *surface = IMG_Load(filename.c_str());
+    CheckSDLError();
     width_ = surface->w;
     height_ = surface->h;
-
-    CheckSDLError();
 
     glGenTextures(1, &textureID_);
     glBindTexture(GL_TEXTURE_2D, textureID_);
