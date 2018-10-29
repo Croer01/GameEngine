@@ -1,0 +1,4 @@
+components:
+  - type: EnemyManagerComponent
+    speed: 20
+    scaleFactor: 0.1

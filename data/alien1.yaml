@@ -1,6 +1,5 @@
+scale: [16, 8, 1]
 components:
   - type: EnemyComponent
-    speed: 20
-    scaleFactor: 0.1
   - type: SpriteComponent
     filePath: alien1.png

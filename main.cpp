@@ -10,6 +10,7 @@ int main() {
         Game::GetInstance().init("conf");
         //load object from file
         ObjectManager::GetInstance().registerPrototype("Alien1", "data/alien1.yaml");
+        ObjectManager::GetInstance().registerPrototype("EnemyManager", "data/enemyManager.yaml");
 
         //register scene
         SceneManager::GetInstance().registerScene("Scene0","data/gameplayScene.yaml");

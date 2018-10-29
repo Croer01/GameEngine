@@ -9,15 +9,8 @@
 
 COMPONENT(EnemyComponent);
 class EnemyComponent : public Component {
-    float speed_;
-    float currentSpeed_;
-    float scaleFactor_;
 public:
-    void Update(float elapsedTime) override;
-
     std::shared_ptr<Component> Clone() override;
-
-    void fromFile(const YAML::Node &componentConfig) override;
 };
 
 
