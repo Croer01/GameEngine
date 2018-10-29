@@ -52,12 +52,14 @@ GameObject::~GameObject() {
 
 std::shared_ptr<GameObject> GameObject::Clone() const {
     auto cloned = std::make_shared<GameObject>(nameType_);
-    //TODO: register clone to the ObjectManager
+
+    cloned->position_ = position_;
+    cloned->rotation_ = rotation_;
+    cloned->scale_ = scale_;
 
     for (auto &component : components_) {
         std::shared_ptr<Component> clonedComponent = component->Clone();
         cloned->addComponent(clonedComponent);
-        //TODO: register clone to the ObjectManager
     }
 
     return cloned;
@@ -67,6 +69,27 @@ void GameObject::fromFile(const std::string &filename) {
     try {
         YAML::Node gameObjectConfig = YAML::LoadFile(filename);
 
+        //object properties
+        if(gameObjectConfig["position"]){
+            YAML::Node node = gameObjectConfig["position"];
+            if(!node.IsSequence() || node.size() != 3)
+                throw std::runtime_error("position must be a sequence of 3 numeric values.");
+            this->setPosition(glm::vec3(node[0].as<double>(), node[1].as<double>(), node[2].as<double>()));
+        }
+        if(gameObjectConfig["rotation"]){
+            YAML::Node node = gameObjectConfig["rotation"];
+            if(!node.IsSequence() || node.size() != 3)
+                throw std::runtime_error("rotation must be a sequence of 3 numeric values.");
+            this->setRotation(glm::vec3(node[0].as<double>(), node[1].as<double>(), node[2].as<double>()));
+        }
+        if(gameObjectConfig["scale"]){
+            YAML::Node node = gameObjectConfig["scale"];
+            if(!node.IsSequence() || node.size() != 3)
+                throw std::runtime_error("scale must be a sequence of 3 numeric values.");
+            this->setScale(glm::vec3(node[0].as<double>(), node[1].as<double>(), node[2].as<double>()));
+        }
+
+        //load components
         YAML::Node components = gameObjectConfig["components"];
         for (auto i = 0; i < components.size(); ++i) {
             YAML::Node componentConfig = components[i];
@@ -76,7 +99,7 @@ void GameObject::fromFile(const std::string &filename) {
             addComponent(component);
         }
 
-    } catch (const YAML::Exception &e) {
+    } catch (const std::exception &e) {
         throw std::runtime_error("Can't load '" + filename + "'. cause: " + e.what());
     }
 }

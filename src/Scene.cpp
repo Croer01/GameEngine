@@ -45,9 +45,12 @@ void Scene::loadFile() {
                     prototype["name"].as<std::string>());
 
             //object properties
-            gameObject->setPosition(readVector3(prototype["position"], 0));
-            gameObject->setRotation(readVector3(prototype["rotation"], 0));
-            gameObject->setScale(readVector3(prototype["scale"], 1));
+            if(prototype["position"])
+                gameObject->setPosition(readVector3(prototype["position"], 0));
+            if(prototype["rotation"])
+                gameObject->setRotation(readVector3(prototype["rotation"], 0));
+            if(prototype["scale"])
+                gameObject->setScale(readVector3(prototype["scale"], 1));
 
             std::cout << "object created " << prototype["name"].as<std::string>() << std::endl;
             gameobjects_.push_back(gameObject);
