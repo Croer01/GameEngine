@@ -3,6 +3,7 @@
 //
 
 #include "SceneManager.hpp"
+#include "ObjectManager.hpp"
 
 void SceneManager::registerScene(const std::string &name, const std::string &filename) {
     auto it = scenes_.find(name);
@@ -39,5 +40,8 @@ void SceneManager::changeSceneInSafeMode() {
     }
 }
 
-    return it->second;
+std::shared_ptr<GameObject> SceneManager::createGameObject(const std::string &objectType) {
+    const std::shared_ptr<GameObject> &instance = ObjectManager::GetInstance().createGameObject(objectType);
+    currentScene_->addGameObject(instance);
+    return instance;
 }

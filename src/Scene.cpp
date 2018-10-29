@@ -60,3 +60,8 @@ void Scene::loadFile() {
 void Scene::shutDown() {
     gameobjects_.clear();
 }
+
+void Scene::addGameObject(const std::shared_ptr<GameObject> &gameObject) {
+    gameobjects_.push_back(gameObject);
+    gameObject->Init();
+}

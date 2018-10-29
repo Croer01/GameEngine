@@ -20,6 +20,7 @@ public:
     void registerScene(const std::string &name, const std::string &filename);
     void changeScene(const std::string &name);
     void changeSceneInSafeMode();
+    std::shared_ptr<GameObject> createGameObject(const std::string &objectType);
 };
 
 
