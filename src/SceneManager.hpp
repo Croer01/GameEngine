@@ -13,9 +13,13 @@
 
 class SceneManager : public Singleton<SceneManager>{
     std::unordered_map<std::string, std::shared_ptr<Scene>> scenes_;
+    std::shared_ptr<Scene> currentScene_;
+    std::string sceneNameToChange_;
 public:
+    void update(float elapsedTime);
     void registerScene(const std::string &name, const std::string &filename);
-    std::shared_ptr<Scene> getScene(const std::string &name);
+    void changeScene(const std::string &name);
+    void changeSceneInSafeMode();
 };
 
 

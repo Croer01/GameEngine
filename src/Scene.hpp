@@ -20,6 +20,7 @@ public:
     explicit Scene(const std::string &filename);
     void init();
     void update(float elapsedTime);
+    void shutDown();
 };
 
 

@@ -56,3 +56,7 @@ void Scene::loadFile() {
         throw std::runtime_error("Can't load '" + filename_ + "'. cause: " + e.what());
     }
 }
+
+void Scene::shutDown() {
+    gameobjects_.clear();
+}

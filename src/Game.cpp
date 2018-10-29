@@ -94,8 +94,7 @@ void Game::makeCurrentContext() {
 }
 
 void Game::loop() {
-    std::shared_ptr<Scene> scene = SceneManager::GetInstance().getScene("Scene0");
-    scene->init();
+    SceneManager::GetInstance().changeScene("Scene0");
 
     unsigned int lastTime = 0, currentTime;
 
@@ -110,12 +109,14 @@ void Game::loop() {
         currentTime = SDL_GetTicks();
         float elapsedTime = (currentTime - lastTime) / 1000.f;
 
-        scene->update(elapsedTime);
+        SceneManager::GetInstance().update(elapsedTime);
         glClear(GL_COLOR_BUFFER_BIT);
         glViewport(screen_->getCalculatedX(), screen_->getCalculatedY(), screen_->getCalculatedWidth(), screen_->getCalculatedHeight());
         GraphicsEngine::GetInstance().draw();
         SDL_GL_SwapWindow(mainWindow_.get());
         lastTime = currentTime;
+
+        SceneManager::GetInstance().changeSceneInSafeMode();
     }
 
     // Shutdown SDL 2
