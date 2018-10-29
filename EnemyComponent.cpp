@@ -7,5 +7,15 @@
 #include "src/components/SpriteComponent.hpp"
 
 std::shared_ptr<Component> EnemyComponent::Clone() {
-    return std::make_shared<EnemyComponent>();
+    std::shared_ptr<EnemyComponent> clone = std::make_shared<EnemyComponent>();
+    clone->points_ = points_;
+    return clone;
+}
+
+int EnemyComponent::getPoints() const {
+    return points_;
+}
+
+void EnemyComponent::fromFile(const YAML::Node &componentConfig) {
+    points_ = componentConfig["points"].as<int>(0);
 }

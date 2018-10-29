@@ -2,3 +2,11 @@ components:
   - type: EnemyManagerComponent
     speed: 20
     scaleFactor: 0.1
+    enemiesPerRow: 11
+    margin: [0,8]
+    rowsConfig:
+      - Alien3
+      - Alien2
+      - Alien2
+      - Alien1
+      - Alien1

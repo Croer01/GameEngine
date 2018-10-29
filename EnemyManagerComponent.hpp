@@ -9,6 +9,15 @@
 #include "src/Component.hpp"
 COMPONENT(EnemyManagerComponent)
 class EnemyManagerComponent : public Component{
+
+    struct RowsConfig{
+        int enemiesPerRow;
+        std::vector<std::string> enemiesType;
+        int horizontalMargin;
+        int verticalMargin;
+    };
+
+    RowsConfig rowsConfig_;
     std::vector<std::shared_ptr<GameObject>> enemies_;
     int totalWidth_;
     int totalHeight_;

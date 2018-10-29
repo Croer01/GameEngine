@@ -3,4 +3,4 @@ components:
   - type: EnemyComponent
     points: 20
   - type: SpriteComponent
-    filePath: alien1.png
+    filePath: alien2.png

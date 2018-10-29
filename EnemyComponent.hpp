@@ -9,8 +9,13 @@
 
 COMPONENT(EnemyComponent);
 class EnemyComponent : public Component {
+    int points_;
 public:
     std::shared_ptr<Component> Clone() override;
+
+    void fromFile(const YAML::Node &componentConfig) override;
+
+    int getPoints() const;
 };
 
 
