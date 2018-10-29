@@ -1,0 +1,6 @@
+scale: [13, 8, 1]
+components:
+  - type: PlayerComponent
+    speed: 50
+  - type: SpriteComponent
+    filePath: player.png
