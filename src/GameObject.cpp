@@ -24,6 +24,9 @@ GameObject::GameObject(const std::string &name) : Subject<GameObjectEvent>(),
 
 void GameObject::Init() {
     std::cout << "Object " << nameType_.c_str() << " initialized" << std::endl;
+    for (auto &component : components_) {
+        component->init();
+    }
 }
 
 void GameObject::Update(float elapsedTime){

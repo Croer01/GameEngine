@@ -7,7 +7,3 @@
 void Component::SetParent(GameObject *parent) {
     parent_ = parent;
 }
-
-void Component::fromFile(const YAML::Node &componentConfig) {
-
-}

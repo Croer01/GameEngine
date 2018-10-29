@@ -16,9 +16,10 @@ protected:
     GameObject *parent_;
 public:
     virtual ~Component() = default;
-    virtual void Update(float elapsedTime) = 0;
+    virtual void Update(float elapsedTime){};
+    virtual void init(){};
     virtual std::shared_ptr<Component> Clone() = 0;
-    virtual void fromFile(const YAML::Node &componentConfig);
+    virtual void fromFile(const YAML::Node &componentConfig){};
 
     virtual void SetParent(GameObject *parent);
 
