@@ -7,10 +7,15 @@
 
 
 #include "src/Component.hpp"
+#include "BulletComponent.hpp"
+
 COMPONENT(PlayerComponent)
 class PlayerComponent : public Component {
+    std::shared_ptr<GameObject> bullet_;
     float speed_;
 public:
+    void init() override;
+
     void Update(float elapsedTime) override;
 
     std::shared_ptr<Component> Clone() override;

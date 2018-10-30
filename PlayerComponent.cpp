@@ -5,6 +5,7 @@
 #include "PlayerComponent.hpp"
 #include "src/InputManager.hpp"
 #include "src/components/SpriteComponent.hpp"
+#include "src/SceneManager.hpp"
 
 std::shared_ptr<Component> PlayerComponent::Clone() {
     auto clone = std::make_shared<PlayerComponent>();
@@ -14,6 +15,10 @@ std::shared_ptr<Component> PlayerComponent::Clone() {
 
 void PlayerComponent::fromFile(const YAML::Node &componentConfig) {
     speed_ = componentConfig["speed"].as<float>(0);
+}
+
+void PlayerComponent::init() {
+    bullet_ = SceneManager::GetInstance().createGameObject("PlayerBullet");
 }
 
 void PlayerComponent::Update(float elapsedTime) {
@@ -34,6 +39,10 @@ void PlayerComponent::Update(float elapsedTime) {
             desiredPos[0] = 224 - parent_->getComponent<SpriteComponent>()->getWidth();
 
         parent_->setPosition(desiredPos);
+    }
+
+    if(InputManager::GetInstance().isKeyDown(SDLK_SPACE)){
+        bullet_->setPosition(parent_->getPosition() + glm::vec3(parent_->getComponent<SpriteComponent>()->getWidth()/2, 0, 0));
     }
 
 }

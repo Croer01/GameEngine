@@ -1,0 +1,6 @@
+scale: [1, 6, 1]
+components:
+  - type: BulletComponent
+    speed: 200
+  - type: SpriteComponent
+    filePath: player bullet.png

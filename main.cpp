@@ -13,6 +13,7 @@ int main() {
         ObjectManager::GetInstance().registerPrototype("Alien2", "data/alien2.yaml");
         ObjectManager::GetInstance().registerPrototype("Alien3", "data/alien3.yaml");
         ObjectManager::GetInstance().registerPrototype("Player", "data/player.yaml");
+        ObjectManager::GetInstance().registerPrototype("PlayerBullet", "data/player bullet.yaml");
         ObjectManager::GetInstance().registerPrototype("EnemyManager", "data/enemyManager.yaml");
 
         //register scene
