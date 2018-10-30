@@ -31,6 +31,10 @@ void SpriteComponent::SetParent(GameObject *parent) {
         parent_->registerObserver(GameObjectEvent::TransformChanged,[&]{
             graphic_->setModelTransform(parent_->getPosition(), parent_->getRotation(), parent_->getScale());
         });
+
+        parent_->registerObserver(GameObjectEvent::ActiveChanged,[&]{
+            graphic_->setActive(parent_->isActive());
+        });
     }
 }
 

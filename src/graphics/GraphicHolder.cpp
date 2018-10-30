@@ -7,12 +7,15 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
 
-GraphicHolder::GraphicHolder(const std::shared_ptr<Graphic> &graphic) {
-    graphic_ = graphic;
-    modelTransform_ = glm::mat4(1);
+GraphicHolder::GraphicHolder(const std::shared_ptr<Graphic> &graphic) :
+    graphic_(graphic),
+    modelTransform_(glm::mat4(1)),
+    active_(true){
 }
 
 void GraphicHolder::draw(const std::shared_ptr<Shader> &shader) {
+    if(!active_)
+        return;
     shader->setUniform("transform", modelTransform_);
     graphic_->draw(shader);
 }
@@ -31,5 +34,9 @@ void GraphicHolder::setGraphic(const std::shared_ptr<Graphic> &graphic) {
 
 std::shared_ptr<Graphic> GraphicHolder::getGraphic() const {
     return graphic_;
+}
+
+void GraphicHolder::setActive(bool active) {
+    active_ = active;
 }
 

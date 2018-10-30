@@ -10,6 +10,7 @@
 #include "Graphic.hpp"
 
 class GraphicHolder {
+    bool active_;
     std::shared_ptr<Graphic> graphic_;
     glm::mat4 modelTransform_;
 public:
@@ -19,6 +20,7 @@ public:
     void setModelTransform(const glm::vec3 &position,const glm::vec3 &rotation ,const glm::vec3 &scale);
     void setGraphic(const std::shared_ptr<Graphic> &graphic);
     std::shared_ptr<Graphic> getGraphic() const;
+    void setActive(bool active);
 };
 
 

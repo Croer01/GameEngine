@@ -15,12 +15,14 @@
 
 class Component;
 enum class GameObjectEvent{
-    TransformChanged
+    TransformChanged,
+    ActiveChanged
 };
 
 class GameObject : public Subject<GameObjectEvent> {
     static int ID_GENERATOR;
     int id_;
+    bool active_;
     std::string nameType_;
     std::vector<std::shared_ptr<Component>> components_;
     glm::vec3 position_;
@@ -56,6 +58,10 @@ public:
     void setScale(const glm::vec3 &scale);
 
     glm::mat4 getTransform();
+
+    bool isActive() const;
+
+    void setActive(bool active);
 
     template <typename T>
     std::shared_ptr<T> getComponent() const{

@@ -17,6 +17,7 @@ int GameObject::ID_GENERATOR = 0;
 GameObject::GameObject(const std::string &name) : Subject<GameObjectEvent>(),
         nameType_(name),
         id_(ID_GENERATOR++),
+        active_(true),
         position_(glm::vec3(0.f)),
         rotation_(glm::vec3(0.f)),
         scale_(glm::vec3(1.f)) {
@@ -30,6 +31,8 @@ void GameObject::Init() {
 }
 
 void GameObject::Update(float elapsedTime){
+    if(!active_)
+        return;
     for (auto &component : components_) {
         component->Update(elapsedTime);
     }
@@ -109,8 +112,10 @@ const glm::vec3 &GameObject::getPosition() const {
 }
 
 void GameObject::setPosition(const glm::vec3 &position) {
-    position_ = position;
-    notify(GameObjectEvent::TransformChanged);
+    if(position_ != position) {
+        position_ = position;
+        notify(GameObjectEvent::TransformChanged);
+    }
 }
 
 const glm::vec3 &GameObject::getRotation() const {
@@ -134,4 +139,15 @@ void GameObject::setScale(const glm::vec3 &scale) {
 glm::mat4 GameObject::getTransform() {
     //remember the order of matrix multiplication is from right to left
     return glm::translate(glm::mat4(1),position_) * glm::mat4_cast(glm::quat(rotation_)) * glm::scale(glm::mat4(1),scale_);
+}
+
+bool GameObject::isActive() const {
+    return active_;
+}
+
+void GameObject::setActive(bool active) {
+    if(active_ != active) {
+        active_ = active;
+        notify(GameObjectEvent::ActiveChanged);
+    }
 }
