@@ -41,7 +41,8 @@ void PlayerComponent::Update(float elapsedTime) {
         parent_->setPosition(desiredPos);
     }
 
-    if(InputManager::GetInstance().isKeyDown(SDLK_SPACE)){
+    if(!bullet_->isActive() && InputManager::GetInstance().isKeyPressed(SDLK_SPACE)){
+        bullet_->setActive(true);
         bullet_->setPosition(parent_->getPosition() + glm::vec3(parent_->getComponent<SpriteComponent>()->getWidth()/2, 0, 0));
     }
 
