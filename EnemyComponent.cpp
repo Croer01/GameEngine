@@ -19,3 +19,7 @@ int EnemyComponent::getPoints() const {
 void EnemyComponent::fromFile(const YAML::Node &componentConfig) {
     points_ = componentConfig["points"].as<int>(0);
 }
+
+void EnemyComponent::kill() {
+    parent_->setActive(false);
+}

@@ -16,6 +16,8 @@ public:
     void fromFile(const YAML::Node &componentConfig) override;
 
     int getPoints() const;
+
+    void kill();
 };
 
 
