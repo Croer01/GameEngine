@@ -13,7 +13,7 @@ find_package(GLEW REQUIRED)
 find_package(glm CONFIG REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(yaml-cpp CONFIG REQUIRED)
-
+find_package(unofficial-box2d CONFIG REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIRS})
 include_directories(${SDL2_INCLUDE_DIR} ${SDL2_IMAGE_INCLUDE} ${GLEW_INCLUDE_DIR} ${glm_INCLUDE_DIR})
 include_directories(${SDL2_ROOT}/include)
@@ -35,7 +35,10 @@ set(ENGINE_SOURCES src/Game.cpp
         src/events/Observer.hpp
         src/events/Subject.hpp
         src/graphics/GraphicHolder.cpp
-        src/Screen.cpp)
+        src/Screen.cpp
+        src/physics/PhysicsEngine.cpp
+        src/physics/Collider.cpp
+        src/components/ColliderComponent.cpp)
 
 set(GAME_SOURCES main.cpp EnemyComponent.cpp EnemyManagerComponent.cpp PlayerComponent.cpp BulletComponent.cpp)
 
@@ -59,7 +62,8 @@ target_link_libraries(SpaceInvaders PRIVATE
         yaml-cpp
         GLEW::GLEW
         glm
-        ${OPENGL_LIBRARIES})
+        ${OPENGL_LIBRARIES}
+        unofficial::box2d::Box2D)
 
 ADD_CUSTOM_TARGET(copyData ALL
         COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/data

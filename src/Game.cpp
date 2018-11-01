@@ -11,6 +11,8 @@
 #include "Scene.hpp"
 #include "SceneManager.hpp"
 #include "InputManager.hpp"
+#include "components/ColliderComponent.hpp"
+#include "physics/PhysicsEngine.hpp"
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
 
@@ -24,8 +26,11 @@ void Game::init(const std::string &configRoot) {
     screen_ = std::make_unique<Screen>(configRoot + "/screen.yaml");
     initSDLWindow();
 
+    PhysicsEngine::GetInstance().init(1.f/60.f);
+
     //Register engine default components
     ObjectManager::GetInstance().registerComponentBuilder("SpriteComponent", new ComponentTBuilder<SpriteComponent>());
+    ObjectManager::GetInstance().registerComponentBuilder("ColliderComponent", new ComponentTBuilder<ColliderComponent>());
     RegisterComponents();
 }
 
@@ -110,6 +115,8 @@ void Game::loop() {
         float elapsedTime = (currentTime - lastTime) / 1000.f;
 
         SceneManager::GetInstance().update(elapsedTime);
+        PhysicsEngine::GetInstance().update(elapsedTime);
+
         glClear(GL_COLOR_BUFFER_BIT);
         glViewport(screen_->getCalculatedX(), screen_->getCalculatedY(), screen_->getCalculatedWidth(), screen_->getCalculatedHeight());
         GraphicsEngine::GetInstance().draw();
