@@ -10,12 +10,10 @@
 #include "../graphics/Graphic.hpp"
 #include "../graphics/GraphicHolder.hpp"
 
-class SpriteComponent : public Component {
+class SpriteComponent : public Component, public Observer<GameObjectEvent>{
     std::shared_ptr<Graphic> graphicLoaded_;
     std::shared_ptr<GraphicHolder> graphic_;
 public:
-    void Update(float elapsedTime) override;
-
     std::shared_ptr<Component> Clone() override;
 
     void fromFile(const YAML::Node &componentConfig) override;
@@ -24,6 +22,8 @@ public:
 
     int getWidth() const;
     int getHeight() const;
+
+    void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
 };
 
 

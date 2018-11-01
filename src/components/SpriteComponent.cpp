@@ -5,10 +5,6 @@
 #include "SpriteComponent.hpp"
 #include "../graphics/GraphicsEngine.hpp"
 
-void SpriteComponent::Update(float elapsedTime) {
-
-}
-
 std::shared_ptr<Component> SpriteComponent::Clone() {
     std::shared_ptr<SpriteComponent> clone = std::make_shared<SpriteComponent>();
     clone->graphicLoaded_ = graphicLoaded_;
@@ -28,13 +24,7 @@ void SpriteComponent::SetParent(GameObject *parent) {
     if(graphic_){
         graphic_->setModelTransform(parent_->getPosition(), parent_->getRotation(), parent_->getScale());
 
-        parent_->registerObserver(GameObjectEvent::TransformChanged,[&]{
-            graphic_->setModelTransform(parent_->getPosition(), parent_->getRotation(), parent_->getScale());
-        });
-
-        parent_->registerObserver(GameObjectEvent::ActiveChanged,[&]{
-            graphic_->setActive(parent_->isActive());
-        });
+        parent_->registerObserver(this);
     }
 }
 
@@ -44,4 +34,13 @@ int SpriteComponent::getWidth() const {
 
 int SpriteComponent::getHeight() const {
     return graphicLoaded_->getHeight();
+}
+
+void SpriteComponent::onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) {
+    if(event == GameObjectEvent::TransformChanged){
+        graphic_->setModelTransform(parent_->getPosition(), parent_->getRotation(), parent_->getScale());
+    }
+    else if(event == GameObjectEvent::ActiveChanged){
+        graphic_->setActive(parent_->isActive());
+    }
 }

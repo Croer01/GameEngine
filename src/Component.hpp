@@ -22,6 +22,7 @@ public:
     virtual void fromFile(const YAML::Node &componentConfig){};
 
     virtual void SetParent(GameObject *parent);
+    GameObject *getParent();
 
 };
 

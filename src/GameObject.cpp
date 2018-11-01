@@ -114,6 +114,7 @@ const glm::vec3 &GameObject::getPosition() const {
 void GameObject::setPosition(const glm::vec3 &position) {
     if(position_ != position) {
         position_ = position;
+        notify(GameObjectEvent::PositionChanged);
         notify(GameObjectEvent::TransformChanged);
     }
 }
@@ -123,8 +124,11 @@ const glm::vec3 &GameObject::getRotation() const {
 }
 
 void GameObject::setRotation(const glm::vec3 &rotation) {
-    rotation_ = rotation;
-    notify(GameObjectEvent::TransformChanged);
+    if(rotation_ != rotation) {
+        rotation_ = rotation;
+        notify(GameObjectEvent::RotationChanged);
+        notify(GameObjectEvent::TransformChanged);
+    }
 }
 
 const glm::vec3 &GameObject::getScale() const {
@@ -132,8 +136,11 @@ const glm::vec3 &GameObject::getScale() const {
 }
 
 void GameObject::setScale(const glm::vec3 &scale) {
-    scale_ = scale;
-    notify(GameObjectEvent::TransformChanged);
+    if(scale_ != scale){
+        scale_ = scale;
+        notify(GameObjectEvent::ScaleChanged);
+        notify(GameObjectEvent::TransformChanged);
+    }
 }
 
 glm::mat4 GameObject::getTransform() {

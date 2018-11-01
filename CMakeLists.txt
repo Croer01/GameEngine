@@ -32,6 +32,7 @@ set(ENGINE_SOURCES src/Game.cpp
         src/graphics/Graphic.cpp
         src/graphics/Shader.cpp
         src/InputManager.cpp
+        src/events/Observer.hpp
         src/events/Subject.hpp
         src/graphics/GraphicHolder.cpp
         src/Screen.cpp)

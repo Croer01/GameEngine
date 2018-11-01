@@ -16,6 +16,9 @@
 class Component;
 enum class GameObjectEvent{
     TransformChanged,
+    PositionChanged,
+    RotationChanged,
+    ScaleChanged,
     ActiveChanged
 };
 

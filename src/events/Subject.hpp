@@ -9,30 +9,44 @@
 #include <map>
 #include <vector>
 #include <functional>
+#include "Observer.hpp"
 
 template <typename EventType>
 class Subject {
 
-    std::map<EventType, std::vector<std::function<void()>>> observers_;
+    std::vector<Observer<EventType> *> observers_;
 public:
     Subject()=default;
     // disallow copying and assigning
     Subject(const Subject&)=delete;
     Subject& operator=(const Subject&)=delete;
 
-    template <typename Observer>
-    void registerObserver(const EventType& event, Observer&& observer)
+    void registerObserver(Observer<EventType>* observer)
     {
-        observers_[event].push_back(std::forward<Observer>(observer));
+        observers_.push_back(observer);
+    }
+
+    void unregisterObserver(Observer<EventType>* observer)
+    {
+        auto it = std::find(observers_.begin(), observers_.end(), observer);
+        if (it != observers_.end())
+        {
+            std::swap(*it, *(--observers_.end()));
+            observers_.pop_back();
+        }
+    }
+
+    void notify(const EventType& event, void *args) const
+    {
+        for (Observer<EventType> *observer : observers_) {
+            observer->onEvent(*this, event, args);
+        }
     }
 
     void notify(const EventType& event) const
     {
-        auto it = observers_.find(event);
-        if(it != observers_.end()) {
-            for (const auto &observer : it->second) {
-                observer();
-            }
+        for (Observer<EventType> *observer : observers_) {
+            observer->onEvent(*this, event, nullptr);
         }
     }
 };
