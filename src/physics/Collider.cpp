@@ -11,14 +11,13 @@ namespace {
     void dummyDeleterBody(b2Body *){
         //dummy deleter
     };
-
-    void dummyDeleterShape(b2PolygonShape *){
-        //dummy deleter
-    };
 }
 
 b2BodyDef *Collider::getBodyDef() const {
     b2BodyDef *bodyDef = new b2BodyDef();
+    bodyDef->userData = (void*)this;
+    bodyDef->fixedRotation = true;
+
     switch (colliderType_){
         case ColliderTypes::Static:
             bodyDef->type = b2_staticBody;
@@ -35,21 +34,7 @@ b2BodyDef *Collider::getBodyDef() const {
 
 void Collider::setBody(b2Body *body) {
     body_ = std::unique_ptr<b2Body, decltype(&dummyDeleterBody)>(body, &dummyDeleterBody);
-    body_->SetUserData(this);
-
-    switch (colliderShape_) {
-        case ColliderShapes::Box:
-            shape_ = std::unique_ptr<b2PolygonShape, decltype(&dummyDeleterShape)>(new b2PolygonShape(), &dummyDeleterShape);
-            shape_->SetAsBox(1.0f, 1.0f);
-
-            b2FixtureDef fixtureDef;
-            fixtureDef.shape = shape_.get();
-            fixtureDef.density = 1.f;
-            fixtureDef.friction = 0.3f;
-
-            body_->CreateFixture(&fixtureDef);
-            break;
-    }
+    addShapeToBody(1,1);
 }
 
 void Collider::setShape(Collider::ColliderShapes shape) {
@@ -62,12 +47,6 @@ void Collider::setType(Collider::ColliderTypes type) {
 
 Collider::ColliderTypes Collider::getType() {
     return colliderType_;
-}
-
-void Collider::debug() {
-    b2Vec2 position = body_->GetPosition();
-    float32 angle = body_->GetAngle();
-    printf("%4.2f %4.2f %4.2f\n", position.x, position.y, angle);
 }
 
 std::shared_ptr<Collider> Collider::clone() {
@@ -110,4 +89,30 @@ void Collider::setActive(bool active) {
 
 b2Body *Collider::getBody() {
     return body_.get();
+}
+
+void Collider::addShapeToBody(float extendX, float extendY) {
+    //first clear all possible fixtures
+    b2Fixture* fixture = body_->GetFixtureList();
+    while(fixture)
+    {
+        b2Fixture* fixtureToDestroy = fixture;
+        fixture = fixture->GetNext();
+        body_->DestroyFixture(fixtureToDestroy);
+    }
+
+    //create the fixture with the new shapes
+    switch (colliderShape_) {
+        case ColliderShapes::Box:
+            b2PolygonShape *shape = new b2PolygonShape();
+            shape->SetAsBox(extendX, extendY);
+
+            b2FixtureDef fixtureDef;
+            fixtureDef.shape = shape;
+            fixtureDef.density = 1.f;
+            fixtureDef.friction = 0.0f;
+
+            body_->CreateFixture(&fixtureDef);
+            break;
+    }
 }

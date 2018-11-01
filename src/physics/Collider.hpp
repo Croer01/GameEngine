@@ -30,10 +30,12 @@ public:
     };
 private:
     std::unique_ptr<b2Body, std::function<void(b2Body*)>> body_;
-    std::unique_ptr<b2PolygonShape, std::function<void(b2PolygonShape*)>> shape_;
     std::shared_ptr<ColliderComponent> component_;
     ColliderShapes colliderShape_;
     ColliderTypes colliderType_;
+
+    void addShapeToBody(float extendX, float extendY);
+
 public:
     b2BodyDef *getBodyDef() const;
     void setBody(b2Body *body);
@@ -49,7 +51,6 @@ public:
     std::shared_ptr<Collider> clone();
     void setComponent(const std::shared_ptr<ColliderComponent> &component);
     std::shared_ptr<ColliderComponent> getComponent();
-    void debug();
 };
 
 
