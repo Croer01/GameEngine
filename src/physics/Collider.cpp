@@ -57,18 +57,18 @@ std::shared_ptr<Collider> Collider::clone() {
     return clone;
 }
 
-void Collider::setPosition(float x, float y) {
-    body_->SetTransform(b2Vec2(x,y), body_->GetAngle());
+void Collider::setPosition(glm::vec3 pos) {
+    body_->SetTransform(b2Vec2(pos.x/PhysicsEngine::getScalePixelsToMeter(),pos.y/PhysicsEngine::getScalePixelsToMeter()), body_->GetAngle());
 }
 
 glm::vec3 Collider::getPosition() const {
     b2Vec2 position = body_->GetPosition();
 
-    return glm::vec3(position.x,position.y,0);
+    return glm::vec3(position.x * PhysicsEngine::getScalePixelsToMeter(),position.y * PhysicsEngine::getScalePixelsToMeter(),0);
 }
 
 void Collider::setSize(float extendX, float extendY) {
-    shape_->SetAsBox(extendX,extendY);
+    addShapeToBody(extendX/PhysicsEngine::getScalePixelsToMeter(),extendY/PhysicsEngine::getScalePixelsToMeter());
 }
 
 void Collider::doBeginCollistion(Collider *other) {

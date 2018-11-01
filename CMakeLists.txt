@@ -38,7 +38,8 @@ set(ENGINE_SOURCES src/Game.cpp
         src/Screen.cpp
         src/physics/PhysicsEngine.cpp
         src/physics/Collider.cpp
-        src/components/ColliderComponent.cpp)
+        src/components/ColliderComponent.cpp
+        src/physics/DebugView.cpp)
 
 set(GAME_SOURCES main.cpp EnemyComponent.cpp EnemyManagerComponent.cpp PlayerComponent.cpp BulletComponent.cpp)
 

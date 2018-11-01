@@ -9,7 +9,13 @@ void PhysicsEngine::init(float timeStep) {
     timeAcumulator_ = 0;
     velocityIterations_ = 6;
     positionIterations_ = 2;
+
     world_ = std::make_unique<b2World>(b2Vec2(0,9.8f));
+    world_->SetContactListener(this);
+
+    debugView_ = std::make_unique<DebugView>() ;
+    world_->SetDebugDraw(debugView_.get());
+    debugView_->SetFlags(b2Draw::e_shapeBit);
 }
 
 void PhysicsEngine::update(float elapsedTime) {
@@ -45,5 +51,9 @@ void PhysicsEngine::BeginContact(b2Contact *contact) {
         colliderA->doBeginCollistion(colliderB);
         colliderB->doBeginCollistion(colliderA);
     }
+}
+
+void PhysicsEngine::drawDebug() {
+    world_->DrawDebugData();
 }
 

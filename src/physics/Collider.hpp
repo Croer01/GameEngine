@@ -44,7 +44,7 @@ public:
     void setType(ColliderTypes type);
     ColliderTypes getType();
     void setActive(bool active);
-    void setPosition(float x, float y);
+    void setPosition(glm::vec3 pos);
     glm::vec3 getPosition() const;
     void setSize(float extendX, float extendY);
     void doBeginCollistion(Collider *other);
