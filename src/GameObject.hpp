@@ -26,6 +26,7 @@ class GameObject : public Subject<GameObjectEvent> {
     static int ID_GENERATOR;
     int id_;
     bool active_;
+    bool activeValueToSetInSafeMode_;
     std::string nameType_;
     std::vector<std::shared_ptr<Component>> components_;
     glm::vec3 position_;

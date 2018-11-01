@@ -8,6 +8,6 @@ void Component::SetParent(GameObject *parent) {
     parent_ = parent;
 }
 
-GameObject *Component::getParent() {
+GameObject *Component::getParent() const {
     return parent_;
 }

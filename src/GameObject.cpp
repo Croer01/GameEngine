@@ -18,6 +18,7 @@ GameObject::GameObject(const std::string &name) : Subject<GameObjectEvent>(),
         nameType_(name),
         id_(ID_GENERATOR++),
         active_(true),
+        activeValueToSetInSafeMode_(true),
         position_(glm::vec3(0.f)),
         rotation_(glm::vec3(0.f)),
         scale_(glm::vec3(1.f)) {
@@ -31,6 +32,11 @@ void GameObject::Init() {
 }
 
 void GameObject::Update(float elapsedTime){
+    if(active_ != activeValueToSetInSafeMode_){
+        active_ = activeValueToSetInSafeMode_;
+        notify(GameObjectEvent::ActiveChanged);
+    }
+
     if(!active_)
         return;
     for (auto &component : components_) {
@@ -149,12 +155,9 @@ glm::mat4 GameObject::getTransform() {
 }
 
 bool GameObject::isActive() const {
-    return active_;
+    return activeValueToSetInSafeMode_;
 }
 
 void GameObject::setActive(bool active) {
-    if(active_ != active) {
-        active_ = active;
-        notify(GameObjectEvent::ActiveChanged);
-    }
+    activeValueToSetInSafeMode_ = active;
 }
