@@ -29,11 +29,19 @@ public:
         Kinameatic
     };
 private:
+    struct PropertiesToSetInSafeMode{
+        bool hasPosition = false;
+        b2Vec2 position;
+        bool hasActive = false;
+        bool active;
+    };
+
+
     std::unique_ptr<b2Body, std::function<void(b2Body*)>> body_;
     std::shared_ptr<ColliderComponent> component_;
     ColliderShapes colliderShape_;
     ColliderTypes colliderType_;
-    b2Vec2 *positionToSet_;
+    PropertiesToSetInSafeMode propertiesToSetInSafeMode_;
 
     void addShapeToBody(float extendX, float extendY);
 

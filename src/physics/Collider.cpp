@@ -58,14 +58,15 @@ std::shared_ptr<Collider> Collider::clone() {
 }
 
 void Collider::setPosition(glm::vec3 pos) {
-    positionToSet_ = new b2Vec2(pos.x/PhysicsEngine::getScalePixelsToMeter(),pos.y/PhysicsEngine::getScalePixelsToMeter());
+    propertiesToSetInSafeMode_.hasPosition = true;
+    propertiesToSetInSafeMode_.position = b2Vec2(pos.x/PhysicsEngine::getScalePixelsToMeter(),pos.y/PhysicsEngine::getScalePixelsToMeter());
 }
 
 glm::vec3 Collider::getPosition() const {
     b2Vec2 position = body_->GetPosition();
 
-    if(positionToSet_)
-        position = *positionToSet_;
+    if(propertiesToSetInSafeMode_.hasPosition)
+        position = propertiesToSetInSafeMode_.position;
 
     return glm::vec3(position.x * PhysicsEngine::getScalePixelsToMeter(),position.y * PhysicsEngine::getScalePixelsToMeter(),0);
 }
@@ -87,7 +88,8 @@ std::shared_ptr<ColliderComponent> Collider::getComponent() {
 }
 
 void Collider::setActive(bool active) {
-    body_->SetActive(active);
+    propertiesToSetInSafeMode_.hasActive = true;
+    propertiesToSetInSafeMode_.active = reinterpret_cast<bool *>(active);
 }
 
 b2Body *Collider::getBody() {
@@ -121,8 +123,13 @@ void Collider::addShapeToBody(float extendX, float extendY) {
 }
 
 void Collider::updateInSafeMode() {
-    if(positionToSet_){
-        body_->SetTransform(*positionToSet_, body_->GetAngle());
-        positionToSet_ = nullptr;
+    if(propertiesToSetInSafeMode_.hasPosition){
+        body_->SetTransform(propertiesToSetInSafeMode_.position, body_->GetAngle());
+        propertiesToSetInSafeMode_.hasPosition = false;
+    }
+
+    if(propertiesToSetInSafeMode_.hasActive){
+        body_->SetActive(propertiesToSetInSafeMode_.active);
+        propertiesToSetInSafeMode_.hasActive = false;
     }
 }
