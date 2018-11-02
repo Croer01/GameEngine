@@ -4,3 +4,5 @@ components:
     speed: 50
   - type: SpriteComponent
     filePath: player.png
+  - type: ColliderComponent
+    colliderType: Kinematic

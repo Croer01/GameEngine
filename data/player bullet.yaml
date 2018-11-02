@@ -1,6 +1,8 @@
 scale: [1, 6, 1]
 components:
   - type: BulletComponent
-    speed: 200
+    speed: 10
   - type: SpriteComponent
     filePath: player bullet.png
+  - type: ColliderComponent
+    colliderType: Dynamic

@@ -4,3 +4,6 @@ components:
     points: 20
   - type: SpriteComponent
     filePath: alien2.png
+  - type: ColliderComponent
+    colliderType: Kinematic
+    extends: [12, 8]
