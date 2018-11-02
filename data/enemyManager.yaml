@@ -1,7 +1,7 @@
 components:
   - type: EnemyManagerComponent
-    speed: 20
-    scaleFactor: 0.1
+    speed: 15
+    scaleFactor: 0.008
     enemiesPerRow: 11
     margin: [0,8]
     rowsConfig:
