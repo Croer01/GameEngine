@@ -113,7 +113,12 @@ void Game::loop() {
         //calculate elapsed time
         currentTime = SDL_GetTicks();
         float elapsedTime = (currentTime - lastTime) / 1000.f;
-
+#ifdef DEBUG
+        //this is a dirty solution to avoid big elapsed times when debugging.
+        // Common situation is the execution stops in breakpoint to a long time.
+        if(elapsedTime >= 5)
+            elapsedTime = 1.f/60.f;
+#endif
         SceneManager::GetInstance().update(elapsedTime);
         PhysicsEngine::GetInstance().update(elapsedTime);
 
