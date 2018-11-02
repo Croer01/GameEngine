@@ -9,6 +9,7 @@ void PhysicsEngine::init(float timeStep) {
     timeAcumulator_ = 0;
     velocityIterations_ = 6;
     positionIterations_ = 2;
+    colliders_.clear();
 
     world_ = std::make_unique<b2World>(b2Vec2(0,9.8f));
     world_->SetContactListener(this);
@@ -25,14 +26,29 @@ void PhysicsEngine::update(float elapsedTime) {
         world_->Step(timeStep_, velocityIterations_, positionIterations_);
         timeAcumulator_ = 0;
     }
+    //update all the colliders in safe mode
+    for (const std::shared_ptr<Collider> &collider : colliders_){
+        collider->updateInSafeMode();
+    }
 }
 
 void PhysicsEngine::registerCollider(const std::shared_ptr<Collider> &collider) {
+    auto it = std::find(colliders_.begin(),colliders_.end(),collider);
+    if(it != colliders_.end())
+        return;
+
+    colliders_.push_back(collider);
     b2Body* body = world_->CreateBody(collider->getBodyDef());
     collider->setBody(body);
 }
 
 void PhysicsEngine::unregisterCollider(const std::shared_ptr<Collider> &collider) {
+    auto it = std::find(colliders_.begin(),colliders_.end(),collider);
+    if(it == colliders_.end())
+        return;
+
+    std::swap(*it, *(--colliders_.end()));
+    colliders_.pop_back();
     world_->DestroyBody(collider->getBody());
 }
 

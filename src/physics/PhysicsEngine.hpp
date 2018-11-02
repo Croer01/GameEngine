@@ -20,6 +20,8 @@ class PhysicsEngine : public Singleton<PhysicsEngine>, b2ContactListener{
     int velocityIterations_;
     int positionIterations_;
     std::unique_ptr<b2World> world_;
+    std::vector<std::shared_ptr<Collider>> colliders_;
+
 #ifdef DEBUG
     std::unique_ptr<DebugView> debugView_;
 #endif

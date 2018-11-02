@@ -58,11 +58,14 @@ std::shared_ptr<Collider> Collider::clone() {
 }
 
 void Collider::setPosition(glm::vec3 pos) {
-    body_->SetTransform(b2Vec2(pos.x/PhysicsEngine::getScalePixelsToMeter(),pos.y/PhysicsEngine::getScalePixelsToMeter()), body_->GetAngle());
+    positionToSet_ = new b2Vec2(pos.x/PhysicsEngine::getScalePixelsToMeter(),pos.y/PhysicsEngine::getScalePixelsToMeter());
 }
 
 glm::vec3 Collider::getPosition() const {
     b2Vec2 position = body_->GetPosition();
+
+    if(positionToSet_)
+        position = *positionToSet_;
 
     return glm::vec3(position.x * PhysicsEngine::getScalePixelsToMeter(),position.y * PhysicsEngine::getScalePixelsToMeter(),0);
 }
@@ -114,5 +117,12 @@ void Collider::addShapeToBody(float extendX, float extendY) {
 
             body_->CreateFixture(&fixtureDef);
             break;
+    }
+}
+
+void Collider::updateInSafeMode() {
+    if(positionToSet_){
+        body_->SetTransform(*positionToSet_, body_->GetAngle());
+        positionToSet_ = nullptr;
     }
 }

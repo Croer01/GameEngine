@@ -33,6 +33,7 @@ private:
     std::shared_ptr<ColliderComponent> component_;
     ColliderShapes colliderShape_;
     ColliderTypes colliderType_;
+    b2Vec2 *positionToSet_;
 
     void addShapeToBody(float extendX, float extendY);
 
@@ -51,6 +52,7 @@ public:
     std::shared_ptr<Collider> clone();
     void setComponent(const std::shared_ptr<ColliderComponent> &component);
     std::shared_ptr<ColliderComponent> getComponent();
+    void updateInSafeMode();
 };
 
 
