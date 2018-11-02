@@ -94,10 +94,16 @@ void EnemyManagerComponent::updateBoundingBox() {
         if(!enemy->isActive())
             continue;
 
-        if(glm::all(glm::lessThanEqual(enemy->getPosition(),min)))
-            min = enemy->getPosition();
-        else if(glm::all(glm::greaterThanEqual(enemy->getPosition(),max)))
-            max = enemy->getPosition();
+        if(min.x > enemy->getPosition().x)
+            min.x = enemy->getPosition().x;
+        else if(max.x < enemy->getPosition().x)
+            max.x = enemy->getPosition().x;
+
+
+        if(min.y > enemy->getPosition().y)
+            min.y = enemy->getPosition().y;
+        else if(max.y < enemy->getPosition().y)
+            max.y = enemy->getPosition().y;
     }
 
     //move the calculated box to the world origin and add the width of the enemies
