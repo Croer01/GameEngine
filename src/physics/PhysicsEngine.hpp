@@ -10,7 +10,9 @@
 #include <Box2D/Box2D.h>
 #include "../Singleton.hpp"
 #include "Collider.hpp"
+#ifdef DEBUG
 #include "DebugView.hpp"
+#endif
 
 class PhysicsEngine : public Singleton<PhysicsEngine>, b2ContactListener{
     float timeStep_;
@@ -18,10 +20,11 @@ class PhysicsEngine : public Singleton<PhysicsEngine>, b2ContactListener{
     int velocityIterations_;
     int positionIterations_;
     std::unique_ptr<b2World> world_;
+#ifdef DEBUG
     std::unique_ptr<DebugView> debugView_;
-public:
+#endif
 private:
-    virtual void BeginContact(b2Contact *contact);
+    void BeginContact(b2Contact *contact) override;
 
 public:
     static float getScalePixelsToMeter(){ return 32.f;}

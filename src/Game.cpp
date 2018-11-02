@@ -120,7 +120,9 @@ void Game::loop() {
         glClear(GL_COLOR_BUFFER_BIT);
         glViewport(screen_->getCalculatedX(), screen_->getCalculatedY(), screen_->getCalculatedWidth(), screen_->getCalculatedHeight());
         GraphicsEngine::GetInstance().draw();
+#ifdef DEBUG
         PhysicsEngine::GetInstance().drawDebug();
+#endif
         SDL_GL_SwapWindow(mainWindow_.get());
         lastTime = currentTime;
 

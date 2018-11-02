@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.12)
 project(SpaceInvaders)
 
 set(CMAKE_CXX_STANDARD 11)
+
+add_compile_options("$<$<CONFIG:DEBUG>:-DDEBUG>")
+
 # dependencies
 #SDL2_image
 find_path(SDL2_IMAGE_INCLUDE SDL2/SDL_image.h)

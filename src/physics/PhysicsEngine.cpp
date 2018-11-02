@@ -12,10 +12,11 @@ void PhysicsEngine::init(float timeStep) {
 
     world_ = std::make_unique<b2World>(b2Vec2(0,9.8f));
     world_->SetContactListener(this);
-
-    debugView_ = std::make_unique<DebugView>() ;
+#ifdef DEBUG
+    debugView_ = std::make_unique<DebugView>();
     world_->SetDebugDraw(debugView_.get());
     debugView_->SetFlags(b2Draw::e_shapeBit);
+#endif
 }
 
 void PhysicsEngine::update(float elapsedTime) {
