@@ -22,4 +22,9 @@ void EnemyComponent::fromFile(const YAML::Node &componentConfig) {
 
 void EnemyComponent::kill() {
     parent_->setActive(false);
+    enemyManager_->enemyKilled();
+}
+
+void EnemyComponent::setEnemeyManager(const std::shared_ptr<EnemyManagerComponent> &enemyManager) {
+    enemyManager_ = enemyManager;
 }

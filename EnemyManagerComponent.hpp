@@ -7,6 +7,8 @@
 
 
 #include "src/Component.hpp"
+#include <glm/glm.hpp>
+
 COMPONENT(EnemyManagerComponent)
 class EnemyManagerComponent : public Component{
 
@@ -19,12 +21,15 @@ class EnemyManagerComponent : public Component{
 
     RowsConfig rowsConfig_;
     std::vector<std::shared_ptr<GameObject>> enemies_;
-    int totalWidth_;
-    int totalHeight_;
+    glm::vec4 boundingBox_;
 
     float speed_;
     float currentSpeed_;
     float scaleFactor_;
+
+    void updateBoundingBox();
+
+    void checkMoveToNextLevel();
 public:
     ~EnemyManagerComponent() override;
 
@@ -35,6 +40,9 @@ public:
     std::shared_ptr<Component> Clone() override;
 
     void fromFile(const YAML::Node &componentConfig) override;
+
+    void enemyKilled();
+
 };
 
 

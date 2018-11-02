@@ -6,10 +6,12 @@
 #define SPACEINVADERS_ENEMYCOMPONENT_HPP
 
 #include "src/Component.hpp"
+#include "EnemyManagerComponent.hpp"
 
 COMPONENT(EnemyComponent);
 class EnemyComponent : public Component {
     int points_;
+    std::shared_ptr<EnemyManagerComponent> enemyManager_;
 public:
     std::shared_ptr<Component> Clone() override;
 
@@ -18,6 +20,7 @@ public:
     int getPoints() const;
 
     void kill();
+    void setEnemeyManager(const std::shared_ptr<EnemyManagerComponent> &enemyManager);
 };
 
 
