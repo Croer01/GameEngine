@@ -96,13 +96,15 @@ void EnemyManagerComponent::updateBoundingBox() {
 
         if(min.x > enemy->getPosition().x)
             min.x = enemy->getPosition().x;
-        else if(max.x < enemy->getPosition().x)
+
+        if(max.x < enemy->getPosition().x)
             max.x = enemy->getPosition().x;
 
 
         if(min.y > enemy->getPosition().y)
             min.y = enemy->getPosition().y;
-        else if(max.y < enemy->getPosition().y)
+
+        if(max.y < enemy->getPosition().y)
             max.y = enemy->getPosition().y;
     }
 
