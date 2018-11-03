@@ -22,7 +22,7 @@ void EnemyComponent::fromFile(const YAML::Node &componentConfig) {
 
 void EnemyComponent::kill() {
     parent_->setActive(false);
-    enemyManager_->enemyKilled();
+    enemyManager_->enemyKilled(points_);
 }
 
 void EnemyComponent::setEnemeyManager(const std::shared_ptr<EnemyManagerComponent> &enemyManager) {

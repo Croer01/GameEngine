@@ -26,6 +26,7 @@ class EnemyManagerComponent : public Component{
     float speed_;
     float currentSpeed_;
     float scaleFactor_;
+    int score_;
 
     void updateBoundingBox();
 
@@ -41,7 +42,7 @@ public:
 
     void fromFile(const YAML::Node &componentConfig) override;
 
-    void enemyKilled();
+    void enemyKilled(int EnemyKilledpoints);
 
 };
 

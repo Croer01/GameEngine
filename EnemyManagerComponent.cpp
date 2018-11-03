@@ -2,6 +2,7 @@
 // Created by adria on 29/10/2018.
 //
 
+#include <iostream>
 #include "EnemyManagerComponent.hpp"
 #include "src/SceneManager.hpp"
 #include "src/components/SpriteComponent.hpp"
@@ -78,8 +79,10 @@ EnemyManagerComponent::~EnemyManagerComponent() {
     enemies_.clear();
 }
 
-void EnemyManagerComponent::enemyKilled() {
+void EnemyManagerComponent::enemyKilled(int EnemyKilledpoints) {
     currentSpeed_ *= 1.f + scaleFactor_;
+    score_ += EnemyKilledpoints;
+    std::cout << "score: " << score_ << std::endl;
     checkMoveToNextLevel();
     updateBoundingBox();
 }
