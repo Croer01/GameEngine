@@ -21,14 +21,15 @@ void PhysicsEngine::init(float timeStep) {
 }
 
 void PhysicsEngine::update(float elapsedTime) {
+    //update all the colliders in safe mode
+    for (const std::shared_ptr<Collider> &collider : colliders_){
+        collider->updateInSafeMode();
+    }
+
     timeAcumulator_ +=elapsedTime;
     if(timeAcumulator_>= timeStep_) {
         world_->Step(timeStep_, velocityIterations_, positionIterations_);
         timeAcumulator_ = 0;
-    }
-    //update all the colliders in safe mode
-    for (const std::shared_ptr<Collider> &collider : colliders_){
-        collider->updateInSafeMode();
     }
 }
 
