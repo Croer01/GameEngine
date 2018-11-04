@@ -3,3 +3,4 @@ prototypes:
     name: EnemyManager
   - prototype: Player
     position: [106, 248, 0]
+  - prototype: ScoreText

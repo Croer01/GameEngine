@@ -82,7 +82,7 @@ EnemyManagerComponent::~EnemyManagerComponent() {
 void EnemyManagerComponent::enemyKilled(int EnemyKilledpoints) {
     currentSpeed_ *= 1.f + scaleFactor_;
     score_ += EnemyKilledpoints;
-    std::cout << "score: " << score_ << std::endl;
+    notify(EnemyManagerEvents::ScoreChanged);
     checkMoveToNextLevel();
     updateBoundingBox();
 }
@@ -148,5 +148,9 @@ void EnemyManagerComponent::checkMoveToNextLevel() {
             }
         }
     }
+}
+
+int EnemyManagerComponent::getScore() const {
+    return score_;
 }
 

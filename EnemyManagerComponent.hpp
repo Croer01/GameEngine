@@ -9,8 +9,12 @@
 #include "src/Component.hpp"
 #include <glm/glm.hpp>
 
+enum class EnemyManagerEvents{
+    ScoreChanged
+};
+
 COMPONENT(EnemyManagerComponent)
-class EnemyManagerComponent : public Component{
+class EnemyManagerComponent : public Component, public Subject<EnemyManagerEvents>{
 
     struct RowsConfig{
         int enemiesPerRow;
@@ -43,6 +47,7 @@ public:
     void fromFile(const YAML::Node &componentConfig) override;
 
     void enemyKilled(int EnemyKilledpoints);
+    int getScore() const;
 
 };
 
