@@ -45,3 +45,7 @@ std::shared_ptr<GameObject> SceneManager::createGameObject(const std::string &ob
     currentScene_->addGameObject(instance);
     return instance;
 }
+
+std::shared_ptr<GameObject> SceneManager::findObjectByName(const std::string &gameObjectName) {
+    return currentScene_->findObjectByName(gameObjectName);
+}

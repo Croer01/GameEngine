@@ -21,6 +21,7 @@ public:
     void init();
     void update(float elapsedTime);
     void addGameObject(const std::shared_ptr<GameObject> &gameObject);
+    std::shared_ptr<GameObject> findObjectByName(const std::string &gameObjectName) const;
     void shutDown();
 };
 

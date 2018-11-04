@@ -72,3 +72,18 @@ void Scene::addGameObject(const std::shared_ptr<GameObject> &gameObject) {
     gameobjects_.push_back(gameObject);
     gameObject->Init();
 }
+
+
+std::shared_ptr<GameObject> Scene::findObjectByName(const std::string &gameObjectName) const {
+
+    std::shared_ptr<GameObject> found;
+    int i = 0;
+
+    while(!found && i < gameobjects_.size()){
+        if(gameobjects_[i]->getName() == gameObjectName)
+            found = gameobjects_[i];
+        i++;
+    }
+
+    return found;
+}

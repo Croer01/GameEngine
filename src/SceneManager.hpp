@@ -21,6 +21,7 @@ public:
     void changeScene(const std::string &name);
     void changeSceneInSafeMode();
     std::shared_ptr<GameObject> createGameObject(const std::string &objectType);
+    std::shared_ptr<GameObject> findObjectByName(const std::string &gameObjectName);
 };
 
 
