@@ -7,6 +7,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "GraphicsEngine.hpp"
 #include "../utils.hpp"
+#include "font/FontManager.hpp"
 
 void GraphicsEngine::init(const Screen &screen) {
 
@@ -14,6 +15,7 @@ void GraphicsEngine::init(const Screen &screen) {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    //The order of the vertices are fliped to from "n" to "u" way to deal with the inverted y axis
     //VBO data
     std::vector<float> vertices = std::vector<float>({ //vertex(3) | uv(2)
                                                                0.f, 1.f, 0.f,   0.f, 1.f,
@@ -79,6 +81,41 @@ void GraphicsEngine::init(const Screen &screen) {
     spriteShader_->build();
     CheckGlError();
 
+    textShader_ = std::make_shared<Shader>("TextShader");
+    textShader_->setVertexShader(R"EOF(
+        #version 330 core
+
+        layout (location = 0) in vec3 aPos;
+        layout (location = 1) in vec2 aTexCoord;
+
+        out vec2 TexCoord;
+
+        uniform mat4 projView;
+        uniform mat4 transform;
+
+        void main() {
+            gl_Position = projView * transform * vec4(aPos, 1.0);
+            TexCoord = aTexCoord;
+        }
+        )EOF");
+    textShader_->setFragmentShader(R"EOF(
+        #version 330 core
+        out vec4 FragColor;
+
+        in vec2 TexCoord;
+
+        uniform sampler2D Texture;
+        uniform vec4 Color;
+
+        void main() {
+            // use the red channel to hold letter fill information
+            vec4 sampled = vec4(1.0, 1.0, 1.0, texture(Texture, TexCoord).r);
+            FragColor = Color * sampled;
+        }
+        )EOF");
+    textShader_->build();
+    CheckGlError();
+
     //init projection matrix
     projMatrix_ = glm::ortho(0.0f, (float)screen.getVirtualWidth(), (float)screen.getVirtualHeight(), 0.0f, 0.f,1.f);
     CheckGlError();
@@ -95,11 +132,22 @@ void GraphicsEngine::draw() {
     spriteShader_->setAttribute(Shader::Attributes::UV, mesh_.vbo);
     spriteShader_->setAttribute(Shader::Attributes::Indices, mesh_.ibo);
 
-    for (const auto &graphic : graphics_) {
+    for (const std::shared_ptr<GraphicHolder> &graphic : graphics_) {
         graphic->draw(spriteShader_);
     }
 
     spriteShader_->unbind();
+
+    //draw text
+    textShader_->bind();
+
+    textShader_->setUniform("projView", projMatrix_);
+
+    for (const std::shared_ptr<Text> &text : texts_) {
+        text->draw(textShader_);
+    }
+
+    textShader_->unbind();
 }
 
 GraphicsEngine::~GraphicsEngine() {

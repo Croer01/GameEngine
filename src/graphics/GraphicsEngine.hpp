@@ -12,6 +12,7 @@
 #include "Shader.h"
 #include "../Singleton.hpp"
 #include "../Screen.hpp"
+#include "font/Text.hpp"
 
 class GraphicsEngine : public Singleton<GraphicsEngine>{
     struct InternalMesh {
@@ -21,8 +22,10 @@ class GraphicsEngine : public Singleton<GraphicsEngine>{
     };
 
     std::vector<std::shared_ptr<GraphicHolder>> graphics_;
+    std::vector<std::shared_ptr<Text>> texts_;
     InternalMesh mesh_;
     std::shared_ptr<Shader> spriteShader_;
+    std::shared_ptr<Shader> textShader_;
     glm::mat4 projMatrix_;
     bool pixelPerfect_;
 public:
