@@ -8,7 +8,8 @@
 #include "../../utils.hpp"
 #include "../GraphicsEngine.hpp"
 
-Text::Text(const TextDef &textDef) :
+Text::Text(const std::shared_ptr<Font> &font, const TextDef &textDef) :
+    font_(font),
     textDef_(textDef),
     modelTransform_(glm::mat4(1)),
     active_(true)
@@ -76,4 +77,8 @@ void Text::setModelTransform(const glm::vec3 &position, const glm::vec3 &rotatio
 
 void Text::setActive(bool active) {
     active_ = active;
+}
+
+void Text::setText(const std::string &text) {
+    textDef_ = font_->createTextDef(text);
 }

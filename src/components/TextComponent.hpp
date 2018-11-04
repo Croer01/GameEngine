@@ -22,6 +22,9 @@ public:
     void SetParent(GameObject *parent) override;
 
     void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
+
+    //Text public API
+    void setText(const std::string &text);
 };
 
 

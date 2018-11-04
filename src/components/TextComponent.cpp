@@ -44,3 +44,8 @@ void TextComponent::onEvent(const Subject<GameObjectEvent> &target, const GameOb
         textGraphic_->setActive(parent_->isActive());
     }
 }
+
+void TextComponent::setText(const std::string &text) {
+    text_ = text;
+    textGraphic_->setText(text_);
+}

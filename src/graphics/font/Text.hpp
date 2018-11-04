@@ -22,15 +22,16 @@ class Text {
     TextDef textDef_;
     glm::mat4 modelTransform_;
     bool active_;
-
+    std::shared_ptr<Font> font_;
     unsigned int VAO;
     unsigned int vbo;
     unsigned int ibo;
 
 public:
-    explicit Text(const TextDef &textDef);
+    Text(const std::shared_ptr<Font> &font, const TextDef &textDef);
     ~Text();
     void draw(const std::shared_ptr<Shader> &shader);
+    void setText(const std::string &text);
     void setModelTransform(const glm::vec3 &position,const glm::vec3 &rotation ,const glm::vec3 &scale);
     void setActive(bool active);
 };

@@ -62,6 +62,16 @@ Font::Font(const FT_Face &face, unsigned int pixelsSize) {
 }
 
 std::shared_ptr<Text> Font::createText(const std::string &text) {
+    return std::make_shared<Text>(shared_from_this(), createTextDef(text));
+}
+
+Font::~Font() {
+    for (auto character : characters_)
+        glDeleteTextures(0, &character.second.TextureID);
+
+}
+
+const TextDef Font::createTextDef(const std::string &text) {
     TextDef textDef;
     std::vector<std::array<float, 20>> vertices;
     std::vector<GLuint> textureIds;
@@ -98,11 +108,5 @@ std::shared_ptr<Text> Font::createText(const std::string &text) {
     textDef.verticesByCharacter = vertices;
     textDef.textureIds = textureIds;
 
-    return std::make_shared<Text>(textDef);
-}
-
-Font::~Font() {
-    for (auto character : characters_)
-        glDeleteTextures(0, &character.second.TextureID);
-
+    return textDef;
 }
