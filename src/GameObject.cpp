@@ -163,3 +163,11 @@ bool GameObject::isActive() const {
 void GameObject::setActive(bool active) {
     activeValueToSetInSafeMode_ = active;
 }
+
+std::string GameObject::getName() const {
+    return name_;
+}
+
+void GameObject::setName(const std::string &name) {
+    name_ = name;
+}

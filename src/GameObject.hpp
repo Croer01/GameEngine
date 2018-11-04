@@ -28,6 +28,7 @@ class GameObject : public Subject<GameObjectEvent> {
     bool active_;
     bool activeValueToSetInSafeMode_;
     std::string nameType_;
+    std::string name_;
     std::vector<std::shared_ptr<Component>> components_;
     glm::vec3 position_;
     glm::vec3 rotation_;
@@ -66,6 +67,9 @@ public:
     bool isActive() const;
 
     void setActive(bool active);
+
+    std::string getName() const;
+    void setName(const std::string &name);
 
     template <typename T>
     std::shared_ptr<T> getComponent() const{

@@ -43,8 +43,10 @@ void Scene::loadFile() {
 
         for (auto i = 0; i < prototypes.size(); ++i) {
             YAML::Node prototype = prototypes[i];
-            std::shared_ptr<GameObject> gameObject = ObjectManager::GetInstance().createGameObject(
-                    prototype["name"].as<std::string>());
+            std::shared_ptr<GameObject> gameObject = ObjectManager::GetInstance().createGameObject(prototype["prototype"].as<std::string>());
+
+            if(prototype["name"])
+                gameObject->setName(prototype["name"].as<std::string>());
 
             //object properties
             if(prototype["position"])
@@ -54,7 +56,7 @@ void Scene::loadFile() {
             if(prototype["scale"])
                 gameObject->setScale(readVector3(prototype["scale"], 1));
 
-            std::cout << "object created " << prototype["name"].as<std::string>() << std::endl;
+            std::cout << "object created " << prototype["prototype"].as<std::string>() << std::endl;
             gameobjects_.push_back(gameObject);
         }
     } catch (const std::exception &e){

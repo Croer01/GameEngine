@@ -1,4 +1,5 @@
 prototypes:
-  - name: EnemyManager
-  - name: Player
+  - prototype: EnemyManager
+    name: EnemyManager
+  - prototype: Player
     position: [106, 248, 0]
