@@ -10,7 +10,8 @@
 
 Text::Text(const TextDef &textDef) :
     textDef_(textDef),
-    modelTransform_(glm::mat4(1))
+    modelTransform_(glm::mat4(1)),
+    active_(true)
 {
 
     glGenVertexArrays(1, &VAO);
@@ -38,7 +39,15 @@ Text::Text(const TextDef &textDef) :
     CheckGlError();
 }
 
+Text::~Text() {
+    glDeleteBuffers(1, &ibo);
+    glDeleteBuffers(1, &vbo);
+    glDeleteVertexArrays(1, &VAO);
+}
+
 void Text::draw(const std::shared_ptr<Shader> &shader) {
+    if(!active_)
+        return;
     shader->setUniform("transform", modelTransform_);
 
     shader->setAttribute(Shader::Attributes::Vertex, vbo);
@@ -65,8 +74,6 @@ void Text::setModelTransform(const glm::vec3 &position, const glm::vec3 &rotatio
         modelTransform_ = glm::translate(glm::mat4(1), position) * glm::mat4_cast(glm::quat(rotation)) * glm::scale(glm::mat4(1), scale);
 }
 
-Text::~Text() {
-    glDeleteBuffers(1, &ibo);
-    glDeleteBuffers(1, &vbo);
-    glDeleteVertexArrays(1, &VAO);
+void Text::setActive(bool active) {
+    active_ = active;
 }

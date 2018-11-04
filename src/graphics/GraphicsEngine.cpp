@@ -161,6 +161,10 @@ void GraphicsEngine::registerGraphic(const std::shared_ptr<GraphicHolder> &graph
     graphics_.push_back(graphic);
 }
 
+void GraphicsEngine::registerText(const std::shared_ptr<Text> &textGraphic) {
+    texts_.push_back(textGraphic);
+}
+
 bool GraphicsEngine::isPixelPerfect() const {
     return pixelPerfect_;
 }

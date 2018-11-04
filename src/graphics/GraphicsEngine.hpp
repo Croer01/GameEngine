@@ -33,6 +33,7 @@ public:
     void init(const Screen &screen);
     void draw();
     void registerGraphic(const std::shared_ptr<GraphicHolder> &graphic);
+    void registerText(const std::shared_ptr<Text> &textGraphic);
     bool isPixelPerfect() const;
 };
 

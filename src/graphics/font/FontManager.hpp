@@ -12,14 +12,15 @@
 // FreeType
 #include <ft2build.h>
 #include FT_FREETYPE_H
+#include "../../Singleton.hpp"
 
-class FontManager {
+class FontManager : public Singleton<FontManager>{
     FT_Library ftLibrary_;
     std::map<std::string, std::shared_ptr<Font>> fonts_;
 public:
     FontManager();
     ~FontManager();
-    std::shared_ptr<Font> loadFont(const std::string &fontPath, int pixelsSize);
+    std::shared_ptr<Font> getFont(const std::string &fontPath, int pixelsSize);
 };
 
 

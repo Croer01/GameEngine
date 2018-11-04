@@ -46,7 +46,8 @@ set(ENGINE_SOURCES src/Game.cpp
         src/physics/DebugView.cpp
         src/graphics/font/Font.cpp
         src/graphics/font/Text.cpp
-        src/graphics/font/FontManager.cpp)
+        src/graphics/font/FontManager.cpp
+        src/components/TextComponent.cpp)
 
 set(GAME_SOURCES main.cpp EnemyComponent.cpp EnemyManagerComponent.cpp PlayerComponent.cpp BulletComponent.cpp)
 

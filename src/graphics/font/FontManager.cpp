@@ -12,7 +12,7 @@ FontManager::FontManager() {
         throw std::runtime_error("ERROR::FREETYPE: Could not init FreeType Library");
 }
 
-std::shared_ptr<Font> FontManager::loadFont(const std::string &fontPath, int pixelsSize) {
+std::shared_ptr<Font> FontManager::getFont(const std::string &fontPath, int pixelsSize) {
     std::string fontName = fontPath + "_" + std::to_string(pixelsSize);
     auto it = fonts_.find(fontName);
 

@@ -13,6 +13,7 @@
 #include "InputManager.hpp"
 #include "components/ColliderComponent.hpp"
 #include "physics/PhysicsEngine.hpp"
+#include "components/TextComponent.hpp"
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
 
@@ -31,6 +32,7 @@ void Game::init(const std::string &configRoot) {
     //Register engine default components
     ObjectManager::GetInstance().registerComponentBuilder("SpriteComponent", new ComponentTBuilder<SpriteComponent>());
     ObjectManager::GetInstance().registerComponentBuilder("ColliderComponent", new ComponentTBuilder<ColliderComponent>());
+    ObjectManager::GetInstance().registerComponentBuilder("TextComponent", new ComponentTBuilder<TextComponent>());
     RegisterComponents();
 }
 
