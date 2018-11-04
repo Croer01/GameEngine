@@ -25,8 +25,11 @@ void TextComponent::fromFile(const YAML::Node &componentConfig) {
 }
 
 void TextComponent::SetParent(GameObject *parent) {
-    Component::SetParent(parent);
-    if(textGraphic_){
+    if(parent_)
+        parent_->unregisterObserver(this);
+    parent_ = parent;
+
+    if(parent_ && textGraphic_){
         textGraphic_->setModelTransform(parent_->getPosition(), parent_->getRotation(), parent_->getScale());
 
         parent_->registerObserver(this);

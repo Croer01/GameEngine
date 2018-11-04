@@ -68,6 +68,8 @@ std::shared_ptr<GameObject> GameObject::Clone() const {
 
     for (auto &component : components_) {
         std::shared_ptr<Component> clonedComponent = component->Clone();
+        if(!clonedComponent)
+            throw std::runtime_error("one of the components of " + nameType_ + " has an error during cloning process");
         cloned->addComponent(clonedComponent);
     }
 
