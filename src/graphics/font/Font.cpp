@@ -75,7 +75,7 @@ std::shared_ptr<Text> Font::createText(const std::string &text) {
         FontCharacter ch = characters_[*c];
 
         GLfloat xpos = x + ch.Bearing.x;
-        GLfloat ypos = y - ch.Bearing.y + ch.Size.y;
+        GLfloat ypos = y - (ch.Size.y - ch.Bearing.y);
 
         GLfloat w = ch.Size.x;
         GLfloat h = ch.Size.y;
