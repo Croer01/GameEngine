@@ -27,6 +27,7 @@ class EnemyManagerComponent : public Component, public Subject<EnemyManagerEvent
     std::vector<std::shared_ptr<GameObject>> enemies_;
     glm::vec4 boundingBox_;
 
+    glm::vec3 currentPosition_;
     float speed_;
     float currentSpeed_;
     float scaleFactor_;

@@ -10,6 +10,7 @@
 
 void EnemyManagerComponent::init() {
     currentSpeed_ = speed_;
+    currentPosition_ = parent_->getPosition();
 
     int rows = rowsConfig_.enemiesType.size();
     int columns = rowsConfig_.enemiesPerRow;
@@ -31,11 +32,11 @@ void EnemyManagerComponent::Update(float elapsedTime) {
     float min = 0;
     float max = 224.f;
 
-    if ((parent_->getPosition()[0] + boundingBox_.x <= min && currentSpeed_ < 0) || (parent_->getPosition()[0] + boundingBox_.z >= max && currentSpeed_ > 0)) {
+    if ((currentPosition_.x + boundingBox_.x <= min && currentSpeed_ < 0) || (currentPosition_.x + boundingBox_.z >= max && currentSpeed_ > 0)) {
         currentSpeed_ = -currentSpeed_;
-        parent_->setPosition(parent_->getPosition() + glm::vec3(0, enemies_[0]->getComponent<SpriteComponent>()->getHeight(), 0));
+        currentPosition_ += glm::vec3(0, enemies_[0]->getComponent<SpriteComponent>()->getHeight(), 0);
     }
-    parent_->setPosition(parent_->getPosition() + glm::vec3(currentSpeed_ * elapsedTime, 0, 0));
+    currentPosition_ += glm::vec3(currentSpeed_ * elapsedTime, 0, 0);
 
     int rows = rowsConfig_.enemiesType.size();
     int columns = rowsConfig_.enemiesPerRow;
@@ -43,7 +44,7 @@ void EnemyManagerComponent::Update(float elapsedTime) {
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < columns; ++j) {
             const std::shared_ptr<GameObject> &alien = enemies_[i * columns + j];
-            alien->setPosition(parent_->getPosition() + glm::vec3(
+            alien->setPosition(currentPosition_ + glm::vec3(
                     j * alien->getComponent<SpriteComponent>()->getWidth() + j * rowsConfig_.horizontalMargin,
                     i * alien->getComponent<SpriteComponent>()->getHeight() + i * rowsConfig_.verticalMargin,
                     0));
@@ -112,8 +113,8 @@ void EnemyManagerComponent::updateBoundingBox() {
     }
 
     //move the calculated box to the world origin and add the width of the enemies
-    min -= parent_->getPosition();
-    max -= parent_->getPosition();
+    min -= currentPosition_;
+    max -= currentPosition_;
     boundingBox_ = glm::vec4(min.x , min.y,
                              max.x + enemies_[0]->getComponent<SpriteComponent>()->getWidth(),
                              max.y + enemies_[0]->getComponent<SpriteComponent>()->getHeight());
@@ -130,7 +131,7 @@ void EnemyManagerComponent::checkMoveToNextLevel() {
     }
 
     if(allEnemiesKilled){
-        parent_->setPosition(glm::vec3(0));
+        currentPosition_ = parent_->getPosition();
         currentSpeed_ = std::abs(currentSpeed_);
 
         int rows = rowsConfig_.enemiesType.size();
@@ -139,7 +140,7 @@ void EnemyManagerComponent::checkMoveToNextLevel() {
         for (int i = 0; i < rows; ++i) {
             for (int j = 0; j < columns; ++j) {
                 const std::shared_ptr<GameObject> &alien = enemies_[i * columns + j];
-                alien->setPosition(parent_->getPosition() + glm::vec3(
+                alien->setPosition(currentPosition_ + glm::vec3(
                         j * alien->getComponent<SpriteComponent>()->getWidth() + j * rowsConfig_.horizontalMargin,
                         i * alien->getComponent<SpriteComponent>()->getHeight() + i * rowsConfig_.verticalMargin,
                         0));
