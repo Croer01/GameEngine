@@ -80,6 +80,9 @@ void GameObject::fromFile(const std::string &filename) {
     try {
         YAML::Node gameObjectConfig = YAML::LoadFile(filename);
 
+        if(gameObjectConfig["name"])
+            name_ = gameObjectConfig["name"].as<std::string>();
+
         //object properties
         if(gameObjectConfig["position"]){
             YAML::Node node = gameObjectConfig["position"];
