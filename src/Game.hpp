@@ -20,6 +20,7 @@ class Game : public Singleton<Game> {
     std::unique_ptr<Screen> screen_;
 
     void initSDLWindow();
+    void initPhysics(const std::string &configFilePath);
 
     void makeCurrentContext();
 public:

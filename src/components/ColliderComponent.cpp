@@ -37,7 +37,9 @@ void ColliderComponent::fromFile(const YAML::Node &componentConfig) {
     std::shared_ptr<Collider> collider = std::make_shared<Collider>();
     collider->setShape(stringToColliderShape(componentConfig["colliderShape"].as<std::string>("Box")));
     collider->setType(stringToColliderType(componentConfig["colliderType"].as<std::string>("Static")));
+    collider->setCategory(componentConfig["category"].as<std::string>(""));
     collider_ = collider;
+
     if(componentConfig["extends"]) {
         YAML::Node extendsNode = componentConfig["extends"];
         if(extendsNode.size() != 2 || extendsNode[0].as<float>() == 0 || extendsNode[1].as<float>() == 0){

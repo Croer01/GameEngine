@@ -26,8 +26,7 @@ void Game::init(const std::string &configRoot) {
     }
     screen_ = std::make_unique<Screen>(configRoot + "/screen.yaml");
     initSDLWindow();
-
-    PhysicsEngine::GetInstance().init(1.f/60.f);
+    initPhysics(configRoot + "/physics.yaml");
 
     //Register engine default components
     ObjectManager::GetInstance().registerComponentBuilder("SpriteComponent", new ComponentTBuilder<SpriteComponent>());
@@ -96,6 +95,39 @@ void Game::initSDLWindow() {
 
 }
 
+void Game::initPhysics(const std::string &configFilePath) {
+    PhysicsEngine::GetInstance().init(1.f/60.f);
+
+    YAML::Node physicsConfig = YAML::LoadFile(configFilePath);
+
+    //TODO: implement category/mask configuration as a object
+    if(physicsConfig["categories"]) {
+        YAML::Node categoriesNode = physicsConfig["categories"];
+
+        std::vector<std::string> categories;
+        categories.reserve(categoriesNode.size());
+        for (int i = 0; i < categoriesNode.size(); ++i) {
+            categories.push_back(categoriesNode[i].as<std::string>());
+        }
+        PhysicsEngine::GetInstance().createCategories(categories);
+    }
+    if(physicsConfig["masks"]) {
+        std::unordered_map<std::string,std::vector<std::string>> masks;
+
+        YAML::Node masksNode = physicsConfig["masks"];
+        for(YAML::const_iterator it=masksNode.begin();it != masksNode.end();++it) {
+            std::string category = it->first.as<std::string>();
+            std::vector<std::string> mask;
+            for (int i = 0; i < it->second.size(); ++i) {
+                mask.push_back(it->second[i].as<std::string>());
+            }
+            masks.insert(std::pair<std::string,std::vector<std::string>>(category, mask));
+        }
+
+        PhysicsEngine::GetInstance().createMasks(masks);
+    }
+}
+
 void Game::makeCurrentContext() {
     SDL_GL_MakeCurrent(mainWindow_.get(), mainContext_);
 }
@@ -143,4 +175,5 @@ void Game::loop() {
 
 void Game::shutdown() {
     running_ = false;
+    //TODO: Do physics and graphics engines shutdown?
 }

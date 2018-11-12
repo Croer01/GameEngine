@@ -1,0 +1,10 @@
+categories:
+  - player
+  - enemy
+  - playerBullet
+  - enemyBullet
+masks:
+  player: [enemyBullet]
+  enemy: [playerBullet]
+  enemyBullet: [player]
+  playerBullet: [enemy]

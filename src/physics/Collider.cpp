@@ -37,6 +37,12 @@ void Collider::setBody(b2Body *body) {
     addShapeToBody(1,1);
 }
 
+
+void Collider::setBody(b2Body *body, const b2Filter &filter) {
+    filter_ = filter;
+    setBody(body);
+}
+
 void Collider::setShape(Collider::ColliderShapes shape) {
     colliderShape_ = shape;
 }
@@ -53,6 +59,7 @@ std::shared_ptr<Collider> Collider::clone() {
     std::shared_ptr<Collider> clone = std::make_shared<Collider>();
     clone->colliderShape_ = colliderShape_;
     clone->colliderType_ = colliderType_;
+    clone->category_ = category_;
 
     return clone;
 }
@@ -116,6 +123,7 @@ void Collider::addShapeToBody(float extendX, float extendY) {
             fixtureDef.shape = shape;
             fixtureDef.density = 1.f;
             fixtureDef.friction = 0.0f;
+            fixtureDef.filter = filter_;
 
             body_->CreateFixture(&fixtureDef);
             break;
@@ -132,4 +140,12 @@ void Collider::updateInSafeMode() {
         body_->SetActive(propertiesToSetInSafeMode_.active);
         propertiesToSetInSafeMode_.hasActive = false;
     }
+}
+
+std::string Collider::getCategory() const {
+    return category_;
+}
+
+void Collider::setCategory(const std::string &category) {
+    category_ = category;
 }

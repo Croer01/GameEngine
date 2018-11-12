@@ -40,7 +40,18 @@ void PhysicsEngine::registerCollider(const std::shared_ptr<Collider> &collider) 
 
     colliders_.push_back(collider);
     b2Body* body = world_->CreateBody(collider->getBodyDef());
-    collider->setBody(body);
+
+    // Create filter if collider has some category assigned
+    const std::string &colliderCategory = collider->getCategory();
+    if(colliderCategory.empty())
+    {
+        collider->setBody(body);
+    } else {
+        b2Filter filter;
+        filter.categoryBits = categories_[colliderCategory].categoryBit;
+        filter.maskBits = categories_[colliderCategory].maskBits;
+        collider->setBody(body, filter);
+    }
 }
 
 void PhysicsEngine::unregisterCollider(const std::shared_ptr<Collider> &collider) {
@@ -73,5 +84,24 @@ void PhysicsEngine::BeginContact(b2Contact *contact) {
 
 void PhysicsEngine::drawDebug() {
     world_->DrawDebugData();
+}
+
+void PhysicsEngine::createCategories(const std::vector<std::string> &categories) {
+    //start the bit shifted from 1 position to avoid use the default mask as a category
+    int bitsToShift = 1;
+    for(const std::string &categoryName : categories){
+        ColliderCategory category = {1 << bitsToShift};
+        categories_.insert(std::pair<std::string, ColliderCategory>(categoryName, category));
+        bitsToShift++;
+    }
+}
+
+void PhysicsEngine::createMasks(const std::unordered_map<std::string, std::vector<std::string>> &masks) {
+    for (const auto &it : masks) {
+        categories_[it.first].maskBits = 0;
+        for (const std::string &categoryToMask : it.second){
+            categories_[it.first].maskBits |= categories_[categoryToMask].categoryBit;
+        }
+    }
 }
 

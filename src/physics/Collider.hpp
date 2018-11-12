@@ -38,16 +38,19 @@ private:
 
 
     std::unique_ptr<b2Body, std::function<void(b2Body*)>> body_;
+    b2Filter filter_;
     std::shared_ptr<ColliderComponent> component_;
     ColliderShapes colliderShape_;
     ColliderTypes colliderType_;
     PropertiesToSetInSafeMode propertiesToSetInSafeMode_;
+    std::string category_;
 
     void addShapeToBody(float extendX, float extendY);
 
 public:
     b2BodyDef *getBodyDef() const;
     void setBody(b2Body *body);
+    void setBody(b2Body *body, const b2Filter &filter);
     b2Body *getBody();
     void setShape(ColliderShapes type);
     void setType(ColliderTypes type);
@@ -55,12 +58,15 @@ public:
     void setActive(bool active);
     void setPosition(glm::vec3 pos);
     glm::vec3 getPosition() const;
+    void setCategory(const std::string &category);
+    std::string getCategory() const;
     void setSize(float extendX, float extendY);
     void doBeginCollistion(Collider *other);
     std::shared_ptr<Collider> clone();
     void setComponent(const std::shared_ptr<ColliderComponent> &component);
     std::shared_ptr<ColliderComponent> getComponent();
     void updateInSafeMode();
+
 };
 
 
