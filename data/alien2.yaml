@@ -7,3 +7,4 @@ components:
   - type: ColliderComponent
     colliderType: Kinematic
     extends: [12, 8]
+    category: enemy

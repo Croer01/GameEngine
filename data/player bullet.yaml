@@ -6,3 +6,4 @@ components:
     filePath: player bullet.png
   - type: ColliderComponent
     colliderType: Dynamic
+    category: playerBullet

@@ -6,3 +6,4 @@ components:
     filePath: player.png
   - type: ColliderComponent
     colliderType: Kinematic
+    category: player
