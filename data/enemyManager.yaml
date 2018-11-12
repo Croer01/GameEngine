@@ -2,6 +2,8 @@ components:
   - type: EnemyManagerComponent
     speed: 15
     scaleFactor: 0.008
+    bulletsNum: 2
+    bulletFrequency: 3
     enemiesPerRow: 11
     margin: [0,8]
     rowsConfig:

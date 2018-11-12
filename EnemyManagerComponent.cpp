@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <ctime>
 #include "EnemyManagerComponent.hpp"
 #include "src/SceneManager.hpp"
 #include "src/components/SpriteComponent.hpp"
@@ -11,7 +12,8 @@
 void EnemyManagerComponent::init() {
     currentSpeed_ = speed_;
     currentPosition_ = parent_->getPosition();
-
+    currentBulletFrequency_ = bulletFrequency_;
+    //generate enemies
     int rows = rowsConfig_.enemiesType.size();
     int columns = rowsConfig_.enemiesPerRow;
     const std::shared_ptr<EnemyManagerComponent> &manager = std::shared_ptr<EnemyManagerComponent>(this);
@@ -26,6 +28,14 @@ void EnemyManagerComponent::init() {
     boundingBox_ = glm::vec4(0.f, 0.f,
             enemies_[0]->getComponent<SpriteComponent>()->getWidth() * columns,
             enemies_[0]->getComponent<SpriteComponent>()->getHeight() * rows);
+
+    //generate bullets
+    for(int i = 0; i < bulletsNum_; i++){
+        const std::shared_ptr<GameObject> &bullet= SceneManager::GetInstance().createGameObject("EnemyBullet");
+        bullet->setActive(false);
+        bullets_.push_back(bullet);
+    }
+    rng_ = std::mt19937(std::time(0));
 }
 
 void EnemyManagerComponent::Update(float elapsedTime) {
@@ -41,14 +51,38 @@ void EnemyManagerComponent::Update(float elapsedTime) {
     int rows = rowsConfig_.enemiesType.size();
     int columns = rowsConfig_.enemiesPerRow;
 
+    std::vector<int> enemiesActive;
+
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < columns; ++j) {
-            const std::shared_ptr<GameObject> &alien = enemies_[i * columns + j];
+            int index = i * columns + j;
+            const std::shared_ptr<GameObject> &alien = enemies_[index];
             alien->setPosition(currentPosition_ + glm::vec3(
                     j * alien->getComponent<SpriteComponent>()->getWidth() + j * rowsConfig_.horizontalMargin,
                     i * alien->getComponent<SpriteComponent>()->getHeight() + i * rowsConfig_.verticalMargin,
                     0));
+            if(alien->isActive())
+                enemiesActive.push_back(index);
         }
+    }
+
+    bulletTimeAcumulator_ += elapsedTime;
+    if(currentBulletFrequency_ <= bulletTimeAcumulator_) {
+        int i = 0;
+        std::shared_ptr<GameObject> bullet;
+        while(!bullet && i < bullets_.size()){
+            if(!bullets_[i]->isActive())
+                bullet = bullets_[i];
+            i++;
+        }
+
+        if(bullet){
+            std::uniform_int_distribution<int> rndDist(0,enemiesActive.size() - 1);
+            int index = rndDist(rng_);
+            bullet->setPosition(enemies_[enemiesActive[index]]->getPosition());
+            bullet->setActive(true);
+        }
+        bulletTimeAcumulator_ = 0;
     }
 }
 
@@ -57,12 +91,18 @@ std::shared_ptr<Component> EnemyManagerComponent::Clone() {
     clone->speed_ = speed_;
     clone->scaleFactor_ = scaleFactor_;
     clone->rowsConfig_ = rowsConfig_;
+    clone->bulletsNum_ = bulletsNum_;
+    clone->bulletFrequency_ = bulletFrequency_;
+
     return clone;
 }
 
 void EnemyManagerComponent::fromFile(const YAML::Node &componentConfig) {
     speed_ = componentConfig["speed"].as<float>();
     scaleFactor_ = componentConfig["scaleFactor"].as<float>();
+
+    bulletsNum_ = componentConfig["bulletsNum"].as<int>();
+    bulletFrequency_ = componentConfig["bulletFrequency"].as<float>();
 
     rowsConfig_ = RowsConfig();
     rowsConfig_.enemiesPerRow = componentConfig["enemiesPerRow"].as<int>();
@@ -82,6 +122,7 @@ EnemyManagerComponent::~EnemyManagerComponent() {
 
 void EnemyManagerComponent::enemyKilled(int EnemyKilledpoints) {
     currentSpeed_ *= 1.f + scaleFactor_;
+    currentBulletFrequency_ *= 1.f - scaleFactor_;
     score_ += EnemyKilledpoints;
     notify(EnemyManagerEvents::ScoreChanged);
     checkMoveToNextLevel();

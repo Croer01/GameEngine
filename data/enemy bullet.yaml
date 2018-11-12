@@ -1,0 +1,9 @@
+scale: [3, 7, 1]
+components:
+  - type: BulletComponent
+    speed: -5
+  - type: SpriteComponent
+    filePath: enemy bullet.png
+  - type: ColliderComponent
+    colliderType: Dynamic
+    category: enemyBullet
