@@ -35,6 +35,8 @@ public:
     void onEvent(const Subject<ColliderEvent> &target, const ColliderEvent &event, void *args) override;
     void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
 
+    void SetParent(GameObject *parent) override;
+
     //Component collider public API
     void setOnColliderEnter(const OnColliderEventCallback &callback);
     void setVelocity(glm::vec3 velocity);

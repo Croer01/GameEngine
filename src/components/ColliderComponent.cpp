@@ -60,7 +60,6 @@ void ColliderComponent::init() {
         collider_->setSize(extends_.x/2.f, extends_.y/2.f);
 
     collider_->registerObserver(this);
-    parent_->registerObserver(this);
 }
 
 void ColliderComponent::Update(float elapsedTime) {
@@ -122,5 +121,14 @@ glm::vec3 ColliderComponent::convertPhysicsToWorldPos(glm::vec3 physicsPos) {
         return physicsPos - glm::vec3(xOffset,yOffset,0.f);
     }
     return glm::vec3(0);
+}
+
+void ColliderComponent::SetParent(GameObject *parent) {
+        if(parent_)
+            parent_->unregisterObserver(this);
+        parent_ = parent;
+        if(parent_) {
+            parent_->registerObserver(this);
+        }
 }
 
