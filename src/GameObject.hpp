@@ -27,6 +27,7 @@ class GameObject : public Subject<GameObjectEvent> {
     int id_;
     bool active_;
     bool activeValueToSetInSafeMode_;
+    bool hasActiveValueToSetInSafeMode_;
     std::string nameType_;
     std::string name_;
     std::vector<std::shared_ptr<Component>> components_;
