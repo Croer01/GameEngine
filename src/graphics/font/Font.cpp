@@ -12,6 +12,9 @@ Font::Font(const FT_Face &face, unsigned int pixelsSize) {
     // Set size to load glyphs as
     FT_Set_Pixel_Sizes(face, 0, pixelsSize);
 
+    //FreeType scale the metrics 1/64: https://www.freetype.org/freetype2/docs/tutorial/step2.html
+    lineSpacing_ = face->size->metrics.height/64;
+
     int pixelStoreValue;
     glGetIntegerv(GL_UNPACK_ALIGNMENT, &pixelStoreValue);
     // Disable byte-alignment restriction
@@ -82,6 +85,12 @@ const TextDef Font::createTextDef(const std::string &text) {
     float y =0.f;
     for (c = text.begin(); c != text.end(); c++)
     {
+        if(*c == '\n'){
+            y += lineSpacing_;
+            x = 0;
+            continue;
+        }
+
         FontCharacter ch = characters_[*c];
 
         GLfloat xpos = x + ch.Bearing.x;
