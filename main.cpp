@@ -17,10 +17,13 @@ int main() {
         ObjectManager::GetInstance().registerPrototype("EnemyBullet", "data/enemy bullet.yaml");
         ObjectManager::GetInstance().registerPrototype("EnemyManager", "data/enemyManager.yaml");
         ObjectManager::GetInstance().registerPrototype("ScoreText", "data/scoreText.yaml");
+        ObjectManager::GetInstance().registerPrototype("StartGameText", "data/startGameText.yaml");
 
         //register scene
+        SceneManager::GetInstance().registerScene("StartMenu","data/startMenuScene.yaml");
         SceneManager::GetInstance().registerScene("Scene0","data/gameplayScene.yaml");
 
+        SceneManager::GetInstance().changeScene("StartMenu");
         Game::GetInstance().loop();
 
         return 0;

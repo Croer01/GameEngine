@@ -46,10 +46,9 @@ void PlayerComponent::Update(float elapsedTime) {
         bullet_->setPosition(parent_->getPosition() + glm::vec3(sprite->getWidth()/2, 0, 0));
         bullet_->setActive(true);
     }
-
 }
 
 void PlayerComponent::kill() {
     parent_->setActive(false);
-    SceneManager::GetInstance().reloadScene();
+    SceneManager::GetInstance().changeScene("StartMenu");
 }
