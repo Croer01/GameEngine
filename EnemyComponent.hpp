@@ -11,8 +11,10 @@
 COMPONENT(EnemyComponent);
 class EnemyComponent : public Component {
     int points_;
-    std::shared_ptr<EnemyManagerComponent> enemyManager_;
+    std::weak_ptr<EnemyManagerComponent> enemyManager_;
 public:
+    virtual ~EnemyComponent() = default;
+
     std::shared_ptr<Component> Clone() override;
 
     void fromFile(const YAML::Node &componentConfig) override;

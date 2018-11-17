@@ -75,7 +75,8 @@ void ColliderComponent::setOnColliderEnter(const OnColliderEventCallback &callba
 void ColliderComponent::onEvent(const Subject<ColliderEvent> &target, const ColliderEvent &event, void *args) {
     if(event == ColliderEvent::BeginCollider && onColliderEnterCallback_) {
         Collider *collider = static_cast<Collider *>(args);
-        onColliderEnterCallback_(collider->getComponent());
+        if(auto component = collider->getComponent().lock())
+            onColliderEnterCallback_(component.get());
     }
 }
 
@@ -106,14 +107,20 @@ void ColliderComponent::applyForce(glm::vec3 force) {
 }
 
 glm::vec3 ColliderComponent::convertWorldToPhysicsPos(glm::vec3 worldPos) {
-    float xOffset = sprite_->getWidth()/2.f;
-    float yOffset = sprite_->getHeight()/2.f;
-    return worldPos + glm::vec3(xOffset,yOffset,0.f);
+    if(auto sprite = sprite_.lock()) {
+        float xOffset = sprite->getWidth() / 2.f;
+        float yOffset = sprite->getHeight() / 2.f;
+        return worldPos + glm::vec3(xOffset, yOffset, 0.f);
+    }
+    return glm::vec3(0);
 }
 
 glm::vec3 ColliderComponent::convertPhysicsToWorldPos(glm::vec3 physicsPos) {
-    float xOffset = sprite_->getWidth()/2.f;
-    float yOffset = sprite_->getHeight()/2.f;
-    return physicsPos - glm::vec3(xOffset,yOffset,0.f);
+    if(auto sprite = sprite_.lock()) {
+        float xOffset = sprite->getWidth()/2.f;
+        float yOffset = sprite->getHeight()/2.f;
+        return physicsPos - glm::vec3(xOffset,yOffset,0.f);
+    }
+    return glm::vec3(0);
 }
 

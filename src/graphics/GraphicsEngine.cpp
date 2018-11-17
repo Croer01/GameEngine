@@ -161,8 +161,27 @@ void GraphicsEngine::registerGraphic(const std::shared_ptr<GraphicHolder> &graph
     graphics_.push_back(graphic);
 }
 
+void GraphicsEngine::unregisterGraphic(const std::shared_ptr<GraphicHolder> &graphic) {
+    auto it = std::find(graphics_.begin(), graphics_.end(), graphic);
+    if (it != graphics_.end())
+    {
+        std::swap(*it, *(--graphics_.end()));
+        graphics_.pop_back();
+    }
+}
+
 void GraphicsEngine::registerText(const std::shared_ptr<Text> &textGraphic) {
     texts_.push_back(textGraphic);
+}
+
+
+void GraphicsEngine::unregisterText(const std::shared_ptr<Text> &textGraphic) {
+    auto it = std::find(texts_.begin(), texts_.end(), textGraphic);
+    if (it != texts_.end())
+    {
+        std::swap(*it, *(--texts_.end()));
+        texts_.pop_back();
+    }
 }
 
 bool GraphicsEngine::isPixelPerfect() const {

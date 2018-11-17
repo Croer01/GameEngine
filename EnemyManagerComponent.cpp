@@ -16,18 +16,18 @@ void EnemyManagerComponent::init() {
     //generate enemies
     int rows = rowsConfig_.enemiesType.size();
     int columns = rowsConfig_.enemiesPerRow;
-    const std::shared_ptr<EnemyManagerComponent> &manager = std::shared_ptr<EnemyManagerComponent>(this);
+    const std::shared_ptr<EnemyManagerComponent> &manager = shared_from_this();
 
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < columns; ++j) {
             const std::shared_ptr<GameObject> &alien = SceneManager::GetInstance().createGameObject(rowsConfig_.enemiesType[i]);
             enemies_.push_back(alien);
-            alien->getComponent<EnemyComponent>()->setEnemeyManager(manager);
+            if (auto enemy = alien->getComponent<EnemyComponent>().lock())
+                enemy->setEnemeyManager(manager);
         }
     }
-    boundingBox_ = glm::vec4(0.f, 0.f,
-            enemies_[0]->getComponent<SpriteComponent>()->getWidth() * columns,
-            enemies_[0]->getComponent<SpriteComponent>()->getHeight() * rows);
+    if(auto firstEnemy = enemies_[0]->getComponent<SpriteComponent>().lock())
+        boundingBox_ = glm::vec4(0.f, 0.f, firstEnemy->getWidth() * columns,firstEnemy->getHeight() * rows);
 
     //generate bullets
     for(int i = 0; i < bulletsNum_; i++){
@@ -44,7 +44,8 @@ void EnemyManagerComponent::Update(float elapsedTime) {
 
     if ((currentPosition_.x + boundingBox_.x <= min && currentSpeed_ < 0) || (currentPosition_.x + boundingBox_.z >= max && currentSpeed_ > 0)) {
         currentSpeed_ = -currentSpeed_;
-        currentPosition_ += glm::vec3(0, enemies_[0]->getComponent<SpriteComponent>()->getHeight(), 0);
+        if(auto firstEnemy = enemies_[0]->getComponent<SpriteComponent>().lock())
+            currentPosition_ += glm::vec3(0, firstEnemy->getHeight(), 0);
     }
     currentPosition_ += glm::vec3(currentSpeed_ * elapsedTime, 0, 0);
 
@@ -57,10 +58,12 @@ void EnemyManagerComponent::Update(float elapsedTime) {
         for (int j = 0; j < columns; ++j) {
             int index = i * columns + j;
             const std::shared_ptr<GameObject> &alien = enemies_[index];
-            alien->setPosition(currentPosition_ + glm::vec3(
-                    j * alien->getComponent<SpriteComponent>()->getWidth() + j * rowsConfig_.horizontalMargin,
-                    i * alien->getComponent<SpriteComponent>()->getHeight() + i * rowsConfig_.verticalMargin,
-                    0));
+            if(auto sprite = alien->getComponent<SpriteComponent>().lock()) {
+                alien->setPosition(currentPosition_ + glm::vec3(
+                        j * sprite->getWidth() + j * rowsConfig_.horizontalMargin,
+                        i * sprite->getHeight() + i * rowsConfig_.verticalMargin,
+                        0));
+            }
             if(alien->isActive())
                 enemiesActive.push_back(index);
         }
@@ -156,9 +159,10 @@ void EnemyManagerComponent::updateBoundingBox() {
     //move the calculated box to the world origin and add the width of the enemies
     min -= currentPosition_;
     max -= currentPosition_;
-    boundingBox_ = glm::vec4(min.x , min.y,
-                             max.x + enemies_[0]->getComponent<SpriteComponent>()->getWidth(),
-                             max.y + enemies_[0]->getComponent<SpriteComponent>()->getHeight());
+    if(auto firstEnemy = enemies_[0]->getComponent<SpriteComponent>().lock())
+        boundingBox_ = glm::vec4(min.x , min.y,
+                             max.x + firstEnemy->getWidth(),
+                             max.y + firstEnemy->getHeight());
 }
 
 void EnemyManagerComponent::checkMoveToNextLevel() {
@@ -181,10 +185,12 @@ void EnemyManagerComponent::checkMoveToNextLevel() {
         for (int i = 0; i < rows; ++i) {
             for (int j = 0; j < columns; ++j) {
                 const std::shared_ptr<GameObject> &alien = enemies_[i * columns + j];
-                alien->setPosition(currentPosition_ + glm::vec3(
-                        j * alien->getComponent<SpriteComponent>()->getWidth() + j * rowsConfig_.horizontalMargin,
-                        i * alien->getComponent<SpriteComponent>()->getHeight() + i * rowsConfig_.verticalMargin,
-                        0));
+                if(auto sprite = alien->getComponent<SpriteComponent>().lock()) {
+                    alien->setPosition(currentPosition_ + glm::vec3(
+                            j * sprite->getWidth() + j * rowsConfig_.horizontalMargin,
+                            i * sprite->getHeight() + i * rowsConfig_.verticalMargin,
+                            0));
+                }
                 alien->setActive(true);
 
             }

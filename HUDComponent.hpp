@@ -12,8 +12,8 @@
 
 COMPONENT(HUDComponent)
 class HUDComponent : public Component, public Observer<EnemyManagerEvents>{
-    std::shared_ptr<TextComponent> playerScore_;
-    std::shared_ptr<EnemyManagerComponent> enemyManager_;
+    std::weak_ptr<TextComponent> playerScore_;
+    std::weak_ptr<EnemyManagerComponent> enemyManager_;
     int score_;
 public:
     virtual ~HUDComponent();

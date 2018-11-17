@@ -47,3 +47,7 @@ void SpriteComponent::onEvent(const Subject<GameObjectEvent> &target, const Game
         graphic_->setActive(parent_->isActive());
     }
 }
+
+SpriteComponent::~SpriteComponent() {
+    GraphicsEngine::GetInstance().unregisterGraphic(graphic_);
+}

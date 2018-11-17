@@ -14,16 +14,19 @@ void HUDComponent::init() {
     playerScore_ = parent_->getComponent<TextComponent>();
     std::shared_ptr<GameObject> enemyManagerObject = SceneManager::GetInstance().findObjectByName("EnemyManager");
     enemyManager_ = enemyManagerObject->getComponent<EnemyManagerComponent>();
-    enemyManager_->registerObserver(this);
+    if(auto enemyManager = enemyManager_.lock())
+        enemyManager->registerObserver(this);
 
     score_ = 0;
 }
 
 void HUDComponent::onEvent(const Subject<EnemyManagerEvents> &target, const EnemyManagerEvents &event, void *args) {
     const EnemyManagerComponent &enemyManager = (const EnemyManagerComponent &)target;
-    playerScore_->setText("Score: " + std::to_string(enemyManager.getScore()));
+    if(auto playerScore = playerScore_.lock())
+        playerScore->setText("Score: " + std::to_string(enemyManager.getScore()));
 }
 
 HUDComponent::~HUDComponent() {
-    enemyManager_->unregisterObserver(this);
+    if(auto enemyManager = enemyManager_.lock())
+        enemyManager->unregisterObserver(this);
 }

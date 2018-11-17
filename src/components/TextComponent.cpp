@@ -49,3 +49,7 @@ void TextComponent::setText(const std::string &text) {
     text_ = text;
     textGraphic_->setText(text_);
 }
+
+TextComponent::~TextComponent() {
+    GraphicsEngine::GetInstance().unregisterText(textGraphic_);
+}

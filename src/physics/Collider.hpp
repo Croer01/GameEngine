@@ -39,7 +39,7 @@ private:
 
     std::unique_ptr<b2Body, std::function<void(b2Body*)>> body_;
     b2Filter filter_;
-    std::shared_ptr<ColliderComponent> component_;
+    std::weak_ptr<ColliderComponent> component_;
     ColliderShapes colliderShape_;
     ColliderTypes colliderType_;
     PropertiesToSetInSafeMode propertiesToSetInSafeMode_;
@@ -64,7 +64,7 @@ public:
     void doBeginCollistion(Collider *other);
     std::shared_ptr<Collider> clone();
     void setComponent(const std::shared_ptr<ColliderComponent> &component);
-    std::shared_ptr<ColliderComponent> getComponent();
+    std::weak_ptr<ColliderComponent> getComponent();
     void updateInSafeMode();
 
 };

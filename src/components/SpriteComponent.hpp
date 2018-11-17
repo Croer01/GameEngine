@@ -14,6 +14,7 @@ class SpriteComponent : public Component, public Observer<GameObjectEvent>{
     std::shared_ptr<Graphic> graphicLoaded_;
     std::shared_ptr<GraphicHolder> graphic_;
 public:
+    ~SpriteComponent();
     std::shared_ptr<Component> Clone() override;
 
     void fromFile(const YAML::Node &componentConfig) override;

@@ -90,7 +90,7 @@ void Collider::setComponent(const std::shared_ptr<ColliderComponent> &component)
     component_ = component;
 }
 
-std::shared_ptr<ColliderComponent> Collider::getComponent() {
+std::weak_ptr<ColliderComponent> Collider::getComponent() {
     return component_;
 }
 

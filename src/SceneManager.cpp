@@ -35,7 +35,7 @@ void SceneManager::changeSceneInSafeMode() {
             currentScene_->shutDown();
         currentScene_ = scenes_[sceneNameToChange_];
         currentScene_->init();
-
+        currentSceneName_ = sceneNameToChange_;
         sceneNameToChange_.clear();
     }
 }
@@ -48,4 +48,8 @@ std::shared_ptr<GameObject> SceneManager::createGameObject(const std::string &ob
 
 std::shared_ptr<GameObject> SceneManager::findObjectByName(const std::string &gameObjectName) {
     return currentScene_->findObjectByName(gameObjectName);
+}
+
+void SceneManager::reloadScene() {
+    changeScene(currentSceneName_);
 }

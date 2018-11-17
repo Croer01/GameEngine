@@ -15,6 +15,8 @@ class TextComponent : public Component, public Observer<GameObjectEvent> {
     unsigned int fontSize_;
     std::shared_ptr<Text> textGraphic_;
 public:
+    virtual ~TextComponent();
+
     std::shared_ptr<Component> Clone() override;
 
     void fromFile(const YAML::Node &componentConfig) override;

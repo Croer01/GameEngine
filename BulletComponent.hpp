@@ -12,8 +12,9 @@
 COMPONENT(BulletComponent)
 class BulletComponent : public Component{
     float speed_;
-    std::shared_ptr<ColliderComponent> collider_;
+    std::weak_ptr<ColliderComponent> collider_;
 public:
+    virtual ~BulletComponent() = default;
     void init() override;
 
     void Update(float elapsedTime) override;
@@ -22,7 +23,7 @@ public:
 
     void fromFile(const YAML::Node &componentConfig) override;
 
-    void onColliderEnter(const std::shared_ptr<ColliderComponent> &other);
+    void onColliderEnter(ColliderComponent *other);
 
 };
 

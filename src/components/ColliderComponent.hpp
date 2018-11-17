@@ -11,12 +11,12 @@
 #include "SpriteComponent.hpp"
 
 class ColliderComponent;
-typedef std::function<void (const std::shared_ptr<ColliderComponent> &)> OnColliderEventCallback;
+typedef std::function<void (ColliderComponent *)> OnColliderEventCallback;
 
 class ColliderComponent : public Component, public Observer<ColliderEvent>, public Observer<GameObjectEvent>{
     std::shared_ptr<Collider> collider_;
     OnColliderEventCallback onColliderEnterCallback_;
-    std::shared_ptr<SpriteComponent> sprite_;
+    std::weak_ptr<SpriteComponent> sprite_;
     glm::vec2 extends_;
 
     glm::vec3 convertWorldToPhysicsPos(glm::vec3 worldPos);

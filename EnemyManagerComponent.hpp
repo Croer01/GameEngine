@@ -16,7 +16,8 @@ enum class EnemyManagerEvents{
 };
 
 COMPONENT(EnemyManagerComponent)
-class EnemyManagerComponent : public Component, public Subject<EnemyManagerEvents>{
+class EnemyManagerComponent : public Component, public Subject<EnemyManagerEvents>,
+        public std::enable_shared_from_this<EnemyManagerComponent> {
 
     struct RowsConfig{
         int enemiesPerRow;
@@ -45,7 +46,7 @@ class EnemyManagerComponent : public Component, public Subject<EnemyManagerEvent
 
     void checkMoveToNextLevel();
 public:
-    ~EnemyManagerComponent() override;
+    virtual ~EnemyManagerComponent();
 
     void init() override;
 

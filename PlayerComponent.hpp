@@ -14,6 +14,8 @@ class PlayerComponent : public Component {
     std::shared_ptr<GameObject> bullet_;
     float speed_;
 public:
+    virtual ~PlayerComponent() = default;
+
     void init() override;
 
     void Update(float elapsedTime) override;
@@ -21,6 +23,9 @@ public:
     std::shared_ptr<Component> Clone() override;
 
     void fromFile(const YAML::Node &componentConfig) override;
+
+    //public player functions
+    void kill();
 };
 
 

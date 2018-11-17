@@ -21,6 +21,10 @@ public:
     Subject(const Subject&)=delete;
     Subject& operator=(const Subject&)=delete;
 
+    virtual ~Subject(){
+        observers_.clear();
+    }
+
     void registerObserver(Observer<EventType>* observer)
     {
         observers_.push_back(observer);

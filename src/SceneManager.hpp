@@ -14,6 +14,7 @@
 class SceneManager : public Singleton<SceneManager>{
     std::unordered_map<std::string, std::shared_ptr<Scene>> scenes_;
     std::shared_ptr<Scene> currentScene_;
+    std::string currentSceneName_;
     std::string sceneNameToChange_;
 public:
     void update(float elapsedTime);
@@ -22,6 +23,7 @@ public:
     void changeSceneInSafeMode();
     std::shared_ptr<GameObject> createGameObject(const std::string &objectType);
     std::shared_ptr<GameObject> findObjectByName(const std::string &gameObjectName);
+    void reloadScene();
 };
 
 

@@ -15,7 +15,7 @@ class Component {
 protected:
     GameObject *parent_;
 public:
-    virtual ~Component() = default;
+    virtual ~Component(){};
     virtual void Update(float elapsedTime){};
     virtual void init(){};
     virtual std::shared_ptr<Component> Clone() = 0;

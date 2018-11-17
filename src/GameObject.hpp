@@ -72,7 +72,7 @@ public:
     void setName(const std::string &name);
 
     template <typename T>
-    std::shared_ptr<T> getComponent() const{
+    std::weak_ptr<T> getComponent() const{
         for(auto component : components_){
             if(auto desiredComponent = std::dynamic_pointer_cast<T>(component))
                 return desiredComponent;

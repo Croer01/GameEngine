@@ -23,6 +23,7 @@ void PlayerComponent::init() {
 
 void PlayerComponent::Update(float elapsedTime) {
     glm::vec3 translation(0);
+    auto sprite = parent_->getComponent<SpriteComponent>().lock();
 
     if (InputManager::GetInstance().isKeyPressed(SDLK_RIGHT)) {
         translation.x+=speed_;
@@ -35,15 +36,20 @@ void PlayerComponent::Update(float elapsedTime) {
 
         if(desiredPos[0] < 0)
             desiredPos[0] = 0;
-        else if(desiredPos[0] + parent_->getComponent<SpriteComponent>()->getWidth() > 224)
-            desiredPos[0] = 224 - parent_->getComponent<SpriteComponent>()->getWidth();
+        else if(desiredPos[0] + sprite->getWidth() > 224)
+            desiredPos[0] = 224 - sprite->getWidth();
 
         parent_->setPosition(desiredPos);
     }
 
     if(!bullet_->isActive() && InputManager::GetInstance().isKeyPressed(SDLK_SPACE)){
-        bullet_->setPosition(parent_->getPosition() + glm::vec3(parent_->getComponent<SpriteComponent>()->getWidth()/2, 0, 0));
+        bullet_->setPosition(parent_->getPosition() + glm::vec3(sprite->getWidth()/2, 0, 0));
         bullet_->setActive(true);
     }
 
+}
+
+void PlayerComponent::kill() {
+    parent_->setActive(false);
+    SceneManager::GetInstance().reloadScene();
 }
