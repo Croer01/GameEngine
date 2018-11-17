@@ -133,8 +133,6 @@ void Game::makeCurrentContext() {
 }
 
 void Game::loop() {
-    SceneManager::GetInstance().changeScene("Scene0");
-
     unsigned int lastTime = 0, currentTime;
 
     while (running_){
