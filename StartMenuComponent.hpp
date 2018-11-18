@@ -8,11 +8,18 @@
 
 #include "src/Component.hpp"
 #include "glm/glm.hpp"
+#include "src/components/TextComponent.hpp"
 
 COMPONENT(StartMenuComponent)
 class StartMenuComponent : public Component {
-    glm::vec4 rectangle_;
+    std::weak_ptr<TextComponent> text_;
+    float timeAcumulator_;
+    float blinkTime_;
 public:
+    void init() override;
+
+    void fromFile(const YAML::Node &componentConfig) override;
+
     std::shared_ptr<Component> Clone() override;
 
     void Update(float elapsedTime) override;

@@ -1,0 +1,6 @@
+scale: [0.16,0.16,0.16]
+components:
+  - type: TextComponent
+    text: "space    invaders\n\n      = 30 points\n\n      = 20 points\n\n      = 10 points"
+    font: fonts\\slkscr.ttf
+    fontSize: 48

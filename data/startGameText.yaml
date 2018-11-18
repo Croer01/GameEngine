@@ -1,8 +1,8 @@
 scale: [0.16,0.16,0.16]
-position: [56,60,0]
 components:
   - type: TextComponent
     text: "press <space> to start"
     font: fonts\\slkscr.ttf
     fontSize: 48
   - type: StartMenuComponent
+    blinkTime: 0.75

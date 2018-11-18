@@ -18,6 +18,7 @@ int main() {
         ObjectManager::GetInstance().registerPrototype("EnemyManager", "data/enemyManager.yaml");
         ObjectManager::GetInstance().registerPrototype("ScoreText", "data/scoreText.yaml");
         ObjectManager::GetInstance().registerPrototype("StartGameText", "data/startGameText.yaml");
+        ObjectManager::GetInstance().registerPrototype("StartGameScoreText", "data/startGameScoreText.yaml");
 
         //register scene
         SceneManager::GetInstance().registerScene("StartMenu","data/startMenuScene.yaml");
