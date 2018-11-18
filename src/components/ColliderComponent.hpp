@@ -9,6 +9,7 @@
 #include "../Component.hpp"
 #include "../physics/Collider.hpp"
 #include "SpriteComponent.hpp"
+#include "SpriteAnimatedComponent.hpp"
 
 class ColliderComponent;
 typedef std::function<void (ColliderComponent *)> OnColliderEventCallback;
@@ -17,6 +18,7 @@ class ColliderComponent : public Component, public Observer<ColliderEvent>, publ
     std::shared_ptr<Collider> collider_;
     OnColliderEventCallback onColliderEnterCallback_;
     std::weak_ptr<SpriteComponent> sprite_;
+    std::weak_ptr<SpriteAnimatedComponent> spriteAnimated_;
     glm::vec2 extends_;
 
     glm::vec3 convertWorldToPhysicsPos(glm::vec3 worldPos);

@@ -51,6 +51,7 @@ void ColliderComponent::fromFile(const YAML::Node &componentConfig) {
 
 void ColliderComponent::init() {
     sprite_ = parent_->getComponent<SpriteComponent>();
+    spriteAnimated_ = parent_->getComponent<SpriteAnimatedComponent>();
 
     collider_->setPosition(convertWorldToPhysicsPos(parent_->getPosition()));
     collider_->setActive(parent_->isActive());
@@ -111,11 +112,22 @@ glm::vec3 ColliderComponent::convertWorldToPhysicsPos(glm::vec3 worldPos) {
         float yOffset = sprite->getHeight() / 2.f;
         return worldPos + glm::vec3(xOffset, yOffset, 0.f);
     }
+
+    if(auto sprite = spriteAnimated_.lock()) {
+        float xOffset = sprite->getWidth() / 2.f;
+        float yOffset = sprite->getHeight() / 2.f;
+        return worldPos + glm::vec3(xOffset, yOffset, 0.f);
+    }
     return glm::vec3(0);
 }
 
 glm::vec3 ColliderComponent::convertPhysicsToWorldPos(glm::vec3 physicsPos) {
     if(auto sprite = sprite_.lock()) {
+        float xOffset = sprite->getWidth()/2.f;
+        float yOffset = sprite->getHeight()/2.f;
+        return physicsPos - glm::vec3(xOffset,yOffset,0.f);
+    }
+    if(auto sprite = spriteAnimated_.lock()) {
         float xOffset = sprite->getWidth()/2.f;
         float yOffset = sprite->getHeight()/2.f;
         return physicsPos - glm::vec3(xOffset,yOffset,0.f);
