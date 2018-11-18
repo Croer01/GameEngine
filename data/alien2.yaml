@@ -2,8 +2,10 @@ scale: [16, 8, 1]
 components:
   - type: EnemyComponent
     points: 20
-  - type: SpriteComponent
+  - type: SpriteAnimatedComponent
     filePath: alien2.png
+    columns: 2
+    framesPerSecond: 2
   - type: ColliderComponent
     colliderType: Kinematic
     extends: [12, 8]

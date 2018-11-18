@@ -6,7 +6,7 @@
 #include <ctime>
 #include "EnemyManagerComponent.hpp"
 #include "src/SceneManager.hpp"
-#include "src/components/SpriteComponent.hpp"
+#include "src/components/SpriteAnimatedComponent.hpp"
 #include "EnemyComponent.hpp"
 
 void EnemyManagerComponent::init() {
@@ -26,7 +26,7 @@ void EnemyManagerComponent::init() {
                 enemy->setEnemeyManager(manager);
         }
     }
-    if(auto firstEnemy = enemies_[0]->getComponent<SpriteComponent>().lock())
+    if(auto firstEnemy = enemies_[0]->getComponent<SpriteAnimatedComponent>().lock())
         boundingBox_ = glm::vec4(0.f, 0.f, firstEnemy->getWidth() * columns,firstEnemy->getHeight() * rows);
 
     //generate bullets
@@ -44,7 +44,7 @@ void EnemyManagerComponent::Update(float elapsedTime) {
 
     if ((currentPosition_.x + boundingBox_.x <= min && currentSpeed_ < 0) || (currentPosition_.x + boundingBox_.z >= max && currentSpeed_ > 0)) {
         currentSpeed_ = -currentSpeed_;
-        if(auto firstEnemy = enemies_[0]->getComponent<SpriteComponent>().lock())
+        if(auto firstEnemy = enemies_[0]->getComponent<SpriteAnimatedComponent>().lock())
             currentPosition_ += glm::vec3(0, firstEnemy->getHeight(), 0);
     }
     currentPosition_ += glm::vec3(currentSpeed_ * elapsedTime, 0, 0);
@@ -58,7 +58,7 @@ void EnemyManagerComponent::Update(float elapsedTime) {
         for (int j = 0; j < columns; ++j) {
             int index = i * columns + j;
             const std::shared_ptr<GameObject> &alien = enemies_[index];
-            if(auto sprite = alien->getComponent<SpriteComponent>().lock()) {
+            if(auto sprite = alien->getComponent<SpriteAnimatedComponent>().lock()) {
                 alien->setPosition(currentPosition_ + glm::vec3(
                         j * sprite->getWidth() + j * rowsConfig_.horizontalMargin,
                         i * sprite->getHeight() + i * rowsConfig_.verticalMargin,
@@ -159,7 +159,7 @@ void EnemyManagerComponent::updateBoundingBox() {
     //move the calculated box to the world origin and add the width of the enemies
     min -= currentPosition_;
     max -= currentPosition_;
-    if(auto firstEnemy = enemies_[0]->getComponent<SpriteComponent>().lock())
+    if(auto firstEnemy = enemies_[0]->getComponent<SpriteAnimatedComponent>().lock())
         boundingBox_ = glm::vec4(min.x , min.y,
                              max.x + firstEnemy->getWidth(),
                              max.y + firstEnemy->getHeight());
@@ -185,7 +185,7 @@ void EnemyManagerComponent::checkMoveToNextLevel() {
         for (int i = 0; i < rows; ++i) {
             for (int j = 0; j < columns; ++j) {
                 const std::shared_ptr<GameObject> &alien = enemies_[i * columns + j];
-                if(auto sprite = alien->getComponent<SpriteComponent>().lock()) {
+                if(auto sprite = alien->getComponent<SpriteAnimatedComponent>().lock()) {
                     alien->setPosition(currentPosition_ + glm::vec3(
                             j * sprite->getWidth() + j * rowsConfig_.horizontalMargin,
                             i * sprite->getHeight() + i * rowsConfig_.verticalMargin,
