@@ -13,8 +13,12 @@
 class SpriteComponent : public Component, public Observer<GameObjectEvent>{
     std::shared_ptr<Graphic> graphicLoaded_;
     std::shared_ptr<GraphicHolder> graphic_;
+    bool visible_;
 public:
     ~SpriteComponent();
+
+    void init() override;
+
     std::shared_ptr<Component> Clone() override;
 
     void fromFile(const YAML::Node &componentConfig) override;
@@ -23,6 +27,8 @@ public:
 
     int getWidth() const;
     int getHeight() const;
+    void setVisible(bool visible);
+    bool isVisible() const;
 
     void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
 };

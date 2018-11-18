@@ -14,8 +14,11 @@ class TextComponent : public Component, public Observer<GameObjectEvent> {
     std::string font_;
     unsigned int fontSize_;
     std::shared_ptr<Text> textGraphic_;
+    bool visible_;
 public:
     virtual ~TextComponent();
+
+    void init() override;
 
     std::shared_ptr<Component> Clone() override;
 
@@ -27,6 +30,9 @@ public:
 
     //Text public API
     void setText(const std::string &text);
+
+    void setVisible(bool visible);
+    bool isVisible() const;
 };
 
 

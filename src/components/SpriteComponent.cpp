@@ -5,6 +5,10 @@
 #include "SpriteComponent.hpp"
 #include "../graphics/GraphicsEngine.hpp"
 
+void SpriteComponent::init() {
+    visible_ = true;
+}
+
 std::shared_ptr<Component> SpriteComponent::Clone() {
     std::shared_ptr<SpriteComponent> clone = std::make_shared<SpriteComponent>();
     clone->graphicLoaded_ = graphicLoaded_;
@@ -44,10 +48,19 @@ void SpriteComponent::onEvent(const Subject<GameObjectEvent> &target, const Game
         graphic_->setModelTransform(parent_->getPosition(), parent_->getRotation(), parent_->getScale());
     }
     else if(event == GameObjectEvent::ActiveChanged){
-        graphic_->setActive(parent_->isActive());
+        graphic_->setActive(parent_->isActive() && visible_);
     }
 }
 
 SpriteComponent::~SpriteComponent() {
     GraphicsEngine::GetInstance().unregisterGraphic(graphic_);
+}
+
+void SpriteComponent::setVisible(bool visible) {
+    visible_ = visible;
+    graphic_->setActive(parent_->isActive() && visible_);
+}
+
+bool SpriteComponent::isVisible() const {
+    return visible_;
 }

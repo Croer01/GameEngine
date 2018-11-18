@@ -6,6 +6,10 @@
 #include "../graphics/font/FontManager.hpp"
 #include "../graphics/GraphicsEngine.hpp"
 
+void TextComponent::init() {
+    visible_ = true;
+}
+
 std::shared_ptr<Component> TextComponent::Clone() {
     std::shared_ptr<TextComponent> clone = std::make_shared<TextComponent>();
     clone->text_ = text_;
@@ -41,7 +45,7 @@ void TextComponent::onEvent(const Subject<GameObjectEvent> &target, const GameOb
         textGraphic_->setModelTransform(parent_->getPosition(), parent_->getRotation(), parent_->getScale());
     }
     else if(event == GameObjectEvent::ActiveChanged){
-        textGraphic_->setActive(parent_->isActive());
+        textGraphic_->setActive(parent_->isActive() && visible_);
     }
 }
 
@@ -52,4 +56,13 @@ void TextComponent::setText(const std::string &text) {
 
 TextComponent::~TextComponent() {
     GraphicsEngine::GetInstance().unregisterText(textGraphic_);
+}
+
+void TextComponent::setVisible(bool visible) {
+    visible_ = visible;
+    textGraphic_->setActive(parent_->isActive() && visible_);
+}
+
+bool TextComponent::isVisible() const {
+    return visible_;
 }
