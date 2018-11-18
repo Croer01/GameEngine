@@ -54,6 +54,8 @@ void GraphicsEngine::init(const Screen &screen) {
         layout (location = 0) in vec3 aPos;
         layout (location = 1) in vec2 aTexCoord;
 
+        uniform vec2 TexOffest;
+        uniform vec2 TexCoordScale;
         out vec2 TexCoord;
 
         uniform mat4 projView;
@@ -61,7 +63,7 @@ void GraphicsEngine::init(const Screen &screen) {
 
         void main() {
             gl_Position = projView * transform * vec4(aPos, 1.0);
-            TexCoord = aTexCoord;
+            TexCoord = TexOffest + aTexCoord * TexCoordScale;
         }
         )EOF");
     spriteShader_->setFragmentShader(R"EOF(

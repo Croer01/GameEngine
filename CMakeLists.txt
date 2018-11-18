@@ -32,6 +32,7 @@ set(ENGINE_SOURCES src/Game.cpp
         src/Scene.cpp
         src/utils.cpp
         src/components/SpriteComponent.cpp
+        src/components/SpriteAnimatedComponent.cpp
         src/graphics/GraphicsEngine.cpp
         src/graphics/Graphic.cpp
         src/graphics/Shader.cpp
