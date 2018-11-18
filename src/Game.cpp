@@ -142,6 +142,12 @@ void Game::loop() {
             continue;
         }
 
+#ifdef DEBUG
+        if(InputManager::GetInstance().isKeyDown(SDLK_F5)){
+            SceneManager::GetInstance().reloadScene();
+        }
+#endif
+
         //calculate elapsed time
         currentTime = SDL_GetTicks();
         float elapsedTime = (currentTime - lastTime) / 1000.f;
