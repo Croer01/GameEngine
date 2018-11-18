@@ -2,8 +2,10 @@ scale: [3, 7, 1]
 components:
   - type: BulletComponent
     speed: -5
-  - type: SpriteComponent
+  - type: SpriteAnimatedComponent
     filePath: enemy bullet.png
+    columns: 2
+    framesPerSecond: 12
   - type: ColliderComponent
     colliderType: Dynamic
     category: enemyBullet
