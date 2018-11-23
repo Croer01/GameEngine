@@ -19,6 +19,9 @@ class SpriteAnimatedComponent : public Component, public Observer<GameObjectEven
     int rows_;
     int index_[2];
     bool visible_;
+
+    void resetAnimation();
+
 public:
     ~SpriteAnimatedComponent();
 

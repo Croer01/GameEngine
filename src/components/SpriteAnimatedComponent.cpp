@@ -60,6 +60,7 @@ void SpriteAnimatedComponent::onEvent(const Subject<GameObjectEvent> &target, co
     }
     else if(event == GameObjectEvent::ActiveChanged){
         graphic_->setActive(parent_->isActive() && visible_);
+        resetAnimation();
     }
 }
 
@@ -70,6 +71,7 @@ SpriteAnimatedComponent::~SpriteAnimatedComponent() {
 void SpriteAnimatedComponent::setVisible(bool visible) {
     visible_ = visible;
     graphic_->setActive(parent_->isActive() && visible_);
+    resetAnimation();
 }
 
 bool SpriteAnimatedComponent::isVisible() const {
@@ -92,4 +94,11 @@ void SpriteAnimatedComponent::Update(float elapsedTime) {
 
         timeAcumulator_ = 0;
     }
+}
+
+void SpriteAnimatedComponent::resetAnimation() {
+    index_[0] = 0;
+    index_[1] = 0;
+    timeAcumulator_ = 0;
+    graphic_->setCellIndex(index_[0], index_[1]);
 }
