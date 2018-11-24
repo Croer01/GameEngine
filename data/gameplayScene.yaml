@@ -1,7 +1,11 @@
 prototypes:
   - prototype: EnemyManager
-    position: [0, 16, 0]
+    position: [0, 36, 0]
     name: EnemyManager
   - prototype: Player
     position: [106, 248, 0]
+    name: Player
   - prototype: ScoreText
+  - prototype: MotherShip
+    position: [244, 20, 0]
+    name: MotherShip

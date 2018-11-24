@@ -12,6 +12,7 @@ int main() {
         ObjectManager::GetInstance().registerPrototype("Alien1", "data/alien1.yaml");
         ObjectManager::GetInstance().registerPrototype("Alien2", "data/alien2.yaml");
         ObjectManager::GetInstance().registerPrototype("Alien3", "data/alien3.yaml");
+        ObjectManager::GetInstance().registerPrototype("MotherShip", "data/mothership.yaml");
         ObjectManager::GetInstance().registerPrototype("Player", "data/player.yaml");
         ObjectManager::GetInstance().registerPrototype("PlayerBullet", "data/player bullet.yaml");
         ObjectManager::GetInstance().registerPrototype("EnemyBullet", "data/enemy bullet.yaml");
@@ -19,6 +20,7 @@ int main() {
         ObjectManager::GetInstance().registerPrototype("ScoreText", "data/scoreText.yaml");
         ObjectManager::GetInstance().registerPrototype("StartGameText", "data/startGameText.yaml");
         ObjectManager::GetInstance().registerPrototype("StartGameScoreText", "data/startGameScoreText.yaml");
+        ObjectManager::GetInstance().registerPrototype("MotherShipStartMenu", "data/motherShipStartMenu.yaml");
 
         //register scene
         SceneManager::GetInstance().registerScene("StartMenu","data/startMenuScene.yaml");

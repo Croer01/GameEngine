@@ -4,6 +4,7 @@ components:
     scaleFactor: 0.008
     bulletsNum: 2
     bulletFrequency: 4
+    mothershipFrequency: 10
     enemiesPerRow: 11
     margin: [0,8]
     rowsConfig:

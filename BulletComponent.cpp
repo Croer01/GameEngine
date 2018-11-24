@@ -5,6 +5,7 @@
 #include "BulletComponent.hpp"
 #include "EnemyComponent.hpp"
 #include "PlayerComponent.hpp"
+#include "MotherShipComponent.hpp"
 
 void BulletComponent::init() {
     parent_->setActive(false);
@@ -50,6 +51,13 @@ void BulletComponent::onColliderEnter(ColliderComponent *other) {
         if(player){
             player->kill();
             parent_->setActive(false);
+        } else {
+
+            std::shared_ptr<MotherShipComponent> mothership = other->getParent()->getComponent<MotherShipComponent>().lock();
+            if(mothership){
+                mothership->kill();
+                parent_->setActive(false);
+            }
         }
     }
 

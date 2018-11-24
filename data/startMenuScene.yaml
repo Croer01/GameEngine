@@ -1,11 +1,13 @@
 prototypes:
   - prototype: StartGameScoreText
     position: [71,60,0]
+  - prototype: MotherShipStartMenu
+    position: [76,73,0]
   - prototype: Alien3
-    position: [78,73,0]
+    position: [76,89,0]
   - prototype: Alien2
-    position: [78,89,0]
+    position: [76,105,0]
   - prototype: Alien1
-    position: [78,105,0]
+    position: [76,121,0]
   - prototype: StartGameText
     position: [58,165,0]

@@ -10,6 +10,7 @@
 #include <glm/glm.hpp>
 #include <random>
 
+class MotherShipComponent;
 
 enum class EnemyManagerEvents{
     ScoreChanged
@@ -30,10 +31,13 @@ class EnemyManagerComponent : public Component, public Subject<EnemyManagerEvent
     std::vector<std::shared_ptr<GameObject>> enemies_;
     glm::vec4 boundingBox_;
     std::vector<std::shared_ptr<GameObject>> bullets_;
+    std::weak_ptr<MotherShipComponent> mothership_;
     int bulletsNum_;
     float bulletFrequency_;
     float currentBulletFrequency_;
     float bulletTimeAcumulator_;
+    float mothershipFrequency_;
+    float mothershipTimeAcumulator_;
     std::mt19937 rng_;
 
     glm::vec3 currentPosition_;

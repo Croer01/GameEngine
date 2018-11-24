@@ -19,6 +19,7 @@ void PlayerComponent::fromFile(const YAML::Node &componentConfig) {
 
 void PlayerComponent::init() {
     bullet_ = SceneManager::GetInstance().createGameObject("PlayerBullet");
+    bullet_->setName("PlayerBullet");
 }
 
 void PlayerComponent::Update(float elapsedTime) {

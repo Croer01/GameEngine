@@ -8,11 +8,19 @@
 #include "src/SceneManager.hpp"
 #include "src/components/SpriteAnimatedComponent.hpp"
 #include "EnemyComponent.hpp"
+#include "MotherShipComponent.hpp"
 
 void EnemyManagerComponent::init() {
     currentSpeed_ = speed_;
     currentPosition_ = parent_->getPosition();
     currentBulletFrequency_ = bulletFrequency_;
+
+    auto gameObject = SceneManager::GetInstance().findObjectByName("MotherShip");
+    if(gameObject){
+        mothership_ = gameObject->getComponent<MotherShipComponent>();
+        gameObject->setActive(false);
+    }
+
     //generate enemies
     int rows = rowsConfig_.enemiesType.size();
     int columns = rowsConfig_.enemiesPerRow;
@@ -87,6 +95,15 @@ void EnemyManagerComponent::Update(float elapsedTime) {
         }
         bulletTimeAcumulator_ = 0;
     }
+
+    mothershipTimeAcumulator_ += elapsedTime;
+    if(auto mothership = mothership_.lock()){
+        if(mothershipFrequency_ <= mothershipTimeAcumulator_) {
+            if(!mothership->getParent()->isActive())
+                mothership->getParent()->setActive(true);
+            mothershipTimeAcumulator_ = 0;
+        }
+    }
 }
 
 std::shared_ptr<Component> EnemyManagerComponent::Clone() {
@@ -96,6 +113,7 @@ std::shared_ptr<Component> EnemyManagerComponent::Clone() {
     clone->rowsConfig_ = rowsConfig_;
     clone->bulletsNum_ = bulletsNum_;
     clone->bulletFrequency_ = bulletFrequency_;
+    clone->mothershipFrequency_ = mothershipFrequency_;
 
     return clone;
 }
@@ -106,6 +124,8 @@ void EnemyManagerComponent::fromFile(const YAML::Node &componentConfig) {
 
     bulletsNum_ = componentConfig["bulletsNum"].as<int>();
     bulletFrequency_ = componentConfig["bulletFrequency"].as<float>();
+
+    mothershipFrequency_ = componentConfig["mothershipFrequency"].as<float>();
 
     rowsConfig_ = RowsConfig();
     rowsConfig_.enemiesPerRow = componentConfig["enemiesPerRow"].as<int>();
@@ -192,9 +212,11 @@ void EnemyManagerComponent::checkMoveToNextLevel() {
                             0));
                 }
                 alien->setActive(true);
-
             }
         }
+
+        if(auto mothership = mothership_.lock())
+            mothership->hide();
     }
 }
 
