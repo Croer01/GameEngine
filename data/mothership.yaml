@@ -7,7 +7,7 @@ components:
     pointsPerBullet: 20
     speed: 52
   - type: SpriteComponent
-    filePath: mothership.png
+    filePath: assets\\mothership.png
   - type: ColliderComponent
     colliderType: Kinematic
     extends: [12, 8]

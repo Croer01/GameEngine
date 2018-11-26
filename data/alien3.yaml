@@ -3,7 +3,7 @@ components:
   - type: EnemyComponent
     points: 30
   - type: SpriteAnimatedComponent
-    filePath: alien3.png
+    filePath: assets\\alien3.png
     columns: 2
     framesPerSecond: 2
   - type: ColliderComponent

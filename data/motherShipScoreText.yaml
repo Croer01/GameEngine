@@ -1,7 +1,7 @@
 scale: [0.16,0.16,0.16]
 components:
   - type: TextComponent
-    font: fonts\\slkscr.ttf
+    font: assets\\fonts\\slkscr.ttf
     fontSize: 48
   - type: BlinkTextComponent
     blinkTimes: 10

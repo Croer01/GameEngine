@@ -3,7 +3,7 @@ components:
   - type: PlayerComponent
     speed: 175
   - type: SpriteComponent
-    filePath: player.png
+    filePath: assets\\player.png
   - type: ColliderComponent
     colliderType: Kinematic
     category: player
