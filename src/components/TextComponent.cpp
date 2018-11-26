@@ -23,7 +23,7 @@ std::shared_ptr<Component> TextComponent::Clone() {
 }
 
 void TextComponent::fromFile(const YAML::Node &componentConfig) {
-    text_ = componentConfig["text"].as<std::string>();
+    text_ = componentConfig["text"].as<std::string>("");
     font_ = componentConfig["font"].as<std::string>();
     fontSize_ = componentConfig["fontSize"].as<unsigned int>();
 }
