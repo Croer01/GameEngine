@@ -7,6 +7,7 @@
 #include "src/SceneManager.hpp"
 #include "src/components/SpriteComponent.hpp"
 #include "src/InputManager.hpp"
+#include "src/components/TextComponent.hpp"
 
 void MotherShipComponent::init() {
     points_ = minPoints_;
@@ -16,6 +17,8 @@ void MotherShipComponent::init() {
         enemyManager_ = enemyManagerGameObject->getComponent<EnemyManagerComponent>();
     if(auto playerBullet = playerBullet_.lock())
         playerBullet->registerObserver(this);
+    scoreText_ = SceneManager::GetInstance().createGameObject("MotherShipScoreText");
+    scoreText_.lock()->setActive(false);
 }
 
 void MotherShipComponent::Update(float elapsedTime) {
@@ -54,6 +57,14 @@ void MotherShipComponent::fromFile(const YAML::Node &componentConfig) {
 void MotherShipComponent::kill() {
     if(auto enemyManager = enemyManager_.lock())
         enemyManager->enemyKilled(points_);
+    if(auto scoreText = scoreText_.lock()) {
+        glm::vec3 desiredPos = parent_->getPosition();
+        if(desiredPos.x < 0)
+            desiredPos.x = 0;
+        scoreText->setPosition(desiredPos);
+        scoreText->setActive(true);
+        scoreText->getComponent<TextComponent>().lock()->setText(std::to_string(points_));
+    }
     hide();
 }
 

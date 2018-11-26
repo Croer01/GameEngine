@@ -18,6 +18,7 @@ class MotherShipComponent : public Component, public Observer<GameObjectEvent> {
     float speed_;
     std::weak_ptr<GameObject> playerBullet_;
     std::weak_ptr<EnemyManagerComponent> enemyManager_;
+    std::weak_ptr<GameObject> scoreText_;
 
 public:
     void init() override;
