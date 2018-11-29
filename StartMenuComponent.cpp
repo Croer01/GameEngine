@@ -20,7 +20,7 @@ void StartMenuComponent::Update(float elapsedTime) {
         timeAcumulator_ = 0;
     }
 
-    if(InputManager::GetInstance().isKeyDown(SDLK_SPACE))
+    if(InputManager::GetInstance().isKeyDown(SDLK_RETURN))
         SceneManager::GetInstance().changeScene("Scene0");
 }
 

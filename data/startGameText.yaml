@@ -1,7 +1,7 @@
 scale: [0.16,0.16,0.16]
 components:
   - type: TextComponent
-    text: "press <space> to start"
+    text: "press <return> to start"
     font: assets\\fonts\\slkscr.ttf
     fontSize: 48
   - type: StartMenuComponent
