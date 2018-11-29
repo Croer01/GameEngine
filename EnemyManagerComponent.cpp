@@ -215,6 +215,10 @@ void EnemyManagerComponent::checkMoveToNextLevel() {
             }
         }
 
+        for(const std::shared_ptr<GameObject> &bullet : bullets_){
+            bullet->setActive(false);
+        }
+
         if(auto mothership = mothership_.lock())
             mothership->hide();
     }
