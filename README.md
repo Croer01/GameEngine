@@ -21,7 +21,7 @@ Also I will do test to check all parts of the engine works properly and it will 
  After you will have set up vcpkg, execute the next command 
  
  ~~~ bash
- vcpkg install --triplet x64-windows glew glm sdl2-image sdl2 yaml-cpp box2d freetype
+ vcpkg install --triplet x64-windows glew glm sdl2-image sdl2 yaml-cpp box2d freetype openal-soft libsndfile
  ~~~
  
  _Note: Before you execute this command, you must check your target architecture to ensure install proper version of packages (the --triplet option)_

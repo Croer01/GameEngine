@@ -15,9 +15,11 @@ find_package(SDL2 CONFIG REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glm CONFIG REQUIRED)
 find_package(OpenGL REQUIRED)
+find_package(OpenAL CONFIG REQUIRED)
 find_package(yaml-cpp CONFIG REQUIRED)
 find_package(unofficial-box2d CONFIG REQUIRED)
 find_package(Freetype REQUIRED)
+find_package(LibSndFile CONFIG REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIRS})
 include_directories(${SDL2_INCLUDE_DIR} ${SDL2_IMAGE_INCLUDE} ${GLEW_INCLUDE_DIR} ${glm_INCLUDE_DIR})
 include_directories(${SDL2_ROOT}/include)
@@ -83,7 +85,9 @@ target_link_libraries(SpaceInvaders PRIVATE
         glm
         ${OPENGL_LIBRARIES}
         unofficial::box2d::Box2D
-        Freetype::Freetype)
+        Freetype::Freetype
+        OpenAL::OpenAL
+        sndfile-shared)
 
 ADD_CUSTOM_TARGET(copyData ALL
         COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/data
