@@ -50,7 +50,10 @@ set(ENGINE_SOURCES src/Game.cpp
         src/graphics/font/Font.cpp
         src/graphics/font/Text.cpp
         src/graphics/font/FontManager.cpp
-        src/components/TextComponent.cpp)
+        src/components/TextComponent.cpp
+        src/audio/AudioEngine.cpp
+        src/audio/AudioSource.cpp
+        )
 
 set(GAME_SOURCES
         main.cpp
