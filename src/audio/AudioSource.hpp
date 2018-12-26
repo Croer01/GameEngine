@@ -10,22 +10,19 @@
 #include <string>
 #include <memory>
 #include <sndfile.h>
+#include "AudioBuffer.hpp"
 
 class AudioSource {
 
     ALuint sourceId_;
-    ALuint bufferId_;
-    SNDFILE * file_;
-    SF_INFO fileInfo_;
-
+    std::shared_ptr<AudioBuffer> buffer_;
 public:
-    explicit AudioSource(const std::string &filePath);
+    explicit AudioSource(const std::shared_ptr<AudioBuffer> &buffer);
     ~AudioSource();
 
-    void readFileIntoBuffer(ALuint buffer);
+    void play() const;
 
 protected:
-    static ALenum AudioSource::getFormatFromChannels(int channelCount);
 };
 
 

@@ -16,5 +16,17 @@ void AudioEngine::init() {
 }
 
 AudioEngine::~AudioEngine() {
+    alcMakeContextCurrent(nullptr);
+    alcDestroyContext(context_);
     alcCloseDevice(device_);
+}
+
+std::shared_ptr<AudioSource> AudioEngine::getAudio(const std::string &filename) {
+    std::shared_ptr<AudioBuffer> buffer = buffers_[filename];
+    if(!buffer){
+        buffer = std::make_shared<AudioBuffer>(filename);
+        buffers_[filename] = buffer;
+    }
+
+    return std::make_shared<AudioSource>(buffer);
 }

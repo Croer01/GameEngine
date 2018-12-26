@@ -7,14 +7,20 @@
 
 
 #include "../Singleton.hpp"
+#include "AudioSource.hpp"
 #include <Al/al.h>
 #include <Al/alc.h>
+#include <memory>
+#include <map>
 
 class AudioEngine : public Singleton<AudioEngine> {
     ALCcontext *context_;
     ALCdevice *device_;
+    std::map<std::string, std::shared_ptr<AudioBuffer>> buffers_;
 public:
     void init();
+
+    std::shared_ptr<AudioSource> getAudio(const std::string &filename);
 
     virtual ~AudioEngine();
 };
