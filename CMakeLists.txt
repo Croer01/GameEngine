@@ -67,10 +67,11 @@ set(GAME_SOURCES
         BlinkTextComponent.cpp)
 
 # auto-generated files
+include(FindPythonInterp)
 set(COMPONENTS_REGISTERED_CPP ${CMAKE_SOURCE_DIR}/componentsRegistered.cpp)
 file(GLOB_RECURSE COMPONENTS_REGISTERED_HEADERS "*.hpp")
 add_custom_command(
-        COMMAND sh ${CMAKE_SOURCE_DIR}/engine_components_gen.sh > ${COMPONENTS_REGISTERED_CPP}
+        COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/engine_components_generator.py > ${COMPONENTS_REGISTERED_CPP}
         DEPENDS ${COMPONENTS_REGISTERED_HEADERS}
         OUTPUT ${COMPONENTS_REGISTERED_CPP}
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
