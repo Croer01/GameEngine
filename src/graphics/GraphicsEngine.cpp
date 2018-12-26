@@ -3,7 +3,6 @@
 //
 
 #include <GL/glew.h>
-#include <glm/detail/type_mat.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include "GraphicsEngine.hpp"
 #include "../utils.hpp"

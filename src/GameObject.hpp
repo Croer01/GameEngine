@@ -10,7 +10,7 @@
 #include <vector>
 #include <memory>
 #include <glm/vec3.hpp>
-#include <glm/detail/type_mat.hpp>
+#include <glm/mat4x4.hpp>
 #include "events/Subject.hpp"
 
 class Component;

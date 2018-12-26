@@ -13,10 +13,14 @@ Also I will do test to check all parts of the engine works properly and it will 
  - Yaml cpp
  - Box2D
  - FreeType
+ - OpenAl-soft (not OpenAl)
+ - Libsndfile
  
  ## Environment
- Currently, I use vcpkg to manage dependencies, It's a cross platform package manager (developed by Microsoft).  
+ Currently, I use [vcpkg](https://github.com/Microsoft/vcpkg) to manage dependencies, It's a cross platform package manager (developed by Microsoft).  
  To use and install follow the vcpkg instructions on its repository.
+ 
+ __Important: The current version I use to get dependencies is from git commit ff9e982d26a5041670d700adb3fd26eb5139cb43.__
  
  After you will have set up vcpkg, execute the next command 
  
