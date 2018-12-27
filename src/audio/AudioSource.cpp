@@ -25,3 +25,14 @@ void AudioSource::play() const {
     alSourcePlay(sourceId_);
     CheckAlError();
 }
+
+bool AudioSource::isPlaying() const {
+    ALenum state;
+    alGetSourcei(sourceId_, AL_SOURCE_STATE, &state);
+
+    return state == AL_PLAYING;
+}
+
+void AudioSource::stop() const {
+    alSourceStop(sourceId_);
+}

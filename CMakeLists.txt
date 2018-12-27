@@ -53,7 +53,8 @@ set(ENGINE_SOURCES src/Game.cpp
         src/components/TextComponent.cpp
         src/audio/AudioEngine.cpp
         src/audio/AudioSource.cpp
-        )
+        src/audio/AudioBuffer.cpp
+        src/components/AudioComponent.cpp)
 
 set(GAME_SOURCES
         main.cpp

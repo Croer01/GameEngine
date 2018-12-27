@@ -21,6 +21,8 @@ public:
     ~AudioSource();
 
     void play() const;
+    bool isPlaying() const;
+    void stop() const;
 
 protected:
 };
