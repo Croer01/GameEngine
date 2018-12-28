@@ -8,45 +8,10 @@
 
 
 AudioBuffer::AudioBuffer(const std::string &filePath) {
-
-    // Open file and save initial data
-    file_ = sf_open(filePath.c_str(), SFM_READ, &fileInfo_);
-
-    if(!file_)
-    {
-        throw std::runtime_error("Could not open audio file '" + filePath + "'");
-    }
-
-    //TODO: load in multiple al buffers
-    alGenBuffers(1, &bufferId_);
-    CheckAlError();
-
-    // Read whole file
-    int sampleCount = fileInfo_.frames * fileInfo_.channels;
-    std::vector<ALshort> fileData(sampleCount);
-    sf_read_short(file_, &fileData[0], sampleCount);
-
-    alBufferData(
-            bufferId_,
-            getFormatFromChannels(fileInfo_.channels),
-            &fileData[0],
-            sampleCount*sizeof(ALushort),
-            fileInfo_.samplerate);
-    CheckAlError();
-
+    loadFileThread_ = std::async(std::launch::async, &AudioBuffer::loadFile, this, filePath);
 }
 
-AudioBuffer::~AudioBuffer() {
-    if(file_)
-    {
-        //TODO: Remove the file reference after load into buffer if it is not streamed?
-        sf_close(file_);
-        alDeleteBuffers(1, &bufferId_);
-    }
-}
-
-
-ALenum AudioBuffer::getFormatFromChannels(int channelCount)
+ALenum AudioBuffer::getFormatFromChannels(int channelCount) const
 {
     // Find audio format based on channel count
     int format = 0;
@@ -79,6 +44,42 @@ ALenum AudioBuffer::getFormatFromChannels(int channelCount)
     return format;
 }
 
-ALuint AudioBuffer::getId() const {
-    return bufferId_;
+void AudioBuffer::fillBuffer(ALuint buffer, int chunk) const {
+    loadFileThread_.wait();
+
+    //TODO: add mutex?
+    std::vector<ALshort> chunkData = chunks_[chunk];
+    alBufferData(
+            buffer,
+            getFormatFromChannels(fileInfo_.channels),
+            &chunkData[0],
+            chunkData.size() * sizeof(ALushort),
+            fileInfo_.samplerate);
+    CheckAlError();
+}
+
+int AudioBuffer::getChunkCount() const {
+    loadFileThread_.wait();
+    return chunks_.size();
+}
+
+void AudioBuffer::loadFile(const std::string &filePath) {
+    // Open file and save initial data
+    SNDFILE * file = sf_open(filePath.c_str(), SFM_READ, &fileInfo_);
+
+    if(!file)
+        throw std::runtime_error("Could not open audio file '" + filePath + "'");
+
+    int sampleSecondCount = fileInfo_.channels * fileInfo_.samplerate;
+
+    bool eof= false;
+    while(!eof) {
+        std::vector<ALshort> chunk(sampleSecondCount);
+        sf_count_t readCount = sf_read_short(file, &chunk[0], sampleSecondCount);
+        eof = readCount == 0;
+        if (!eof)
+            chunks_.push_back(chunk);
+    }
+
+    sf_close(file);
 }

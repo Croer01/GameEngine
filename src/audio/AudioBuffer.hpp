@@ -9,18 +9,24 @@
 #include <AL/al.h>
 #include <sndfile.h>
 #include <string>
+#include <vector>
+#include <future>
+
 
 class AudioBuffer {
-    ALuint bufferId_;
-    SNDFILE * file_;
     SF_INFO fileInfo_;
+    std::vector<std::vector<ALshort>> chunks_;
+    std::future<void> loadFileThread_;
+
+    void loadFile(const std::string &filePath);
 public:
     explicit AudioBuffer(const std::string &filePath);
-    ~AudioBuffer();
 
-    ALenum getFormatFromChannels(int channelCount);
+    ALenum getFormatFromChannels(int channelCount) const;
 
-    ALuint getId() const;
+    void fillBuffer(ALuint buffer, int chunk) const;
+
+    int getChunkCount() const;
 };
 
 
