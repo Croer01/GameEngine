@@ -10,21 +10,28 @@
 #include <string>
 #include <memory>
 #include <sndfile.h>
+#include <thread>
 #include "AudioBuffer.hpp"
+
+#define AUDIOSOURCE_BUFFERS 4
 
 class AudioSource {
 
     ALuint sourceId_;
     std::shared_ptr<AudioBuffer> buffer_;
+    ALuint streamBuffers_[AUDIOSOURCE_BUFFERS];
+    int currentChunk_;
+    std::thread streamThread_;
+
+    void processStream();
 public:
     explicit AudioSource(const std::shared_ptr<AudioBuffer> &buffer);
     ~AudioSource();
 
-    void play() const;
+    void play();
     bool isPlaying() const;
-    void stop() const;
-
-protected:
+    void stop();
+    void setLooping(bool loop);
 };
 
 
