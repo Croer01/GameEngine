@@ -8,7 +8,9 @@
 
 
 AudioBuffer::AudioBuffer(const std::string &filePath) {
-    loadFileThread_ = std::async(std::launch::async, &AudioBuffer::loadFile, this, filePath);
+    loaded_ = false;
+    loadFileRunning_ = false;
+    loadFileThread_ = std::thread(&AudioBuffer::loadFile, this, filePath);
 }
 
 ALenum AudioBuffer::getFormatFromChannels(int channelCount) const
@@ -44,8 +46,15 @@ ALenum AudioBuffer::getFormatFromChannels(int channelCount) const
     return format;
 }
 
-void AudioBuffer::fillBuffer(ALuint buffer, int chunk) const {
-    loadFileThread_.wait();
+bool AudioBuffer::fillBuffer(ALuint buffer, int chunk) const {
+    using namespace std::chrono_literals;
+
+    while(!loaded_ && chunk >= chunks_.size()){
+        std::this_thread::sleep_for(10ms);
+    }
+
+    if(chunk >= chunks_.size())
+        return false;
 
     //TODO: add mutex?
     std::vector<ALshort> chunkData = chunks_[chunk];
@@ -56,14 +65,11 @@ void AudioBuffer::fillBuffer(ALuint buffer, int chunk) const {
             chunkData.size() * sizeof(ALushort),
             fileInfo_.samplerate);
     CheckAlError();
-}
-
-int AudioBuffer::getChunkCount() const {
-    loadFileThread_.wait();
-    return chunks_.size();
+    return true;
 }
 
 void AudioBuffer::loadFile(const std::string &filePath) {
+    loadFileRunning_ = true;
     // Open file and save initial data
     SNDFILE * file = sf_open(filePath.c_str(), SFM_READ, &fileInfo_);
 
@@ -73,7 +79,7 @@ void AudioBuffer::loadFile(const std::string &filePath) {
     int sampleSecondCount = fileInfo_.channels * fileInfo_.samplerate;
 
     bool eof= false;
-    while(!eof) {
+    while(loadFileRunning_ && !eof) {
         std::vector<ALshort> chunk(sampleSecondCount);
         sf_count_t readCount = sf_read_short(file, &chunk[0], sampleSecondCount);
         eof = readCount == 0;
@@ -82,4 +88,11 @@ void AudioBuffer::loadFile(const std::string &filePath) {
     }
 
     sf_close(file);
+    loadFileRunning_ = false;
+    loaded_ = true;
+}
+
+AudioBuffer::~AudioBuffer() {
+    loadFileRunning_ = false;
+    loadFileThread_.join();
 }

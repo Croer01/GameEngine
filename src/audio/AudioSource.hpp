@@ -11,6 +11,7 @@
 #include <memory>
 #include <sndfile.h>
 #include <thread>
+#include <atomic>
 #include "AudioBuffer.hpp"
 
 #define AUDIOSOURCE_BUFFERS 4
@@ -22,7 +23,7 @@ class AudioSource {
     ALuint streamBuffers_[AUDIOSOURCE_BUFFERS];
     int currentChunk_;
     std::thread streamThread_;
-
+    std::atomic<bool> streamRunning_;
     void processStream();
 public:
     explicit AudioSource(const std::shared_ptr<AudioBuffer> &buffer);

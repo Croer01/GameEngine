@@ -12,6 +12,7 @@
 AudioSource::AudioSource(const std::shared_ptr<AudioBuffer> &buffer) {
     currentChunk_ = 0;
     buffer_ = buffer;
+    streamRunning_ = false;
 
     alGenSources(1, &sourceId_);
     CheckAlError();
@@ -22,6 +23,8 @@ AudioSource::AudioSource(const std::shared_ptr<AudioBuffer> &buffer) {
 AudioSource::~AudioSource() {
     alDeleteSources(1, &sourceId_);
     alDeleteBuffers(AUDIOSOURCE_BUFFERS, streamBuffers_);
+    streamRunning_ = false;
+    streamThread_.join();
 }
 
 void AudioSource::play() {
@@ -38,10 +41,8 @@ void AudioSource::play() {
     // Fill all the buffers with audio data from buffer_
     for(int i = 0; i < AUDIOSOURCE_BUFFERS; i++)
     {
-        if(currentChunk_ >= buffer_->getChunkCount())
+        if(!buffer_->fillBuffer(streamBuffers_[i], currentChunk_++))
             break;
-
-        buffer_->fillBuffer(streamBuffers_[i], currentChunk_++);
         alSourceQueueBuffers(sourceId_, 1, &streamBuffers_[i]);
     }
 
@@ -70,6 +71,7 @@ bool AudioSource::isPlaying() const {
 
 void AudioSource::stop() {
     alSourceStop(sourceId_);
+    streamRunning_ = false;
 }
 
 void AudioSource::setLooping(bool loop) {
@@ -78,27 +80,25 @@ void AudioSource::setLooping(bool loop) {
 
 void AudioSource::processStream() {
     using namespace std::chrono_literals;
-    bool running = true;
+    streamRunning_ = true;
 
-    while (running) {
+    while (streamRunning_) {
 
         ALint state = AL_INITIAL;
         alGetSourcei(sourceId_, AL_SOURCE_STATE, &state);
 
-        running = state == AL_PLAYING && currentChunk_ < buffer_->getChunkCount();
+        streamRunning_ = state == AL_PLAYING;
 
         ALint processedBuffers = 0;
         alGetSourcei(sourceId_, AL_BUFFERS_PROCESSED, &processedBuffers);
 
         while(processedBuffers > 0)
         {
-            if(currentChunk_ >= buffer_->getChunkCount())
-                break;
-
             ALuint buffer;
             alSourceUnqueueBuffers(sourceId_, 1, &buffer);
 
-            buffer_->fillBuffer(buffer, currentChunk_++);
+            streamRunning_ = buffer_->fillBuffer(buffer, currentChunk_++);
+
             alSourceQueueBuffers(sourceId_, 1, &buffer);
             processedBuffers--;
         }
@@ -106,5 +106,5 @@ void AudioSource::processStream() {
         std::this_thread::sleep_for(100ms);
     }
 
-    std::cout << "the stream finish successfully chunks: " << std::to_string(currentChunk_) << "/" << std::to_string(buffer_->getChunkCount()) << std::endl;
+    std::cout << "the stream finish successfully" << std::endl;
 }

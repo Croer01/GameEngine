@@ -10,23 +10,26 @@
 #include <sndfile.h>
 #include <string>
 #include <vector>
-#include <future>
+#include <thread>
+#include <atomic>
 
 
 class AudioBuffer {
     SF_INFO fileInfo_;
     std::vector<std::vector<ALshort>> chunks_;
-    std::future<void> loadFileThread_;
+    std::thread loadFileThread_;
+    std::atomic<bool> loadFileRunning_;
+    bool loaded_;
+
 
     void loadFile(const std::string &filePath);
 public:
     explicit AudioBuffer(const std::string &filePath);
+    virtual ~AudioBuffer();
 
     ALenum getFormatFromChannels(int channelCount) const;
 
-    void fillBuffer(ALuint buffer, int chunk) const;
-
-    int getChunkCount() const;
+    bool fillBuffer(ALuint buffer, int chunk) const;
 };
 
 
