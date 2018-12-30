@@ -11,6 +11,7 @@
 
 AudioSource::AudioSource(const std::shared_ptr<AudioBuffer> &buffer) {
     currentChunk_ = 0;
+    looping_ = false;
     buffer_ = buffer;
     streamRunning_ = false;
 
@@ -75,7 +76,7 @@ void AudioSource::stop() {
 }
 
 void AudioSource::setLooping(bool loop) {
-//    alSourcei(sourceId_, AL_LOOPING, loop? 1 : 0);
+    looping_ = loop;
 }
 
 void AudioSource::processStream() {
@@ -97,7 +98,17 @@ void AudioSource::processStream() {
             ALuint buffer;
             alSourceUnqueueBuffers(sourceId_, 1, &buffer);
 
-            streamRunning_ = buffer_->fillBuffer(buffer, currentChunk_++);
+            if(looping_) {
+                bool isEndOfBuffer = !buffer_->fillBuffer(buffer, currentChunk_++);
+
+                if(isEndOfBuffer) {
+                    currentChunk_ = 0;
+                    buffer_->fillBuffer(buffer, currentChunk_++);
+                }
+            }
+            else{
+                streamRunning_ = buffer_->fillBuffer(buffer, currentChunk_++);
+            }
 
             alSourceQueueBuffers(sourceId_, 1, &buffer);
             processedBuffers--;

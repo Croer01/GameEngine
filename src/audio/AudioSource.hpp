@@ -22,6 +22,7 @@ class AudioSource {
     std::shared_ptr<AudioBuffer> buffer_;
     ALuint streamBuffers_[AUDIOSOURCE_BUFFERS];
     int currentChunk_;
+    bool looping_;
     std::thread streamThread_;
     std::atomic<bool> streamRunning_;
     void processStream();
