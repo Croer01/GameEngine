@@ -32,6 +32,7 @@ void AudioSource::play() {
     //prepare data to stream sound
     currentChunk_ = 0;
 
+    //unqueue all buffers
     int buffersQueued = 0;
     alGetSourcei(sourceId_, AL_BUFFERS_QUEUED, &buffersQueued);
 
@@ -40,25 +41,24 @@ void AudioSource::play() {
     free(tmpBuffer);
 
     // Fill all the buffers with audio data from buffer_
+    bool needStream = true;
     for(int i = 0; i < AUDIOSOURCE_BUFFERS; i++)
     {
-        if(!buffer_->fillBuffer(streamBuffers_[i], currentChunk_++))
+        if(!buffer_->fillBuffer(streamBuffers_[i], currentChunk_++)){
+            needStream = false;
             break;
+        }
         alSourceQueueBuffers(sourceId_, 1, &streamBuffers_[i]);
     }
 
     alSourcePlay(sourceId_);
 
     //start the thread in charge of streaming the audio
-    if(streamThread_.joinable())
-        streamThread_.join();
-    streamThread_ = std::thread(&AudioSource::processStream, this);
-    // 1 - start queue first OpenAL buffers from buffer_.
-    // 2 - play audio.
-    // 3 - start new thread to queue/unqueue OpenAlBuffers from buffer_.
-    // 4 - If source stops there are 2 options:
-    //     - If loop is enable, continue from 1 (modifying some steps but quiet similar).
-    //     - If loop is disable, destroy thread and prepare for a future play action.
+    if(needStream) {
+        if (streamThread_.joinable())
+            streamThread_.join();
+        streamThread_ = std::thread(&AudioSource::processStream, this);
+    }
 
     CheckAlError();
 }
