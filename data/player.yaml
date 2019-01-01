@@ -7,3 +7,5 @@ components:
   - type: ColliderComponent
     colliderType: Kinematic
     category: player
+  - type: AudioComponent
+    filePath: assets/sounds/shoot.wav

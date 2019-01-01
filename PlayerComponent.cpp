@@ -20,6 +20,7 @@ void PlayerComponent::fromFile(const YAML::Node &componentConfig) {
 void PlayerComponent::init() {
     bullet_ = SceneManager::GetInstance().createGameObject("PlayerBullet");
     bullet_->setName("PlayerBullet");
+    shootSound_ = parent_->getComponent<AudioComponent>();
 }
 
 void PlayerComponent::Update(float elapsedTime) {
@@ -46,6 +47,8 @@ void PlayerComponent::Update(float elapsedTime) {
     if(!bullet_->isActive() && InputManager::GetInstance().isKeyPressed(SDLK_SPACE)){
         bullet_->setPosition(parent_->getPosition() + glm::vec3(sprite->getWidth()/2, 0, 0));
         bullet_->setActive(true);
+        if(auto shootSound = shootSound_.lock())
+            shootSound->play();
     }
 }
 
