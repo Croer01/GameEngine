@@ -7,6 +7,15 @@
 
 #include "src/Component.hpp"
 #include "EnemyManagerComponent.hpp"
+#include "src/components/AudioComponent.hpp"
+
+class MotherShipComponent;
+class MotherShipObserver : public Observer<GameObjectEvent>{
+    std::weak_ptr<AudioComponent> sound_;
+public:
+    explicit MotherShipObserver(MotherShipComponent *mothership);
+    void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
+};
 
 COMPONENT(MotherShipComponent);
 class MotherShipComponent : public Component, public Observer<GameObjectEvent> {
@@ -19,6 +28,8 @@ class MotherShipComponent : public Component, public Observer<GameObjectEvent> {
     std::weak_ptr<GameObject> playerBullet_;
     std::weak_ptr<EnemyManagerComponent> enemyManager_;
     std::weak_ptr<GameObject> scoreText_;
+    std::weak_ptr<GameObject> explosion_;
+    std::shared_ptr<MotherShipObserver> motherShipSoundObserver_;
 
 public:
     void init() override;

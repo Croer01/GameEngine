@@ -12,3 +12,6 @@ components:
     colliderType: Kinematic
     extends: [12, 8]
     category: enemy
+  - type: AudioComponent
+    filePath: assets/sounds/ufo_highpitch.wav
+    loopOnInit: true

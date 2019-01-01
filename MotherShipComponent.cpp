@@ -19,6 +19,9 @@ void MotherShipComponent::init() {
         playerBullet->registerObserver(this);
     scoreText_ = SceneManager::GetInstance().createGameObject("MotherShipScoreText");
     scoreText_.lock()->setActive(false);
+    explosion_ = SceneManager::GetInstance().createGameObject("EnemyExplosion");
+    explosion_ .lock()->setActive(false);
+    motherShipSoundObserver_ = std::make_shared<MotherShipObserver>(this);
 }
 
 void MotherShipComponent::Update(float elapsedTime) {
@@ -61,9 +64,15 @@ void MotherShipComponent::kill() {
         glm::vec3 desiredPos = parent_->getPosition();
         if(desiredPos.x < 0)
             desiredPos.x = 0;
+        desiredPos.y -=8;
+
         scoreText->setPosition(desiredPos);
         scoreText->setActive(true);
         scoreText->getComponent<TextComponent>().lock()->setText(std::to_string(points_));
+    }
+    if(auto explosion = explosion_.lock()){
+        explosion->setPosition(parent_->getPosition());
+        explosion->setActive(true);
     }
     hide();
 }
@@ -83,4 +92,20 @@ void MotherShipComponent::hide() {
     vec.x = 244;
     parent_->setPosition(vec);
     points_ = minPoints_;
+}
+
+MotherShipObserver::MotherShipObserver(MotherShipComponent *mothership) {
+    sound_ = mothership->getParent()->getComponent<AudioComponent>();
+    mothership->getParent()->registerObserver(this);
+}
+
+void MotherShipObserver::onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) {
+    if(event == GameObjectEvent::ActiveChanged){
+        if(auto sound = sound_.lock()) {
+            if(sound->getParent()->isActive())
+                sound->play();
+            else
+                sound->stop();
+        }
+    }
 }
