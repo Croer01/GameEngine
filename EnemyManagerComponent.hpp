@@ -7,8 +7,8 @@
 
 
 #include "src/Component.hpp"
+#include "src/Random.hpp"
 #include <glm/glm.hpp>
-#include <random>
 
 class MotherShipComponent;
 
@@ -37,8 +37,10 @@ class EnemyManagerComponent : public Component, public Subject<EnemyManagerEvent
     float currentBulletFrequency_;
     float bulletTimeAcumulator_;
     float mothershipFrequency_;
+    float mothershipCurrentFrequency_;
+    float mothershipVariation_;
     float mothershipTimeAcumulator_;
-    std::mt19937 rng_;
+    Random rnd_;
 
     glm::vec3 currentPosition_;
     float speed_;

@@ -14,6 +14,7 @@ void EnemyManagerComponent::init() {
     currentSpeed_ = speed_;
     currentPosition_ = parent_->getPosition();
     currentBulletFrequency_ = bulletFrequency_;
+    mothershipCurrentFrequency_ = rnd_.getRange(mothershipFrequency_ - mothershipVariation_,mothershipFrequency_ + mothershipVariation_);
 
     auto gameObject = SceneManager::GetInstance().findObjectByName("MotherShip");
     if(gameObject){
@@ -43,7 +44,6 @@ void EnemyManagerComponent::init() {
         bullet->setActive(false);
         bullets_.push_back(bullet);
     }
-    rng_ = std::mt19937(std::time(0));
 }
 
 void EnemyManagerComponent::Update(float elapsedTime) {
@@ -87,21 +87,24 @@ void EnemyManagerComponent::Update(float elapsedTime) {
             i++;
         }
 
-        if(bullet){
-            std::uniform_int_distribution<int> rndDist(0,enemiesActive.size() - 1);
-            int index = rndDist(rng_);
+        if(bullet) {
+            int index = rnd_.getRange(0,enemiesActive.size() - 1);
             bullet->setPosition(enemies_[enemiesActive[index]]->getPosition());
             bullet->setActive(true);
         }
         bulletTimeAcumulator_ = 0;
     }
 
-    mothershipTimeAcumulator_ += elapsedTime;
-    if(auto mothership = mothership_.lock()){
-        if(mothershipFrequency_ <= mothershipTimeAcumulator_) {
+    if(auto mothership = mothership_.lock()) {
+    if(!mothership->getParent()->isActive())
+        mothershipTimeAcumulator_ += elapsedTime;
+
+        if(mothershipCurrentFrequency_ <= mothershipTimeAcumulator_) {
             if(!mothership->getParent()->isActive())
                 mothership->getParent()->setActive(true);
             mothershipTimeAcumulator_ = 0;
+            mothershipCurrentFrequency_ = rnd_.getRange(mothershipFrequency_ - mothershipVariation_,mothershipFrequency_ + mothershipVariation_);
+            std::cout << "mothershipCurrentFrequency_: " << std::to_string(mothershipCurrentFrequency_)<< std::endl;
         }
     }
 }
@@ -114,6 +117,7 @@ std::shared_ptr<Component> EnemyManagerComponent::Clone() {
     clone->bulletsNum_ = bulletsNum_;
     clone->bulletFrequency_ = bulletFrequency_;
     clone->mothershipFrequency_ = mothershipFrequency_;
+    clone->mothershipVariation_ = mothershipVariation_;
 
     return clone;
 }
@@ -126,6 +130,7 @@ void EnemyManagerComponent::fromFile(const YAML::Node &componentConfig) {
     bulletFrequency_ = componentConfig["bulletFrequency"].as<float>();
 
     mothershipFrequency_ = componentConfig["mothershipFrequency"].as<float>();
+    mothershipVariation_ = componentConfig["mothershipVariation"].as<float>();
 
     rowsConfig_ = RowsConfig();
     rowsConfig_.enemiesPerRow = componentConfig["enemiesPerRow"].as<int>();
