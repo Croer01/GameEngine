@@ -9,6 +9,7 @@
 void StartMenuComponent::init() {
     timeAcumulator_ = 0;
     text_ = parent_->getComponent<TextComponent>();
+    audioSource_ = parent_->getComponent<AudioComponent>();
 }
 
 void StartMenuComponent::Update(float elapsedTime) {
@@ -22,6 +23,15 @@ void StartMenuComponent::Update(float elapsedTime) {
 
     if(InputManager::GetInstance().isKeyDown(SDLK_RETURN))
         SceneManager::GetInstance().changeScene("Scene0");
+
+
+    if(InputManager::GetInstance().isKeyDown(SDLK_SPACE)) {
+        if(auto audioSource = audioSource_.lock())
+            if(!audioSource->isPlaying())
+                audioSource->play();
+            else
+                audioSource->stop();
+    }
 }
 
 std::shared_ptr<Component> StartMenuComponent::Clone() {

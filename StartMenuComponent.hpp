@@ -9,10 +9,12 @@
 #include "src/Component.hpp"
 #include "glm/glm.hpp"
 #include "src/components/TextComponent.hpp"
+#include "src/components/AudioComponent.hpp"
 
 COMPONENT(StartMenuComponent)
 class StartMenuComponent : public Component {
     std::weak_ptr<TextComponent> text_;
+    std::weak_ptr<AudioComponent> audioSource_;
     float timeAcumulator_;
     float blinkTime_;
 public:
