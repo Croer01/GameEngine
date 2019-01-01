@@ -54,7 +54,8 @@ set(ENGINE_SOURCES src/Game.cpp
         src/audio/AudioEngine.cpp
         src/audio/AudioSource.cpp
         src/audio/AudioBuffer.cpp
-        src/components/AudioComponent.cpp)
+        src/components/AudioComponent.cpp
+        src/Random.cpp)
 
 set(GAME_SOURCES
         main.cpp
