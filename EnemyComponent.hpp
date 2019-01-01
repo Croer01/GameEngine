@@ -7,13 +7,17 @@
 
 #include "src/Component.hpp"
 #include "EnemyManagerComponent.hpp"
+#include "src/components/AudioComponent.hpp"
 
 COMPONENT(EnemyComponent);
 class EnemyComponent : public Component {
     int points_;
     std::weak_ptr<EnemyManagerComponent> enemyManager_;
+    std::weak_ptr<GameObject> explosion_;
 public:
     virtual ~EnemyComponent() = default;
+
+    void init() override;
 
     std::shared_ptr<Component> Clone() override;
 
