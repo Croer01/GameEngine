@@ -25,7 +25,8 @@ AudioSource::~AudioSource() {
     alDeleteSources(1, &sourceId_);
     alDeleteBuffers(AUDIOSOURCE_BUFFERS, streamBuffers_);
     streamRunning_ = false;
-    streamThread_.join();
+    if(streamThread_.joinable())
+        streamThread_.join();
 }
 
 void AudioSource::play() {
