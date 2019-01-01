@@ -59,6 +59,9 @@ void AudioSource::play() {
         if (streamThread_.joinable())
             streamThread_.join();
         streamThread_ = std::thread(&AudioSource::processStream, this);
+    // if I needn't stream and looping is enable, use OpenAl loop system
+    } else if(looping_) {
+        alSourcei(sourceId_, AL_LOOPING, 1);
     }
 
     CheckAlError();
@@ -74,6 +77,8 @@ bool AudioSource::isPlaying() const {
 void AudioSource::stop() {
     alSourceStop(sourceId_);
     streamRunning_ = false;
+    //always disable the OpenAl loop system to avoid weird playbacks
+    alSourcei(sourceId_, AL_LOOPING, 0);
 }
 
 void AudioSource::setLooping(bool loop) {
