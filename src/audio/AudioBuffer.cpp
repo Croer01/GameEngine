@@ -82,6 +82,9 @@ void AudioBuffer::loadFile(const std::string &filePath) {
     while(loadFileRunning_ && !eof) {
         std::vector<ALshort> chunk(sampleSecondCount);
         sf_count_t readCount = sf_read_short(file, &chunk[0], sampleSecondCount);
+        //resize the vector if the data read from file is less than one second
+        if(sampleSecondCount != readCount)
+            chunk.resize(readCount);
         eof = readCount == 0;
         if (!eof)
             chunks_.push_back(chunk);
