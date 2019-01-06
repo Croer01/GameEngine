@@ -80,6 +80,7 @@ GameObject::~GameObject() {
 std::shared_ptr<GameObject> GameObject::Clone() const {
     auto cloned = std::make_shared<GameObject>(nameType_);
 
+    cloned->name_ = name_;
     cloned->position_ = position_;
     cloned->rotation_ = rotation_;
     cloned->scale_ = scale_;
