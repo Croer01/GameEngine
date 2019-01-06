@@ -23,6 +23,7 @@ int main() {
         ObjectManager::GetInstance().registerPrototype("MotherShipStartMenu", "data/motherShipStartMenu.yaml");
         ObjectManager::GetInstance().registerPrototype("MotherShipScoreText", "data/motherShipScoreText.yaml");
         ObjectManager::GetInstance().registerPrototype("EnemyExplosion", "data/enemyExplosion.yaml");
+        ObjectManager::GetInstance().registerPrototype("LifesCounter", "data/playerLifesCounter.yaml");
 
         //register scene
         SceneManager::GetInstance().registerScene("StartMenu","data/startMenuScene.yaml");

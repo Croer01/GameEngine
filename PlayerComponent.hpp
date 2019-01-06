@@ -9,12 +9,16 @@
 #include "src/Component.hpp"
 #include "BulletComponent.hpp"
 #include "src/components/AudioComponent.hpp"
+#include "src/components/TextComponent.hpp"
 
 COMPONENT(PlayerComponent)
 class PlayerComponent : public Component {
     std::shared_ptr<GameObject> bullet_;
     std::weak_ptr<AudioComponent> shootSound_;
+    std::weak_ptr<TextComponent> lifesCounter_;
     float speed_;
+    int lives_;
+    int currentLives_;
 public:
     virtual ~PlayerComponent() = default;
 

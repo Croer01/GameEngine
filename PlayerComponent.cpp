@@ -10,17 +10,26 @@
 std::shared_ptr<Component> PlayerComponent::Clone() {
     auto clone = std::make_shared<PlayerComponent>();
     clone->speed_ = speed_;
+    clone->lives_ = lives_;
     return clone;
 }
 
 void PlayerComponent::fromFile(const YAML::Node &componentConfig) {
     speed_ = componentConfig["speed"].as<float>(0);
+    lives_ = componentConfig["lives"].as<int>(0);
 }
 
 void PlayerComponent::init() {
+    currentLives_ = lives_;
     bullet_ = SceneManager::GetInstance().createGameObject("PlayerBullet");
     bullet_->setName("PlayerBullet");
     shootSound_ = parent_->getComponent<AudioComponent>();
+    lifesCounter_ = SceneManager::GetInstance()
+            .findObjectByName("LifesCounter")->
+            findChildByName("Label")->
+            getComponent<TextComponent>();
+    if(auto lifesCounter = lifesCounter_.lock())
+        lifesCounter->setText("X" + std::to_string(currentLives_));
 }
 
 void PlayerComponent::Update(float elapsedTime) {
@@ -53,6 +62,12 @@ void PlayerComponent::Update(float elapsedTime) {
 }
 
 void PlayerComponent::kill() {
-    parent_->setActive(false);
-    SceneManager::GetInstance().changeScene("StartMenu");
+    currentLives_--;
+    if(currentLives_ < 0) {
+        parent_->setActive(false);
+        SceneManager::GetInstance().changeScene("StartMenu");
+    } else {
+        if(auto lifesCounter = lifesCounter_.lock())
+            lifesCounter->setText("X" + std::to_string(currentLives_));
+    }
 }
