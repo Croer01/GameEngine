@@ -235,3 +235,11 @@ void GameObject::onEvent(const Subject<GameObjectEvent> &target, const GameObjec
     //Used as a proxy for events raised from parent and affect directly to the children objects
     notify(event);
 }
+
+std::shared_ptr<GameObject> GameObject::findChildByName(const std::string &name) {
+    for(std::shared_ptr<GameObject> child : children_){
+        if(child->name_ == name)
+            return child;
+    }
+    return std::shared_ptr<GameObject>();
+}

@@ -55,6 +55,8 @@ public:
 
     void addChild(std::shared_ptr<GameObject> child);
 
+    std::shared_ptr<GameObject> findChildByName(const std::string &name);
+
     void setParent(GameObject *parent);
 
     void fromFile(const std::string &filename);
