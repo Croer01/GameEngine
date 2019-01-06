@@ -11,6 +11,7 @@
 #include <memory>
 #include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
+#include <yaml-cpp/yaml.h>
 #include "events/Subject.hpp"
 
 class Component;
@@ -22,7 +23,7 @@ enum class GameObjectEvent{
     ActiveChanged
 };
 
-class GameObject : public Subject<GameObjectEvent> {
+class GameObject : public Subject<GameObjectEvent>, private Observer<GameObjectEvent> {
     static int ID_GENERATOR;
     int id_;
     bool active_;
@@ -31,9 +32,14 @@ class GameObject : public Subject<GameObjectEvent> {
     std::string nameType_;
     std::string name_;
     std::vector<std::shared_ptr<Component>> components_;
+    std::vector<std::shared_ptr<GameObject>> children_;
     glm::vec3 position_;
     glm::vec3 rotation_;
     glm::vec3 scale_;
+    GameObject *parent_;
+
+    void fromYamlNode(const YAML::Node &node);
+
 public:
 
     explicit GameObject(const std::string &name);
@@ -47,19 +53,23 @@ public:
 
     void addComponent(std::shared_ptr<Component> component);
 
+    void addChild(std::shared_ptr<GameObject> child);
+
+    void setParent(GameObject *parent);
+
     void fromFile(const std::string &filename);
 
     std::shared_ptr<GameObject> Clone() const;
 
-    const glm::vec3 &getPosition() const;
+    glm::vec3 getPosition() const;
 
     void setPosition(const glm::vec3 &position);
 
-    const glm::vec3 &getRotation() const;
+    glm::vec3 getRotation() const;
 
     void setRotation(const glm::vec3 &rotation);
 
-    const glm::vec3 &getScale() const;
+    glm::vec3 getScale() const;
 
     void setScale(const glm::vec3 &scale);
 
@@ -81,6 +91,9 @@ public:
 
         return std::shared_ptr<T>();
     }
+
+private:
+    void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
 };
 
 
