@@ -8,6 +8,7 @@
 
 void TextComponent::init() {
     visible_ = true;
+    updateTextTransform();
 }
 
 std::shared_ptr<Component> TextComponent::Clone() {
@@ -34,7 +35,7 @@ void TextComponent::SetParent(GameObject *parent) {
     parent_ = parent;
 
     if(parent_ && textGraphic_){
-        textGraphic_->setModelTransform(parent_->getPosition(), parent_->getRotation(), parent_->getScale());
+        updateTextTransform();
 
         parent_->registerObserver(this);
     }
@@ -42,7 +43,7 @@ void TextComponent::SetParent(GameObject *parent) {
 
 void TextComponent::onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) {
     if(event == GameObjectEvent::TransformChanged){
-        textGraphic_->setModelTransform(parent_->getPosition(), parent_->getRotation(), parent_->getScale());
+        updateTextTransform();
     }
     else if(event == GameObjectEvent::ActiveChanged){
         textGraphic_->setActive(parent_->isActive() && visible_);
@@ -65,4 +66,11 @@ void TextComponent::setVisible(bool visible) {
 
 bool TextComponent::isVisible() const {
     return visible_;
+}
+
+void TextComponent::updateTextTransform() {
+    const glm::vec3 &position = parent_->getPosition();
+    const glm::vec3 &rotation = parent_->getRotation();
+    const glm::vec3 &scale = parent_->getScale();
+    textGraphic_->setModelTransform(position, rotation, scale);
 }

@@ -15,6 +15,8 @@ class TextComponent : public Component, public Observer<GameObjectEvent> {
     unsigned int fontSize_;
     std::shared_ptr<Text> textGraphic_;
     bool visible_;
+
+    void updateTextTransform();
 public:
     virtual ~TextComponent();
 
