@@ -6,7 +6,7 @@
 #include "../graphics/GraphicsEngine.hpp"
 
 void SpriteAnimatedComponent::init() {
-    visible_ = true;
+    setVisible(visible_);
     timeAcumulator_ = 0;
     index_[0] = 0;
     index_[1] = 0;
@@ -20,6 +20,7 @@ std::shared_ptr<Component> SpriteAnimatedComponent::Clone() {
     clone->timePerFrame_ = timePerFrame_;
     clone->columns_ = columns_;
     clone->rows_ = rows_;
+    clone->visible_ = visible_;
     GraphicsEngine::GetInstance().registerGraphic(clone->graphic_);
     return clone;
 }
@@ -32,6 +33,7 @@ void SpriteAnimatedComponent::fromFile(const YAML::Node &componentConfig) {
     timePerFrame_ = 1.f/componentConfig["framesPerSecond"].as<float>(1);
     columns_ = componentConfig["columns"].as<int>(1);
     rows_ = componentConfig["rows"].as<int>(1);
+    visible_ = componentConfig["visible"].as<bool>(true);
 }
 
 void SpriteAnimatedComponent::SetParent(GameObject *parent) {

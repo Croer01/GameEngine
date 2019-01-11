@@ -6,7 +6,7 @@
 #include "../graphics/GraphicsEngine.hpp"
 
 void SpriteComponent::init() {
-    visible_ = true;
+    setVisible(visible_);
 }
 
 std::shared_ptr<Component> SpriteComponent::Clone() {
@@ -14,6 +14,7 @@ std::shared_ptr<Component> SpriteComponent::Clone() {
     clone->graphicLoaded_ = graphicLoaded_;
     clone->graphic_ = std::make_shared<GraphicHolder>(graphicLoaded_);
     GraphicsEngine::GetInstance().registerGraphic(clone->graphic_);
+    clone->visible_ = visible_;
     return clone;
 }
 
@@ -21,6 +22,7 @@ void SpriteComponent::fromFile(const YAML::Node &componentConfig) {
     if(!componentConfig["filePath"])
         throw std::logic_error("property filePath not defined");
     graphicLoaded_ = std::make_shared<Graphic>(componentConfig["filePath"].as<std::string>());
+    visible_ = componentConfig["visible"].as<bool>(true);
 }
 
 void SpriteComponent::SetParent(GameObject *parent) {
