@@ -67,7 +67,8 @@ set(GAME_SOURCES
         StartMenuComponent.cpp
         MotherShipComponent.cpp
         BlinkTextComponent.cpp
-        EnemyExplosionComponent.cpp)
+        EnemyExplosionComponent.cpp
+        GameManagerComponent.cpp)
 
 # auto-generated files
 include(FindPythonInterp)

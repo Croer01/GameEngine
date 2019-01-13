@@ -13,3 +13,4 @@ prototypes:
   - prototype: MotherShip
     position: [244, 20, 0]
     name: MotherShip
+  - prototype: GameManager

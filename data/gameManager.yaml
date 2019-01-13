@@ -1,0 +1,3 @@
+components:
+  - type: GameManagerComponent
+    lives: 3
