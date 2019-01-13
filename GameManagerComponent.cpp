@@ -24,12 +24,15 @@ void GameManagerComponent::init() {
 
     if(auto lifesCounter = lifesCounter_.lock())
         lifesCounter->setText("X" + std::to_string(currentLives_));
+
+    playerKilledTimeAcumulator_ = 0.f;
+    playerKilledTime_ = 2.f;
+    playerKilled_ = false;
 }
 
 void GameManagerComponent::lostLive() {
     currentLives_--;
     if(currentLives_ < 0) {
-        parent_->setActive(false);
         SceneManager::GetInstance().changeScene("StartMenu");
     } else {
         if(auto lifesCounter = lifesCounter_.lock())
@@ -42,6 +45,21 @@ void GameManagerComponent::fromFile(const YAML::Node &componentConfig) {
 }
 
 void GameManagerComponent::onEvent(const Subject<PlayerEvents> &target, const PlayerEvents &event, void *args) {
-    if(event == PlayerEvents::KILLED)
+    if(event == PlayerEvents::KILLED) {
         lostLive();
+        playerKilled_ = true;
+        playerKilledTimeAcumulator_ = 0;
+        enemyManager_.lock()->setPause(true);
+    }
+}
+
+void GameManagerComponent::Update(float elapsedTime) {
+    if(playerKilled_){
+        if(playerKilledTime_ <= playerKilledTimeAcumulator_) {
+            player_.lock()->restore();
+            playerKilled_ = false;
+            enemyManager_.lock()->setPause(false);
+        }
+        playerKilledTimeAcumulator_ += elapsedTime;
+    }
 }

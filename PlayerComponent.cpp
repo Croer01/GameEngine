@@ -21,10 +21,16 @@ void PlayerComponent::init() {
     bullet_ = SceneManager::GetInstance().createGameObject("PlayerBullet");
     bullet_->setName("PlayerBullet");
     shootSound_ = parent_->getComponent<AudioComponent>();
+    sprite_ = getParent()->getComponent<SpriteComponent>();
+    spriteExplosion_ = getParent()->getComponent<SpriteAnimatedComponent>();
+    killed_ = false;
 
 }
 
 void PlayerComponent::Update(float elapsedTime) {
+    if(killed_)
+        return;
+
     glm::vec3 translation(0);
     auto sprite = parent_->getComponent<SpriteComponent>().lock();
 
@@ -54,5 +60,15 @@ void PlayerComponent::Update(float elapsedTime) {
 }
 
 void PlayerComponent::kill() {
+    sprite_.lock()->setVisible(false);
+    spriteExplosion_.lock()->setVisible(true);
     notify(PlayerEvents::KILLED);
+    killed_ = true;
+}
+
+void PlayerComponent::restore() {
+    sprite_.lock()->setVisible(true);
+    spriteExplosion_.lock()->setVisible(false);
+    parent_->setPosition(glm::vec3(106, 248, 0));
+    killed_ = false;
 }

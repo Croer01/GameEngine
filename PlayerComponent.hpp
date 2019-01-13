@@ -19,8 +19,10 @@ COMPONENT(PlayerComponent)
 class PlayerComponent : public Component , public Subject<PlayerEvents>{
     std::shared_ptr<GameObject> bullet_;
     std::weak_ptr<AudioComponent> shootSound_;
-    std::weak_ptr<TextComponent> lifesCounter_;
+    std::weak_ptr<SpriteComponent> sprite_;
+    std::weak_ptr<SpriteAnimatedComponent> spriteExplosion_;
     float speed_;
+    bool killed_;
 public:
     virtual ~PlayerComponent() = default;
 
@@ -34,6 +36,8 @@ public:
 
     //public player functions
     void kill();
+
+    void restore();
 };
 
 

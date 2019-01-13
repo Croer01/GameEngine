@@ -48,6 +48,8 @@ class EnemyManagerComponent : public Component, public Subject<EnemyManagerEvent
     float scaleFactor_;
     int score_;
 
+    bool paused_;
+
     void updateBoundingBox();
 
     void checkMoveToNextLevel();
@@ -64,7 +66,7 @@ public:
 
     void enemyKilled(int EnemyKilledpoints);
     int getScore() const;
-
+    void setPause(bool pause);
 };
 
 

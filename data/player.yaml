@@ -5,6 +5,11 @@ components:
     lives: 3
   - type: SpriteComponent
     filePath: assets\\player.png
+  - type: SpriteAnimatedComponent
+    filePath: assets\\player_explosion.png
+    columns: 2
+    framesPerSecond: 16
+    visible: false
   - type: ColliderComponent
     colliderType: Kinematic
     category: player

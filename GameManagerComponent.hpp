@@ -18,9 +18,15 @@ class GameManagerComponent : public Component, public Observer<PlayerEvents> {
     int lives_;
     int currentLives_;
 
+    float playerKilledTimeAcumulator_;
+    float playerKilledTime_;
+    bool playerKilled_;
+
     void lostLive();
 public:
     void init() override;
+
+    void Update(float elapsedTime) override;
 
     void fromFile(const YAML::Node &componentConfig) override;
 

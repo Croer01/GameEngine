@@ -44,9 +44,13 @@ void EnemyManagerComponent::init() {
         bullet->setActive(false);
         bullets_.push_back(bullet);
     }
+    paused_ = false;
 }
 
 void EnemyManagerComponent::Update(float elapsedTime) {
+    if(paused_)
+        return;
+
     float min = 0;
     float max = 224.f;
 
@@ -107,6 +111,10 @@ void EnemyManagerComponent::Update(float elapsedTime) {
             std::cout << "mothershipCurrentFrequency_: " << std::to_string(mothershipCurrentFrequency_)<< std::endl;
         }
     }
+}
+
+void EnemyManagerComponent::setPause(bool pause) {
+    paused_ = pause;
 }
 
 std::shared_ptr<Component> EnemyManagerComponent::Clone() {
