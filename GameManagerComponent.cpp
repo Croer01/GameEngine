@@ -32,12 +32,9 @@ void GameManagerComponent::init() {
 
 void GameManagerComponent::lostLive() {
     currentLives_--;
-    if(currentLives_ < 0) {
-        SceneManager::GetInstance().changeScene("StartMenu");
-    } else {
+    if(currentLives_ >= 0)
         if(auto lifesCounter = lifesCounter_.lock())
             lifesCounter->setText("X" + std::to_string(currentLives_));
-    }
 }
 
 void GameManagerComponent::fromFile(const YAML::Node &componentConfig) {
@@ -56,9 +53,13 @@ void GameManagerComponent::onEvent(const Subject<PlayerEvents> &target, const Pl
 void GameManagerComponent::Update(float elapsedTime) {
     if(playerKilled_){
         if(playerKilledTime_ <= playerKilledTimeAcumulator_) {
-            player_.lock()->restore();
-            playerKilled_ = false;
-            enemyManager_.lock()->setPause(false);
+            if(currentLives_ < 0) {
+                SceneManager::GetInstance().changeScene("StartMenu");
+            } else {
+                player_.lock()->restore();
+                playerKilled_ = false;
+                enemyManager_.lock()->setPause(false);
+            }
         }
         playerKilledTimeAcumulator_ += elapsedTime;
     }

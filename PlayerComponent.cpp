@@ -64,6 +64,7 @@ void PlayerComponent::kill() {
     spriteExplosion_.lock()->setVisible(true);
     notify(PlayerEvents::KILLED);
     killed_ = true;
+    bullet_->setActive(false);
 }
 
 void PlayerComponent::restore() {

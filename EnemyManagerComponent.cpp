@@ -115,6 +115,14 @@ void EnemyManagerComponent::Update(float elapsedTime) {
 
 void EnemyManagerComponent::setPause(bool pause) {
     paused_ = pause;
+    if(paused_){
+        mothership_.lock()->hide();
+
+        for (const std::shared_ptr<GameObject> &bullet : bullets_){
+            bullet->setActive(false);
+            bulletTimeAcumulator_ = 0;
+        }
+    }
 }
 
 std::shared_ptr<Component> EnemyManagerComponent::Clone() {
