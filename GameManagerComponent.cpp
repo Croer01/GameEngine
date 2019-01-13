@@ -25,6 +25,8 @@ void GameManagerComponent::init() {
     if(auto lifesCounter = lifesCounter_.lock())
         lifesCounter->setText("X" + std::to_string(currentLives_));
 
+    playerExplosionSound_ = parent_->getComponent<AudioComponent>();
+
     playerKilledTimeAcumulator_ = 0.f;
     playerKilledTime_ = 2.f;
     playerKilled_ = false;
@@ -47,6 +49,7 @@ void GameManagerComponent::onEvent(const Subject<PlayerEvents> &target, const Pl
         playerKilled_ = true;
         playerKilledTimeAcumulator_ = 0;
         enemyManager_.lock()->setPause(true);
+        playerExplosionSound_.lock()->play();
     }
 }
 

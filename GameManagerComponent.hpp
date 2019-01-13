@@ -14,6 +14,7 @@ class GameManagerComponent : public Component, public Observer<PlayerEvents> {
     std::weak_ptr<PlayerComponent> player_;
     std::weak_ptr<EnemyManagerComponent> enemyManager_;
     std::weak_ptr<TextComponent> lifesCounter_;
+    std::weak_ptr<AudioComponent> playerExplosionSound_;
 
     int lives_;
     int currentLives_;
