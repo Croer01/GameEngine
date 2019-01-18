@@ -20,6 +20,7 @@ class ColliderComponent : public Component, public Observer<ColliderEvent>, publ
     std::weak_ptr<SpriteComponent> sprite_;
     std::weak_ptr<SpriteAnimatedComponent> spriteAnimated_;
     glm::vec2 extends_;
+    glm::vec3 offset_;
 
     glm::vec3 convertWorldToPhysicsPos(glm::vec3 worldPos);
     glm::vec3 convertPhysicsToWorldPos(glm::vec3 physicsPos);
