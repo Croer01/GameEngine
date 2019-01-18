@@ -1,7 +1,7 @@
 components:
   - type: EnemyManagerComponent
     speed: 12
-    scaleFactor: 0.008
+    scaleFactor: 0.0072
     bulletsNum: 2
     bulletFrequency: 4
     mothershipFrequency: 11
