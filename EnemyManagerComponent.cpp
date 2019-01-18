@@ -51,8 +51,12 @@ void EnemyManagerComponent::Update(float elapsedTime) {
     if(paused_)
         return;
 
-    float min = 0;
-    float max = 224.f;
+    constexpr float min = 0;
+    constexpr float max = 224.f;
+    constexpr float bottom = 256.f;
+
+    if(currentPosition_.y + boundingBox_.w >= bottom)
+        SceneManager::GetInstance().changeScene("StartMenu");
 
     if ((currentPosition_.x + boundingBox_.x <= min && currentSpeed_ < 0) || (currentPosition_.x + boundingBox_.z >= max && currentSpeed_ > 0)) {
         currentSpeed_ = -currentSpeed_;
