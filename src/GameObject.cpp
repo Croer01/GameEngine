@@ -30,6 +30,9 @@ void GameObject::Init() {
     for (auto &component : components_) {
         component->init();
     }
+    for (auto &child : children_) {
+        child->Init();
+    }
 }
 
 void GameObject::Update(float elapsedTime){
