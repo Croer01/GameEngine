@@ -19,7 +19,7 @@ namespace {
         else if(typeName == "Dynamic" || typeName == "dynamic")
             return Collider::ColliderTypes::Dynamic;
         else if(typeName == "Kinematic" || typeName == "kinematic")
-            return Collider::ColliderTypes::Kinameatic;
+            return Collider::ColliderTypes::Kinematic;
 
         throw std::runtime_error("Unknown " + typeName + " collider type.");
     }

@@ -25,7 +25,7 @@ b2BodyDef *Collider::getBodyDef() const {
         case ColliderTypes::Dynamic:
             bodyDef->type = b2_dynamicBody;
             break;
-        case ColliderTypes::Kinameatic:
+        case ColliderTypes::Kinematic:
             bodyDef->type = b2_kinematicBody;
             break;
     }

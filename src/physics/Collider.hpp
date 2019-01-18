@@ -26,7 +26,7 @@ public:
     enum class ColliderTypes{
         Static,
         Dynamic,
-        Kinameatic
+        Kinematic
     };
 private:
     struct PropertiesToSetInSafeMode{
