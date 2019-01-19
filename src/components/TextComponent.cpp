@@ -29,24 +29,12 @@ void TextComponent::fromFile(const YAML::Node &componentConfig) {
     fontSize_ = componentConfig["fontSize"].as<unsigned int>();
 }
 
-void TextComponent::SetParent(GameObject *parent) {
-    if(parent_)
-        parent_->unregisterObserver(this);
-    parent_ = parent;
-
-    if(parent_ && textGraphic_){
-        updateTextTransform();
-
-        parent_->registerObserver(this);
-    }
-}
-
 void TextComponent::onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) {
     if(event == GameObjectEvent::TransformChanged){
         updateTextTransform();
     }
     else if(event == GameObjectEvent::ActiveChanged){
-        textGraphic_->setActive(parent_->isActive() && visible_);
+        textGraphic_->setActive(gameObject()->isActive() && visible_);
     }
 }
 
@@ -61,7 +49,7 @@ TextComponent::~TextComponent() {
 
 void TextComponent::setVisible(bool visible) {
     visible_ = visible;
-    textGraphic_->setActive(parent_->isActive() && visible_);
+    textGraphic_->setActive(gameObject()->isActive() && visible_);
 }
 
 bool TextComponent::isVisible() const {
@@ -69,8 +57,18 @@ bool TextComponent::isVisible() const {
 }
 
 void TextComponent::updateTextTransform() {
-    const glm::vec3 &position = parent_->getPosition();
-    const glm::vec3 &rotation = parent_->getRotation();
-    const glm::vec3 &scale = parent_->getScale();
+    const glm::vec3 &position = gameObject()->getPosition();
+    const glm::vec3 &rotation = gameObject()->getRotation();
+    const glm::vec3 &scale = gameObject()->getScale();
     textGraphic_->setModelTransform(position, rotation, scale);
+}
+
+void TextComponent::onGameObjectChange(GameObject *oldGameObject, GameObject *newGameObject) {
+    if(oldGameObject)
+        oldGameObject->unregisterObserver(this);
+
+    if(newGameObject && textGraphic_){
+        updateTextTransform();
+        newGameObject->registerObserver(this);
+    }
 }

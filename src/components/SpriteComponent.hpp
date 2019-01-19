@@ -14,6 +14,10 @@ class SpriteComponent : public Component, public Observer<GameObjectEvent>{
     std::shared_ptr<Graphic> graphicLoaded_;
     std::shared_ptr<GraphicHolder> graphic_;
     bool visible_;
+
+protected:
+    void onGameObjectChange(GameObject *oldGameObject, GameObject *newGameObject) override;
+
 public:
     ~SpriteComponent();
 
@@ -22,8 +26,6 @@ public:
     std::shared_ptr<Component> Clone() override;
 
     void fromFile(const YAML::Node &componentConfig) override;
-
-    void SetParent(GameObject *parent) override;
 
     int getWidth() const;
     int getHeight() const;

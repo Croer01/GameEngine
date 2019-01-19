@@ -38,18 +38,6 @@ void SpriteAnimatedComponent::fromFile(const YAML::Node &componentConfig) {
     playing_ = componentConfig["playOnInit"].as<bool>(true);
 }
 
-void SpriteAnimatedComponent::SetParent(GameObject *parent) {
-    if(parent_)
-        parent_->unregisterObserver(this);
-    parent_ = parent;
-
-    if(parent_ && graphic_){
-        graphic_->setModelTransform(parent_->getPosition(), parent_->getRotation(), parent_->getScale());
-
-        parent_->registerObserver(this);
-    }
-}
-
 int SpriteAnimatedComponent::getWidth() const {
     return graphic_->getCellWidth();
 }
@@ -60,10 +48,10 @@ int SpriteAnimatedComponent::getHeight() const {
 
 void SpriteAnimatedComponent::onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) {
     if(event == GameObjectEvent::TransformChanged){
-        graphic_->setModelTransform(parent_->getPosition(), parent_->getRotation(), parent_->getScale());
+        graphic_->setModelTransform(gameObject()->getPosition(), gameObject()->getRotation(), gameObject()->getScale());
     }
     else if(event == GameObjectEvent::ActiveChanged){
-        graphic_->setActive(parent_->isActive() && visible_);
+        graphic_->setActive(gameObject()->isActive() && visible_);
         resetAnimation();
     }
 }
@@ -74,7 +62,7 @@ SpriteAnimatedComponent::~SpriteAnimatedComponent() {
 
 void SpriteAnimatedComponent::setVisible(bool visible) {
     visible_ = visible;
-    graphic_->setActive(parent_->isActive() && visible_);
+    graphic_->setActive(gameObject()->isActive() && visible_);
     resetAnimation();
 }
 
@@ -137,4 +125,15 @@ void SpriteAnimatedComponent::setFrame(int frame) {
 
 int SpriteAnimatedComponent::getFramesNum() const {
     return columns_ * rows_;
+}
+
+void SpriteAnimatedComponent::onGameObjectChange(GameObject *oldGameObject, GameObject *newGameObject) {
+    if(oldGameObject)
+        oldGameObject->unregisterObserver(this);
+
+    if(newGameObject && graphic_){
+        graphic_->setModelTransform(newGameObject->getPosition(), newGameObject->getRotation(), newGameObject->getScale());
+
+        newGameObject->registerObserver(this);
+    }
 }

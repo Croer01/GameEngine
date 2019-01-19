@@ -57,7 +57,7 @@ void GameObject::addComponent(std::shared_ptr<Component> component) {
     auto it = std::find(components_.begin(),components_.end(),component);
     if(it != components_.end())
         return;
-    component->SetParent(this);
+    component->gameObject(this);
     components_.push_back(component);
 }
 
@@ -79,7 +79,7 @@ void GameObject::setParent(GameObject *parent) {
 
 GameObject::~GameObject() {
     for (auto &component : components_) {
-        component->SetParent(nullptr);
+        component->gameObject(nullptr);
     }
     components_.clear();
 }

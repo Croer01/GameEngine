@@ -11,7 +11,7 @@ std::shared_ptr<Component> HUDComponent::Clone() {
 }
 
 void HUDComponent::init() {
-    playerScore_ = parent_->getComponent<TextComponent>();
+    playerScore_ = gameObject()->getComponent<TextComponent>();
     std::shared_ptr<GameObject> enemyManagerObject = SceneManager::GetInstance().findObjectByName("EnemyManager");
     enemyManager_ = enemyManagerObject->getComponent<EnemyManagerComponent>();
     if(auto enemyManager = enemyManager_.lock())

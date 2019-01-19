@@ -27,12 +27,12 @@ void EnemyComponent::fromFile(const YAML::Node &componentConfig) {
 }
 
 void EnemyComponent::kill() {
-    parent_->setActive(false);
+    gameObject()->setActive(false);
     if(auto enemyManager = enemyManager_.lock())
         enemyManager->enemyKilled(points_);
 
     if(auto explosion = explosion_.lock()){
-        explosion->setPosition(parent_->getPosition());
+        explosion->setPosition(gameObject()->getPosition());
         explosion->setActive(true);
     }
 }

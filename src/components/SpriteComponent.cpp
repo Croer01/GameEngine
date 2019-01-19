@@ -25,18 +25,6 @@ void SpriteComponent::fromFile(const YAML::Node &componentConfig) {
     visible_ = componentConfig["visible"].as<bool>(true);
 }
 
-void SpriteComponent::SetParent(GameObject *parent) {
-    if(parent_)
-        parent_->unregisterObserver(this);
-    parent_ = parent;
-
-    if(parent_ && graphic_){
-        graphic_->setModelTransform(parent_->getPosition(), parent_->getRotation(), parent_->getScale());
-
-        parent_->registerObserver(this);
-    }
-}
-
 int SpriteComponent::getWidth() const {
     return graphicLoaded_->getWidth();
 }
@@ -47,10 +35,10 @@ int SpriteComponent::getHeight() const {
 
 void SpriteComponent::onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) {
     if(event == GameObjectEvent::TransformChanged){
-        graphic_->setModelTransform(parent_->getPosition(), parent_->getRotation(), parent_->getScale());
+        graphic_->setModelTransform(gameObject()->getPosition(), gameObject()->getRotation(), gameObject()->getScale());
     }
     else if(event == GameObjectEvent::ActiveChanged){
-        graphic_->setActive(parent_->isActive() && visible_);
+        graphic_->setActive(gameObject()->isActive() && visible_);
     }
 }
 
@@ -60,9 +48,20 @@ SpriteComponent::~SpriteComponent() {
 
 void SpriteComponent::setVisible(bool visible) {
     visible_ = visible;
-    graphic_->setActive(parent_->isActive() && visible_);
+    graphic_->setActive(gameObject()->isActive() && visible_);
 }
 
 bool SpriteComponent::isVisible() const {
     return visible_;
+}
+
+void SpriteComponent::onGameObjectChange(GameObject *oldGameObject, GameObject *newGameObject) {
+    if(oldGameObject)
+        oldGameObject->unregisterObserver(this);
+
+    if(newGameObject && graphic_){
+        graphic_->setModelTransform(gameObject()->getPosition(), newGameObject->getRotation(), newGameObject->getScale());
+
+        newGameObject->registerObserver(this);
+    }
 }

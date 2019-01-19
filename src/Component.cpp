@@ -4,10 +4,11 @@
 
 #include "Component.hpp"
 
-void Component::SetParent(GameObject *parent) {
-    parent_ = parent;
+void Component::gameObject(GameObject *gameObject) {
+    gameObject_ = gameObject;
+    onGameObjectChange(gameObject_, gameObject);
 }
 
-GameObject *Component::getParent() const {
-    return parent_;
+GameObject *Component::gameObject() const {
+    return gameObject_;
 }

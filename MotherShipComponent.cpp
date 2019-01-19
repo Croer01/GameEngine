@@ -31,10 +31,10 @@ void MotherShipComponent::Update(float elapsedTime) {
     glm::vec3 translation(0);
     translation.x-=speed_;
     
-    auto sprite = parent_->getComponent<SpriteComponent>().lock();
+    auto sprite = gameObject()->getComponent<SpriteComponent>().lock();
     
-    glm::vec3 desiredPos = parent_->getPosition() + (translation * elapsedTime);
-    parent_->setPosition(desiredPos);
+    glm::vec3 desiredPos = gameObject()->getPosition() + (translation * elapsedTime);
+    gameObject()->setPosition(desiredPos);
 
     if(desiredPos[0] + sprite->getWidth() < 0)
         hide();
@@ -61,7 +61,7 @@ void MotherShipComponent::kill() {
     if(auto enemyManager = enemyManager_.lock())
         enemyManager->enemyKilled(points_);
     if(auto scoreText = scoreText_.lock()) {
-        glm::vec3 desiredPos = parent_->getPosition();
+        glm::vec3 desiredPos = gameObject()->getPosition();
         if(desiredPos.x < 0)
             desiredPos.x = 0;
         desiredPos.y -=8;
@@ -71,7 +71,7 @@ void MotherShipComponent::kill() {
         scoreText->getComponent<TextComponent>().lock()->setText(std::to_string(points_));
     }
     if(auto explosion = explosion_.lock()){
-        explosion->setPosition(parent_->getPosition());
+        explosion->setPosition(gameObject()->getPosition());
         explosion->setActive(true);
     }
     hide();
@@ -79,7 +79,7 @@ void MotherShipComponent::kill() {
 
 void MotherShipComponent::onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) {
     if(auto bullet = playerBullet_.lock()) {
-        if (parent_->isActive() && event == GameObjectEvent::ActiveChanged && bullet->isActive()) {
+        if (gameObject()->isActive() && event == GameObjectEvent::ActiveChanged && bullet->isActive()) {
             points_ = std::min(points_ + pointsPerBullet_, maxPoints_);
             std::cout << "current points: " << std::to_string(points_) << std::endl;
         }
@@ -87,22 +87,22 @@ void MotherShipComponent::onEvent(const Subject<GameObjectEvent> &target, const 
 }
 
 void MotherShipComponent::hide() {
-    parent_->setActive(false);
-    glm::vec3 vec = parent_->getPosition();
+    gameObject()->setActive(false);
+    glm::vec3 vec = gameObject()->getPosition();
     vec.x = 244;
-    parent_->setPosition(vec);
+    gameObject()->setPosition(vec);
     points_ = minPoints_;
 }
 
 MotherShipObserver::MotherShipObserver(MotherShipComponent *mothership) {
-    sound_ = mothership->getParent()->getComponent<AudioComponent>();
-    mothership->getParent()->registerObserver(this);
+    sound_ = mothership->gameObject()->getComponent<AudioComponent>();
+    mothership->gameObject()->registerObserver(this);
 }
 
 void MotherShipObserver::onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) {
     if(event == GameObjectEvent::ActiveChanged){
         if(auto sound = sound_.lock()) {
-            if(sound->getParent()->isActive())
+            if(sound->gameObject()->isActive())
                 sound->play();
             else
                 sound->stop();

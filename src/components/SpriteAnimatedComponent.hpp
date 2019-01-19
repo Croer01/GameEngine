@@ -32,8 +32,6 @@ public:
 
     void fromFile(const YAML::Node &componentConfig) override;
 
-    void SetParent(GameObject *parent) override;
-
     void Update(float elapsedTime) override;
 
     int getWidth() const;
@@ -48,6 +46,9 @@ public:
     int getFramesNum() const;
 
     void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
+
+protected:
+    void onGameObjectChange(GameObject *oldGameObject, GameObject *newGameObject) override;
 };
 
 

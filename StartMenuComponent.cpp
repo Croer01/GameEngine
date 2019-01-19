@@ -8,8 +8,8 @@
 
 void StartMenuComponent::init() {
     timeAcumulator_ = 0;
-    text_ = parent_->getComponent<TextComponent>();
-    audioSource_ = parent_->getComponent<AudioComponent>();
+    text_ = gameObject()->getComponent<TextComponent>();
+    audioSource_ = gameObject()->getComponent<AudioComponent>();
 }
 
 void StartMenuComponent::Update(float elapsedTime) {

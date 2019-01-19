@@ -12,7 +12,7 @@
 
 void EnemyManagerComponent::init() {
     currentSpeed_ = speed_;
-    currentPosition_ = parent_->getPosition();
+    currentPosition_ = gameObject()->getPosition();
     currentBulletFrequency_ = bulletFrequency_;
     mothershipCurrentFrequency_ = rnd_.getRange(mothershipFrequency_ - mothershipVariation_,mothershipFrequency_ + mothershipVariation_);
 
@@ -104,12 +104,12 @@ void EnemyManagerComponent::Update(float elapsedTime) {
     }
 
     if(auto mothership = mothership_.lock()) {
-    if(!mothership->getParent()->isActive())
+    if(!mothership->gameObject()->isActive())
         mothershipTimeAcumulator_ += elapsedTime;
 
         if(mothershipCurrentFrequency_ <= mothershipTimeAcumulator_) {
-            if(!mothership->getParent()->isActive())
-                mothership->getParent()->setActive(true);
+            if(!mothership->gameObject()->isActive())
+                mothership->gameObject()->setActive(true);
             mothershipTimeAcumulator_ = 0;
             mothershipCurrentFrequency_ = rnd_.getRange(mothershipFrequency_ - mothershipVariation_,mothershipFrequency_ + mothershipVariation_);
             std::cout << "mothershipCurrentFrequency_: " << std::to_string(mothershipCurrentFrequency_)<< std::endl;
@@ -221,7 +221,7 @@ void EnemyManagerComponent::checkMoveToNextLevel() {
     }
 
     if(allEnemiesKilled){
-        currentPosition_ = parent_->getPosition();
+        currentPosition_ = gameObject()->getPosition();
         currentSpeed_ = std::abs(currentSpeed_);
 
         int rows = rowsConfig_.enemiesType.size();

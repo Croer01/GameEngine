@@ -12,8 +12,9 @@
 #define COMPONENT(x) //the #x component has been registered
 
 class Component {
+    GameObject *gameObject_;
 protected:
-    GameObject *parent_;
+    virtual void onGameObjectChange(GameObject *oldGameObject, GameObject *newGameObject) {};
 public:
     virtual ~Component(){};
     virtual void Update(float elapsedTime){};
@@ -21,8 +22,8 @@ public:
     virtual std::shared_ptr<Component> Clone() = 0;
     virtual void fromFile(const YAML::Node &componentConfig){};
 
-    virtual void SetParent(GameObject *parent);
-    GameObject *getParent() const;
+    void gameObject(GameObject *gameObject);
+    GameObject *gameObject() const;
 
 };
 

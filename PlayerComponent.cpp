@@ -20,9 +20,9 @@ void PlayerComponent::fromFile(const YAML::Node &componentConfig) {
 void PlayerComponent::init() {
     bullet_ = SceneManager::GetInstance().createGameObject("PlayerBullet");
     bullet_->setName("PlayerBullet");
-    shootSound_ = parent_->getComponent<AudioComponent>();
-    sprite_ = getParent()->getComponent<SpriteComponent>();
-    spriteExplosion_ = getParent()->getComponent<SpriteAnimatedComponent>();
+    shootSound_ = gameObject()->getComponent<AudioComponent>();
+    sprite_ = gameObject()->getComponent<SpriteComponent>();
+    spriteExplosion_ = gameObject()->getComponent<SpriteAnimatedComponent>();
     killed_ = false;
 
 }
@@ -32,7 +32,7 @@ void PlayerComponent::Update(float elapsedTime) {
         return;
 
     glm::vec3 translation(0);
-    auto sprite = parent_->getComponent<SpriteComponent>().lock();
+    auto sprite = gameObject()->getComponent<SpriteComponent>().lock();
 
     if (InputManager::GetInstance().isKeyPressed(SDLK_RIGHT)) {
         translation.x+=speed_;
@@ -41,18 +41,18 @@ void PlayerComponent::Update(float elapsedTime) {
     }
 
     if(translation.x != 0){
-        glm::vec3 desiredPos = parent_->getPosition() + (translation * elapsedTime);
+        glm::vec3 desiredPos = gameObject()->getPosition() + (translation * elapsedTime);
 
         if(desiredPos[0] < 0)
             desiredPos[0] = 0;
         else if(desiredPos[0] + sprite->getWidth() > 224)
             desiredPos[0] = 224 - sprite->getWidth();
 
-        parent_->setPosition(desiredPos);
+        gameObject()->setPosition(desiredPos);
     }
 
     if(!bullet_->isActive() && InputManager::GetInstance().isKeyPressed(SDLK_SPACE)){
-        bullet_->setPosition(parent_->getPosition() + glm::vec3(sprite->getWidth()/2, 0, 0));
+        bullet_->setPosition(gameObject()->getPosition() + glm::vec3(sprite->getWidth()/2, 0, 0));
         bullet_->setActive(true);
         if(auto shootSound = shootSound_.lock())
             shootSound->play();
@@ -70,6 +70,6 @@ void PlayerComponent::kill() {
 void PlayerComponent::restore() {
     sprite_.lock()->setVisible(true);
     spriteExplosion_.lock()->setVisible(false);
-    parent_->setPosition(glm::vec3(106, 248, 0));
+    gameObject()->setPosition(glm::vec3(106, 248, 0));
     killed_ = false;
 }

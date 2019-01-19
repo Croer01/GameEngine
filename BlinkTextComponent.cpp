@@ -8,7 +8,7 @@ void BlinkTextComponent::init() {
     timeToBlinkAcumulator_ = 0;
     durationAcumulator_ = 0;
     blinkElapsedTime_ = duration_/blinkTimes_;
-    text_ = parent_->getComponent<TextComponent>();
+    text_ = gameObject()->getComponent<TextComponent>();
 }
 
 std::shared_ptr<Component> BlinkTextComponent::Clone() {
@@ -34,7 +34,7 @@ void BlinkTextComponent::Update(float elapsedTime) {
     }
 
     if(durationAcumulator_ >= duration_) {
-        parent_->setActive(false);
+        gameObject()->setActive(false);
         durationAcumulator_ = 0;
     }
 }

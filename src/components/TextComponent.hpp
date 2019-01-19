@@ -26,8 +26,6 @@ public:
 
     void fromFile(const YAML::Node &componentConfig) override;
 
-    void SetParent(GameObject *parent) override;
-
     void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
 
     //Text public API
@@ -35,6 +33,9 @@ public:
 
     void setVisible(bool visible);
     bool isVisible() const;
+
+protected:
+    void onGameObjectChange(GameObject *oldGameObject, GameObject *newGameObject) override;
 };
 
 

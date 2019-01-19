@@ -61,13 +61,13 @@ void ColliderComponent::fromFile(const YAML::Node &componentConfig) {
 }
 
 void ColliderComponent::init() {
-    sprite_ = parent_->getComponent<SpriteComponent>();
-    spriteAnimated_ = parent_->getComponent<SpriteAnimatedComponent>();
+    sprite_ = gameObject()->getComponent<SpriteComponent>();
+    spriteAnimated_ = gameObject()->getComponent<SpriteAnimatedComponent>();
 
-    collider_->setPosition(convertWorldToPhysicsPos(parent_->getPosition()));
-    collider_->setActive(parent_->isActive());
+    collider_->setPosition(convertWorldToPhysicsPos(gameObject()->getPosition()));
+    collider_->setActive(gameObject()->isActive());
     if(extends_.x == 0 && extends_.y == 0){
-        glm::vec3 scale = glm::abs(parent_->getScale());
+        glm::vec3 scale = glm::abs(gameObject()->getScale());
         collider_->setSize(scale.x/2.f, scale.y/2.f);
     }else
         collider_->setSize(extends_.x/2.f, extends_.y/2.f);
@@ -77,7 +77,7 @@ void ColliderComponent::init() {
 
 void ColliderComponent::Update(float elapsedTime) {
     if(collider_->getType() == Collider::ColliderTypes::Dynamic)
-        parent_->setPosition(convertPhysicsToWorldPos(collider_->getPosition()));
+        gameObject()->setPosition(convertPhysicsToWorldPos(collider_->getPosition()));
 }
 
 void ColliderComponent::setOnColliderEnter(const OnColliderEventCallback &callback) {
@@ -94,15 +94,15 @@ void ColliderComponent::onEvent(const Subject<ColliderEvent> &target, const Coll
 
 void ColliderComponent::onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) {
     if(event == GameObjectEvent::PositionChanged){
-        if(!parent_->isActive() || collider_->getType() != Collider::ColliderTypes::Dynamic)
-            collider_->setPosition(convertWorldToPhysicsPos(parent_->getPosition()));
+        if(!gameObject()->isActive() || collider_->getType() != Collider::ColliderTypes::Dynamic)
+            collider_->setPosition(convertWorldToPhysicsPos(gameObject()->getPosition()));
     }
     else if(event == GameObjectEvent::ScaleChanged){
-        glm::vec3 scale = glm::abs(parent_->getScale());
+        glm::vec3 scale = glm::abs(gameObject()->getScale());
         collider_->setSize(scale.x/2.f, scale.y/2.f);
     }
     else if(event == GameObjectEvent::ActiveChanged){
-        collider_->setActive(parent_->isActive());
+        collider_->setActive(gameObject()->isActive());
     }
 }
 
@@ -153,12 +153,10 @@ glm::vec3 ColliderComponent::convertPhysicsToWorldPos(glm::vec3 physicsPos) {
     return result;
 }
 
-void ColliderComponent::SetParent(GameObject *parent) {
-        if(parent_)
-            parent_->unregisterObserver(this);
-        parent_ = parent;
-        if(parent_) {
-            parent_->registerObserver(this);
-        }
+void ColliderComponent::onGameObjectChange(GameObject *oldGameObject, GameObject *newGameObject) {
+    if (oldGameObject)
+        oldGameObject->unregisterObserver(this);
+    if (newGameObject)
+        newGameObject->registerObserver(this);
 }
 

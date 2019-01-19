@@ -5,9 +5,9 @@
 #include "EnemyExplosionComponent.hpp"
 
 void EnemyExplosionComponent::init() {
-    sound_ = parent_->getComponent<AudioComponent>();
+    sound_ = gameObject()->getComponent<AudioComponent>();
     LifeTimeAcumulator = 0;
-    parent_->registerObserver(this);
+    gameObject()->registerObserver(this);
 }
 
 void EnemyExplosionComponent::Update(float elapsedTime) {
@@ -15,12 +15,12 @@ void EnemyExplosionComponent::Update(float elapsedTime) {
 
     //150 ms
     if(LifeTimeAcumulator >= 0.15f)
-        parent_->setActive(false);
+        gameObject()->setActive(false);
 
 }
 
 void EnemyExplosionComponent::onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) {
-    if(event == GameObjectEvent::ActiveChanged && parent_->isActive()) {
+    if(event == GameObjectEvent::ActiveChanged && gameObject()->isActive()) {
         if(auto sound = sound_.lock())
             sound->play();
         LifeTimeAcumulator = 0;
