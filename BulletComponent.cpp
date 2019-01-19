@@ -43,24 +43,21 @@ void BulletComponent::onColliderEnter(ColliderComponent *other) {
     //kill the enemy
     if(enemy){
         enemy->kill();
-        parent_->setActive(false);
-    } else {
-        std::shared_ptr<PlayerComponent> player = other->getParent()->getComponent<PlayerComponent>().lock();
-
-        //kill the player
-        if(player){
-            player->kill();
-            parent_->setActive(false);
-        } else {
-
-            std::shared_ptr<MotherShipComponent> mothership = other->getParent()->getComponent<MotherShipComponent>().lock();
-            if(mothership){
-                mothership->kill();
-                parent_->setActive(false);
-            }
-        }
     }
 
+    std::shared_ptr<PlayerComponent> player = other->getParent()->getComponent<PlayerComponent>().lock();
 
+    //kill the player
+    if(player){
+        player->kill();
+    }
+
+    //kill the mothership
+    std::shared_ptr<MotherShipComponent> mothership = other->getParent()->getComponent<MotherShipComponent>().lock();
+    if(mothership){
+        mothership->kill();
+    }
+
+    parent_->setActive(false);
 }
 
