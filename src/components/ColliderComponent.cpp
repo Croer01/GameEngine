@@ -66,9 +66,10 @@ void ColliderComponent::init() {
 
     collider_->setPosition(convertWorldToPhysicsPos(parent_->getPosition()));
     collider_->setActive(parent_->isActive());
-    if(extends_.x == 0 && extends_.y == 0)
-        collider_->setSize(parent_->getScale().x/2.f, parent_->getScale().y/2.f);
-    else
+    if(extends_.x == 0 && extends_.y == 0){
+        glm::vec3 scale = glm::abs(parent_->getScale());
+        collider_->setSize(scale.x/2.f, scale.y/2.f);
+    }else
         collider_->setSize(extends_.x/2.f, extends_.y/2.f);
 
     collider_->registerObserver(this);
@@ -97,7 +98,8 @@ void ColliderComponent::onEvent(const Subject<GameObjectEvent> &target, const Ga
             collider_->setPosition(convertWorldToPhysicsPos(parent_->getPosition()));
     }
     else if(event == GameObjectEvent::ScaleChanged){
-        collider_->setSize(parent_->getScale().x/2.f, parent_->getScale().y/2.f);
+        glm::vec3 scale = glm::abs(parent_->getScale());
+        collider_->setSize(scale.x/2.f, scale.y/2.f);
     }
     else if(event == GameObjectEvent::ActiveChanged){
         collider_->setActive(parent_->isActive());
