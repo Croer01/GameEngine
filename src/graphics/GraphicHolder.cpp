@@ -11,7 +11,7 @@ GraphicHolder::GraphicHolder(const std::shared_ptr<Graphic> &graphic) :
     graphic_(graphic),
     modelTransform_(glm::mat4(1)),
     active_(true),
-    texOffset_(1),
+    texOffset_(0),
     texScale_(1){
 }
 
