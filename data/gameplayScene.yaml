@@ -14,3 +14,11 @@ prototypes:
     position: [244, 20, 0]
     name: MotherShip
   - prototype: GameManager
+  - prototype: Shelter
+    position: [25, 220, 0]
+  - prototype: Shelter
+    position: [75, 220, 0]
+  - prototype: Shelter
+    position: [125, 220, 0]
+  - prototype: Shelter
+    position: [175, 220, 0]

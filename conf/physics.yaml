@@ -3,8 +3,10 @@ categories:
   - enemy
   - playerBullet
   - enemyBullet
+  - shelter
 masks:
   player: [enemyBullet]
   enemy: [playerBullet]
-  enemyBullet: [player]
-  playerBullet: [enemy]
+  enemyBullet: [player, shelter]
+  playerBullet: [enemy, shelter]
+  shelter: [playerBullet, enemyBullet]
