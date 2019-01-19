@@ -47,6 +47,10 @@ void GameObject::Update(float elapsedTime){
     for (auto &component : components_) {
         component->Update(elapsedTime);
     }
+
+    for (auto &child : children_) {
+        child->Update(elapsedTime);
+    }
 }
 
 void GameObject::addComponent(std::shared_ptr<Component> component) {
