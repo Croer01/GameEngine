@@ -19,6 +19,7 @@ class SpriteAnimatedComponent : public Component, public Observer<GameObjectEven
     int rows_;
     int index_[2];
     bool visible_;
+    bool playing_;
 
     void resetAnimation();
 
@@ -39,6 +40,12 @@ public:
     int getHeight() const;
     void setVisible(bool visible);
     bool isVisible() const;
+
+    void play();
+    bool isPlaying() const;
+    void stop();
+    void setFrame(int frame);
+    int getFramesNum() const;
 
     void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
 };

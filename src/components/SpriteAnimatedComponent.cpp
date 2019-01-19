@@ -21,6 +21,7 @@ std::shared_ptr<Component> SpriteAnimatedComponent::Clone() {
     clone->columns_ = columns_;
     clone->rows_ = rows_;
     clone->visible_ = visible_;
+    clone->playing_ = playing_;
     GraphicsEngine::GetInstance().registerGraphic(clone->graphic_);
     return clone;
 }
@@ -34,6 +35,7 @@ void SpriteAnimatedComponent::fromFile(const YAML::Node &componentConfig) {
     columns_ = componentConfig["columns"].as<int>(1);
     rows_ = componentConfig["rows"].as<int>(1);
     visible_ = componentConfig["visible"].as<bool>(true);
+    playing_ = componentConfig["playOnInit"].as<bool>(true);
 }
 
 void SpriteAnimatedComponent::SetParent(GameObject *parent) {
@@ -81,6 +83,9 @@ bool SpriteAnimatedComponent::isVisible() const {
 }
 
 void SpriteAnimatedComponent::Update(float elapsedTime) {
+    if(!playing_)
+        return;
+
     timeAcumulator_ += elapsedTime;
     if(timeAcumulator_ >= timePerFrame_){
         index_[0] ++;
@@ -103,4 +108,33 @@ void SpriteAnimatedComponent::resetAnimation() {
     index_[1] = 0;
     timeAcumulator_ = 0;
     graphic_->setCellIndex(index_[0], index_[1]);
+}
+
+void SpriteAnimatedComponent::play() {
+    if(!playing_) {
+        playing_ = true;
+        resetAnimation();
+    }
+}
+
+bool SpriteAnimatedComponent::isPlaying() const {
+    return playing_;
+}
+
+void SpriteAnimatedComponent::stop() {
+    playing_ = false;
+}
+
+void SpriteAnimatedComponent::setFrame(int frame) {
+    if(frame >= getFramesNum())
+        throw std::invalid_argument("frame is out of bounds. The frame " +
+        std::to_string(frame) + " is equal or greater than " + std::to_string(getFramesNum()));
+
+    index_[0] = frame % columns_;
+    index_[1] = frame /columns_;
+    graphic_->setCellIndex(index_[0], index_[1]);
+}
+
+int SpriteAnimatedComponent::getFramesNum() const {
+    return columns_ * rows_;
 }
