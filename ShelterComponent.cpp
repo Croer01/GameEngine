@@ -11,16 +11,17 @@ void ShelterComponent::init() {
 
     collider_ = parent_->getComponent<ColliderComponent>();
     sprite_ = parent_->getComponent<SpriteAnimatedComponent>();
+    audio_ = parent_->getComponent<AudioComponent>();
 
     collider_.lock()->setOnColliderEnter([&](ColliderComponent*) {
         currentHits_++;
-
         if(currentHits_ >= maxHits_) {
             parent_->setActive(false);
         }
-        else if(auto sprite = sprite_.lock())
-            sprite->setFrame(currentHits_);
-
+        else {
+            sprite_.lock()->setFrame(currentHits_);
+            audio_.lock()->play();
+        }
     });
 }
 

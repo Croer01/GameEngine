@@ -10,6 +10,8 @@ children:
       - type: ColliderComponent
         category: shelter
       - type: ShelterComponent
+      - type: AudioComponent
+        filePath: assets/sounds/damageshelter.ogg
   - scale: [6, 6, 1]
     position: [6, 0, 0]
     components:
@@ -20,6 +22,8 @@ children:
       - type: ColliderComponent
         category: shelter
       - type: ShelterComponent
+      - type: AudioComponent
+        filePath: assets/sounds/damageshelter.ogg
   - scale: [6, 6, 1]
     position: [12, 0, 0]
     components:
@@ -30,6 +34,8 @@ children:
       - type: ColliderComponent
         category: shelter
       - type: ShelterComponent
+      - type: AudioComponent
+        filePath: assets/sounds/damageshelter.ogg
   - scale: [-6, 6, 1]
     position: [24, 0, 0]
     components:
@@ -41,6 +47,8 @@ children:
         offset: [-6, 0]
         category: shelter
       - type: ShelterComponent
+      - type: AudioComponent
+        filePath: assets/sounds/damageshelter.ogg
 # midle line
   - scale: [6, 6, 1]
     position: [0, 6, 0]
@@ -52,6 +60,8 @@ children:
       - type: ColliderComponent
         category: shelter
       - type: ShelterComponent
+      - type: AudioComponent
+        filePath: assets/sounds/damageshelter.ogg
   - scale: [6, 6, 0]
     position: [6, 6, 0]
     components:
@@ -62,6 +72,8 @@ children:
       - type: ColliderComponent
         category: shelter
       - type: ShelterComponent
+      - type: AudioComponent
+        filePath: assets/sounds/damageshelter.ogg
   - scale: [6, 6, 0]
     position: [12, 6, 0]
     components:
@@ -72,6 +84,8 @@ children:
       - type: ColliderComponent
         category: shelter
       - type: ShelterComponent
+      - type: AudioComponent
+        filePath: assets/sounds/damageshelter.ogg
   - scale: [6, 6, 1]
     position: [18, 6, 0]
     components:
@@ -82,6 +96,8 @@ children:
       - type: ColliderComponent
         category: shelter
       - type: ShelterComponent
+      - type: AudioComponent
+        filePath: assets/sounds/damageshelter.ogg
 # bottom line
   - scale: [6, 6, 1]
     position: [0, 12, 0]
@@ -93,6 +109,8 @@ children:
       - type: ColliderComponent
         category: shelter
       - type: ShelterComponent
+      - type: AudioComponent
+        filePath: assets/sounds/damageshelter.ogg
   - scale: [6, 6, 0]
     position: [6, 12, 0]
     components:
@@ -103,6 +121,8 @@ children:
       - type: ColliderComponent
         category: shelter
       - type: ShelterComponent
+      - type: AudioComponent
+        filePath: assets/sounds/damageshelter.ogg
   - scale: [-6, 6, 0]
     position: [18, 12, 0]
     components:
@@ -114,6 +134,8 @@ children:
         offset: [-6, 0]
         category: shelter
       - type: ShelterComponent
+      - type: AudioComponent
+        filePath: assets/sounds/damageshelter.ogg
   - scale: [6, 6, 1]
     position: [18, 12, 0]
     components:
@@ -124,3 +146,5 @@ children:
       - type: ColliderComponent
         category: shelter
       - type: ShelterComponent
+      - type: AudioComponent
+        filePath: assets/sounds/damageshelter.ogg

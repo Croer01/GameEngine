@@ -8,6 +8,7 @@
 #include "src/Component.hpp"
 #include "src/components/ColliderComponent.hpp"
 #include "src/components/SpriteAnimatedComponent.hpp"
+#include "src/components/AudioComponent.hpp"
 
 COMPONENT(ShelterComponent);
 class ShelterComponent : public Component{
@@ -15,6 +16,7 @@ class ShelterComponent : public Component{
     int currentHits_;
     std::weak_ptr<ColliderComponent> collider_;
     std::weak_ptr<SpriteAnimatedComponent> sprite_;
+    std::weak_ptr<AudioComponent> audio_;
 
 public:
     void init() override;
