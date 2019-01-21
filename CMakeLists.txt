@@ -3,59 +3,7 @@ project(SpaceInvaders)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_compile_options("$<$<CONFIG:DEBUG>:-DDEBUG>")
-
-# dependencies
-#SDL2_image
-find_path(SDL2_IMAGE_INCLUDE SDL2/SDL_image.h)
-find_library(SDL2_IMAGE_LIBRARY SDL2_image)
-
-
-find_package(SDL2 CONFIG REQUIRED)
-find_package(GLEW REQUIRED)
-find_package(glm CONFIG REQUIRED)
-find_package(OpenGL REQUIRED)
-find_package(OpenAL CONFIG REQUIRED)
-find_package(yaml-cpp CONFIG REQUIRED)
-find_package(unofficial-box2d CONFIG REQUIRED)
-find_package(Freetype REQUIRED)
-find_package(LibSndFile CONFIG REQUIRED)
-include_directories(${OPENGL_INCLUDE_DIRS})
-include_directories(${SDL2_INCLUDE_DIR} ${SDL2_IMAGE_INCLUDE} ${GLEW_INCLUDE_DIR} ${glm_INCLUDE_DIR})
-include_directories(${SDL2_ROOT}/include)
-
-# source files
-set(ENGINE_SOURCES src/Game.cpp
-        src/GameObject.cpp
-        src/Component.cpp
-        src/ObjectManager.cpp
-        src/Builder.cpp
-        src/SceneManager.cpp
-        src/Scene.cpp
-        src/utils.cpp
-        src/components/SpriteComponent.cpp
-        src/components/SpriteAnimatedComponent.cpp
-        src/graphics/GraphicsEngine.cpp
-        src/graphics/Graphic.cpp
-        src/graphics/Shader.cpp
-        src/InputManager.cpp
-        src/events/Observer.hpp
-        src/events/Subject.hpp
-        src/graphics/GraphicHolder.cpp
-        src/Screen.cpp
-        src/physics/PhysicsEngine.cpp
-        src/physics/Collider.cpp
-        src/components/ColliderComponent.cpp
-        src/physics/DebugView.cpp
-        src/graphics/font/Font.cpp
-        src/graphics/font/Text.cpp
-        src/graphics/font/FontManager.cpp
-        src/components/TextComponent.cpp
-        src/audio/AudioEngine.cpp
-        src/audio/AudioSource.cpp
-        src/audio/AudioBuffer.cpp
-        src/components/AudioComponent.cpp
-        src/Random.cpp)
+add_subdirectory(src)
 
 set(GAME_SOURCES
         main.cpp
@@ -82,21 +30,14 @@ add_custom_command(
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         COMMENT "Generating code to register components into the object manager"
 )
-set(ENGINE_SOURCES ${ENGINE_SOURCES} ${COMPONENTS_REGISTERED_CPP})
+set(GAME_SOURCES ${GAME_SOURCES} ${COMPONENTS_REGISTERED_CPP})
+
+find_package(SDL2 CONFIG REQUIRED)
 
 add_executable(SpaceInvaders ${ENGINE_SOURCES} ${GAME_SOURCES})
 target_link_libraries(SpaceInvaders PRIVATE
         SDL2::SDL2main
-        SDL2::SDL2
-        ${SDL2_IMAGE_LIBRARY}
-        yaml-cpp
-        GLEW::GLEW
-        glm
-        ${OPENGL_LIBRARIES}
-        unofficial::box2d::Box2D
-        Freetype::Freetype
-        OpenAL::OpenAL
-        sndfile-shared)
+        GameEngine)
 
 ADD_CUSTOM_TARGET(copyData ALL
         COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/data
