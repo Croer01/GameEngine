@@ -3,17 +3,19 @@
 //
 #ifndef SPACEINVADERS_OBSERVER_HPP
 #define SPACEINVADERS_OBSERVER_HPP
+namespace GameEngine {
+namespace Internal {
+    template<typename EventType>
+    class Subject;
 
-template <typename EventType>
-class Subject;
+    template<typename EventType>
+    class Observer {
+    public:
+        virtual ~Observer() {}
 
-template <typename EventType>
-class Observer {
-public:
-    virtual ~Observer() {}
-
-    virtual void onEvent(const Subject<EventType> &target, const EventType &event, void *args) = 0;
-};
-
+        virtual void onEvent(const Subject<EventType> &target, const EventType &event, void *args) = 0;
+    };
+}
+}
 
 #endif //SPACEINVADERS_OBSERVER_HPP

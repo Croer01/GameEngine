@@ -13,90 +13,107 @@
 #include <glm/mat4x4.hpp>
 #include <yaml-cpp/yaml.h>
 #include "events/Subject.hpp"
+#include "api.hpp"
 
-class Component;
-enum class GameObjectEvent{
-    TransformChanged,
-    PositionChanged,
-    RotationChanged,
-    ScaleChanged,
-    ActiveChanged
-};
+namespace GameEngine {
+namespace Internal {
+    class Component;
 
-class GameObject : public Subject<GameObjectEvent>, private Observer<GameObjectEvent> {
-    static int ID_GENERATOR;
-    int id_;
-    bool active_;
-    bool activeValueToSetInSafeMode_;
-    bool hasActiveValueToSetInSafeMode_;
-    std::string nameType_;
-    std::string name_;
-    std::vector<std::shared_ptr<Component>> components_;
-    std::vector<std::shared_ptr<GameObject>> children_;
-    glm::vec3 position_;
-    glm::vec3 rotation_;
-    glm::vec3 scale_;
-    GameObject *parent_;
+    enum class GameObjectEvent{
+        TransformChanged,
+        PositionChanged,
+        RotationChanged,
+        ScaleChanged,
+        ActiveChanged
+    };
 
-    void fromYamlNode(const YAML::Node &node);
+    class GameObject : public GameEngine::GameObject, public Subject<GameObjectEvent>, private Observer<GameObjectEvent> {
+        static int ID_GENERATOR;
+        int id_;
+        bool active_;
+        bool activeValueToSetInSafeMode_;
+        bool hasActiveValueToSetInSafeMode_;
+        std::string nameType_;
+        std::string name_;
+        std::vector<std::shared_ptr<Component>> components_;
+        std::vector<std::shared_ptr<GameObject>> children_;
+        glm::vec3 position_;
+        glm::vec3 rotation_;
+        glm::vec3 scale_;
+        GameObject *parent_;
 
-public:
+        void fromYamlNode(const YAML::Node &node);
 
-    explicit GameObject(const std::string &name);
-    ~GameObject();
+    public:
 
-    void Init();
+        explicit GameObject(const std::string &name);
+        ~GameObject();
 
-    void Update(float elapsedTime);
+        void Init();
 
-    std::string getType() const { return nameType_; };
+        void Update(float elapsedTime);
 
-    void addComponent(std::shared_ptr<Component> component);
+        std::string getType() const { return nameType_; };
 
-    void addChild(std::shared_ptr<GameObject> child);
+        void addComponent(std::shared_ptr<Component> component);
 
-    std::shared_ptr<GameObject> findChildByName(const std::string &name);
+        void addChild(std::shared_ptr<GameObject> child);
 
-    void setParent(GameObject *parent);
+        std::shared_ptr<GameObject> findChildByName(const std::string &name);
 
-    void fromFile(const std::string &filename);
+        void setParent(GameObject *parent);
 
-    std::shared_ptr<GameObject> Clone() const;
+        void fromFile(const std::string &filename);
 
-    glm::vec3 getPosition() const;
+        std::shared_ptr<GameObject> Clone() const;
 
-    void setPosition(const glm::vec3 &position);
+        glm::vec3 getPosition() const;
 
-    glm::vec3 getRotation() const;
+        void setPosition(const glm::vec3 &position);
 
-    void setRotation(const glm::vec3 &rotation);
+        glm::vec3 getRotation() const;
 
-    glm::vec3 getScale() const;
+        void setRotation(const glm::vec3 &rotation);
 
-    void setScale(const glm::vec3 &scale);
+        glm::vec3 getScale() const;
 
-    glm::mat4 getTransform();
+        void setScale(const glm::vec3 &scale);
 
-    bool isActive() const;
+        glm::mat4 getTransform();
 
-    void setActive(bool active);
+        bool isActive() const;
 
-    std::string getName() const;
-    void setName(const std::string &name);
+        void setActive(bool active);
 
-    template <typename T>
-    std::weak_ptr<T> getComponent() const{
-        for(auto component : components_){
-            if(auto desiredComponent = std::dynamic_pointer_cast<T>(component))
-                return desiredComponent;
+        std::string getName() const;
+        void setName(const std::string &name);
+
+        template <typename T>
+        std::weak_ptr<T> getComponent() const{
+            for(auto component : components_){
+                if(auto desiredComponent = std::dynamic_pointer_cast<T>(component))
+                    return desiredComponent;
+            }
+
+            return std::shared_ptr<T>();
         }
 
-        return std::shared_ptr<T>();
-    }
+        Vec3D position() const override;
 
-private:
-    void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
-};
+        void position(const Vec3D &position) override;
 
+        Vec3D rotation() const override;
+
+        void rotation(const Vec3D &rotation) override;
+
+        Vec3D scale() const override;
+
+        void scale(const Vec3D &scale) override;
+
+    private:
+        void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
+    };
+}
+}
 
 #endif //SPACEINVADERS_GAMEOBJECT_HPP

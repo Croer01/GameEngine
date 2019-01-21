@@ -3,12 +3,15 @@
 //
 
 #include "Component.hpp"
+namespace GameEngine {
+namespace Internal {
+    void Component::gameObject(GameObject *gameObject) {
+        gameObject_ = gameObject;
+        onGameObjectChange(gameObject_, gameObject);
+    }
 
-void Component::gameObject(GameObject *gameObject) {
-    gameObject_ = gameObject;
-    onGameObjectChange(gameObject_, gameObject);
+    GameObject *Component::gameObject() const {
+        return gameObject_;
+    }
 }
-
-GameObject *Component::gameObject() const {
-    return gameObject_;
 }

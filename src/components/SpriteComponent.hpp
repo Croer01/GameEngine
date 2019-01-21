@@ -9,31 +9,36 @@
 #include "../Component.hpp"
 #include "../graphics/Graphic.hpp"
 #include "../graphics/GraphicHolder.hpp"
+namespace GameEngine {
+namespace Internal {
+    class SpriteComponent : public Component, public Observer<GameObjectEvent> {
+        std::shared_ptr<Graphic> graphicLoaded_;
+        std::shared_ptr<GraphicHolder> graphic_;
+        bool visible_;
 
-class SpriteComponent : public Component, public Observer<GameObjectEvent>{
-    std::shared_ptr<Graphic> graphicLoaded_;
-    std::shared_ptr<GraphicHolder> graphic_;
-    bool visible_;
+    protected:
+        void onGameObjectChange(GameObject *oldGameObject, GameObject *newGameObject) override;
 
-protected:
-    void onGameObjectChange(GameObject *oldGameObject, GameObject *newGameObject) override;
+    public:
+        ~SpriteComponent();
 
-public:
-    ~SpriteComponent();
+        void init() override;
 
-    void init() override;
+        std::shared_ptr<Component> Clone() override;
 
-    std::shared_ptr<Component> Clone() override;
+        void fromFile(const YAML::Node &componentConfig) override;
 
-    void fromFile(const YAML::Node &componentConfig) override;
+        int getWidth() const;
 
-    int getWidth() const;
-    int getHeight() const;
-    void setVisible(bool visible);
-    bool isVisible() const;
+        int getHeight() const;
 
-    void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
-};
+        void setVisible(bool visible);
 
+        bool isVisible() const;
+
+        void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
+    };
+}
+}
 
 #endif //SPACEINVADERS_SPRITECOMPONENT_HPP

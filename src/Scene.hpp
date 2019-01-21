@@ -10,20 +10,28 @@
 #include <vector>
 #include <memory>
 #include "GameObject.hpp"
+namespace GameEngine {
+namespace Internal {
+    class Scene {
+        std::string filename_;
+        std::vector<std::shared_ptr<GameObject>> gameobjects_;
 
-class Scene {
-    std::string filename_;
-    std::vector<std::shared_ptr<GameObject>> gameobjects_;
+        void loadFile();
 
-    void loadFile();
-public:
-    explicit Scene(const std::string &filename);
-    void init();
-    void update(float elapsedTime);
-    void addGameObject(const std::shared_ptr<GameObject> &gameObject);
-    std::shared_ptr<GameObject> findObjectByName(const std::string &gameObjectName) const;
-    void shutDown();
-};
+    public:
+        explicit Scene(const std::string &filename);
 
+        void init();
+
+        void update(float elapsedTime);
+
+        void addGameObject(const std::shared_ptr<GameObject> &gameObject);
+
+        std::shared_ptr<GameObject> findObjectByName(const std::string &gameObjectName) const;
+
+        void shutDown();
+    };
+}
+}
 
 #endif //SPACEINVADERS_SCENE_HPP

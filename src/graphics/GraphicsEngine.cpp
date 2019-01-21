@@ -7,47 +7,48 @@
 #include "GraphicsEngine.hpp"
 #include "../utils.hpp"
 #include "font/FontManager.hpp"
+namespace GameEngine {
+namespace Internal {
+    void GraphicsEngine::init(const Screen &screen) {
 
-void GraphicsEngine::init(const Screen &screen) {
+        //set alpha blending
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    //set alpha blending
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    //The order of the vertices are fliped to from "n" to "u" way to deal with the inverted y axis
-    //VBO data
-    std::vector<float> vertices = std::vector<float>({ //vertex(3) | uv(2)
-                                                               0.f, 1.f, 0.f,   0.f, 1.f,
-                                                               0.f, 0.f, 0.f,   0.f, 0.f,
-                                                               1.f, 0.f, 0.f,   1.f, 0.f,
-                                                               1.f, 1.f, 0.f,   1.f, 1.f
-                                                      });
-    //IBO data
-    std::vector<unsigned int> indices = std::vector<unsigned int>({
-                                                                           0, 1, 2,
-                                                                           0, 2, 3
-                                                                   });
+        //The order of the vertices are fliped to from "n" to "u" way to deal with the inverted y axis
+        //VBO data
+        std::vector<float> vertices = std::vector<float>({ //vertex(3) | uv(2)
+                                                                 0.f, 1.f, 0.f, 0.f, 1.f,
+                                                                 0.f, 0.f, 0.f, 0.f, 0.f,
+                                                                 1.f, 0.f, 0.f, 1.f, 0.f,
+                                                                 1.f, 1.f, 0.f, 1.f, 1.f
+                                                         });
+        //IBO data
+        std::vector<unsigned int> indices = std::vector<unsigned int>({
+                                                                              0, 1, 2,
+                                                                              0, 2, 3
+                                                                      });
 
 
-    glGenVertexArrays(1, &mesh_.VAO);
+        glGenVertexArrays(1, &mesh_.VAO);
 
-    //  Set vertex data
-    glBindVertexArray(mesh_.VAO);
+        //  Set vertex data
+        glBindVertexArray(mesh_.VAO);
 
-    //Create VBO
-    glGenBuffers(1, &mesh_.vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, mesh_.vbo);
+        //Create VBO
+        glGenBuffers(1, &mesh_.vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, mesh_.vbo);
 
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat), &vertices.front(), GL_STREAM_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat), &vertices.front(), GL_STREAM_DRAW);
 
-    //Create IBO
-    glGenBuffers(1, &mesh_.ibo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_.ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), &indices.front(), GL_STREAM_DRAW);
-    CheckGlError();
+        //Create IBO
+        glGenBuffers(1, &mesh_.ibo);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_.ibo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), &indices.front(), GL_STREAM_DRAW);
+        CheckGlError();
 
-    spriteShader_ = std::make_shared<Shader>("Basic");
-    spriteShader_->setVertexShader(R"EOF(
+        spriteShader_ = std::make_shared<Shader>("Basic");
+        spriteShader_->setVertexShader(R"EOF(
         #version 330 core
 
         layout (location = 0) in vec3 aPos;
@@ -65,7 +66,7 @@ void GraphicsEngine::init(const Screen &screen) {
             TexCoord = TexOffest + aTexCoord * TexCoordScale;
         }
         )EOF");
-    spriteShader_->setFragmentShader(R"EOF(
+        spriteShader_->setFragmentShader(R"EOF(
         #version 330 core
         out vec4 FragColor;
 
@@ -79,11 +80,11 @@ void GraphicsEngine::init(const Screen &screen) {
             FragColor = vec4(texColor.rgb * Color.rgb, texColor.a);
         }
         )EOF");
-    spriteShader_->build();
-    CheckGlError();
+        spriteShader_->build();
+        CheckGlError();
 
-    textShader_ = std::make_shared<Shader>("TextShader");
-    textShader_->setVertexShader(R"EOF(
+        textShader_ = std::make_shared<Shader>("TextShader");
+        textShader_->setVertexShader(R"EOF(
         #version 330 core
 
         layout (location = 0) in vec3 aPos;
@@ -99,7 +100,7 @@ void GraphicsEngine::init(const Screen &screen) {
             TexCoord = aTexCoord;
         }
         )EOF");
-    textShader_->setFragmentShader(R"EOF(
+        textShader_->setFragmentShader(R"EOF(
         #version 330 core
         out vec4 FragColor;
 
@@ -114,78 +115,78 @@ void GraphicsEngine::init(const Screen &screen) {
             FragColor = Color * sampled;
         }
         )EOF");
-    textShader_->build();
-    CheckGlError();
+        textShader_->build();
+        CheckGlError();
 
-    //init projection matrix
-    projMatrix_ = glm::ortho(0.0f, (float)screen.getVirtualWidth(), (float)screen.getVirtualHeight(), 0.0f, 0.f,1.f);
-    CheckGlError();
+        //init projection matrix
+        projMatrix_ = glm::ortho(0.0f, (float) screen.getVirtualWidth(), (float) screen.getVirtualHeight(), 0.0f, 0.f,
+                                 1.f);
+        CheckGlError();
 
-    pixelPerfect_ = screen.isPixelPerfect();
-}
-
-void GraphicsEngine::draw() {
-    spriteShader_->bind();
-
-    spriteShader_->setUniform("projView", projMatrix_);
-
-    spriteShader_->setAttribute(Shader::Attributes::Vertex, mesh_.vbo);
-    spriteShader_->setAttribute(Shader::Attributes::UV, mesh_.vbo);
-    spriteShader_->setAttribute(Shader::Attributes::Indices, mesh_.ibo);
-
-    for (const std::shared_ptr<GraphicHolder> &graphic : graphics_) {
-        graphic->draw(spriteShader_);
+        pixelPerfect_ = screen.isPixelPerfect();
     }
 
-    spriteShader_->unbind();
+    void GraphicsEngine::draw() {
+        spriteShader_->bind();
 
-    //draw text
-    textShader_->bind();
+        spriteShader_->setUniform("projView", projMatrix_);
 
-    textShader_->setUniform("projView", projMatrix_);
+        spriteShader_->setAttribute(Shader::Attributes::Vertex, mesh_.vbo);
+        spriteShader_->setAttribute(Shader::Attributes::UV, mesh_.vbo);
+        spriteShader_->setAttribute(Shader::Attributes::Indices, mesh_.ibo);
 
-    for (const std::shared_ptr<Text> &text : texts_) {
-        text->draw(textShader_);
+        for (const std::shared_ptr<GraphicHolder> &graphic : graphics_) {
+            graphic->draw(spriteShader_);
+        }
+
+        spriteShader_->unbind();
+
+        //draw text
+        textShader_->bind();
+
+        textShader_->setUniform("projView", projMatrix_);
+
+        for (const std::shared_ptr<Text> &text : texts_) {
+            text->draw(textShader_);
+        }
+
+        textShader_->unbind();
     }
 
-    textShader_->unbind();
-}
+    GraphicsEngine::~GraphicsEngine() {
 
-GraphicsEngine::~GraphicsEngine() {
+        glDeleteBuffers(1, &mesh_.ibo);
+        glDeleteBuffers(1, &mesh_.vbo);
+        glDeleteVertexArrays(1, &mesh_.VAO);
+    }
 
-    glDeleteBuffers(1, &mesh_.ibo);
-    glDeleteBuffers(1, &mesh_.vbo);
-    glDeleteVertexArrays(1, &mesh_.VAO);
-}
+    void GraphicsEngine::registerGraphic(const std::shared_ptr<GraphicHolder> &graphic) {
+        graphics_.push_back(graphic);
+    }
 
-void GraphicsEngine::registerGraphic(const std::shared_ptr<GraphicHolder> &graphic) {
-    graphics_.push_back(graphic);
-}
+    void GraphicsEngine::unregisterGraphic(const std::shared_ptr<GraphicHolder> &graphic) {
+        auto it = std::find(graphics_.begin(), graphics_.end(), graphic);
+        if (it != graphics_.end()) {
+            std::swap(*it, *(--graphics_.end()));
+            graphics_.pop_back();
+        }
+    }
 
-void GraphicsEngine::unregisterGraphic(const std::shared_ptr<GraphicHolder> &graphic) {
-    auto it = std::find(graphics_.begin(), graphics_.end(), graphic);
-    if (it != graphics_.end())
-    {
-        std::swap(*it, *(--graphics_.end()));
-        graphics_.pop_back();
+    void GraphicsEngine::registerText(const std::shared_ptr<Text> &textGraphic) {
+        texts_.push_back(textGraphic);
+    }
+
+
+    void GraphicsEngine::unregisterText(const std::shared_ptr<Text> &textGraphic) {
+        auto it = std::find(texts_.begin(), texts_.end(), textGraphic);
+        if (it != texts_.end()) {
+            std::swap(*it, *(--texts_.end()));
+            texts_.pop_back();
+        }
+    }
+
+    bool GraphicsEngine::isPixelPerfect() const {
+        return pixelPerfect_;
     }
 }
-
-void GraphicsEngine::registerText(const std::shared_ptr<Text> &textGraphic) {
-    texts_.push_back(textGraphic);
 }
-
-
-void GraphicsEngine::unregisterText(const std::shared_ptr<Text> &textGraphic) {
-    auto it = std::find(texts_.begin(), texts_.end(), textGraphic);
-    if (it != texts_.end())
-    {
-        std::swap(*it, *(--texts_.end()));
-        texts_.pop_back();
-    }
-}
-
-bool GraphicsEngine::isPixelPerfect() const {
-    return pixelPerfect_;
-}
-

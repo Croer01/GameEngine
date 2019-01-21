@@ -7,37 +7,41 @@
 
 #include <unordered_map>
 #include <memory>
+namespace GameEngine {
+namespace Internal {
+    template<typename ReturnType, typename BuilderType, typename IdType>
+    class Factory {
+        std::unordered_map<IdType, BuilderType *> builders_;
+    public:
+        void AddBuilder(IdType type, BuilderType *builder) {
+            auto it = builders_.find(type);
 
-template <typename ReturnType, typename BuilderType, typename IdType>
-class Factory {
-    std::unordered_map<IdType,BuilderType*> builders_;
-public:
-    void AddBuilder(IdType type, BuilderType* builder){
-        auto it = builders_.find(type);
+            if (it != builders_.end())
+                throw std::exception("builder already exist");
 
-        if(it != builders_.end())
-            throw std::exception("builder already exist");
+            builders_.insert(std::pair<IdType, BuilderType *>(type, builder));
 
-        builders_.insert(std::pair<IdType, BuilderType*>(type, builder));
+        };
 
+        void RemoveBuilder(IdType type) {
+            auto it = builders_.find(type);
+
+            if (it == builders_.end())
+                throw std::exception("builder doesn't exist");
+
+            delete it->second;
+            builders_.erase(type);
+        };
+
+        std::shared_ptr<ReturnType> Create(IdType type) {
+            auto it = builders_.find(type);
+
+            if (it == builders_.end())
+                throw std::exception("builder doesn't exist");
+
+            return it->second->Create();
+        };
     };
-    void RemoveBuilder(IdType type){
-        auto it = builders_.find(type);
-
-        if(it == builders_.end())
-            throw std::exception("builder doesn't exist");
-
-        delete it->second;
-        builders_.erase(type);
-    };
-    std::shared_ptr<ReturnType> Create(IdType type){
-        auto it = builders_.find(type);
-
-        if(it == builders_.end())
-            throw std::exception("builder doesn't exist");
-
-        return it->second->Create();
-    };
-};
-
+}
+}
 #endif //SPACEINVADERS_FACTORY_HPP

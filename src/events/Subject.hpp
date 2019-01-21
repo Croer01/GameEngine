@@ -10,50 +10,49 @@
 #include <vector>
 #include <functional>
 #include "Observer.hpp"
+namespace GameEngine {
+namespace Internal {
+    template<typename EventType>
+    class Subject {
 
-template <typename EventType>
-class Subject {
+        std::vector<Observer<EventType> *> observers_;
+    public:
+        Subject() = default;
 
-    std::vector<Observer<EventType> *> observers_;
-public:
-    Subject()=default;
-    // disallow copying and assigning
-    Subject(const Subject&)=delete;
-    Subject& operator=(const Subject&)=delete;
+        // disallow copying and assigning
+        Subject(const Subject &) = delete;
 
-    virtual ~Subject(){
-        observers_.clear();
-    }
+        Subject &operator=(const Subject &) = delete;
 
-    void registerObserver(Observer<EventType>* observer)
-    {
-        observers_.push_back(observer);
-    }
-
-    void unregisterObserver(Observer<EventType>* observer)
-    {
-        auto it = std::find(observers_.begin(), observers_.end(), observer);
-        if (it != observers_.end())
-        {
-            std::swap(*it, *(--observers_.end()));
-            observers_.pop_back();
+        virtual ~Subject() {
+            observers_.clear();
         }
-    }
 
-    void notify(const EventType& event, void *args) const
-    {
-        for (Observer<EventType> *observer : observers_) {
-            observer->onEvent(*this, event, args);
+        void registerObserver(Observer<EventType> *observer) {
+            observers_.push_back(observer);
         }
-    }
 
-    void notify(const EventType& event) const
-    {
-        for (Observer<EventType> *observer : observers_) {
-            observer->onEvent(*this, event, nullptr);
+        void unregisterObserver(Observer<EventType> *observer) {
+            auto it = std::find(observers_.begin(), observers_.end(), observer);
+            if (it != observers_.end()) {
+                std::swap(*it, *(--observers_.end()));
+                observers_.pop_back();
+            }
         }
-    }
-};
 
+        void notify(const EventType &event, void *args) const {
+            for (Observer<EventType> *observer : observers_) {
+                observer->onEvent(*this, event, args);
+            }
+        }
+
+        void notify(const EventType &event) const {
+            for (Observer<EventType> *observer : observers_) {
+                observer->onEvent(*this, event, nullptr);
+            }
+        }
+    };
+}
+}
 
 #endif //SPACEINVADERS_SUBJECT_HPP

@@ -10,19 +10,24 @@
 #include <memory>
 #include <glm/glm.hpp>
 #include "Shader.h"
+namespace GameEngine {
+namespace Internal {
+    class Graphic {
+        unsigned int textureID_;
+        int width_;
+        int height_;
+    public:
+        explicit Graphic(std::string filename);
 
-class Graphic {
-    unsigned int textureID_;
-    int width_;
-    int height_;
-public:
-    explicit Graphic(std::string filename);
-    ~Graphic();
-    void draw(std::shared_ptr<Shader> shader);
+        ~Graphic();
 
-    int getWidth() const;
-    int getHeight() const;
-};
+        void draw(std::shared_ptr<Shader> shader);
 
+        int getWidth() const;
+
+        int getHeight() const;
+    };
+}
+}
 
 #endif //SPACEINVADERS_GRAPHIC_HPP

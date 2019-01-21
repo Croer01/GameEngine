@@ -13,17 +13,21 @@
 #include <memory>
 #include <map>
 
-class AudioEngine : public Singleton<AudioEngine> {
-    ALCcontext *context_;
-    ALCdevice *device_;
-    std::map<std::string, std::shared_ptr<AudioBuffer>> buffers_;
-public:
-    void init();
+namespace GameEngine {
+namespace Internal {
+    class AudioEngine : public Singleton<AudioEngine> {
+        ALCcontext *context_;
+        ALCdevice *device_;
+        std::map<std::string, std::shared_ptr<AudioBuffer>> buffers_;
+    public:
+        void init();
 
-    std::shared_ptr<AudioSource> getAudio(const std::string &filename);
+        std::shared_ptr<AudioSource> getAudio(const std::string &filename);
 
-    virtual ~AudioEngine();
-};
+        virtual ~AudioEngine();
+    };
+}
+}
 
 
 #endif //SPACEINVADERS_AUDIOENGINE_HPP

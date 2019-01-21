@@ -7,16 +7,21 @@
 
 
 #include <random>
+namespace GameEngine {
+namespace Internal {
+    class Random {
+        std::mt19937 generator_;
+        std::uniform_real_distribution<float> distributionReal_;
+    public:
+        Random();
 
-class Random {
-    std::mt19937 generator_;
-    std::uniform_real_distribution<float> distributionReal_;
-public:
-    Random();
-    float getFloat();
-    int getRange(int min, int max);
-    float getRange(float min, float max);
-};
+        float getFloat();
 
+        int getRange(int min, int max);
+
+        float getRange(float min, float max);
+    };
+}
+}
 
 #endif //SPACEINVADERS_RANDOM_HPP

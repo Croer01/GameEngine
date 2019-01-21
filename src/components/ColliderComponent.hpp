@@ -11,41 +11,50 @@
 #include "SpriteComponent.hpp"
 #include "SpriteAnimatedComponent.hpp"
 
-class ColliderComponent;
-typedef std::function<void (ColliderComponent *)> OnColliderEventCallback;
+namespace GameEngine {
+namespace Internal {
+        class ColliderComponent;
 
-class ColliderComponent : public Component, public Observer<ColliderEvent>, public Observer<GameObjectEvent>{
-    std::shared_ptr<Collider> collider_;
-    OnColliderEventCallback onColliderEnterCallback_;
-    std::weak_ptr<SpriteComponent> sprite_;
-    std::weak_ptr<SpriteAnimatedComponent> spriteAnimated_;
-    glm::vec2 extends_;
-    glm::vec3 offset_;
+        typedef std::function<void(ColliderComponent *)> OnColliderEventCallback;
 
-    glm::vec3 convertWorldToPhysicsPos(glm::vec3 worldPos);
-    glm::vec3 convertPhysicsToWorldPos(glm::vec3 physicsPos);
-public:
-    virtual ~ColliderComponent();
+        class ColliderComponent : public Component, public Observer<ColliderEvent>, public Observer<GameObjectEvent> {
+            std::shared_ptr<Collider> collider_;
+            OnColliderEventCallback onColliderEnterCallback_;
+            std::weak_ptr<SpriteComponent> sprite_;
+            std::weak_ptr<SpriteAnimatedComponent> spriteAnimated_;
+            glm::vec2 extends_;
+            glm::vec3 offset_;
 
-    std::shared_ptr<Component> Clone() override;
+            glm::vec3 convertWorldToPhysicsPos(glm::vec3 worldPos);
 
-    void init() override;
+            glm::vec3 convertPhysicsToWorldPos(glm::vec3 physicsPos);
 
-    void Update(float elapsedTime) override;
+        public:
+            virtual ~ColliderComponent();
 
-    void fromFile(const YAML::Node &componentConfig) override;
+            std::shared_ptr<Component> Clone() override;
 
-    void onEvent(const Subject<ColliderEvent> &target, const ColliderEvent &event, void *args) override;
-    void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
+            void init() override;
 
-    //Component collider public API
-    void setOnColliderEnter(const OnColliderEventCallback &callback);
-    void setVelocity(glm::vec3 velocity);
-    void applyForce(glm::vec3 force);
+            void Update(float elapsedTime) override;
 
-protected:
-    void onGameObjectChange(GameObject *oldGameObject, GameObject *newGameObject) override;
-};
+            void fromFile(const YAML::Node &componentConfig) override;
 
+            void onEvent(const Subject<ColliderEvent> &target, const ColliderEvent &event, void *args) override;
+
+            void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
+
+            //Component collider public API
+            void setOnColliderEnter(const OnColliderEventCallback &callback);
+
+            void setVelocity(glm::vec3 velocity);
+
+            void applyForce(glm::vec3 force);
+
+        protected:
+            void onGameObjectChange(GameObject *oldGameObject, GameObject *newGameObject) override;
+        };
+    }
+}
 
 #endif //SPACEINVADERS_COLLIDERCOMPONENT_HPP

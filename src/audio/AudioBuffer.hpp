@@ -12,25 +12,27 @@
 #include <vector>
 #include <thread>
 #include <atomic>
+namespace GameEngine {
+namespace Internal {
+    class AudioBuffer {
+        SF_INFO fileInfo_;
+        std::vector<std::vector<ALshort>> chunks_;
+        std::thread loadFileThread_;
+        std::atomic<bool> loadFileRunning_;
+        bool loaded_;
 
 
-class AudioBuffer {
-    SF_INFO fileInfo_;
-    std::vector<std::vector<ALshort>> chunks_;
-    std::thread loadFileThread_;
-    std::atomic<bool> loadFileRunning_;
-    bool loaded_;
+        void loadFile(const std::string &filePath);
+    public:
+        explicit AudioBuffer(const std::string &filePath);
+        virtual ~AudioBuffer();
 
+        ALenum getFormatFromChannels(int channelCount) const;
 
-    void loadFile(const std::string &filePath);
-public:
-    explicit AudioBuffer(const std::string &filePath);
-    virtual ~AudioBuffer();
-
-    ALenum getFormatFromChannels(int channelCount) const;
-
-    bool fillBuffer(ALuint buffer, int chunk) const;
-};
+        bool fillBuffer(ALuint buffer, int chunk) const;
+    };
+}
+}
 
 
 #endif //SPACEINVADERS_AUDIOBUFFER_HPP

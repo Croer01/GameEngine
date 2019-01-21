@@ -11,23 +11,29 @@
 #include "Singleton.hpp"
 #include "Screen.hpp"
 #include <string>
+namespace GameEngine {
+namespace Internal {
+    class Game : public Singleton<Game> {
+        std::shared_ptr<SDL_Window> mainWindow_;
+        SDL_GLContext mainContext_;
+        bool running_;
 
-class Game : public Singleton<Game> {
-    std::shared_ptr<SDL_Window> mainWindow_;
-    SDL_GLContext mainContext_;
-    bool running_;
+        std::unique_ptr<Screen> screen_;
 
-    std::unique_ptr<Screen> screen_;
+        void initSDLWindow();
 
-    void initSDLWindow();
-    void initPhysics(const std::string &configFilePath);
+        void initPhysics(const std::string &configFilePath);
 
-    void makeCurrentContext();
-public:
-    void init(const std::string &configRoot);
-    void loop();
-    void shutdown();
-};
+        void makeCurrentContext();
 
+    public:
+        void init(const std::string &configRoot);
+
+        void loop();
+
+        void shutdown();
+    };
+}
+}
 
 #endif //SPACEINVADERS_GAME_HPP
