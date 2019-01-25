@@ -22,12 +22,12 @@ namespace Internal {
             OnColliderEventCallback onColliderEnterCallback_;
             std::weak_ptr<SpriteComponent> sprite_;
             std::weak_ptr<SpriteAnimatedComponent> spriteAnimated_;
-            glm::vec2 extends_;
-            glm::vec3 offset_;
+            Vec2D extends_;
+            Vec2D offset_;
 
-            glm::vec3 convertWorldToPhysicsPos(glm::vec3 worldPos);
+            Vec2D convertWorldToPhysicsPos(const Vec2D &worldPos) const;
 
-            glm::vec3 convertPhysicsToWorldPos(glm::vec3 physicsPos);
+            Vec2D convertPhysicsToWorldPos(const Vec2D &physicsPos) const;
 
         public:
             virtual ~ColliderComponent();

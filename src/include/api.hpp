@@ -12,31 +12,53 @@
 #endif
 namespace GameEngine {
 
-struct PUBLICAPI Vec3D {
+//TODO: Move Vec2D into math header
+struct PUBLICAPI Vec2D {
     float x;
     float y;
-    float z;
 
-    Vec3D() : x(0), y(0), z(0){};
-    Vec3D(float x, float y, float z) : x(x), y(y), z(z){};
-};
+    Vec2D() : x(0), y(0){};
+    Vec2D(float x, float y) : x(x), y(y){};
 
-class PUBLICAPI GameObject {
-public:
-    virtual ~GameObject() = 0;
+    Vec2D operator+(const Vec2D &other) const {
+        return Vec2D(x + other.x, y + other.y);
+    };
 
-    virtual Vec3D position() const = 0;
+    Vec2D operator+=(const Vec2D &other){
+        x += other.x;
+        y += other.y;
+        return *this;
+    };
 
-    virtual void position(const Vec3D &position) = 0;
+    Vec2D operator-(const Vec2D &other) const {
+        return Vec2D(x - other.x, y - other.y);
+    };
 
-    virtual Vec3D rotation() const = 0;
+    Vec2D operator-=(const Vec2D &other) {
+        x -= other.x;
+        y -= other.y;
+        return *this;
+    };
 
-    virtual void rotation(const Vec3D &rotation) = 0;
 
-    virtual Vec3D scale() const = 0;
+    Vec2D operator*(const Vec2D &other) const {
+        return Vec2D(x * other.x, y * other.y);
+    };
 
-    virtual void scale(const Vec3D &scale) = 0;
+    Vec2D operator*=(const Vec2D &other) {
+        x *= other.x;
+        y *= other.y;
+        return *this;
+    };
 
+    bool operator==(const Vec2D &rhs) const {
+        return x == rhs.x &&
+               y == rhs.y;
+    }
+
+    bool operator!=(const Vec2D &rhs) const {
+        return !(rhs == *this);
+    }
 };
 }
 

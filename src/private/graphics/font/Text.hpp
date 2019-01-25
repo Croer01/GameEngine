@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 #include <array>
+#include <api.hpp>
 #include "Font.hpp"
 #include "../Shader.h"
 
@@ -37,7 +38,7 @@ namespace Internal {
 
         void setText(const std::string &text);
 
-        void setModelTransform(const glm::vec3 &position, const glm::vec3 &rotation, const glm::vec3 &scale);
+        void setModelTransform(const Vec2D &position, const Vec2D &rotation, const Vec2D &scale);
 
         void setActive(bool active);
     };

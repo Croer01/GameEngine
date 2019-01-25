@@ -23,9 +23,10 @@ namespace Internal {
             active_(true),
             activeValueToSetInSafeMode_(true),
             hasActiveValueToSetInSafeMode_(false),
-            position_(glm::vec3(0.f)),
-            rotation_(glm::vec3(0.f)),
-            scale_(glm::vec3(1.f)) {
+            position_(0.f, 0.f),
+            rotation_(0.f, 0.f),
+            scale_(1.f,1.f) {
+        computeTransform();
     }
 
     void GameObject::Init() {
@@ -121,58 +122,59 @@ namespace Internal {
         }
     }
 
-    glm::vec3 GameObject::getPosition() const {
-        glm::vec3 position = position_;
+    Vec2D GameObject::position() const {
+        Vec2D position = position_;
         if(parent_)
             position += parent_->position_;
         return position;
     }
 
-    void GameObject::setPosition(const glm::vec3 &position) {
+    void GameObject::position(const Vec2D &position) {
         if(position_ != position) {
             position_ = position;
             notify(GameObjectEvent::PositionChanged);
+            computeTransform();
             notify(GameObjectEvent::TransformChanged);
         }
     }
 
-    glm::vec3 GameObject::getRotation() const {
-        glm::vec3 rotation = rotation_;
+    Vec2D GameObject::rotation() const {
+        Vec2D rotation = rotation_;
         if(parent_)
             rotation += parent_->rotation_;
         return rotation;
     }
 
-    void GameObject::setRotation(const glm::vec3 &rotation) {
+    void GameObject::rotation(const Vec2D &rotation) {
         if(rotation_ != rotation) {
             rotation_ = rotation;
             notify(GameObjectEvent::RotationChanged);
+            computeTransform();
             notify(GameObjectEvent::TransformChanged);
         }
     }
 
-    glm::vec3 GameObject::getScale() const {
-        glm::vec3 scale = scale_;
+    Vec2D GameObject::scale() const {
+        Vec2D scale = scale_;
         if(parent_)
             scale *= parent_->scale_;
         return scale;
     }
 
-    void GameObject::setScale(const glm::vec3 &scale) {
+    void GameObject::scale(const Vec2D &scale) {
         if(scale_ != scale){
             scale_ = scale;
             notify(GameObjectEvent::ScaleChanged);
+            computeTransform();
             notify(GameObjectEvent::TransformChanged);
         }
     }
 
     glm::mat4 GameObject::getTransform() {
-        //remember the order of matrix multiplication is from right to left
-        glm::mat4 transform = glm::translate(glm::mat4(1),position_) * glm::mat4_cast(glm::quat(rotation_)) * glm::scale(glm::mat4(1),scale_);
         if(parent_)
-            return parent_->getTransform() * transform;
+            return parent_->getTransform() * transform_;
 
-        return transform;
+        return transform_;
     }
 
     bool GameObject::isActive() const {
@@ -196,24 +198,25 @@ namespace Internal {
         if(node["name"])
             name_ = node["name"].as<std::string>();
 
+        // TODO: refactor the position, the rotation and the scale to get arrays of length 2
         //object properties
         if(node["position"]){
             YAML::Node position = node["position"];
             if(!position.IsSequence() || position.size() != 3)
                 throw std::runtime_error("position must be a sequence of 3 numeric values.");
-            this->setPosition(glm::vec3(position[0].as<double>(), position[1].as<double>(), position[2].as<double>()));
+            this->position(Vec2D(position[0].as<float>(), position[1].as<float>()));
         }
         if(node["rotation"]){
             YAML::Node rotation = node["rotation"];
             if(!rotation.IsSequence() || rotation.size() != 3)
                 throw std::runtime_error("rotation must be a sequence of 3 numeric values.");
-            this->setRotation(glm::vec3(rotation[0].as<double>(), rotation[1].as<double>(), rotation[2].as<double>()));
+            this->rotation(Vec2D(rotation[0].as<float>(), rotation[1].as<float>()));
         }
         if(node["scale"]){
             YAML::Node scale = node["scale"];
             if(!scale.IsSequence() || scale.size() != 3)
                 throw std::runtime_error("scale must be a sequence of 3 numeric values.");
-            this->setScale(glm::vec3(scale[0].as<double>(), scale[1].as<double>(), scale[2].as<double>()));
+            this->scale(Vec2D(scale[0].as<float>(), scale[1].as<float>()));
         }
 
         //load components
@@ -254,34 +257,9 @@ namespace Internal {
         return std::shared_ptr<GameObject>();
     }
 
-    Vec3D GameObject::position() const {
-        return {position_.x, position_.y, position_.z};
-    }
-
-    void GameObject::position(const Vec3D &position) {
-        position_.x = position.x;
-        position_.y = position.y;
-        position_.z = position.z;
-    }
-
-    Vec3D GameObject::rotation() const {
-        return {rotation_.x, rotation_.y, rotation_.z};
-    }
-
-    void GameObject::rotation(const Vec3D &rotation) {
-        rotation_.x = rotation.x;
-        rotation_.y = rotation.y;
-        rotation_.z = rotation.z;
-    }
-
-    Vec3D GameObject::scale() const {
-        return {scale_.x, scale_.y, scale_.z};
-    }
-
-    void GameObject::scale(const Vec3D &scale) {
-        scale_.x = scale.x;
-        scale_.y = scale.y;
-        scale_.z = scale.z;
+    void GameObject::computeTransform() {
+        //remember the order of matrix multiplication is from right to left
+        transform_ = glm::translate(glm::mat4(1),glm::vec3(position_.x,position_.y,0.f)) * glm::mat4_cast(glm::quat(glm::vec3(rotation_.x, rotation_.y,0.f))) * glm::scale(glm::mat4(1),glm::vec3(scale_.x, scale_.y, 1.f));
     }
 }
 }

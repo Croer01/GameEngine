@@ -9,12 +9,13 @@
 #include "ObjectManager.hpp"
 namespace GameEngine {
 namespace Internal {
-    glm::vec3 readVector3(const YAML::Node &node, float defaultValue) {
+    //TODO: create internal overload operator for serialize/deserialize using YAML
+    Vec2D readVec2D(const YAML::Node &node, float defaultValue) {
         if (!node.IsSequence() || node.size() != 3) {
-            return glm::vec3(defaultValue, defaultValue, defaultValue);
+            return Vec2D(defaultValue, defaultValue);
         }
 
-        return glm::vec3(node[0].as<double>(), node[1].as<double>(), node[2].as<double>());
+        return Vec2D(node[0].as<float>(), node[1].as<float>());
     }
 
     Scene::Scene(const std::string &filename) : filename_(filename) {
@@ -52,11 +53,11 @@ namespace Internal {
 
                 //object properties
                 if (prototype["position"])
-                    gameObject->setPosition(readVector3(prototype["position"], 0));
+                    gameObject->position(readVec2D(prototype["position"], 0));
                 if (prototype["rotation"])
-                    gameObject->setRotation(readVector3(prototype["rotation"], 0));
+                    gameObject->rotation(readVec2D(prototype["rotation"], 0));
                 if (prototype["scale"])
-                    gameObject->setScale(readVector3(prototype["scale"], 1));
+                    gameObject->scale(readVec2D(prototype["scale"], 1));
 
                 std::cout << "object created " << prototype["prototype"].as<std::string>() << std::endl;
                 gameobjects_.push_back(gameObject);

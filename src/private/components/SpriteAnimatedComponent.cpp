@@ -49,7 +49,7 @@ namespace GameEngine {
 
     void SpriteAnimatedComponent::onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) {
         if(event == GameObjectEvent::TransformChanged){
-            graphic_->setModelTransform(gameObject()->getPosition(), gameObject()->getRotation(), gameObject()->getScale());
+            graphic_->setModelTransform(gameObject()->position(), gameObject()->rotation(), gameObject()->scale());
         }
         else if(event == GameObjectEvent::ActiveChanged){
             graphic_->setActive(gameObject()->isActive() && visible_);
@@ -133,7 +133,7 @@ namespace GameEngine {
             oldGameObject->unregisterObserver(this);
 
         if(newGameObject && graphic_){
-            graphic_->setModelTransform(newGameObject->getPosition(), newGameObject->getRotation(), newGameObject->getScale());
+            graphic_->setModelTransform(newGameObject->position(), newGameObject->rotation(), newGameObject->scale());
 
             newGameObject->registerObserver(this);
         }

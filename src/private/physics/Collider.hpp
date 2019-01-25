@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <glm/vec3.hpp>
+#include <api.hpp>
 #include "../events/Subject.hpp"
 namespace GameEngine {
 namespace Internal {
@@ -65,9 +66,9 @@ namespace Internal {
 
         void setActive(bool active);
 
-        void setPosition(glm::vec3 pos);
+        void setPosition(const Vec2D &pos);
 
-        glm::vec3 getPosition() const;
+        Vec2D getPosition() const;
 
         void setCategory(const std::string &category);
 

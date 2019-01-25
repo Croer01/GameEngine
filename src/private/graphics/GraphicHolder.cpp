@@ -26,14 +26,15 @@ namespace Internal {
     }
 
     void
-    GraphicHolder::setModelTransform(const glm::vec3 &position, const glm::vec3 &rotation, const glm::vec3 &scale) {
-        //remember the order of matrix multiplication is from right to left
+    GraphicHolder::setModelTransform(const Vec2D &position, const Vec2D &rotation, const Vec2D &scale) {
+        glm::vec3 desiredPosition = glm::vec3(position.x,position.y,0.f);
+
         if (GraphicsEngine::GetInstance().isPixelPerfect())
-            modelTransform_ = glm::translate(glm::mat4(1), glm::round(position)) * glm::mat4_cast(glm::quat(rotation)) *
-                              glm::scale(glm::mat4(1), scale);
-        else
-            modelTransform_ = glm::translate(glm::mat4(1), position) * glm::mat4_cast(glm::quat(rotation)) *
-                              glm::scale(glm::mat4(1), scale);
+            desiredPosition = glm::round(desiredPosition);
+
+        //remember the order of matrix multiplication is from right to left
+        modelTransform_ = glm::translate(glm::mat4(1), desiredPosition) * glm::mat4_cast(glm::quat(glm::vec3(rotation.x, rotation.y,0.f))) *
+                          glm::scale(glm::mat4(1), glm::vec3(scale.x, scale.y, 1.f));
     }
 
     void GraphicHolder::setGraphic(const std::shared_ptr<Graphic> &graphic) {

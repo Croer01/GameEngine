@@ -59,10 +59,9 @@ namespace Internal {
     }
 
     void TextComponent::updateTextTransform() {
-        const glm::vec3 &position = gameObject()->getPosition();
-        const glm::vec3 &rotation = gameObject()->getRotation();
-        const glm::vec3 &scale = gameObject()->getScale();
-        textGraphic_->setModelTransform(position, rotation, scale);
+        textGraphic_->setModelTransform(gameObject()->position(),
+                gameObject()->rotation(),
+                gameObject()->scale());
     }
 
     void TextComponent::onGameObjectChange(GameObject *oldGameObject, GameObject *newGameObject) {

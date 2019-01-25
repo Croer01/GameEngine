@@ -65,20 +65,20 @@ namespace Internal {
         return clone;
     }
 
-    void Collider::setPosition(glm::vec3 pos) {
+    void Collider::setPosition(const Vec2D &pos) {
         propertiesToSetInSafeMode_.hasPosition = true;
         propertiesToSetInSafeMode_.position = b2Vec2(pos.x / PhysicsEngine::getScalePixelsToMeter(),
                                                      pos.y / PhysicsEngine::getScalePixelsToMeter());
     }
 
-    glm::vec3 Collider::getPosition() const {
+    Vec2D Collider::getPosition() const {
         b2Vec2 position = body_->GetPosition();
 
         if (propertiesToSetInSafeMode_.hasPosition)
             position = propertiesToSetInSafeMode_.position;
 
-        return glm::vec3(position.x * PhysicsEngine::getScalePixelsToMeter(),
-                         position.y * PhysicsEngine::getScalePixelsToMeter(), 0);
+        return Vec2D(position.x * PhysicsEngine::getScalePixelsToMeter(),
+                         position.y * PhysicsEngine::getScalePixelsToMeter());
     }
 
     void Collider::setSize(float extendX, float extendY) {

@@ -26,42 +26,47 @@ include_directories(${OPENGL_INCLUDE_DIRS})
 include_directories(${SDL2_INCLUDE_DIR} ${SDL2_IMAGE_INCLUDE} ${GLEW_INCLUDE_DIR} ${glm_INCLUDE_DIR})
 include_directories(${SDL2_ROOT}/include)
 
-# source files
-set(ENGINE_SOURCES Game.cpp
-        GameObject.cpp
-        Component.cpp
-        ObjectManager.cpp
-        SceneManager.cpp
-        Scene.cpp
-        utils.cpp
-        components/SpriteComponent.cpp
-        components/SpriteAnimatedComponent.cpp
-        graphics/GraphicsEngine.cpp
-        graphics/Graphic.cpp
-        graphics/Shader.cpp
-        InputManager.cpp
-        events/Observer.hpp
-        events/Subject.hpp
-        graphics/GraphicHolder.cpp
-        Screen.cpp
-        physics/PhysicsEngine.cpp
-        physics/Collider.cpp
-        components/ColliderComponent.cpp
-        physics/DebugView.cpp
-        graphics/font/Font.cpp
-        graphics/font/Text.cpp
-        graphics/font/FontManager.cpp
-        components/TextComponent.cpp
-        audio/AudioEngine.cpp
-        audio/AudioSource.cpp
-        audio/AudioBuffer.cpp
-        components/AudioComponent.cpp
-        Random.cpp)
+# public stuff
+set(ENGINE_SOURCES public/geGameObject.cpp)
+set(ENGINE_HEADERS include/api.h
+        include/geGameObject.hpp)
 
-add_library(GameEngine SHARED ${ENGINE_SOURCES})
+# private stuff
+set(ENGINE_PRIVATE_SOURCES private/Game.cpp
+        private/GameObject.cpp
+        private/Component.cpp
+        private/ObjectManager.cpp
+        private/SceneManager.cpp
+        private/Scene.cpp
+        private/utils.cpp
+        private/components/SpriteComponent.cpp
+        private/components/SpriteAnimatedComponent.cpp
+        private/graphics/GraphicsEngine.cpp
+        private/graphics/Graphic.cpp
+        private/graphics/Shader.cpp
+        private/InputManager.cpp
+        private/events/Observer.hpp
+        private/events/Subject.hpp
+        private/graphics/GraphicHolder.cpp
+        private/Screen.cpp
+        private/physics/PhysicsEngine.cpp
+        private/physics/Collider.cpp
+        private/components/ColliderComponent.cpp
+        private/physics/DebugView.cpp
+        private/graphics/font/Font.cpp
+        private/graphics/font/Text.cpp
+        private/graphics/font/FontManager.cpp
+        private/components/TextComponent.cpp
+        private/audio/AudioEngine.cpp
+        private/audio/AudioSource.cpp
+        private/audio/AudioBuffer.cpp
+        private/components/AudioComponent.cpp
+        private/Random.cpp)
+
+add_library(GameEngine SHARED ${ENGINE_SOURCES} ${ENGINE_PRIVATE_SOURCES})
 set_target_properties(GameEngine PROPERTIES
         VERSION 0.0.1
-        PUBLIC_HEADER include/api.h
+        PUBLIC_HEADER "${ENGINGE_HEADERS}"
         )
 
 target_include_directories(GameEngine PRIVATE include)
@@ -77,3 +82,8 @@ target_link_libraries(GameEngine
         Freetype::Freetype
         OpenAL::OpenAL
         sndfile-shared)
+
+install(TARGETS GameEngine
+        ARCHIVE DESTINATION lib
+        LIBRARY DESTINATION lib
+        PUBLIC_HEADER DESTINATION include/GameEngine)

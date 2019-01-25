@@ -47,7 +47,7 @@ namespace {
             if(extendsNode.size() != 2 || extendsNode[0].as<float>() == 0 || extendsNode[1].as<float>() == 0){
                 throw std::runtime_error("collider's extends configuration must be a sequence of 2 numbers greater than 0.");
             }
-            extends_ = glm::vec2(extendsNode[0].as<float>(), extendsNode[1].as<float>());
+            extends_ = Vec2D(extendsNode[0].as<float>(), extendsNode[1].as<float>());
         }
 
         if(componentConfig["offset"]) {
@@ -55,9 +55,9 @@ namespace {
             if(offsetNode.size() != 2)
                 throw std::runtime_error("collider's offset configuration must be a sequence of 2 numbers.");
 
-            offset_ = glm::vec3(offsetNode[0].as<float>(), offsetNode[1].as<float>(),0);
+            offset_ = Vec2D(offsetNode[0].as<float>(), offsetNode[1].as<float>());
         } else{
-            offset_ = glm::vec3(0);
+            offset_ = Vec2D(0.f,0.f);
         }
     }
 
@@ -65,11 +65,11 @@ namespace {
         sprite_ = gameObject()->getComponent<SpriteComponent>();
         spriteAnimated_ = gameObject()->getComponent<SpriteAnimatedComponent>();
 
-        collider_->setPosition(convertWorldToPhysicsPos(gameObject()->getPosition()));
+        collider_->setPosition(convertWorldToPhysicsPos(gameObject()->position()));
         collider_->setActive(gameObject()->isActive());
         if(extends_.x == 0 && extends_.y == 0){
-            glm::vec3 scale = glm::abs(gameObject()->getScale());
-            collider_->setSize(scale.x/2.f, scale.y/2.f);
+            const Vec2D &scale = gameObject()->scale();
+            collider_->setSize(std::abs(scale.x)/2.f, std::abs(scale.y)/2.f);
         }else
             collider_->setSize(extends_.x/2.f, extends_.y/2.f);
 
@@ -78,7 +78,7 @@ namespace {
 
     void ColliderComponent::Update(float elapsedTime) {
         if(collider_->getType() == Collider::ColliderTypes::Dynamic)
-            gameObject()->setPosition(convertPhysicsToWorldPos(collider_->getPosition()));
+            gameObject()->position(convertPhysicsToWorldPos(collider_->getPosition()));
     }
 
     void ColliderComponent::setOnColliderEnter(const OnColliderEventCallback &callback) {
@@ -96,11 +96,11 @@ namespace {
     void ColliderComponent::onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) {
         if(event == GameObjectEvent::PositionChanged){
             if(!gameObject()->isActive() || collider_->getType() != Collider::ColliderTypes::Dynamic)
-                collider_->setPosition(convertWorldToPhysicsPos(gameObject()->getPosition()));
+                collider_->setPosition(convertWorldToPhysicsPos(gameObject()->position()));
         }
         else if(event == GameObjectEvent::ScaleChanged){
-            glm::vec3 scale = glm::abs(gameObject()->getScale());
-            collider_->setSize(scale.x/2.f, scale.y/2.f);
+            const Vec2D &scale = gameObject()->scale();
+            collider_->setSize(std::abs(scale.x)/2.f, std::abs(scale.y)/2.f);
         }
         else if(event == GameObjectEvent::ActiveChanged){
             collider_->setActive(gameObject()->isActive());
@@ -120,35 +120,35 @@ namespace {
         collider_->getBody()->ApplyForceToCenter(b2Vec2(force.x,force.y), true);
     }
 
-    glm::vec3 ColliderComponent::convertWorldToPhysicsPos(glm::vec3 worldPos) {
-        glm::vec3 result = worldPos + offset_;
+    Vec2D ColliderComponent::convertWorldToPhysicsPos(const Vec2D &worldPos) const {
+        Vec2D result = worldPos + offset_;
 
         if(auto sprite = sprite_.lock()) {
             float xOffset = sprite->getWidth() / 2.f;
             float yOffset = sprite->getHeight() / 2.f;
-            result += glm::vec3(xOffset, yOffset, 0.f);
+            result += Vec2D(xOffset, yOffset);
         }
         else if(auto sprite = spriteAnimated_.lock()) {
             float xOffset = sprite->getWidth() / 2.f;
             float yOffset = sprite->getHeight() / 2.f;
-            result += glm::vec3(xOffset, yOffset, 0.f);
+            result += Vec2D(xOffset, yOffset);
         }
 
         return result;
     }
 
-    glm::vec3 ColliderComponent::convertPhysicsToWorldPos(glm::vec3 physicsPos) {
-        glm::vec3 result = physicsPos - offset_;
+    Vec2D ColliderComponent::convertPhysicsToWorldPos(const Vec2D &physicsPos) const {
+        Vec2D result = physicsPos - offset_;
 
         if(auto sprite = sprite_.lock()) {
             float xOffset = sprite->getWidth()/2.f;
             float yOffset = sprite->getHeight()/2.f;
-            result -= glm::vec3(xOffset,yOffset,0.f);
+            result -= Vec2D(xOffset,yOffset);
         }
         else if(auto sprite = spriteAnimated_.lock()) {
             float xOffset = sprite->getWidth()/2.f;
             float yOffset = sprite->getHeight()/2.f;
-            result -= glm::vec3(xOffset,yOffset,0.f);
+            result -= Vec2D(xOffset, yOffset);
         }
 
         return result;

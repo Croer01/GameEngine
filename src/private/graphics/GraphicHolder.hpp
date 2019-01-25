@@ -7,6 +7,7 @@
 
 
 #include <memory>
+#include <api.hpp>
 #include "Graphic.hpp"
 namespace GameEngine {
 namespace Internal {
@@ -23,7 +24,7 @@ namespace Internal {
 
         void draw(const std::shared_ptr<Shader> &shader);
 
-        void setModelTransform(const glm::vec3 &position, const glm::vec3 &rotation, const glm::vec3 &scale);
+        void setModelTransform(const Vec2D &position, const Vec2D &rotation, const Vec2D &scale);
 
         void setGraphic(const std::shared_ptr<Graphic> &graphic);
 

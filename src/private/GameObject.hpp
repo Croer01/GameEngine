@@ -12,6 +12,7 @@
 #include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
 #include <yaml-cpp/yaml.h>
+#include <geGameObject.hpp>
 #include "events/Subject.hpp"
 #include "api.hpp"
 
@@ -19,15 +20,8 @@ namespace GameEngine {
 namespace Internal {
     class Component;
 
-    enum class GameObjectEvent{
-        TransformChanged,
-        PositionChanged,
-        RotationChanged,
-        ScaleChanged,
-        ActiveChanged
-    };
 
-    class GameObject : public GameEngine::GameObject, public Subject<GameObjectEvent>, private Observer<GameObjectEvent> {
+    class PUBLICAPI GameObject : public geGameObject, public Subject<GameObjectEvent>, private Observer<GameObjectEvent> {
         static int ID_GENERATOR;
         int id_;
         bool active_;
@@ -37,10 +31,11 @@ namespace Internal {
         std::string name_;
         std::vector<std::shared_ptr<Component>> components_;
         std::vector<std::shared_ptr<GameObject>> children_;
-        glm::vec3 position_;
-        glm::vec3 rotation_;
-        glm::vec3 scale_;
+        Vec2D position_;
+        Vec2D rotation_;
+        Vec2D scale_;
         GameObject *parent_;
+        glm::mat4 transform_;
 
         void fromYamlNode(const YAML::Node &node);
 
@@ -67,17 +62,17 @@ namespace Internal {
 
         std::shared_ptr<GameObject> Clone() const;
 
-        glm::vec3 getPosition() const;
+        Vec2D position() const override;
 
-        void setPosition(const glm::vec3 &position);
+        void position(const Vec2D &position) override;
 
-        glm::vec3 getRotation() const;
+        Vec2D rotation() const override;
 
-        void setRotation(const glm::vec3 &rotation);
+        void rotation(const Vec2D &rotation) override;
 
-        glm::vec3 getScale() const;
+        Vec2D scale() const override;
 
-        void setScale(const glm::vec3 &scale);
+        void scale(const Vec2D &scale) override;
 
         glm::mat4 getTransform();
 
@@ -98,20 +93,10 @@ namespace Internal {
             return std::shared_ptr<T>();
         }
 
-        Vec3D position() const override;
-
-        void position(const Vec3D &position) override;
-
-        Vec3D rotation() const override;
-
-        void rotation(const Vec3D &rotation) override;
-
-        Vec3D scale() const override;
-
-        void scale(const Vec3D &scale) override;
-
     private:
         void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
+
+        void computeTransform();
     };
 }
 }
