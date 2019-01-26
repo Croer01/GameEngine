@@ -37,6 +37,8 @@ namespace GameEngine {
 
         virtual Vec2D scale() const = 0;
         virtual void scale(const Vec2D &scale) = 0;
+
+        virtual void parent(geGameObjectRef gameObject) = 0;
     };
 
 }

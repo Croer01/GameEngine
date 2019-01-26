@@ -69,15 +69,17 @@ namespace Internal {
         auto it = std::find(children_.begin(),children_.end(),child);
         if(it != children_.end())
             return;
-        child->setParent(this);
+        child->parent(std::shared_ptr<geGameObject>(this));
         children_.push_back(child);
     }
 
-    void GameObject::setParent(GameObject *parent) {
+    void GameObject::parent(geGameObjectRef goParent) {
         if(parent_)
             parent_->unregisterObserver(this);
-        parent_ = parent;
-        parent_->registerObserver(this);
+        parent_ = std::dynamic_pointer_cast<GameObject>(goParent);
+        //goParent could be null
+        if(parent_)
+            parent_->registerObserver(this);
         notify(GameObjectEvent::TransformChanged);
     }
 

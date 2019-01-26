@@ -34,7 +34,7 @@ namespace Internal {
         Vec2D position_;
         Vec2D rotation_;
         Vec2D scale_;
-        GameObject *parent_;
+        std::shared_ptr<GameObject> parent_;
         glm::mat4 transform_;
 
         void fromYamlNode(const YAML::Node &node);
@@ -56,11 +56,12 @@ namespace Internal {
 
         std::shared_ptr<GameObject> findChildByName(const std::string &name);
 
-        void setParent(GameObject *parent);
 
         void fromFile(const std::string &filename);
 
         std::shared_ptr<GameObject> Clone() const;
+
+        void parent(geGameObjectRef parent) override;
 
         Vec2D position() const override;
 
