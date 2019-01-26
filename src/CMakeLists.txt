@@ -12,7 +12,6 @@ add_compile_options("$<$<CONFIG:DEBUG>:-DDEBUG>")
 find_path(SDL2_IMAGE_INCLUDE SDL2/SDL_image.h)
 find_library(SDL2_IMAGE_LIBRARY SDL2_image)
 
-
 find_package(SDL2 CONFIG REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glm CONFIG REQUIRED)
@@ -73,6 +72,9 @@ add_library(GameEngine SHARED ${ENGINE_SOURCES} ${ENGINE_PRIVATE_SOURCES})
 set_target_properties(GameEngine PROPERTIES
         VERSION 0.0.1
         PUBLIC_HEADER "${ENGINGE_HEADERS}"
+        ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
         )
 
 target_include_directories(GameEngine PUBLIC include)
@@ -90,6 +92,6 @@ target_link_libraries(GameEngine PUBLIC
         sndfile-shared)
 
 install(TARGETS GameEngine
-        ARCHIVE DESTINATION lib
-        LIBRARY DESTINATION lib
-        PUBLIC_HEADER DESTINATION include/GameEngine)
+        ARCHIVE DESTINATION ${CMAKE_BINARY_DIR}/GameEngine/lib
+        LIBRARY DESTINATION ${CMAKE_BINARY_DIR}/GameEngine/lib
+        PUBLIC_HEADER DESTINATION ${CMAKE_BINARY_DIR}/GameEngine/include)
