@@ -12,9 +12,9 @@
 #include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
 #include <yaml-cpp/yaml.h>
-#include <geGameObject.hpp>
+#include <game-engine/geGameObject.hpp>
+#include <game-engine/api.hpp>
 #include "events/Subject.hpp"
-#include "api.hpp"
 
 namespace GameEngine {
 namespace Internal {

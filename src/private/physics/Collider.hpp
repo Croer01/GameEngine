@@ -10,7 +10,7 @@
 #include <memory>
 #include <functional>
 #include <glm/vec3.hpp>
-#include <api.hpp>
+#include <game-engine/api.hpp>
 #include "../events/Subject.hpp"
 namespace GameEngine {
 namespace Internal {
