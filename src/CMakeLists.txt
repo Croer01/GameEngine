@@ -27,12 +27,18 @@ include_directories(${SDL2_INCLUDE_DIR} ${SDL2_IMAGE_INCLUDE} ${GLEW_INCLUDE_DIR
 include_directories(${SDL2_ROOT}/include)
 
 # public stuff
-set(ENGINE_SOURCES public/geGameObject.cpp)
-set(ENGINE_HEADERS include/api.h
-        include/geGameObject.hpp)
+set(ENGINE_SOURCES
+    public/geGameObject.cpp
+    public/geGame.cpp
+)
 
+set(ENGINGE_HEADERS
+    include/game-engine/geGameObject.hpp
+    include/game-engine/geGame.hpp.hpp
+)
 # private stuff
-set(ENGINE_PRIVATE_SOURCES private/Game.cpp
+set(ENGINE_PRIVATE_SOURCES
+        private/Game.cpp
         private/GameObject.cpp
         private/Component.cpp
         private/ObjectManager.cpp
@@ -69,9 +75,9 @@ set_target_properties(GameEngine PROPERTIES
         PUBLIC_HEADER "${ENGINGE_HEADERS}"
         )
 
-target_include_directories(GameEngine PRIVATE include)
+target_include_directories(GameEngine PUBLIC include)
 
-target_link_libraries(GameEngine
+target_link_libraries(GameEngine PUBLIC
         SDL2::SDL2
         ${SDL2_IMAGE_LIBRARY}
         yaml-cpp

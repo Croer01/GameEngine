@@ -24,7 +24,10 @@ namespace GameEngine {
 
     class PUBLICAPI geGameObject {
     public:
-        virtual ~geGameObject() {};
+        virtual ~geGameObject() = default;
+
+        virtual std::string name() const = 0;
+        virtual void name(const std::string &name) = 0;
 
         virtual Vec2D position() const = 0;
         virtual void position(const Vec2D &position) = 0;

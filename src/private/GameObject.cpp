@@ -16,9 +16,9 @@ namespace GameEngine {
 namespace Internal {
     int GameObject::ID_GENERATOR = 0;
 
-    GameObject::GameObject(const std::string &name) : Subject<GameObjectEvent>(), Observer<GameObjectEvent>(),
+    GameObject::GameObject(const std::string &prototype) : Subject<GameObjectEvent>(), Observer<GameObjectEvent>(),
             parent_(nullptr),
-            nameType_(name),
+            prototype_(prototype),
             id_(ID_GENERATOR++),
             active_(true),
             activeValueToSetInSafeMode_(true),
@@ -30,7 +30,7 @@ namespace Internal {
     }
 
     void GameObject::Init() {
-        std::cout << "Object " << nameType_.c_str() << " initialized" << std::endl;
+        std::cout << "Object " << prototype_.c_str() << " initialized" << std::endl;
         for (auto &component : components_) {
             component->init();
         }
@@ -89,7 +89,7 @@ namespace Internal {
     }
 
     std::shared_ptr<GameObject> GameObject::Clone() const {
-        auto cloned = std::make_shared<GameObject>(nameType_);
+        auto cloned = std::make_shared<GameObject>(prototype_);
 
         cloned->name_ = name_;
         cloned->position_ = position_;
@@ -99,14 +99,14 @@ namespace Internal {
         for (auto &component : components_) {
             std::shared_ptr<Component> clonedComponent = component->Clone();
             if(!clonedComponent)
-                throw std::runtime_error("one of the components of " + nameType_ + " has an error during cloning process");
+                throw std::runtime_error("one of the components of " + prototype_ + " has an error during cloning process");
             cloned->addComponent(clonedComponent);
         }
 
         for (auto &child : children_) {
             std::shared_ptr<GameObject> clonedChild = child->Clone();
             if(!clonedChild)
-                throw std::runtime_error("one of the child of " + nameType_ + " has an error during cloning process");
+                throw std::runtime_error("one of the child of " + prototype_ + " has an error during cloning process");
             cloned->addChild(clonedChild);
         }
 
@@ -186,11 +186,11 @@ namespace Internal {
         hasActiveValueToSetInSafeMode_ = true;
     }
 
-    std::string GameObject::getName() const {
+    std::string GameObject::name() const {
         return name_;
     }
 
-    void GameObject::setName(const std::string &name) {
+    void GameObject::name(const std::string &name) {
         name_ = name;
     }
 

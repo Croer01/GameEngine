@@ -49,7 +49,7 @@ namespace Internal {
                         prototype["prototype"].as<std::string>());
 
                 if (prototype["name"])
-                    gameObject->setName(prototype["name"].as<std::string>());
+                    gameObject->name(prototype["name"].as<std::string>());
 
                 //object properties
                 if (prototype["position"])
@@ -83,7 +83,7 @@ namespace Internal {
         int i = 0;
 
         while (!found && i < gameobjects_.size()) {
-            if (gameobjects_[i]->getName() == gameObjectName)
+            if (gameobjects_[i]->name() == gameObjectName)
                 found = gameobjects_[i];
             i++;
         }

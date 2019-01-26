@@ -21,13 +21,13 @@ namespace Internal {
     class Component;
 
 
-    class PUBLICAPI GameObject : public geGameObject, public Subject<GameObjectEvent>, private Observer<GameObjectEvent> {
+    class GameObject : public geGameObject, public Subject<GameObjectEvent>, private Observer<GameObjectEvent> {
         static int ID_GENERATOR;
         int id_;
         bool active_;
         bool activeValueToSetInSafeMode_;
         bool hasActiveValueToSetInSafeMode_;
-        std::string nameType_;
+        std::string prototype_;
         std::string name_;
         std::vector<std::shared_ptr<Component>> components_;
         std::vector<std::shared_ptr<GameObject>> children_;
@@ -41,14 +41,14 @@ namespace Internal {
 
     public:
 
-        explicit GameObject(const std::string &name);
+        explicit GameObject(const std::string &prototype);
         ~GameObject();
 
         void Init();
 
         void Update(float elapsedTime);
 
-        std::string getType() const { return nameType_; };
+        std::string getType() const { return prototype_; };
 
         void addComponent(std::shared_ptr<Component> component);
 
@@ -80,8 +80,8 @@ namespace Internal {
 
         void setActive(bool active);
 
-        std::string getName() const;
-        void setName(const std::string &name);
+        std::string name() const override;
+        void name(const std::string &name) override;
 
         template <typename T>
         std::weak_ptr<T> getComponent() const{
