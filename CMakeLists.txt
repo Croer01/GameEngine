@@ -51,3 +51,6 @@ ADD_CUSTOM_TARGET(copyAssets ALL
         COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/assets
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/assets ${CMAKE_BINARY_DIR}/assets
         )
+
+enable_testing()
+add_subdirectory(test)
