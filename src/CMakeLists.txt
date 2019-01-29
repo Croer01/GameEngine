@@ -5,6 +5,12 @@ set(CMAKE_CXX_STANDARD 11)
 
 add_compile_options("$<$<CONFIG:DEBUG>:-DDEBUG>")
 
+
+# To build shared libraries in Windows, we set CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS to TRUE.
+# See https://cmake.org/cmake/help/v3.4/variable/CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS.html
+# See https://blog.kitware.com/create-dlls-on-windows-without-declspec-using-new-cmake-export-all-feature/
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+
 # dependencies
 # All the dependencies are managed by vcpkg
 
@@ -27,14 +33,9 @@ include_directories(${SDL2_ROOT}/include)
 
 # public stuff
 set(ENGINE_SOURCES
-    public/geGameObject.cpp
-    public/geGame.cpp
-)
+        public/geGame.cpp
+        public/geEnvironment.cpp)
 
-set(ENGINGE_HEADERS
-    include/game-engine/geGameObject.hpp
-    include/game-engine/geGame.hpp.hpp
-)
 # private stuff
 set(ENGINE_PRIVATE_SOURCES
         private/Game.cpp
@@ -68,16 +69,18 @@ set(ENGINE_PRIVATE_SOURCES
         private/components/AudioComponent.cpp
         private/Random.cpp)
 
-add_library(GameEngine SHARED ${ENGINE_SOURCES} ${ENGINE_PRIVATE_SOURCES})
-set_target_properties(GameEngine PROPERTIES
-        VERSION 0.0.1
-        PUBLIC_HEADER "${ENGINGE_HEADERS}"
-        ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
-        )
+add_library(GameEngine ${ENGINE_SOURCES} ${ENGINE_PRIVATE_SOURCES})
 
-target_include_directories(GameEngine PUBLIC include)
+include(GenerateExportHeader)
+generate_export_header(GameEngine)
+set_target_properties(GameEngine PROPERTIES
+    VERSION 0.0.1
+)
+
+target_include_directories(GameEngine PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+)
 
 target_link_libraries(GameEngine PUBLIC
         SDL2::SDL2
@@ -91,7 +94,9 @@ target_link_libraries(GameEngine PUBLIC
         OpenAL::OpenAL
         sndfile-shared)
 
-install(TARGETS GameEngine
-        ARCHIVE DESTINATION ${CMAKE_BINARY_DIR}/GameEngine/lib
-        LIBRARY DESTINATION ${CMAKE_BINARY_DIR}/GameEngine/lib
-        PUBLIC_HEADER DESTINATION ${CMAKE_BINARY_DIR}/GameEngine/include)
+install(TARGETS GameEngine EXPORT GameEngineTargets
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin
+    INCLUDES DESTINATION include
+)

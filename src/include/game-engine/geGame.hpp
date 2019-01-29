@@ -7,12 +7,15 @@
 
 #include <game-engine/api.hpp>
 #include <game-engine/geGameObject.hpp>
+#include <game-engine/geEnvironment.hpp>
 #include <string>
 
 namespace GameEngine {
     class PUBLICAPI geGame{
         public:
             geGameObjectRef createObject(const std::string &name);
+            geGameObjectRef createFromPrototype(const std::string &prototype);
+            void configEnvironment(const geEnvironment &environment);
     };
 }
 
