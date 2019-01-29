@@ -46,3 +46,18 @@ TEST(GameObject, positionChangedByParent)
     ASSERT_EQ(child->position(), childPos);
 
 }
+
+TEST(GameObject, loadGameObject)
+{
+    const std::string &prototype = "ObjectLoaded";
+
+    GameEngine::geGame game;
+
+    GameEngine::geEnvironment environment;
+    environment.addPrototype(prototype, "data/goLoadTest.yaml");
+
+    game.configEnvironment(environment);
+
+    GameEngine::geGameObjectRef gameObject = game.createFromPrototype(prototype);
+    ASSERT_EQ(gameObject->name(), "loadedFromFile");
+}
