@@ -14,6 +14,8 @@ namespace GameEngine {
     class PUBLICAPI geGame {
         geEnvironment environment_;
     public:
+        int start();
+        void shutdown();
         geGameObjectRef createObject(const std::string &name);
         geGameObjectRef createFromPrototype(const std::string &prototype);
         void configEnvironment(const geEnvironment &environment);

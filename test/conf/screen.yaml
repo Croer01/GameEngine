@@ -1,0 +1,5 @@
+title: Test
+pixelPerfect: true
+backgroundColor: [0.4,0.57,0.78]
+windowSize: [512, 512]
+virtualSize: [512, 512]

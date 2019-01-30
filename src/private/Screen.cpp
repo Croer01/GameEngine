@@ -8,6 +8,7 @@
 namespace GameEngine {
 namespace Internal {
     Screen::Screen(const std::string &filePath) {
+        //TODO: set default values to manage better screen configuration
         YAML::Node screenConfig = YAML::LoadFile(filePath);
 
         title_ = screenConfig["title"].as<std::string>();
