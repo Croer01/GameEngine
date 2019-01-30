@@ -7,6 +7,9 @@
 #include "../private/SceneManager.hpp"
 
 namespace GameEngine {
+    geEnvironment::geEnvironment() : configurationPath_("conf"){
+    }
+
     void GameEngine::geEnvironment::configurationPath(const std::string &config) {
         configurationPath_ = config;
     }

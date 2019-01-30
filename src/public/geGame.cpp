@@ -14,7 +14,7 @@ namespace GameEngine {
     }
 
     void geGame::configEnvironment(const geEnvironment &environment) {
-
+        environment_ = environment;
     }
 
     geGameObjectRef geGame::createFromPrototype(const std::string &prototype) {

@@ -15,6 +15,7 @@ namespace GameEngine {
         std::string firstScene_;
 
     public:
+        geEnvironment();
         virtual ~geEnvironment() = default;
         virtual void registerComponent(){};
 
