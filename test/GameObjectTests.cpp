@@ -47,6 +47,51 @@ TEST(GameObject, positionChangedByParent)
 
 }
 
+TEST(GameObject, rotationChangedByParent)
+{
+    GameEngine::geGame game;
+    GameEngine::geGameObjectRef parent = game.createObject("parent");
+    GameEngine::geGameObjectRef child = game.createObject("child");
+    const GameEngine::Vec2D &parentRot = GameEngine::Vec2D(5,5);
+    const GameEngine::Vec2D &childRot = GameEngine::Vec2D(2,2);
+    parent->rotation(parentRot);
+    child->rotation(childRot);
+
+    ASSERT_EQ(parent->rotation(), parentRot);
+    ASSERT_EQ(child->rotation(), childRot);
+
+    child->parent(parent);
+    ASSERT_EQ(parent->rotation(), parentRot);
+    ASSERT_EQ(child->rotation(), parentRot + childRot);
+
+    child->parent(nullptr);
+    ASSERT_EQ(parent->rotation(), parentRot);
+    ASSERT_EQ(child->rotation(), childRot);
+}
+
+
+TEST(GameObject, scaleChangedByParent)
+{
+    GameEngine::geGame game;
+    GameEngine::geGameObjectRef parent = game.createObject("parent");
+    GameEngine::geGameObjectRef child = game.createObject("child");
+    const GameEngine::Vec2D &parentScale = GameEngine::Vec2D(5,5);
+    const GameEngine::Vec2D &childScale = GameEngine::Vec2D(2,2);
+    parent->scale(parentScale);
+    child->scale(childScale);
+
+    ASSERT_EQ(parent->scale(), parentScale);
+    ASSERT_EQ(child->scale(), childScale);
+
+    child->parent(parent);
+    ASSERT_EQ(parent->scale(), parentScale);
+    ASSERT_EQ(child->scale(), parentScale * childScale);
+
+    child->parent(nullptr);
+    ASSERT_EQ(parent->scale(), parentScale);
+    ASSERT_EQ(child->scale(), childScale);
+}
+
 TEST(GameObject, loadGameObject)
 {
     const std::string &prototype = "ObjectLoaded";
