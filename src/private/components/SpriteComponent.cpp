@@ -40,7 +40,7 @@ namespace Internal {
             graphic_->setModelTransform(gameObject()->position(), gameObject()->rotation(),
                                         gameObject()->scale());
         } else if (event == GameObjectEvent::ActiveChanged) {
-            graphic_->setActive(gameObject()->isActive() && visible_);
+            graphic_->setActive(gameObject()->active() && visible_);
         }
     }
 
@@ -50,22 +50,22 @@ namespace Internal {
 
     void SpriteComponent::setVisible(bool visible) {
         visible_ = visible;
-        graphic_->setActive(gameObject()->isActive() && visible_);
+        graphic_->setActive(gameObject()->active() && visible_);
     }
 
     bool SpriteComponent::isVisible() const {
         return visible_;
     }
 
-    void SpriteComponent::onGameObjectChange(GameObject *oldGameObject, GameObject *newGameObject) {
+    void SpriteComponent::onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) {
         if (oldGameObject)
-            oldGameObject->unregisterObserver(this);
+            dynamic_cast<GameObject*>(oldGameObject)->unregisterObserver(this);
 
         if (newGameObject && graphic_) {
             graphic_->setModelTransform(gameObject()->position(), newGameObject->rotation(),
                                         newGameObject->scale());
 
-            newGameObject->registerObserver(this);
+            dynamic_cast<GameObject*>(newGameObject)->registerObserver(this);
         }
     }
 }

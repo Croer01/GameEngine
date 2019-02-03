@@ -66,7 +66,7 @@ namespace {
         spriteAnimated_ = gameObject()->getComponent<SpriteAnimatedComponent>();
 
         collider_->setPosition(convertWorldToPhysicsPos(gameObject()->position()));
-        collider_->setActive(gameObject()->isActive());
+        collider_->setActive(gameObject()->active());
         if(extends_.x == 0 && extends_.y == 0){
             const Vec2D &scale = gameObject()->scale();
             collider_->setSize(std::abs(scale.x)/2.f, std::abs(scale.y)/2.f);
@@ -95,7 +95,7 @@ namespace {
 
     void ColliderComponent::onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) {
         if(event == GameObjectEvent::PositionChanged){
-            if(!gameObject()->isActive() || collider_->getType() != Collider::ColliderTypes::Dynamic)
+            if(!gameObject()->active() || collider_->getType() != Collider::ColliderTypes::Dynamic)
                 collider_->setPosition(convertWorldToPhysicsPos(gameObject()->position()));
         }
         else if(event == GameObjectEvent::ScaleChanged){
@@ -103,7 +103,7 @@ namespace {
             collider_->setSize(std::abs(scale.x)/2.f, std::abs(scale.y)/2.f);
         }
         else if(event == GameObjectEvent::ActiveChanged){
-            collider_->setActive(gameObject()->isActive());
+            collider_->setActive(gameObject()->active());
         }
     }
 
@@ -154,11 +154,11 @@ namespace {
         return result;
     }
 
-    void ColliderComponent::onGameObjectChange(GameObject *oldGameObject, GameObject *newGameObject) {
+    void ColliderComponent::onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) {
         if (oldGameObject)
-            oldGameObject->unregisterObserver(this);
+            dynamic_cast<GameObject*>(oldGameObject)->unregisterObserver(this);
         if (newGameObject)
-            newGameObject->registerObserver(this);
+            dynamic_cast<GameObject*>(newGameObject)->registerObserver(this);
     }
 }
 }

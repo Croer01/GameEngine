@@ -52,7 +52,7 @@ namespace Internal {
             void applyForce(glm::vec3 force);
 
         protected:
-            void onGameObjectChange(GameObject *oldGameObject, GameObject *newGameObject) override;
+            void onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) override;
         };
     }
 }

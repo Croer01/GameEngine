@@ -52,7 +52,7 @@ namespace GameEngine {
             graphic_->setModelTransform(gameObject()->position(), gameObject()->rotation(), gameObject()->scale());
         }
         else if(event == GameObjectEvent::ActiveChanged){
-            graphic_->setActive(gameObject()->isActive() && visible_);
+            graphic_->setActive(gameObject()->active() && visible_);
             resetAnimation();
         }
     }
@@ -63,7 +63,7 @@ namespace GameEngine {
 
     void SpriteAnimatedComponent::setVisible(bool visible) {
         visible_ = visible;
-        graphic_->setActive(gameObject()->isActive() && visible_);
+        graphic_->setActive(gameObject()->active() && visible_);
         resetAnimation();
     }
 
@@ -128,14 +128,14 @@ namespace GameEngine {
         return columns_ * rows_;
     }
 
-    void SpriteAnimatedComponent::onGameObjectChange(GameObject *oldGameObject, GameObject *newGameObject) {
+    void SpriteAnimatedComponent::onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) {
         if(oldGameObject)
-            oldGameObject->unregisterObserver(this);
+            dynamic_cast<GameObject*>(oldGameObject)->unregisterObserver(this);
 
         if(newGameObject && graphic_){
             graphic_->setModelTransform(newGameObject->position(), newGameObject->rotation(), newGameObject->scale());
 
-            newGameObject->registerObserver(this);
+            dynamic_cast<GameObject*>(newGameObject)->registerObserver(this);
         }
     }
 }

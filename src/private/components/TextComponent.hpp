@@ -38,7 +38,7 @@ namespace Internal {
         bool isVisible() const;
 
     protected:
-        void onGameObjectChange(GameObject *oldGameObject, GameObject *newGameObject) override;
+        void onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) override;
     };
 }
 }

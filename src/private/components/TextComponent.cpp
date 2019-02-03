@@ -36,7 +36,7 @@ namespace Internal {
         if (event == GameObjectEvent::TransformChanged) {
             updateTextTransform();
         } else if (event == GameObjectEvent::ActiveChanged) {
-            textGraphic_->setActive(gameObject()->isActive() && visible_);
+            textGraphic_->setActive(gameObject()->active() && visible_);
         }
     }
 
@@ -51,7 +51,7 @@ namespace Internal {
 
     void TextComponent::setVisible(bool visible) {
         visible_ = visible;
-        textGraphic_->setActive(gameObject()->isActive() && visible_);
+        textGraphic_->setActive(gameObject()->active() && visible_);
     }
 
     bool TextComponent::isVisible() const {
@@ -64,13 +64,13 @@ namespace Internal {
                 gameObject()->scale());
     }
 
-    void TextComponent::onGameObjectChange(GameObject *oldGameObject, GameObject *newGameObject) {
+    void TextComponent::onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) {
         if (oldGameObject)
-            oldGameObject->unregisterObserver(this);
+            dynamic_cast<GameObject*>(oldGameObject)->unregisterObserver(this);
 
         if (newGameObject && textGraphic_) {
             updateTextTransform();
-            newGameObject->registerObserver(this);
+            dynamic_cast<GameObject*>(newGameObject)->registerObserver(this);
         }
     }
 }

@@ -17,7 +17,7 @@ namespace Internal {
         bool visible_;
 
     protected:
-        void onGameObjectChange(GameObject *oldGameObject, GameObject *newGameObject) override;
+        void onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) override;
 
     public:
         ~SpriteComponent();

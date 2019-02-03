@@ -7,16 +7,17 @@
 
 
 #include <yaml-cpp/yaml.h>
+#include <game-engine/geComponent.hpp>
 #include "GameObject.hpp"
 
 namespace GameEngine {
 namespace Internal {
     #define COMPONENT(x) //the #x component has been registered
 
-    class Component {
-        GameObject *gameObject_;
+    class Component : public geComponent {
+        GameEngine::geGameObject *gameObject_;
     protected:
-        virtual void onGameObjectChange(GameObject *oldGameObject, GameObject *newGameObject) {};
+        virtual void onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) {};
     public:
         virtual ~Component(){};
         virtual void Update(float elapsedTime){};
@@ -24,8 +25,8 @@ namespace Internal {
         virtual std::shared_ptr<Component> Clone() = 0;
         virtual void fromFile(const YAML::Node &componentConfig){};
 
-        void gameObject(GameObject *gameObject);
-        GameObject *gameObject() const;
+        virtual void gameObject(GameEngine::geGameObject *gameObject);
+        virtual GameEngine::geGameObject *gameObject() const;
 
     };
 }

@@ -5,12 +5,13 @@
 #include "Component.hpp"
 namespace GameEngine {
 namespace Internal {
-    void Component::gameObject(GameObject *gameObject) {
+    void Component::gameObject(GameEngine::geGameObject *gameObject) {
+        GameEngine::geGameObject *old = gameObject_;
         gameObject_ = gameObject;
-        onGameObjectChange(gameObject_, gameObject);
+        onGameObjectChange(old, gameObject);
     }
 
-    GameObject *Component::gameObject() const {
+    GameEngine::geGameObject *Component::gameObject() const {
         return gameObject_;
     }
 }

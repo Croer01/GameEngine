@@ -14,6 +14,7 @@
 #include <yaml-cpp/yaml.h>
 #include <game-engine/geGameObject.hpp>
 #include <game-engine/api.hpp>
+#include <game-engine/geComponent.hpp>
 #include "events/Subject.hpp"
 
 namespace GameEngine {
@@ -29,7 +30,6 @@ namespace Internal {
         bool hasActiveValueToSetInSafeMode_;
         std::string prototype_;
         std::string name_;
-        std::vector<std::shared_ptr<Component>> components_;
         std::vector<std::shared_ptr<GameObject>> children_;
         Vec2D position_;
         Vec2D rotation_;
@@ -50,7 +50,7 @@ namespace Internal {
 
         std::string getType() const { return prototype_; };
 
-        void addComponent(std::shared_ptr<Component> component);
+        void addComponent(const geComponentRef &component);
 
         void addChild(std::shared_ptr<GameObject> child);
 
@@ -61,7 +61,7 @@ namespace Internal {
 
         std::shared_ptr<GameObject> Clone() const;
 
-        void parent(geGameObjectRef parent) override;
+        void parent(const geGameObjectRef &parent) override;
 
         Vec2D position() const override;
 
@@ -77,22 +77,12 @@ namespace Internal {
 
         glm::mat4 getTransform();
 
-        bool isActive() const;
+        virtual bool active() const;
 
-        void setActive(bool active);
+        virtual void active(bool active);
 
         std::string name() const override;
         void name(const std::string &name) override;
-
-        template <typename T>
-        std::weak_ptr<T> getComponent() const{
-            for(auto component : components_){
-                if(auto desiredComponent = std::dynamic_pointer_cast<T>(component))
-                    return desiredComponent;
-            }
-
-            return std::shared_ptr<T>();
-        }
 
     private:
         void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;

@@ -56,7 +56,7 @@ namespace Internal {
             void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
 
         protected:
-            void onGameObjectChange(GameObject *oldGameObject, GameObject *newGameObject) override;
+            void onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) override;
         };
     }
 }

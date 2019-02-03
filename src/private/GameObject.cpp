@@ -57,12 +57,13 @@ namespace Internal {
         }
     }
 
-    void GameObject::addComponent(std::shared_ptr<Component> component) {
-        auto it = std::find(components_.begin(),components_.end(),component);
+    void GameObject::addComponent(const geComponentRef &component) {
+        auto cast = std::dynamic_pointer_cast<Component>(component);
+        auto it = std::find(components_.begin(),components_.end(),cast);
         if(it != components_.end())
             return;
-        component->gameObject(this);
-        components_.push_back(component);
+        cast->gameObject(this);
+        components_.push_back(cast);
     }
 
     void GameObject::addChild(std::shared_ptr<GameObject> child) {
@@ -73,7 +74,7 @@ namespace Internal {
         children_.push_back(child);
     }
 
-    void GameObject::parent(geGameObjectRef goParent) {
+    void GameObject::parent(const geGameObjectRef &goParent) {
         if(parent_)
             parent_->unregisterObserver(this);
         parent_ = std::dynamic_pointer_cast<GameObject>(goParent);
@@ -99,7 +100,7 @@ namespace Internal {
         cloned->scale_ = scale_;
 
         for (auto &component : components_) {
-            std::shared_ptr<Component> clonedComponent = component->Clone();
+            std::shared_ptr<Component> clonedComponent = std::dynamic_pointer_cast<Component>(component)->Clone();
             if(!clonedComponent)
                 throw std::runtime_error("one of the components of " + prototype_ + " has an error during cloning process");
             cloned->addComponent(clonedComponent);
@@ -179,11 +180,11 @@ namespace Internal {
         return transform_;
     }
 
-    bool GameObject::isActive() const {
+    bool GameObject::active() const {
         return activeValueToSetInSafeMode_;
     }
 
-    void GameObject::setActive(bool active) {
+    void GameObject::active(bool active) {
         activeValueToSetInSafeMode_ = active;
         hasActiveValueToSetInSafeMode_ = true;
     }
