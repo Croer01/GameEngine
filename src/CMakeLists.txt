@@ -34,7 +34,10 @@ include_directories(${SDL2_ROOT}/include)
 # public stuff
 set(ENGINE_SOURCES
         public/geGame.cpp
-        public/geEnvironment.cpp)
+        public/geComponent.cpp
+        public/geEnvironment.cpp
+        public/properties/Property.cpp
+        public/properties/PropertySet.cpp)
 
 # private stuff
 set(ENGINE_PRIVATE_SOURCES

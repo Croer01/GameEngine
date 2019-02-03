@@ -7,6 +7,8 @@
 
 #include <unordered_map>
 #include <memory>
+#include <yaml-cpp/node/node.h>
+
 namespace GameEngine {
 namespace Internal {
     template<typename ReturnType, typename BuilderType, typename IdType>
@@ -33,13 +35,13 @@ namespace Internal {
             builders_.erase(type);
         };
 
-        std::shared_ptr<ReturnType> Create(IdType type) {
+        std::shared_ptr<ReturnType> Create(IdType type, const YAML::Node &data) {
             auto it = builders_.find(type);
 
             if (it == builders_.end())
                 throw std::exception("builder doesn't exist");
 
-            return it->second->Create();
+            return it->second->Create(data);
         };
     };
 }
