@@ -1,0 +1,33 @@
+#include "gtest/gtest.h"
+#include <game-engine/properties/PropertySet.hpp>
+#include <game-engine/properties/Property.hpp>
+#include <thread>
+#include <chrono>
+
+struct TestData{
+    int intValue;
+};
+
+TEST(Properties, setValueFromProperty)
+{
+    int defaultValue = -1;
+    int newValue = 10;
+    TestData instance{defaultValue};
+    GameEngine::Property<TestData, int> property("value",&instance,&TestData::intValue,0);
+    EXPECT_EQ(instance.intValue, property.get());
+    property.set(newValue);
+    EXPECT_EQ(instance.intValue, newValue);
+    EXPECT_EQ(instance.intValue, property.get());
+}
+
+TEST(Properties, getValueFromPropertyEdited)
+{
+    int defaultValue = -1;
+    int newValue = 10;
+    TestData instance{defaultValue};
+    GameEngine::Property<TestData, int> property("value",&instance,&TestData::intValue,0);
+    EXPECT_EQ(instance.intValue, property.get());
+    instance.intValue = newValue;
+    EXPECT_EQ(property.get(), newValue);
+    EXPECT_EQ(instance.intValue, property.get());
+}

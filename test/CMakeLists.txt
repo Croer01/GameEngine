@@ -13,6 +13,11 @@ target_link_libraries(game_test GTest::GTest GTest::Main GameEngine)
 add_test(GameTests game_test)
 add_dependencies(game_test copyTestData copyTestConf)
 
+add_executable(properties_test PropertiesTests.cpp)
+target_link_libraries(properties_test GTest::GTest GTest::Main GameEngine)
+add_test(PropertiesTests properties_test)
+add_dependencies(properties_test copyTestData copyTestConf)
+
 add_custom_target(copyTestData ALL
     COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_CURRENT_BINARY_DIR}/data
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/data ${CMAKE_CURRENT_BINARY_DIR}/data
