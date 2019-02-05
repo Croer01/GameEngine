@@ -50,9 +50,16 @@ namespace GameEngine {
 
     template <typename Class, typename MemberType>
     class PUBLICAPI Property : public PropertyBase<Class>{
+    public:
         typedef MemberType Class::*Member;
+        typedef MemberType (Class::*Getter)() const;
+        typedef void (Class::*Setter)(const MemberType &);
+    private:
         Member value_;
+        Getter getter_;
+        Setter setter_;
         MemberType default_;
+        bool useMethods;
     public:
         Property(const std::string &name, Class *target, Member value, MemberType defaultValue) :
                 Property(name, target, value, defaultValue, false){
@@ -60,13 +67,30 @@ namespace GameEngine {
 
         Property(const std::string &name, Class *target, Member value, MemberType defaultValue, bool required) :
                 PropertyBase(name, required),
-                value_(value) {
+                value_(value),
+                getter_(nullptr),
+                setter_(nullptr),
+                useMethods(false) {
+            default_ = defaultValue;
+            target_ = target;
+        };
+
+        Property(const std::string &name, Class *target, Getter getter, Setter setter, MemberType defaultValue) :
+                Property(name, target, getter, setter, defaultValue, false){
+        };
+
+        Property(const std::string &name, Class *target, Getter getter, Setter setter, MemberType defaultValue, bool required) :
+                PropertyBase(name, required),
+                value_(nullptr),
+                getter_(getter),
+                setter_(setter),
+                useMethods(true) {
             default_ = defaultValue;
             target_ = target;
         };
 
         MemberType get() const {
-            return target_->*value_;
+            return useMethods? (target_->*getter_)() : target_->*value_;
         };
 
         MemberType defaultValue() const {
@@ -74,7 +98,10 @@ namespace GameEngine {
         };
 
         void set(MemberType value) {
-            target_->*value_ = value;
+            if(useMethods)
+                (target_->*setter_)(value);
+            else
+                target_->*value_ = value;
         };
 
         PropertyBase<Class> copy(Class *newTarget) const override {
