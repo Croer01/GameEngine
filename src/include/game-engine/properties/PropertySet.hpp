@@ -18,14 +18,14 @@ namespace GameEngine {
         explicit PropertySetBase(void *target) : target_(target){};
         virtual ~PropertySetBase() = default;
 
-        virtual void copy(const PropertySetBase &other) const {
+        virtual void copy(PropertySetBase &other) const {
             throw std::runtime_error("not implemented. Need to cast this instance to PropertySet<Component>");
         };
     };
 
     template <typename Class>
     class PUBLICAPI PropertySet : public PropertySetBase {
-        std::vector<PropertyBase<Class>> properties_;
+        std::vector<PropertyBase<Class>*> properties_;
     public:
         explicit PropertySet(Class *target) : PropertySetBase(target)
         {};
@@ -34,13 +34,12 @@ namespace GameEngine {
             return properties_.size();
         }
 
-        void add(GameEngine::PropertyBase<Class> &property) {
-            property.target(static_cast<Class*>(target_));
+        void add(GameEngine::PropertyBase<Class> *property) {
             properties_.push_back(property);
         };
 
         PropertyBase<Class>& get(int index){
-            return properties_[index];
+            return *properties_[index];
         }
 
         PropertyBase<Class>& get(const std::string &name) {
@@ -48,7 +47,7 @@ namespace GameEngine {
             int i = 0;
 
             while (index == -1 && i < properties_.size()){
-                if(properties_[index].name() == name)
+                if(properties_[index]->name() == name)
                     index = i;
                 i++;
             }
@@ -56,13 +55,13 @@ namespace GameEngine {
             if(index == -1)
                 throw std::runtime_error("property " + name + " not found");
 
-            return  properties_[index];
+            return  *properties_[index];
         };
 
-        virtual void copy(const PropertySetBase &other) {
-            auto otherCast = static_cast<const PropertySet<Class>&>(other);
-            for (const auto &property : properties_) {
-                otherCast.add(property.copy(static_cast<Class*>(otherCast.target_)));
+        virtual void copy(PropertySetBase &other) const {
+            auto otherCast = static_cast<PropertySet<Class>&>(other);
+            for (auto *property : properties_) {
+                otherCast.add(property->copy(static_cast<Class*>(otherCast.target_)));
             }
         };
     };

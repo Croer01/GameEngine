@@ -24,8 +24,16 @@ namespace Internal {
 
             const std::shared_ptr<ComponentType> &instance = std::make_shared<ComponentType>();
             PropertySet<ComponentType> &properties = static_cast<PropertySet<ComponentType>&>(instance->properties());
+
             for(int i = 0; i < properties.size(); i++){
                 PropertyBase<ComponentType> &property = properties.get(i);
+
+                if(!data[property.name()]) {
+                    if(property.required())
+                        throw std::logic_error("property " + property.name() + " is required but it isn't defined");
+                    continue;
+                }
+
                 switch (property.type()){
                     case PropertyTypes::INT:
                         {
@@ -54,12 +62,19 @@ namespace Internal {
                             });
                         }
                         break;
+
+                    case PropertyTypes::BOOL:
+                        {
+                            auto propertyBool = static_cast<Property<ComponentType, bool>&>(property);
+                            propertyBool.set(data[property.name()].as<bool>(false));
+                        }
+                        break;
                     case PropertyTypes::UNKNOWN:
                         throw std::runtime_error("the property " + property.name() + " has unknown type");
                         break;
                 }
             }
-                
+
             return instance;
         };
     };

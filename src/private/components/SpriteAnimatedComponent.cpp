@@ -13,7 +13,7 @@ namespace GameEngine {
         index_[1] = 0;
     }
 
-    std::shared_ptr<Component> SpriteAnimatedComponent::Clone() {
+    geComponentRef SpriteAnimatedComponent::Clone() {
         std::shared_ptr<SpriteAnimatedComponent> clone = std::make_shared<SpriteAnimatedComponent>();
         clone->graphicLoaded_ = graphicLoaded_;
         clone->graphic_ = std::make_shared<GraphicHolder>(graphicLoaded_);

@@ -30,14 +30,17 @@ namespace GameEngine {
     public:
         explicit PropertyBase(const std::string &name) : PropertyBase(name, false){};
         PropertyBase(const std::string &name, bool required) : name_(name), required_(required){};
-        virtual PropertyBase copy(Class *newTarget) const {
+        virtual PropertyBase<Class> *copy(Class *newTarget) const {
             throw std::runtime_error("not implemented. Cast to Property class to call this method");
         };
         void target(Class *target){
             target_ = target;
-        }
-        PropertyTypes type() const{
+        };
+        PropertyTypes type() const {
             return type_;
+        };
+        void type(PropertyTypes propertyType) {
+            type_ = propertyType;
         };
 
         std::string name() const {
@@ -104,9 +107,14 @@ namespace GameEngine {
                 target_->*value_ = value;
         };
 
-        PropertyBase<Class> copy(Class *newTarget) const override {
-            Property<Class, MemberType> clone(name_, newTarget, value_, default_, required_);
-            clone.target(newTarget);
+        virtual PropertyBase<Class> *copy(Class *newTarget) const override {
+            Property<Class, MemberType> *clone = nullptr;
+            if (useMethods)
+                clone = new Property<Class, MemberType>(name_, newTarget, getter_, setter_, default_, required_);
+            else
+                clone = new Property<Class, MemberType>(name_, newTarget, value_, default_, required_);
+
+            clone->set(get());
             return clone;
         }
     };

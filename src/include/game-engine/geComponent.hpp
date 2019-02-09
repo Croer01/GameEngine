@@ -7,6 +7,9 @@
 
 #include <memory>
 #include <game-engine/api.hpp>
+#include <game-engine/properties/PropertySet.hpp>
+
+#define COMPONENT(x) //the #x component has been registered
 
 namespace GameEngine {
 
@@ -15,12 +18,22 @@ namespace GameEngine {
 
     class geGameObject;
     class PUBLICAPI geComponent{
+        GameEngine::geGameObject *gameObject_;
+        PropertySetBase* properties_;
+    protected:
+        virtual void onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) {};
+        virtual PropertySetBase *configureProperties();
+        virtual geComponentRef instantiate() const;
     public:
-        virtual ~geComponent() = default;
-        virtual void Update(float elapsedTime) = 0;
-        virtual void init() = 0;
-        virtual void gameObject(geGameObject *gameObject) = 0;
-        virtual geGameObject *gameObject() const = 0;
+        virtual ~geComponent();
+
+        virtual void Update(float elapsedTime){};
+        virtual void init(){};
+        void gameObject(geGameObject *gameObject);
+        geGameObject *gameObject() const;
+        PropertySetBase &properties();
+        void properties(PropertySetBase &properties);
+        geComponentRef clone() const;
     };
 }
 #endif //SPACEINVADERS_GECOMPONENT_HPP

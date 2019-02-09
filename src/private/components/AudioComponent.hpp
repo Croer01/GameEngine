@@ -6,21 +6,17 @@
 #define SPACEINVADERS_AUDIOCOMPONENT_HPP
 
 
-#include "../Component.hpp"
+#include <game-engine/geComponent.hpp>
 #include "../audio/AudioSource.hpp"
 namespace GameEngine {
 namespace Internal {
-    class AudioComponent : public Component {
+    class AudioComponent : public geComponent {
         std::string filePath_;
         std::shared_ptr<AudioSource> source_;
         bool playOnInit_;
         bool loopOnInit_;
     public:
         void init() override;
-
-        std::shared_ptr<Component> Clone() override;
-
-        void fromFile(const YAML::Node &componentConfig) override;
 
         //AudioComponent public API
         void play();

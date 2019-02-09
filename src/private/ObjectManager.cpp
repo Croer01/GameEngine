@@ -10,13 +10,12 @@ namespace Internal {
         componentFactory_.AddBuilder(idType, builder);
     }
 
-    std::shared_ptr<Component> ObjectManager::createComponent(const std::string &idType) {
+    geComponentRef ObjectManager::createComponent(const std::string &idType, const YAML::Node &data) {
         try {
-            return componentFactory_.Create(idType);
+            return componentFactory_.Create(idType, data);
         }
         catch (const std::exception &e) {
-            throw std::exception(
-                    ("error instantiating component " + idType + ". cause: object not registered").c_str());
+            throw std::runtime_error("error instantiating component " + idType + ". cause: " + e.what());
         }
     }
 

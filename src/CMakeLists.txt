@@ -37,19 +37,19 @@ set(ENGINE_SOURCES
         public/geComponent.cpp
         public/geEnvironment.cpp
         public/properties/Property.cpp
-        public/properties/PropertySet.cpp)
+        public/properties/PropertySet.cpp
+        public/components/SpriteComponent.cpp
+        )
 
 # private stuff
 set(ENGINE_PRIVATE_SOURCES
         private/Game.cpp
         private/GameObject.cpp
-        private/Component.cpp
         private/ObjectManager.cpp
         private/SceneManager.cpp
         private/Scene.cpp
         private/utils.cpp
-        private/components/SpriteComponent.cpp
-        private/components/SpriteAnimatedComponent.cpp
+#        private/components/SpriteAnimatedComponent.cpp
         private/graphics/GraphicsEngine.cpp
         private/graphics/Graphic.cpp
         private/graphics/Shader.cpp
@@ -60,16 +60,16 @@ set(ENGINE_PRIVATE_SOURCES
         private/Screen.cpp
         private/physics/PhysicsEngine.cpp
         private/physics/Collider.cpp
-        private/components/ColliderComponent.cpp
+#        private/components/ColliderComponent.cpp
         private/physics/DebugView.cpp
         private/graphics/font/Font.cpp
         private/graphics/font/Text.cpp
         private/graphics/font/FontManager.cpp
-        private/components/TextComponent.cpp
+#        private/components/TextComponent.cpp
         private/audio/AudioEngine.cpp
         private/audio/AudioSource.cpp
         private/audio/AudioBuffer.cpp
-        private/components/AudioComponent.cpp
+#        private/components/AudioComponent.cpp
         private/Random.cpp)
 
 add_library(GameEngine ${ENGINE_SOURCES} ${ENGINE_PRIVATE_SOURCES})

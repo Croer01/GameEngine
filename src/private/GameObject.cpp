@@ -5,7 +5,7 @@
 #include <iostream>
 #include <sstream>
 #include "GameObject.hpp"
-#include "Component.hpp"
+#include <game-engine/geComponent.hpp>
 #include "ObjectManager.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -58,12 +58,11 @@ namespace Internal {
     }
 
     void GameObject::addComponent(const geComponentRef &component) {
-        auto cast = std::dynamic_pointer_cast<Component>(component);
-        auto it = std::find(components_.begin(),components_.end(),cast);
+        auto it = std::find(components_.begin(),components_.end(),component);
         if(it != components_.end())
             return;
-        cast->gameObject(this);
-        components_.push_back(cast);
+        component->gameObject(this);
+        components_.push_back(component);
     }
 
     void GameObject::addChild(std::shared_ptr<GameObject> child) {
@@ -100,7 +99,7 @@ namespace Internal {
         cloned->scale_ = scale_;
 
         for (auto &component : components_) {
-            std::shared_ptr<Component> clonedComponent = std::dynamic_pointer_cast<Component>(component)->Clone();
+            std::shared_ptr<geComponent> clonedComponent = component->clone();
             if(!clonedComponent)
                 throw std::runtime_error("one of the components of " + prototype_ + " has an error during cloning process");
             cloned->addComponent(clonedComponent);
@@ -227,9 +226,9 @@ namespace Internal {
         if(components) {
             for (auto i = 0; i < components.size(); ++i) {
                 YAML::Node componentConfig = components[i];
-                std::shared_ptr<Component> component = ObjectManager::GetInstance().createComponent(
-                        componentConfig["type"].as<std::string>());
-                component->fromFile(componentConfig);
+                geComponentRef component = ObjectManager::GetInstance().createComponent(
+                        componentConfig["type"].as<std::string>(),componentConfig);
+
                 addComponent(component);
             }
         }

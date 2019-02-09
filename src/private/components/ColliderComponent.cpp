@@ -25,7 +25,7 @@ namespace {
         throw std::runtime_error("Unknown " + typeName + " collider type.");
     }
 }
-    std::shared_ptr<Component> ColliderComponent::Clone() {
+    geComponentRef ColliderComponent::Clone() {
         std::shared_ptr<ColliderComponent> clone = std::make_shared<ColliderComponent>();
         clone->extends_ = extends_;
         clone->offset_ = offset_;

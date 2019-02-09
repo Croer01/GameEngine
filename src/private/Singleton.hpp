@@ -14,6 +14,7 @@ namespace Internal {
             static T *instance_;
             if (!instance_) {
                 instance_ = new T();
+                static_cast<Singleton<T>*>(instance_)->onCreateInstance();
             }
             return *instance_;
         }
@@ -24,6 +25,8 @@ namespace Internal {
 
     protected:
         Singleton() {};
+
+        virtual void onCreateInstance(){};
 
         virtual ~Singleton() {}
     };

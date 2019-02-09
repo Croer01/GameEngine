@@ -13,7 +13,7 @@ namespace Internal {
         updateTextTransform();
     }
 
-    std::shared_ptr<Component> TextComponent::Clone() {
+    geComponentRef TextComponent::Clone() {
         std::shared_ptr<TextComponent> clone = std::make_shared<TextComponent>();
         clone->text_ = text_;
         clone->font_ = font_;

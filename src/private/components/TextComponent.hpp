@@ -6,11 +6,14 @@
 #define SPACEINVADERS_TEXTCOMPONENT_HPP
 
 
-#include "../Component.hpp"
+#include <game-engine/geComponent.hpp>
+#include <game-engine/geGameObject.hpp>
 #include "../graphics/font/Text.hpp"
+#include "../events/Observer.hpp"
+
 namespace GameEngine {
 namespace Internal {
-    class TextComponent : public Component, public Observer<GameObjectEvent> {
+    class TextComponent : public geComponent, public Observer<GameObjectEvent> {
         std::string text_;
         std::string font_;
         unsigned int fontSize_;
@@ -23,10 +26,6 @@ namespace Internal {
         virtual ~TextComponent();
 
         void init() override;
-
-        std::shared_ptr<Component> Clone() override;
-
-        void fromFile(const YAML::Node &componentConfig) override;
 
         void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
 

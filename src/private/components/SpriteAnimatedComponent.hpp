@@ -6,12 +6,15 @@
 #define SPACEINVADERS_SPRITEANIMATEDCOMPONENT_HPP
 
 
-#include "../Component.hpp"
+#include <game-engine/geComponent.hpp>
+#include <game-engine/geGameObject.hpp>
 #include "../graphics/Graphic.hpp"
 #include "../graphics/GraphicHolder.hpp"
+#include "../events/Observer.hpp"
+
 namespace GameEngine {
 namespace Internal {
-        class SpriteAnimatedComponent : public Component, public Observer<GameObjectEvent> {
+        class SpriteAnimatedComponent : public geComponent, public Observer<GameObjectEvent> {
             std::shared_ptr<Graphic> graphicLoaded_;
             std::shared_ptr<GraphicHolder> graphic_;
             float timePerFrame_;
@@ -28,10 +31,6 @@ namespace Internal {
             ~SpriteAnimatedComponent();
 
             void init() override;
-
-            std::shared_ptr<Component> Clone() override;
-
-            void fromFile(const YAML::Node &componentConfig) override;
 
             void Update(float elapsedTime) override;
 

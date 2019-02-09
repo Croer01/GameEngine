@@ -19,8 +19,6 @@
 
 namespace GameEngine {
 namespace Internal {
-    class Component;
-
 
     class GameObject : public geGameObject, public Subject<GameObjectEvent>, private Observer<GameObjectEvent> {
         static int ID_GENERATOR;

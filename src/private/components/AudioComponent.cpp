@@ -12,7 +12,7 @@ namespace Internal {
         setLooping(loopOnInit_);
     }
 
-    std::shared_ptr<Component> AudioComponent::Clone() {
+    geComponentRef AudioComponent::Clone() {
         std::shared_ptr<AudioComponent> clone = std::make_shared<AudioComponent>();
         clone->filePath_ = filePath_;
         clone->playOnInit_ = playOnInit_;
