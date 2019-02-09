@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 #include <game-engine/geGame.hpp>
 #include <game-engine/geGameObject.hpp>
+#include <game-engine/components/SpriteComponent.hpp>
 
 TEST(GameObject, createObject)
 {
@@ -105,4 +106,25 @@ TEST(GameObject, loadGameObject)
 
     GameEngine::geGameObjectRef gameObject = game.createFromPrototype(prototype);
     ASSERT_EQ(gameObject->name(), "loadedFromFile");
+}
+
+
+TEST(SpriteComponent, load)
+{
+    const std::string &prototype = "ObjectWithSpriteLoaded";
+
+    GameEngine::geGame game;
+
+    GameEngine::geEnvironment environment;
+
+    game.configEnvironment(environment);
+    game.init();
+    //TODO: fix how to register prototypes (maybe can add a flag into graphics to know when the gl context is created
+    environment.addPrototype(prototype, "data/spriteComponentLoadTest.yaml");
+
+    GameEngine::geGameObjectRef gameObject = game.createFromPrototype(prototype);
+    const std::weak_ptr<GameEngine::SpriteComponent> &component = gameObject->getComponent<GameEngine::SpriteComponent>();
+    ASSERT_EQ(gameObject->name(), "loadedFromFile");
+    ASSERT_TRUE(component.lock());
+    ASSERT_EQ(component.lock()->filepath(),"data/1x1white.png");
 }
