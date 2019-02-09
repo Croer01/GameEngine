@@ -10,6 +10,13 @@
 #include "../private/SceneManager.hpp"
 
 namespace GameEngine {
+
+    geGame::geGame() {
+        //Force initialize the instance
+        Internal::Game::GetInstance().GetInstance();
+        initialized_ = false;
+    }
+
     geGameObjectRef geGame::createObject(const std::string &name) {
         Internal::GameObject *object = new Internal::GameObject("");
         object->name(name);
@@ -25,9 +32,16 @@ namespace GameEngine {
         return object;
     }
 
-    int geGame::start() {
-        try {
+    void geGame::init(){
+        if(!initialized_) {
             Internal::Game::GetInstance().init(environment_.configurationPath());
+            initialized_ = true;
+        }
+    }
+
+    int geGame::loop() {
+        try {
+            init();
 
             if(!environment_.firstScene().empty())
                 Internal::SceneManager::GetInstance().changeScene(environment_.firstScene());

@@ -13,7 +13,7 @@ TEST(Game, start)
         game.shutdown();
     });
     EXPECT_NO_THROW(
-    EXPECT_HRESULT_SUCCEEDED(game.start());
+        EXPECT_HRESULT_SUCCEEDED(game.loop());
     );
     t.join();
 }

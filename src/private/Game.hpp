@@ -26,6 +26,8 @@ namespace Internal {
 
         void makeCurrentContext();
 
+    protected:
+        void onCreateInstance() override;
     public:
         void init(const std::string &configRoot);
 

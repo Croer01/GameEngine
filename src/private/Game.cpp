@@ -6,22 +6,39 @@
 #include "Game.hpp"
 #include "ObjectManager.hpp"
 #include "utils.hpp"
-#include "components/SpriteComponent.hpp"
+#include <game-engine/components/SpriteComponent.hpp>
 #include "graphics/GraphicsEngine.hpp"
 #include "Scene.hpp"
 #include "SceneManager.hpp"
 #include "InputManager.hpp"
-#include "components/ColliderComponent.hpp"
+//#include "components/ColliderComponent.hpp"
 #include "physics/PhysicsEngine.hpp"
-#include "components/TextComponent.hpp"
-#include "components/SpriteAnimatedComponent.hpp"
+//#include "components/TextComponent.hpp"
+//#include "components/SpriteAnimatedComponent.hpp"
 #include "audio/AudioEngine.hpp"
-#include "components/AudioComponent.hpp"
+//#include "components/AudioComponent.hpp"
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
 
 namespace GameEngine {
 namespace Internal {
+
+    void Game::onCreateInstance() {
+        //Register engine default components
+        ObjectManager::GetInstance().registerComponentBuilder("SpriteComponent",
+                                                              new ComponentTBuilder<SpriteComponent>());
+//        ObjectManager::GetInstance().registerComponentBuilder("SpriteAnimatedComponent",
+//                                                              new ComponentTBuilder<SpriteAnimatedComponent>());
+//        ObjectManager::GetInstance().registerComponentBuilder("ColliderComponent",
+//                                                              new ComponentTBuilder<ColliderComponent>());
+//        ObjectManager::GetInstance().registerComponentBuilder("TextComponent", new ComponentTBuilder<TextComponent>());
+//        ObjectManager::GetInstance().registerComponentBuilder("AudioComponent",
+//                                                              new ComponentTBuilder<AudioComponent>());
+#ifdef REGISTER_COMPONENT_FN
+        REGISTER_COMPONENT_FN();
+#endif
+    }
+
     void Game::init(const std::string &configRoot) {
         running_ = true;
         // Initialize SDL's Video subsystem
@@ -33,20 +50,6 @@ namespace Internal {
         initPhysics(configRoot + "/physics.yaml");
 
         AudioEngine::GetInstance().init();
-
-        //Register engine default components
-        ObjectManager::GetInstance().registerComponentBuilder("SpriteComponent",
-                                                              new ComponentTBuilder<SpriteComponent>());
-        ObjectManager::GetInstance().registerComponentBuilder("SpriteAnimatedComponent",
-                                                              new ComponentTBuilder<SpriteAnimatedComponent>());
-        ObjectManager::GetInstance().registerComponentBuilder("ColliderComponent",
-                                                              new ComponentTBuilder<ColliderComponent>());
-        ObjectManager::GetInstance().registerComponentBuilder("TextComponent", new ComponentTBuilder<TextComponent>());
-        ObjectManager::GetInstance().registerComponentBuilder("AudioComponent",
-                                                              new ComponentTBuilder<AudioComponent>());
-#ifdef REGISTER_COMPONENT_FN
-        REGISTER_COMPONENT_FN();
-#endif
     }
 
     void Game::initSDLWindow() {
