@@ -21,7 +21,6 @@ namespace GameEngine {
                         &SpriteComponent::filepath,
                         "",
                         true);
-        property->type(PropertyTypes::STRING);
         properties->add(property);
         auto *aProperty = new Property<SpriteComponent, bool>(
                         "visible",
@@ -29,7 +28,6 @@ namespace GameEngine {
                         &SpriteComponent::isVisible,
                         &SpriteComponent::setVisible,
                         true);
-        aProperty->type(PropertyTypes::BOOL);
 
         properties->add(aProperty);
 

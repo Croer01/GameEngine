@@ -19,17 +19,41 @@ namespace GameEngine {
         VEC2D
     };
 
+    template <typename ValueType>
+    struct PropertyTypeDeductive{
+        PropertyTypes type = PropertyTypes::UNKNOWN;
+    };
+    template <>
+    struct PropertyTypeDeductive<int>{
+        static constexpr PropertyTypes type = PropertyTypes::INT;
+    };
+    template <>
+    struct PropertyTypeDeductive<float>{
+        static constexpr PropertyTypes type = PropertyTypes::FLOAT;
+    };
+    template <>
+    struct PropertyTypeDeductive<std::string>{
+        static constexpr PropertyTypes type = PropertyTypes::STRING;
+    };
+    template <>
+    struct PropertyTypeDeductive<bool>{
+        static constexpr PropertyTypes type = PropertyTypes::BOOL;
+    };
+    template <>
+    struct PropertyTypeDeductive<GameEngine::Vec2D>{
+        static constexpr PropertyTypes type = PropertyTypes::VEC2D;
+    };
+
     template <typename Class>
     class PUBLICAPI PropertyBase{
     protected:
         Class *target_;
-        // TODO: implement type
         PropertyTypes type_;
         std::string name_;
         bool required_;
     public:
         explicit PropertyBase(const std::string &name) : PropertyBase(name, false){};
-        PropertyBase(const std::string &name, bool required) : name_(name), required_(required){};
+        PropertyBase(const std::string &name, bool required) : name_(name), required_(required), type_(PropertyTypes::UNKNOWN){};
         virtual PropertyBase<Class> *copy(Class *newTarget) const {
             throw std::runtime_error("not implemented. Cast to Property class to call this method");
         };
@@ -39,10 +63,6 @@ namespace GameEngine {
         PropertyTypes type() const {
             return type_;
         };
-        void type(PropertyTypes propertyType) {
-            type_ = propertyType;
-        };
-
         std::string name() const {
             return name_;
         };
@@ -76,6 +96,7 @@ namespace GameEngine {
                 useMethods(false) {
             default_ = defaultValue;
             target_ = target;
+            type_ = PropertyTypeDeductive<MemberType>::type;
         };
 
         Property(const std::string &name, Class *target, Getter getter, Setter setter, MemberType defaultValue) :
@@ -90,6 +111,7 @@ namespace GameEngine {
                 useMethods(true) {
             default_ = defaultValue;
             target_ = target;
+            type_ = PropertyTypeDeductive<MemberType>::type;
         };
 
         MemberType get() const {
