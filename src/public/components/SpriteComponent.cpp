@@ -14,22 +14,19 @@ namespace GameEngine {
     PropertySetBase *SpriteComponent::configureProperties() {
         auto *properties = new PropertySet<SpriteComponent>(this);
 
-        auto *property = new Property<SpriteComponent, std::string>(
+        properties->add(new Property<SpriteComponent, std::string>(
                         "filePath",
                         this,
                         &SpriteComponent::filepath,
                         &SpriteComponent::filepath,
                         "",
-                        true);
-        properties->add(property);
-        auto *aProperty = new Property<SpriteComponent, bool>(
+                        true));
+        properties->add(new Property<SpriteComponent, bool>(
                         "visible",
                         this,
                         &SpriteComponent::isVisible,
                         &SpriteComponent::setVisible,
-                        true);
-
-        properties->add(aProperty);
+                        true));
 
         return properties;
     }
