@@ -115,7 +115,14 @@ namespace GameEngine {
         };
 
         MemberType get() const {
-            return useMethods? (target_->*getter_)() : target_->*value_;
+            if(useMethods){
+                if(getter_ == nullptr)
+                    throw std::runtime_error("There is not a getter registered to use in property " + name_);
+
+                return (target_->*getter_)();
+            } else {
+                return target_->*value_;
+            }
         };
 
         MemberType defaultValue() const {
@@ -123,10 +130,13 @@ namespace GameEngine {
         };
 
         void set(MemberType value) {
-            if(useMethods)
+            if(useMethods) {
+                if(setter_ == nullptr)
+                    throw std::runtime_error("There is not a setter registered to use in property " + name_);
                 (target_->*setter_)(value);
-            else
+            } else {
                 target_->*value_ = value;
+            }
         };
 
         virtual PropertyBase<Class> *copy(Class *newTarget) const override {
