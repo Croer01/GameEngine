@@ -191,6 +191,10 @@ namespace Internal {
             SceneManager::GetInstance().changeSceneInSafeMode();
         }
 
+        //TODO: Do physics and graphics engines shutdown?
+        SDL_GL_DeleteContext(mainContext_);
+        mainWindow_.reset();
+
         // Shutdown SDL 2
         SDL_Quit();
     }
@@ -198,7 +202,6 @@ namespace Internal {
 
     void Game::shutdown() {
         running_ = false;
-        //TODO: Do physics and graphics engines shutdown?
     }
 }
 }
