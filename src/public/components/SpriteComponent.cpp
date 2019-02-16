@@ -76,12 +76,16 @@ namespace GameEngine {
 
     void SpriteComponent::filepath(const std::string &path) {
         if(path.empty()){
+            if(graphic_)
+                Internal::GraphicsEngine::GetInstance().unregisterGraphic(graphic_);
+
             graphicLoaded_.reset();
             graphic_.reset();
         }
         else{
             graphicLoaded_ = std::make_shared<Internal::Graphic>(path);
             graphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
+            Internal::GraphicsEngine::GetInstance().registerGraphic(graphic_);
         }
         filePath_ = path;
     }
