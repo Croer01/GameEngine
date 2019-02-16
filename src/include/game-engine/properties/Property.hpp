@@ -97,6 +97,7 @@ namespace GameEngine {
             default_ = defaultValue;
             target_ = target;
             type_ = PropertyTypeDeductive<MemberType>::type;
+            set(default_);
         };
 
         Property(const std::string &name, Class *target, Getter getter, Setter setter, MemberType defaultValue) :
@@ -112,6 +113,7 @@ namespace GameEngine {
             default_ = defaultValue;
             target_ = target;
             type_ = PropertyTypeDeductive<MemberType>::type;
+            set(default_);
         };
 
         MemberType get() const {
