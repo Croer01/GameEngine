@@ -13,8 +13,9 @@
 #include <game-engine/api.hpp>
 #include "../events/Subject.hpp"
 namespace GameEngine {
-namespace Internal {
     class ColliderComponent;
+
+namespace Internal {
 
     enum class ColliderEvent {
         BeginCollider
