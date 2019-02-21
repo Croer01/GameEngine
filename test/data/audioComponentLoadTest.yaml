@@ -1,0 +1,5 @@
+name: loadedFromFile
+components:
+  - type: AudioComponent
+    filePath: data/shoot.wav
+    playOnInit: true
