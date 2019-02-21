@@ -31,6 +31,8 @@ namespace Internal {
         std::shared_ptr<GameObject> findObjectByName(const std::string &gameObjectName);
 
         void reloadScene();
+
+        void clear();
     };
 }
 }

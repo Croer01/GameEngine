@@ -191,6 +191,12 @@ namespace Internal {
             SceneManager::GetInstance().changeSceneInSafeMode();
         }
 
+        // shutdown or clear all Game Systems
+        SceneManager::GetInstance().clear();
+        ObjectManager::GetInstance().clear();
+        // Restore default Components' Builder
+        onCreateInstance();
+
         //TODO: Do physics and graphics engines shutdown?
         SDL_GL_DeleteContext(mainContext_);
         mainWindow_.reset();

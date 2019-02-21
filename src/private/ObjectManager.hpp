@@ -28,6 +28,8 @@ namespace Internal {
         void registerPrototype(const std::string &objectType, const std::string &filename);
 
         std::shared_ptr<GameObject> createGameObject(const std::string &objectType);
+
+        void clear();
     };
 }
 }

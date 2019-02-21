@@ -54,5 +54,11 @@ namespace Internal {
     void SceneManager::reloadScene() {
         changeScene(currentSceneName_);
     }
+
+    void SceneManager::clear() {
+        if (currentScene_)
+            currentScene_->shutDown();
+        scenes_.clear();
+    }
 }
 }

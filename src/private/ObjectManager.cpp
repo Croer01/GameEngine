@@ -39,5 +39,10 @@ namespace Internal {
 
         return it->second->Clone();
     }
+
+    void ObjectManager::clear() {
+        prototypes_.clear();
+        componentFactory_ = Factory<geComponent, ComponentBuilder, std::string>();
+    }
 }
 }
