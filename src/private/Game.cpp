@@ -11,7 +11,7 @@
 #include "Scene.hpp"
 #include "SceneManager.hpp"
 #include "InputManager.hpp"
-//#include "components/ColliderComponent.hpp"
+#include <game-engine/components/ColliderComponent.hpp>
 #include "physics/PhysicsEngine.hpp"
 //#include "components/TextComponent.hpp"
 #include <game-engine/components/SpriteAnimatedComponent.hpp>
@@ -29,8 +29,8 @@ namespace Internal {
                                                               new ComponentTBuilder<SpriteComponent>());
         ObjectManager::GetInstance().registerComponentBuilder("SpriteAnimatedComponent",
                                                               new ComponentTBuilder<SpriteAnimatedComponent>());
-//        ObjectManager::GetInstance().registerComponentBuilder("ColliderComponent",
-//                                                              new ComponentTBuilder<ColliderComponent>());
+        ObjectManager::GetInstance().registerComponentBuilder("ColliderComponent",
+                                                              new ComponentTBuilder<ColliderComponent>());
 //        ObjectManager::GetInstance().registerComponentBuilder("TextComponent", new ComponentTBuilder<TextComponent>());
 //        ObjectManager::GetInstance().registerComponentBuilder("AudioComponent",
 //                                                              new ComponentTBuilder<AudioComponent>());

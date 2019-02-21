@@ -33,13 +33,13 @@ namespace {
         properties->add(new Property<ColliderComponent, Vec2D>(
                 "extends",
                 this,
-                nullptr,
+                &ColliderComponent::extends,
                 &ColliderComponent::extends,
                 Vec2D()));
         properties->add(new Property<ColliderComponent, Vec2D>(
                 "offset",
                 this,
-                nullptr,
+                &ColliderComponent::offset,
                 &ColliderComponent::offset,
                 Vec2D()));
 
@@ -47,19 +47,19 @@ namespace {
         properties->add(new Property<ColliderComponent, std::string>(
                 "colliderShape",
                 this,
-                nullptr,
+                &ColliderComponent::shape,
                 &ColliderComponent::shape,
                 "Box"));
         properties->add(new Property<ColliderComponent, std::string>(
                 "colliderShape",
                 this,
-                nullptr,
+                &ColliderComponent::type,
                 &ColliderComponent::type,
                 "Static"));
         properties->add(new Property<ColliderComponent, std::string>(
                 "category",
                 this,
-                nullptr,
+                &ColliderComponent::category,
                 &ColliderComponent::category,
                 ""));
 
@@ -172,25 +172,51 @@ namespace {
             collider_->setSize(extends_.x/2.f, extends_.y/2.f);
     }
 
+    Vec2D ColliderComponent::extends() const {
+        return extends_;
+    }
+
     void ColliderComponent::offset(const Vec2D &offsetValue) {
         offset_ = offsetValue;
     }
 
+    Vec2D ColliderComponent::offset() const {
+        return offset_;
+    }
     void ColliderComponent::shape(const std::string &colliderShape) {
         if(!collider_)
             collider_ = std::make_shared<Internal::Collider>();
         collider_->setShape(stringToColliderShape(colliderShape));
+        colliderShape_ = colliderShape;
     }
+
+    std::string ColliderComponent::shape() const {
+        return colliderShape_;
+    }
+
     void ColliderComponent::type(const std::string &colliderType) {
         if(!collider_)
             collider_ = std::make_shared<Internal::Collider>();
 
         collider_->setType(stringToColliderType(colliderType));
+        colliderType_ = colliderType;
     }
+
+    std::string ColliderComponent::type() const {
+        return colliderType_;
+    }
+
     void ColliderComponent::category(const std::string &colliderCategory) {
         if(!collider_)
             collider_ = std::make_shared<Internal::Collider>();
         collider_->setCategory(colliderCategory);
+        colliderCategory_ = colliderCategory;
+    }
+
+
+
+    std::string ColliderComponent::category() const {
+        return colliderCategory_;
     }
 }
 

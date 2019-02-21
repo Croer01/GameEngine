@@ -22,6 +22,9 @@ namespace GameEngine {
         std::weak_ptr<SpriteAnimatedComponent> spriteAnimated_;
         Vec2D extends_;
         Vec2D offset_;
+        std::string colliderShape_;
+        std::string colliderType_;
+        std::string colliderCategory_;
 
         Vec2D convertWorldToPhysicsPos(const Vec2D &worldPos) const;
 
@@ -41,11 +44,17 @@ namespace GameEngine {
 
         void applyForce(glm::vec3 force);
 
+        Vec2D extends() const;
         void extends(const Vec2D &extends);
+        Vec2D offset() const;
         void offset(const Vec2D &offsetValue);
+        std::string shape() const;
         void shape(const std::string &colliderShape);
+        std::string type() const;
         void type(const std::string &colliderType);
+        std::string category() const;
         void category(const std::string &colliderCategory);
+
     protected:
         PropertySetBase *configureProperties() override;
 
