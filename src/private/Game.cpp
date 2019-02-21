@@ -16,7 +16,7 @@
 //#include "components/TextComponent.hpp"
 #include <game-engine/components/SpriteAnimatedComponent.hpp>
 #include "audio/AudioEngine.hpp"
-//#include "components/AudioComponent.hpp"
+#include <game-engine/components/AudioComponent.hpp>
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
 
@@ -32,8 +32,8 @@ namespace Internal {
         ObjectManager::GetInstance().registerComponentBuilder("ColliderComponent",
                                                               new ComponentTBuilder<ColliderComponent>());
 //        ObjectManager::GetInstance().registerComponentBuilder("TextComponent", new ComponentTBuilder<TextComponent>());
-//        ObjectManager::GetInstance().registerComponentBuilder("AudioComponent",
-//                                                              new ComponentTBuilder<AudioComponent>());
+        ObjectManager::GetInstance().registerComponentBuilder("AudioComponent",
+                                                              new ComponentTBuilder<AudioComponent>());
 #ifdef REGISTER_COMPONENT_FN
         REGISTER_COMPONENT_FN();
 #endif
