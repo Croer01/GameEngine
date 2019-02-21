@@ -22,6 +22,8 @@ namespace GameEngine {
         geGameObjectRef createObject(const std::string &name);
         geGameObjectRef createFromPrototype(const std::string &prototype);
         void configEnvironment(const geEnvironment &environment);
+        // TODO: Improve this method or way to access an object of the currentScene (maybe using a "Context" object?)
+        geGameObjectRef findObjectByNameInCurrentScene(const std::string &gameObjectName);
     };
 }
 

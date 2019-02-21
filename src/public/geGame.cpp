@@ -59,4 +59,9 @@ namespace GameEngine {
     void geGame::shutdown() {
         Internal::Game::GetInstance().shutdown();
     }
+
+    geGameObjectRef geGame::findObjectByNameInCurrentScene(const std::string &gameObjectName) {
+        const std::shared_ptr<Internal::GameObject> &object = Internal::SceneManager::GetInstance().findObjectByName(gameObjectName);
+        return std::dynamic_pointer_cast<geGameObject>(object);
+    }
 }
