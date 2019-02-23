@@ -95,7 +95,7 @@ namespace GameEngine {
                 setter_(nullptr),
                 useMethods(false) {
             if(value == nullptr)
-                throw new std::invalid_argument("the member must not be null.");
+                throw std::invalid_argument("the member must not be null.");
             default_ = defaultValue;
             target_ = target;
             type_ = PropertyTypeDeductive<MemberType>::type;
