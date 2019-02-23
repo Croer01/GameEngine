@@ -13,7 +13,7 @@
 #include "InputManager.hpp"
 #include <game-engine/components/ColliderComponent.hpp>
 #include "physics/PhysicsEngine.hpp"
-//#include "components/TextComponent.hpp"
+#include <game-engine/components/TextComponent.hpp>
 #include <game-engine/components/SpriteAnimatedComponent.hpp>
 #include "audio/AudioEngine.hpp"
 #include <game-engine/components/AudioComponent.hpp>
@@ -31,7 +31,7 @@ namespace Internal {
                                                               new ComponentTBuilder<SpriteAnimatedComponent>());
         ObjectManager::GetInstance().registerComponentBuilder("ColliderComponent",
                                                               new ComponentTBuilder<ColliderComponent>());
-//        ObjectManager::GetInstance().registerComponentBuilder("TextComponent", new ComponentTBuilder<TextComponent>());
+        ObjectManager::GetInstance().registerComponentBuilder("TextComponent", new ComponentTBuilder<TextComponent>());
         ObjectManager::GetInstance().registerComponentBuilder("AudioComponent",
                                                               new ComponentTBuilder<AudioComponent>());
 #ifdef REGISTER_COMPONENT_FN

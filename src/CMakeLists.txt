@@ -41,7 +41,7 @@ set(ENGINE_SOURCES
         public/components/SpriteComponent.cpp
         public/components/SpriteAnimatedComponent.cpp
         public/components/ColliderComponent.cpp
-#        public/components/TextComponent.cpp
+        public/components/TextComponent.cpp
         public/components/AudioComponent.cpp
         )
 

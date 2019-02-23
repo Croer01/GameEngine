@@ -8,16 +8,15 @@
 
 #include <game-engine/geComponent.hpp>
 #include <game-engine/geGameObject.hpp>
-#include "../graphics/font/Text.hpp"
-#include "../events/Observer.hpp"
+#include "../private/graphics/font/Text.hpp"
+#include "../private/events/Observer.hpp"
 
 namespace GameEngine {
-namespace Internal {
-    class TextComponent : public geComponent, public Observer<GameObjectEvent> {
+class TextComponent : public geComponent, public Internal::Observer<GameObjectEvent> {
         std::string text_;
         std::string font_;
         unsigned int fontSize_;
-        std::shared_ptr<Text> textGraphic_;
+        std::shared_ptr<Internal::Text> textGraphic_;
         bool visible_;
 
         void updateTextTransform();
@@ -27,19 +26,30 @@ namespace Internal {
 
         void init() override;
 
-        void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
+        void onEvent(const Internal::Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
 
         //Text public API
-        void setText(const std::string &text);
+        int fontSize() const;
+        void fontSize(const int &size);
+
+        std::string font() const;
+        void font(const std::string &fontName);
+
+        void text(const std::string &text);
+        std::string text() const;
 
         void setVisible(bool visible);
 
         bool isVisible() const;
 
-    protected:
+protected:
+    PropertySetBase *configureProperties() override;
+
+    geComponentRef instantiate() const override;
+
+protected:
         void onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) override;
     };
-}
 }
 
 #endif //SPACEINVADERS_TEXTCOMPONENT_HPP
