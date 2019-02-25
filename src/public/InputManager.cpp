@@ -2,11 +2,14 @@
 // Created by adria on 14/10/2018.
 //
 
-#include "InputManager.hpp"
+#include <game-engine/InputManager.hpp>
+#include "../private/KeyCodeMap.hpp"
 #include <SDL2/SDL_events.h>
 
 namespace GameEngine {
-namespace Internal {
+
+    Internal::KeyMap keyMap;
+
     InputManager::InputManager() : mousePosition_({0, 0}), quit_(false) {}
 
 
@@ -31,8 +34,11 @@ namespace Internal {
         return mouseState[mouseButton] == InputState::DOWN;
     }
 
-    Vector2D InputManager::getMousePosition() {
-        SDL_GetMouseState(&mousePosition_.x, &mousePosition_.y);
+    Vec2D InputManager::getMousePosition() {
+    int x,y;
+        SDL_GetMouseState(&x, &y);
+        mousePosition_.x = x;
+        mousePosition_.y = y;
         return mousePosition_;
     }
 
@@ -53,12 +59,12 @@ namespace Internal {
                     break;
                 case SDL_KEYDOWN:
                     if (event.key.repeat == 0)
-                        keyboardState[event.key.keysym.sym] = InputState::DOWN;
+                        keyboardState[keyMap[event.key.keysym.sym]] = InputState::DOWN;
                     else
-                        keyboardState[event.key.keysym.sym] = InputState::PRESSED;
+                        keyboardState[keyMap[event.key.keysym.sym]] = InputState::PRESSED;
                     break;
                 case SDL_KEYUP:
-                    keyboardState[event.key.keysym.sym] = InputState::UP;
+                    keyboardState[keyMap[event.key.keysym.sym]] = InputState::UP;
                     break;
                 case SDL_MOUSEBUTTONDOWN:
                     switch (event.button.button) {
@@ -116,5 +122,4 @@ namespace Internal {
         bool InputManager::isQuitDown() {
             return quit_;
         }
-}
 }

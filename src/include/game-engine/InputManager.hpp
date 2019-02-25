@@ -7,30 +7,18 @@
 
 
 #include <map>
-#include <glm/vec2.hpp>
-#include "Singleton.hpp"
-#include <SDL2/SDL_keycode.h>
+#include "../private/Singleton.hpp"
+#include <game-engine/api.hpp>
+#include <game-engine/KeyCodes.hpp>
+
 namespace GameEngine {
-namespace Internal {
-    struct Vector2D {
-        int x;
-        int y;
-    };
 
-    enum class MouseButton {
-        LEFT,
-        RIGHT,
-        MIDDLE
-    };
-
-    typedef SDL_Keycode KeyCode;
-
-    class InputManager : public Singleton<InputManager> {
+class InputManager : public Internal::Singleton<InputManager> {
         enum class InputState {
             NONE, UP, DOWN, PRESSED
         };
         bool quit_;
-        Vector2D mousePosition_;
+        Vec2D mousePosition_;
         std::map<MouseButton, InputState> mouseState;
         std::map<KeyCode, InputState> keyboardState;
 
@@ -51,11 +39,10 @@ namespace Internal {
 
         bool isMouseButtonUp(MouseButton mouseButton);
 
-        Vector2D getMousePosition();
+        Vec2D getMousePosition();
 
         void update();
     };
-}
 }
 
 #endif //SPACEINVADERS_INPUTMANAGER_HPP

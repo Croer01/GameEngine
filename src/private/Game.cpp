@@ -10,7 +10,7 @@
 #include "graphics/GraphicsEngine.hpp"
 #include "Scene.hpp"
 #include "SceneManager.hpp"
-#include "InputManager.hpp"
+#include <game-engine/InputManager.hpp>
 #include <game-engine/components/ColliderComponent.hpp>
 #include "physics/PhysicsEngine.hpp"
 #include <game-engine/components/TextComponent.hpp>
@@ -161,7 +161,7 @@ namespace Internal {
             }
 
 #ifdef DEBUG
-            if (InputManager::GetInstance().isKeyDown(SDLK_F5)) {
+            if (InputManager::GetInstance().isKeyDown(KeyCode::KEY_F5)) {
                 SceneManager::GetInstance().reloadScene();
             }
 #endif

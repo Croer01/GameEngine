@@ -36,6 +36,7 @@ set(ENGINE_SOURCES
         public/geGame.cpp
         public/geComponent.cpp
         public/geEnvironment.cpp
+        public/InputManager.cpp
         public/properties/Property.cpp
         public/properties/PropertySet.cpp
         public/components/SpriteComponent.cpp
@@ -56,7 +57,6 @@ set(ENGINE_PRIVATE_SOURCES
         private/graphics/GraphicsEngine.cpp
         private/graphics/Graphic.cpp
         private/graphics/Shader.cpp
-        private/InputManager.cpp
         private/events/Observer.hpp
         private/events/Subject.hpp
         private/graphics/GraphicHolder.cpp
