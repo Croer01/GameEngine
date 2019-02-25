@@ -10,6 +10,7 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include <game-engine/geGame.hpp>
 
 namespace GameEngine {
 
@@ -46,6 +47,8 @@ namespace GameEngine {
         virtual void parent(const geGameObjectRef &gameObject) = 0;
 
         virtual void addComponent(const geComponentRef &component) = 0;
+
+        virtual geGame &game() const = 0;
 
         template <typename T>
         std::weak_ptr<T> getComponent() const {

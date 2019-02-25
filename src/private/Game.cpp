@@ -208,6 +208,15 @@ namespace Internal {
 
     void Game::shutdown() {
         running_ = false;
+        context_ = nullptr;
+    }
+
+    void Game::context(geGame *context) {
+        context_ = context;
+    }
+
+    geGame &Game::context() const {
+        return *context_;
     }
 }
 }

@@ -5,6 +5,7 @@
 #include <iostream>
 #include <sstream>
 #include "GameObject.hpp"
+#include "Game.hpp"
 #include <game-engine/geComponent.hpp>
 #include "ObjectManager.hpp"
 #include <glm/glm.hpp>
@@ -262,6 +263,10 @@ namespace Internal {
     void GameObject::computeTransform() {
         //remember the order of matrix multiplication is from right to left
         transform_ = glm::translate(glm::mat4(1),glm::vec3(position_.x,position_.y,0.f)) * glm::mat4_cast(glm::quat(glm::vec3(rotation_.x, rotation_.y,0.f))) * glm::scale(glm::mat4(1),glm::vec3(scale_.x, scale_.y, 1.f));
+    }
+
+    geGame &GameObject::game() const {
+        return Internal::Game::GetInstance().context();
     }
 }
 }

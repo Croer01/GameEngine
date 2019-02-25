@@ -13,8 +13,12 @@ namespace GameEngine {
 
     geGame::geGame() {
         //Force initialize the instance
-        Internal::Game::GetInstance().GetInstance();
+        Internal::Game::GetInstance().context(this);
         initialized_ = false;
+    }
+
+    geGame::~geGame() {
+        Internal::Game::GetInstance().context(nullptr);
     }
 
     geGameObjectRef geGame::createObject(const std::string &name) {

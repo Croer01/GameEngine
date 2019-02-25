@@ -82,6 +82,8 @@ namespace Internal {
         std::string name() const override;
         void name(const std::string &name) override;
 
+        virtual geGame &game() const;
+
     private:
         void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
 

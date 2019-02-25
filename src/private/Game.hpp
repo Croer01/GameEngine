@@ -7,16 +7,19 @@
 
 
 #include <SDL2/SDL_video.h>
+#include <game-engine/geGame.hpp>
 #include <memory>
 #include "Singleton.hpp"
 #include "Screen.hpp"
 #include <string>
+
 namespace GameEngine {
 namespace Internal {
     class Game : public Singleton<Game> {
         std::shared_ptr<SDL_Window> mainWindow_;
         SDL_GLContext mainContext_;
         bool running_;
+        geGame *context_;
 
         std::unique_ptr<Screen> screen_;
 
@@ -34,6 +37,9 @@ namespace Internal {
         void loop();
 
         void shutdown();
+
+        void context(geGame *context);
+        geGame &context() const;
     };
 }
 }

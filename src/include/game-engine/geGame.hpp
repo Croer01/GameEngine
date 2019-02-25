@@ -6,16 +6,21 @@
 #define SPACEINVADERS_GEGAME_HPP
 
 #include <game-engine/api.hpp>
-#include <game-engine/geGameObject.hpp>
 #include <game-engine/geEnvironment.hpp>
 #include <string>
+#include <memory>
 
 namespace GameEngine {
+    class geGame;
+    class geGameObject;
+    typedef std::shared_ptr<geGameObject> geGameObjectRef;
+
     class PUBLICAPI geGame {
         geEnvironment environment_;
         bool initialized_;
     public:
         geGame();
+        virtual ~geGame();
         void init();
         int loop();
         void shutdown();
