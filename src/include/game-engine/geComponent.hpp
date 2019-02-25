@@ -35,5 +35,13 @@ namespace GameEngine {
         void properties(PropertySetBase &properties);
         geComponentRef clone() const;
     };
+
+    template<typename T>
+    class PUBLICAPI geComponentInstantiable : public geComponent{
+    protected:
+        geComponentRef instantiate() const override {
+            return std::make_shared<T>();
+        }
+    };
 }
 #endif //SPACEINVADERS_GECOMPONENT_HPP
