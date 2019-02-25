@@ -22,9 +22,11 @@ namespace GameEngine {
     }
 
     geGameObjectRef geGame::createObject(const std::string &name) {
-        Internal::GameObject *object = new Internal::GameObject("");
+        const std::shared_ptr<Internal::GameObject> &object = std::make_shared<Internal::GameObject>("");
         object->name(name);
-        return geGameObjectRef(object);
+        if(Internal::SceneManager::GetInstance().isSceneLoaded())
+            Internal::SceneManager::GetInstance().addObjectIntoCurrentScene(object);
+        return object;
     }
 
     void geGame::configEnvironment(const geEnvironment &environment) {
@@ -32,7 +34,9 @@ namespace GameEngine {
     }
 
     geGameObjectRef geGame::createFromPrototype(const std::string &prototype) {
-        std::shared_ptr<Internal::GameObject> object = Internal::ObjectManager::GetInstance().createGameObject(prototype);
+        const std::shared_ptr<Internal::GameObject> &object = Internal::ObjectManager::GetInstance().createGameObject(prototype);
+        if(Internal::SceneManager::GetInstance().isSceneLoaded())
+            Internal::SceneManager::GetInstance().addObjectIntoCurrentScene(object);
         return object;
     }
 

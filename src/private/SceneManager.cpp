@@ -41,10 +41,8 @@ namespace Internal {
         }
     }
 
-    std::shared_ptr<GameObject> SceneManager::createGameObject(const std::string &objectType) {
-        const std::shared_ptr<GameObject> &instance = ObjectManager::GetInstance().createGameObject(objectType);
-        currentScene_->addGameObject(instance);
-        return instance;
+    void SceneManager::addObjectIntoCurrentScene(const std::shared_ptr<Internal::GameObject> &object) {
+        currentScene_->addGameObject(object);
     }
 
     std::shared_ptr<GameObject> SceneManager::findObjectByName(const std::string &gameObjectName) {
@@ -58,7 +56,13 @@ namespace Internal {
     void SceneManager::clear() {
         if (currentScene_)
             currentScene_->shutDown();
+        currentScene_.reset();
+        sceneNameToChange_.clear();
         scenes_.clear();
+    }
+
+    bool SceneManager::isSceneLoaded() const {
+        return (bool)currentScene_;
     }
 }
 }

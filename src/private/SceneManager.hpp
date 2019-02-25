@@ -26,13 +26,15 @@ namespace Internal {
 
         void changeSceneInSafeMode();
 
-        std::shared_ptr<GameObject> createGameObject(const std::string &objectType);
+        void addObjectIntoCurrentScene(const std::shared_ptr<Internal::GameObject> &object);
 
         std::shared_ptr<GameObject> findObjectByName(const std::string &gameObjectName);
 
         void reloadScene();
 
         void clear();
+
+        bool isSceneLoaded() const;
     };
 }
 }
