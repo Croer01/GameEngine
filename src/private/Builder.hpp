@@ -69,6 +69,17 @@ namespace Internal {
                             propertyBool.set(data[property.name()].as<bool>(false));
                         }
                         break;
+                    case PropertyTypes::ARRAY_STRING:
+                        {
+                            auto propertyArray = static_cast<Property<ComponentType,std::vector<std::string>&>(property);
+                            YAML::Node propertyNode = componentConfig[property.name()];
+                            const std::vector<std::string> &value;
+                            for (int i = 0; i < propertyNode.size(); ++i) {
+                                value.push_back(propertyNode[i].as<std::string>(""));
+                            }
+                            propertyArray.set(value);
+                        }
+                        break;
                     case PropertyTypes::UNKNOWN:
                         throw std::runtime_error("the property " + property.name() + " has unknown type");
                         break;
