@@ -41,7 +41,7 @@ namespace GameEngine {
         return properties;
     }
 
-    void TextComponent::onEvent(const Internal::Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) {
+    void TextComponent::onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) {
         if (event == GameObjectEvent::TransformChanged) {
             updateTextTransform();
         } else if (event == GameObjectEvent::ActiveChanged) {

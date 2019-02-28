@@ -87,7 +87,7 @@ namespace {
         onColliderEnterCallback_ = callback;
     }
 
-    void ColliderComponent::onEvent(const Internal::Subject<Internal::ColliderEvent> &target, const Internal::ColliderEvent &event, void *args) {
+    void ColliderComponent::onEvent(const Subject<Internal::ColliderEvent> &target, const Internal::ColliderEvent &event, void *args) {
         if(event == Internal::ColliderEvent::BeginCollider && onColliderEnterCallback_) {
             auto *collider = static_cast<Internal::Collider *>(args);
             if(auto component = collider->getComponent().lock())
@@ -95,7 +95,7 @@ namespace {
         }
     }
 
-    void ColliderComponent::onEvent(const Internal::Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) {
+    void ColliderComponent::onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) {
         if(event == GameObjectEvent::PositionChanged){
             if(!gameObject()->active() || collider_->getType() != Internal::Collider::ColliderTypes::Dynamic)
                 collider_->setPosition(convertWorldToPhysicsPos(gameObject()->position()));

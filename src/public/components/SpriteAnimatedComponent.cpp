@@ -73,7 +73,7 @@ namespace GameEngine {
         return graphic_->getCellHeight();
     }
 
-    void SpriteAnimatedComponent::onEvent(const Internal::Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) {
+    void SpriteAnimatedComponent::onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) {
         if(event == GameObjectEvent::TransformChanged){
             graphic_->setModelTransform(gameObject()->position(), gameObject()->rotation(), gameObject()->scale());
         }

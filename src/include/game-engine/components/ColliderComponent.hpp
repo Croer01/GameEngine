@@ -15,7 +15,7 @@ namespace GameEngine {
 
     typedef std::function<void(ColliderComponent *)> OnColliderEventCallback;
 
-    class ColliderComponent : public geComponent, public Internal::Observer<Internal::ColliderEvent>, public Internal::Observer<GameObjectEvent> {
+    class ColliderComponent : public geComponent, public Observer<Internal::ColliderEvent>, public Observer<GameObjectEvent> {
         std::shared_ptr<Internal::Collider> collider_;
         OnColliderEventCallback onColliderEnterCallback_;
         std::weak_ptr<SpriteComponent> sprite_;
@@ -59,9 +59,9 @@ namespace GameEngine {
         PropertySetBase *configureProperties() override;
 
     protected:
-        void onEvent(const Internal::Subject<Internal::ColliderEvent> &target, const Internal::ColliderEvent &event, void *args) override;
+        void onEvent(const Subject<Internal::ColliderEvent> &target, const Internal::ColliderEvent &event, void *args) override;
 
-        void onEvent(const Internal::Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
+        void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
 
         void onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) override;
     };

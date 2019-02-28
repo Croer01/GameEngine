@@ -39,7 +39,7 @@ namespace GameEngine {
         return graphicLoaded_->getHeight();
     }
 
-    void SpriteComponent::onEvent(const Internal::Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) {
+    void SpriteComponent::onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) {
         if (event == GameObjectEvent::TransformChanged) {
             graphic_->setModelTransform(gameObject()->position(), gameObject()->rotation(),
                                         gameObject()->scale());

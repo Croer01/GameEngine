@@ -8,11 +8,11 @@
 
 #include <game-engine/geComponent.hpp>
 #include <game-engine/geGameObject.hpp>
+#include <game-engine/events/Observer.hpp>
 #include "../private/graphics/font/Text.hpp"
-#include "../private/events/Observer.hpp"
 
 namespace GameEngine {
-class TextComponent : public geComponent, public Internal::Observer<GameObjectEvent> {
+class TextComponent : public geComponent, public Observer<GameObjectEvent> {
         std::string text_;
         std::string font_;
         unsigned int fontSize_;
@@ -26,7 +26,7 @@ class TextComponent : public geComponent, public Internal::Observer<GameObjectEv
 
         void init() override;
 
-        void onEvent(const Internal::Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
+        void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
 
         //Text public API
         int fontSize() const;

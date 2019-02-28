@@ -57,8 +57,6 @@ set(ENGINE_PRIVATE_SOURCES
         private/graphics/GraphicsEngine.cpp
         private/graphics/Graphic.cpp
         private/graphics/Shader.cpp
-        private/events/Observer.hpp
-        private/events/Subject.hpp
         private/graphics/GraphicHolder.cpp
         private/Screen.cpp
         private/physics/PhysicsEngine.cpp

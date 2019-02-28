@@ -11,6 +11,7 @@
 #include <vector>
 #include <string>
 #include <game-engine/geGame.hpp>
+#include <game-engine/events/Subject.hpp>
 
 namespace GameEngine {
 
@@ -25,7 +26,7 @@ namespace GameEngine {
 
     typedef std::shared_ptr<geGameObject> geGameObjectRef;
 
-    class PUBLICAPI geGameObject {
+    class PUBLICAPI geGameObject : public Subject<GameObjectEvent> {
     public:
         virtual ~geGameObject(){};
 
@@ -64,7 +65,8 @@ namespace GameEngine {
         }
     protected:
         std::vector<geComponentRef> components_;
-
+    private:
+    virtual void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) = 0;
     };
 
 }

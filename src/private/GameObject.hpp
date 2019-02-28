@@ -15,12 +15,11 @@
 #include <game-engine/geGameObject.hpp>
 #include <game-engine/api.hpp>
 #include <game-engine/geComponent.hpp>
-#include "events/Subject.hpp"
 
 namespace GameEngine {
 namespace Internal {
 
-    class GameObject : public geGameObject, public Subject<GameObjectEvent>, private Observer<GameObjectEvent> {
+    class GameObject : public geGameObject, private Observer<GameObjectEvent> {
         static int ID_GENERATOR;
         int id_;
         bool active_;

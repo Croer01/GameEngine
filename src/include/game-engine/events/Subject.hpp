@@ -9,9 +9,9 @@
 #include <map>
 #include <vector>
 #include <functional>
-#include "Observer.hpp"
+#include <game-engine/events/Observer.hpp>
+
 namespace GameEngine {
-namespace Internal {
     template<typename EventType>
     class Subject {
 
@@ -52,7 +52,6 @@ namespace Internal {
             }
         }
     };
-}
 }
 
 #endif //SPACEINVADERS_SUBJECT_HPP

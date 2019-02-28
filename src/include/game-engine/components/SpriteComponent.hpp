@@ -8,12 +8,12 @@
 
 #include <game-engine/geComponent.hpp>
 #include <game-engine/geGameObject.hpp>
+#include <game-engine/events/Observer.hpp>
 #include "../private/graphics/Graphic.hpp"
 #include "../private/graphics/GraphicHolder.hpp"
-#include "../private/events/Observer.hpp"
 
 namespace GameEngine {
-class PUBLICAPI SpriteComponent : public geComponent, public Internal::Observer<GameObjectEvent> {
+class PUBLICAPI SpriteComponent : public geComponent, public Observer<GameObjectEvent> {
         std::shared_ptr<Internal::Graphic> graphicLoaded_;
         std::shared_ptr<Internal::GraphicHolder> graphic_;
         bool visible_;
@@ -38,7 +38,7 @@ public:
 
         bool isVisible() const;
 
-        void onEvent(const Internal::Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
+        void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
 
         void filepath(const std::string &path);
         std::string filepath() const;

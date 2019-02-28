@@ -11,7 +11,8 @@
 #include <functional>
 #include <glm/vec3.hpp>
 #include <game-engine/api.hpp>
-#include "../events/Subject.hpp"
+#include <game-engine/events/Subject.hpp>
+
 namespace GameEngine {
     class ColliderComponent;
 
