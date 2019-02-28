@@ -51,6 +51,26 @@ struct PUBLICAPI Vec2D {
         return *this;
     };
 
+    Vec2D operator*(const int &other) const {
+        return Vec2D(x * other, y * other);
+    };
+
+    Vec2D operator*=(const int &other) {
+        x *= other;
+        y *= other;
+        return *this;
+    };
+
+    Vec2D operator*(const float &other) const {
+        return Vec2D(x * other, y * other);
+    };
+
+    Vec2D operator*=(const float &other) {
+        x *= other;
+        y *= other;
+        return *this;
+    };
+
     bool operator==(const Vec2D &rhs) const {
         return x == rhs.x &&
                y == rhs.y;
