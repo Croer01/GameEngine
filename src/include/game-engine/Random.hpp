@@ -8,7 +8,6 @@
 
 #include <random>
 namespace GameEngine {
-namespace Internal {
     class Random {
         std::mt19937 generator_;
         std::uniform_real_distribution<float> distributionReal_;
@@ -21,7 +20,6 @@ namespace Internal {
 
         float getRange(float min, float max);
     };
-}
 }
 
 #endif //SPACEINVADERS_RANDOM_HPP

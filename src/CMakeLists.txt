@@ -44,6 +44,7 @@ set(ENGINE_SOURCES
         public/components/ColliderComponent.cpp
         public/components/TextComponent.cpp
         public/components/AudioComponent.cpp
+        public/Random.cpp
         )
 
 # private stuff
@@ -68,7 +69,7 @@ set(ENGINE_PRIVATE_SOURCES
         private/audio/AudioEngine.cpp
         private/audio/AudioSource.cpp
         private/audio/AudioBuffer.cpp
-        private/Random.cpp)
+        )
 
 add_library(GameEngine ${ENGINE_SOURCES} ${ENGINE_PRIVATE_SOURCES})
 

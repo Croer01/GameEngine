@@ -4,9 +4,9 @@
 
 #include <ctime>
 #include <string>
-#include "Random.hpp"
+#include <game-engine/Random.hpp>
+
 namespace GameEngine {
-namespace Internal {
     Random::Random() : generator_(std::random_device()()),
                        distributionReal_(std::uniform_real_distribution<float>(0.f, 1.f)) {}
 
@@ -39,5 +39,4 @@ namespace Internal {
 
         return min + randomDist(generator_);
     }
-}
 }
