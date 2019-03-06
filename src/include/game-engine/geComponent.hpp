@@ -42,6 +42,10 @@ namespace GameEngine {
         geComponentRef instantiate() const override {
             return std::make_shared<T>();
         }
+        virtual PropertySetBase *configureProperties() {
+            return new PropertySet<T>(dynamic_cast<T*>(this));
+        }
+
     };
 }
 #endif //SPACEINVADERS_GECOMPONENT_HPP
