@@ -10,6 +10,9 @@
 namespace GameEngine {
     void TextComponent::init() {
         visible_ = true;
+
+        updateTextRef();
+
         updateTextTransform();
     }
 
@@ -49,50 +52,41 @@ namespace GameEngine {
         }
     }
     void TextComponent::font(const std::string &fontName) {
-        font_ = fontName;
+        textParams_.fontName = fontName;
 
         if(textGraphic_)
-            Internal::GraphicsEngine::GetInstance().unregisterText(textGraphic_);
-
-        textGraphic_ = Internal::FontManager::GetInstance().getFont(font_, fontSize_)->createText(text_);
-        Internal::GraphicsEngine::GetInstance().registerText(textGraphic_);
+            updateTextRef();
     }
 
     std::string TextComponent::font() const {
-        return font_;
+        return textParams_.fontName;
     }
 
     void TextComponent::fontSize(const int &size) {
         if(size < 0)
             throw std::invalid_argument("fontsize must be greater than 0. current value is " + std::to_string(size));
-        fontSize_ = size;
+        textParams_.fontSize = size;
         if(textGraphic_)
-            Internal::GraphicsEngine::GetInstance().unregisterText(textGraphic_);
-
-        textGraphic_ = Internal::FontManager::GetInstance().getFont(font_, fontSize_)->createText(text_);
-        Internal::GraphicsEngine::GetInstance().registerText(textGraphic_);
+            updateTextRef();
     }
 
     int TextComponent::fontSize() const {
-        return fontSize_;
+        return textParams_.fontSize;
     }
     void TextComponent::text(const std::string &text) {
-        text_ = text;
+        textParams_.text = text;
 
         if(textGraphic_ )
-            textGraphic_->setText(text_);
-        else {
-            textGraphic_ = Internal::FontManager::GetInstance().getFont(font_, fontSize_)->createText(text_);
-            Internal::GraphicsEngine::GetInstance().registerText(textGraphic_);
-        }
+            textGraphic_->setText(textParams_.text);
     }
 
     std::string TextComponent::text() const {
-        return text_;
+        return textParams_.text;
     }
 
     TextComponent::~TextComponent() {
-        Internal::GraphicsEngine::GetInstance().unregisterText(textGraphic_);
+        if(textGraphic_)
+            Internal::GraphicsEngine::GetInstance().unregisterText(textGraphic_);
     }
 
     void TextComponent::setVisible(bool visible) {
@@ -120,7 +114,15 @@ namespace GameEngine {
         }
     }
 
-    geComponentRef TextComponent::instantiate() const {
-        return std::make_shared<TextComponent>();
+    void TextComponent::updateTextRef() {
+        if(textGraphic_)
+            Internal::GraphicsEngine::GetInstance().unregisterText(textGraphic_);
+
+        if(!textParams_.fontName.empty()){
+            textGraphic_ = Internal::FontManager::GetInstance().getFont(textParams_.fontName, textParams_.fontSize)->createText(textParams_.text);
+            Internal::GraphicsEngine::GetInstance().registerText(textGraphic_);
+        }else{
+            textGraphic_.reset();
+        }
     }
 }

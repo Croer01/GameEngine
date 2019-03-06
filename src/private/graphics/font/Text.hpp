@@ -15,6 +15,14 @@
 
 namespace GameEngine {
 namespace Internal {
+
+    struct TextParameters {
+        std::string text;
+        std::string fontName;
+        unsigned int fontSize;
+        bool visible;
+    };
+
     struct TextDef {
         std::vector<std::array<float, 20>> verticesByCharacter;
         std::vector<unsigned int> textureIds;

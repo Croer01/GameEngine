@@ -12,14 +12,14 @@
 #include "../private/graphics/font/Text.hpp"
 
 namespace GameEngine {
-class TextComponent : public geComponent, public Observer<GameObjectEvent> {
-        std::string text_;
-        std::string font_;
-        unsigned int fontSize_;
+class TextComponent : public geComponentInstantiable<TextComponent>, public Observer<GameObjectEvent> {
+        Internal::TextParameters textParams_;
         std::shared_ptr<Internal::Text> textGraphic_;
         bool visible_;
 
         void updateTextTransform();
+
+        void updateTextRef();
 
     public:
         virtual ~TextComponent();
@@ -44,8 +44,6 @@ class TextComponent : public geComponent, public Observer<GameObjectEvent> {
 
 protected:
     PropertySetBase *configureProperties() override;
-
-    geComponentRef instantiate() const override;
 
 protected:
         void onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) override;
