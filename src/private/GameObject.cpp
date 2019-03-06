@@ -17,7 +17,7 @@ namespace GameEngine {
 namespace Internal {
     int GameObject::ID_GENERATOR = 0;
 
-    GameObject::GameObject(const std::string &prototype) : Subject<GameObjectEvent>(), Observer<GameObjectEvent>(),
+    GameObject::GameObject(const std::string &prototype) : Observer<GameObjectEvent>(),
             parent_(nullptr),
             prototype_(prototype),
             id_(ID_GENERATOR++),
@@ -252,12 +252,12 @@ namespace Internal {
         notify(event);
     }
 
-    std::shared_ptr<GameObject> GameObject::findChildByName(const std::string &name) {
+    GameEngine::geGameObjectRef GameObject::findChildByName(const std::string &name) {
         for(std::shared_ptr<GameObject> child : children_){
             if(child->name_ == name)
                 return child;
         }
-        return std::shared_ptr<GameObject>();
+        return geGameObjectRef();
     }
 
     void GameObject::computeTransform() {

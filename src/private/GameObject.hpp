@@ -51,8 +51,7 @@ namespace Internal {
 
         void addChild(std::shared_ptr<GameObject> child);
 
-        std::shared_ptr<GameObject> findChildByName(const std::string &name);
-
+        virtual GameEngine::geGameObjectRef findChildByName(const std::string &name);
 
         void fromFile(const std::string &filename);
 

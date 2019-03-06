@@ -49,6 +49,8 @@ namespace GameEngine {
 
         virtual void addComponent(const geComponentRef &component) = 0;
 
+        virtual geGameObjectRef findChildByName(const std::string &name) = 0;
+
         virtual geGame &game() const = 0;
 
         template <typename T>
