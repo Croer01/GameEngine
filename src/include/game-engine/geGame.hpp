@@ -29,6 +29,7 @@ namespace GameEngine {
         void configEnvironment(const geEnvironment &environment);
         // TODO: Improve this method or way to access an object of the currentScene (maybe using a "Context" object?)
         geGameObjectRef findObjectByNameInCurrentScene(const std::string &gameObjectName);
+        void changeScene(const std::string &name);
     };
 }
 

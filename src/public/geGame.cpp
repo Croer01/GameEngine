@@ -72,4 +72,8 @@ namespace GameEngine {
         const std::shared_ptr<Internal::GameObject> &object = Internal::SceneManager::GetInstance().findObjectByName(gameObjectName);
         return std::dynamic_pointer_cast<geGameObject>(object);
     }
+
+    void geGame::changeScene(const std::string &name) {
+        Internal::SceneManager::GetInstance().changeScene(name);
+    }
 }
