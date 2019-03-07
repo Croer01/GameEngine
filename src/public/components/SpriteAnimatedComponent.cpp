@@ -8,11 +8,13 @@
 
 namespace GameEngine {
     void SpriteAnimatedComponent::init() {
+        updateGraphicRef();
         graphic_->setGrid(columns_, rows_);
         setVisible(visible_);
         timeAcumulator_ = 0;
         index_[0] = 0;
         index_[1] = 0;
+        graphic_->setModelTransform(gameObject()->position(), gameObject()->rotation(), gameObject()->scale());
     }
 
     PropertySetBase *SpriteAnimatedComponent::configureProperties() {
@@ -44,7 +46,7 @@ namespace GameEngine {
         properties->add(new Property<SpriteAnimatedComponent, float>(
                 "framesPerSecond",
                 this,
-                nullptr,
+                &SpriteAnimatedComponent::framesPerSecond,
                 &SpriteAnimatedComponent::framesPerSecond,
                 1.f));
 
@@ -58,7 +60,7 @@ namespace GameEngine {
         properties->add(new Property<SpriteAnimatedComponent, bool>(
                 "playOnInit",
                 this,
-                nullptr,
+                &SpriteAnimatedComponent::playOnInit,
                 &SpriteAnimatedComponent::playOnInit,
                 true));
 
@@ -166,18 +168,9 @@ namespace GameEngine {
     }
 
     void SpriteAnimatedComponent::filepath(const std::string &path) {
-        if(path.empty()){
-            if(graphic_)
-                Internal::GraphicsEngine::GetInstance().unregisterGraphic(graphic_);
-            graphicLoaded_.reset();
-            graphic_.reset();
-        }
-        else{
-            graphicLoaded_ = std::make_shared<Internal::Graphic>(path);
-            graphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
-            Internal::GraphicsEngine::GetInstance().registerGraphic(graphic_);
-        }
         filePath_ = path;
+        if(graphic_)
+            updateGraphicRef();
     }
 
     std::string SpriteAnimatedComponent::filepath() const {
@@ -204,10 +197,33 @@ namespace GameEngine {
         return columns_;
     }
 
-    void SpriteAnimatedComponent::framesPerSecond(const float &frames) {
-        timePerFrame_ = frames;
+    float SpriteAnimatedComponent::framesPerSecond() const{
+        return 1.f / timePerFrame_;
     }
+    void SpriteAnimatedComponent::framesPerSecond(const float &frames) {
+        timePerFrame_ = 1.f / frames;
+    }
+
+    bool SpriteAnimatedComponent::playOnInit() const{
+        return playing_;
+    }
+
     void SpriteAnimatedComponent::playOnInit(const bool &play){
         playing_ = play;
+    }
+
+    void SpriteAnimatedComponent::updateGraphicRef() {
+        if(filePath_.empty()){
+            if(graphic_)
+                Internal::GraphicsEngine::GetInstance().unregisterGraphic(graphic_);
+            graphicLoaded_.reset();
+            graphic_.reset();
+        } else {
+            graphicLoaded_ = std::make_shared<Internal::Graphic>(filePath_);
+            graphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
+            graphic_->setGrid(columns_, rows_);
+            resetAnimation();
+            Internal::GraphicsEngine::GetInstance().registerGraphic(graphic_);
+        }
     }
 }

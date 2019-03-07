@@ -13,7 +13,7 @@
 #include "../private/graphics/GraphicHolder.hpp"
 
 namespace GameEngine {
-    class PUBLICAPI SpriteAnimatedComponent : public geComponent, public Observer<GameObjectEvent> {
+    class PUBLICAPI SpriteAnimatedComponent : public geComponentInstantiable<SpriteAnimatedComponent>, public Observer<GameObjectEvent> {
         std::shared_ptr<Internal::Graphic> graphicLoaded_;
         std::shared_ptr<Internal::GraphicHolder> graphic_;
         float timePerFrame_;
@@ -26,6 +26,7 @@ namespace GameEngine {
         std::string filePath_;
 
         void resetAnimation();
+        void updateGraphicRef();
 
     protected:
         PropertySetBase *configureProperties() override;
@@ -72,8 +73,10 @@ namespace GameEngine {
 
         int columns() const;
 
+        float framesPerSecond() const;
         void framesPerSecond(const float &frames);
 
+        bool playOnInit() const;
         void playOnInit(const bool &play);
     };
 }
