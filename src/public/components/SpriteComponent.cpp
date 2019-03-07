@@ -11,6 +11,7 @@ namespace GameEngine {
         updateGraphicRef();
         setVisible(visible_);
         graphic_->setModelTransform(gameObject()->position(),gameObject()->rotation(),gameObject()->scale());
+        gameObject()->registerObserver(this);
     }
 
     PropertySetBase *SpriteComponent::configureProperties() {
@@ -66,13 +67,13 @@ namespace GameEngine {
 
     void SpriteComponent::onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) {
         if (oldGameObject)
-            dynamic_cast<Internal::GameObject*>(oldGameObject)->unregisterObserver(this);
+            oldGameObject->unregisterObserver(this);
 
         if (newGameObject && graphic_) {
             graphic_->setModelTransform(newGameObject->position(), newGameObject->rotation(),
                                         newGameObject->scale());
 
-            dynamic_cast<Internal::GameObject*>(newGameObject)->registerObserver(this);
+            newGameObject->registerObserver(this);
         }
     }
 
