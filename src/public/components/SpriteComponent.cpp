@@ -8,7 +8,9 @@
 
 namespace GameEngine {
     void SpriteComponent::init() {
+        updateGraphicRef();
         setVisible(visible_);
+        graphic_->setModelTransform(gameObject()->position(),gameObject()->rotation(),gameObject()->scale());
     }
 
     PropertySetBase *SpriteComponent::configureProperties() {
@@ -67,7 +69,7 @@ namespace GameEngine {
             dynamic_cast<Internal::GameObject*>(oldGameObject)->unregisterObserver(this);
 
         if (newGameObject && graphic_) {
-            graphic_->setModelTransform(gameObject()->position(), newGameObject->rotation(),
+            graphic_->setModelTransform(newGameObject->position(), newGameObject->rotation(),
                                         newGameObject->scale());
 
             dynamic_cast<Internal::GameObject*>(newGameObject)->registerObserver(this);
@@ -75,26 +77,27 @@ namespace GameEngine {
     }
 
     void SpriteComponent::filepath(const std::string &path) {
-        if(path.empty()){
-            if(graphic_)
-                Internal::GraphicsEngine::GetInstance().unregisterGraphic(graphic_);
-
-            graphicLoaded_.reset();
-            graphic_.reset();
-        }
-        else{
-            graphicLoaded_ = std::make_shared<Internal::Graphic>(path);
-            graphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
-            Internal::GraphicsEngine::GetInstance().registerGraphic(graphic_);
-        }
         filePath_ = path;
+
+        if(graphic_)
+            updateGraphicRef();
     }
 
     std::string SpriteComponent::filepath() const {
         return filePath_;
     }
 
-    geComponentRef SpriteComponent::instantiate() const {
-        return std::make_shared<SpriteComponent>();
+    void SpriteComponent::updateGraphicRef() {
+        if(filePath_.empty()){
+            if(graphic_)
+                Internal::GraphicsEngine::GetInstance().unregisterGraphic(graphic_);
+
+            graphicLoaded_.reset();
+            graphic_.reset();
+        } else {
+            graphicLoaded_ = std::make_shared<Internal::Graphic>(filePath_);
+            graphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
+            Internal::GraphicsEngine::GetInstance().registerGraphic(graphic_);
+        }
     }
 }

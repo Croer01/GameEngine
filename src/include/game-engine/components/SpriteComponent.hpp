@@ -13,17 +13,16 @@
 #include "../private/graphics/GraphicHolder.hpp"
 
 namespace GameEngine {
-class PUBLICAPI SpriteComponent : public geComponent, public Observer<GameObjectEvent> {
-        std::shared_ptr<Internal::Graphic> graphicLoaded_;
-        std::shared_ptr<Internal::GraphicHolder> graphic_;
-        bool visible_;
-        std::string filePath_;
+class PUBLICAPI SpriteComponent : public geComponentInstantiable<SpriteComponent>, public Observer<GameObjectEvent> {
+    std::shared_ptr<Internal::Graphic> graphicLoaded_;
+    std::shared_ptr<Internal::GraphicHolder> graphic_;
+    bool visible_;
+    std::string filePath_;
 
-    protected:
-        void onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) override;
-        virtual PropertySetBase *configureProperties() override;
-
-    geComponentRef instantiate() const override;
+    void updateGraphicRef();
+protected:
+    void onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) override;
+    virtual PropertySetBase *configureProperties() override;
 
 public:
         virtual ~SpriteComponent();
