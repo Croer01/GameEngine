@@ -51,7 +51,7 @@ namespace {
                 &ColliderComponent::shape,
                 "Box"));
         properties->add(new Property<ColliderComponent, std::string>(
-                "colliderShape",
+                "colliderType",
                 this,
                 &ColliderComponent::type,
                 &ColliderComponent::type,
@@ -216,10 +216,11 @@ namespace {
             Internal::PhysicsEngine::GetInstance().unregisterCollider(collider_);
 
         collider_ = std::make_shared<Internal::Collider>();
-        Internal::PhysicsEngine::GetInstance().registerCollider(collider_);
         collider_->setShape(stringToColliderShape(colliderShape_));
         collider_->setType(stringToColliderType(colliderType_));
         collider_->setCategory(colliderCategory_);
+
+        Internal::PhysicsEngine::GetInstance().registerCollider(collider_);
         collider_->setPosition(convertWorldToPhysicsPos(gameObject()->position()));
         collider_->setActive(gameObject()->active());
 
