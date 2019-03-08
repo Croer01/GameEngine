@@ -14,6 +14,7 @@ namespace GameEngine {
         updateTextRef();
 
         updateTextTransform();
+        gameObject()->registerObserver(this);
     }
 
     PropertySetBase *TextComponent::configureProperties() {
@@ -106,11 +107,11 @@ namespace GameEngine {
 
     void TextComponent::onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) {
         if (oldGameObject)
-            dynamic_cast<Internal::GameObject*>(oldGameObject)->unregisterObserver(this);
+            oldGameObject->unregisterObserver(this);
 
         if (newGameObject && textGraphic_) {
             updateTextTransform();
-            dynamic_cast<Internal::GameObject*>(newGameObject)->registerObserver(this);
+            newGameObject->registerObserver(this);
         }
     }
 
