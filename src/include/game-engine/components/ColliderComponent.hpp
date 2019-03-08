@@ -15,7 +15,7 @@ namespace GameEngine {
 
     typedef std::function<void(ColliderComponent *)> OnColliderEventCallback;
 
-    class ColliderComponent : public geComponent, public Observer<Internal::ColliderEvent>, public Observer<GameObjectEvent> {
+    class ColliderComponent : public geComponentInstantiable<ColliderComponent>, public Observer<Internal::ColliderEvent>, public Observer<GameObjectEvent> {
         std::shared_ptr<Internal::Collider> collider_;
         OnColliderEventCallback onColliderEnterCallback_;
         std::weak_ptr<SpriteComponent> sprite_;
@@ -29,6 +29,8 @@ namespace GameEngine {
         Vec2D convertWorldToPhysicsPos(const Vec2D &worldPos) const;
 
         Vec2D convertPhysicsToWorldPos(const Vec2D &physicsPos) const;
+
+        void updateColliderRef();
 
     public:
         virtual ~ColliderComponent();

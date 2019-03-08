@@ -67,15 +67,11 @@ namespace {
     }
 
     void ColliderComponent::init() {
-        Internal::PhysicsEngine::GetInstance().registerCollider(collider_);
-
         sprite_ = gameObject()->getComponent<SpriteComponent>();
         spriteAnimated_ = gameObject()->getComponent<SpriteAnimatedComponent>();
 
-        collider_->setPosition(convertWorldToPhysicsPos(gameObject()->position()));
-        collider_->setActive(gameObject()->active());
-
-        collider_->registerObserver(this);
+        updateColliderRef();
+        gameObject()->registerObserver(this);
     }
 
     void ColliderComponent::Update(float elapsedTime) {
@@ -158,18 +154,20 @@ namespace {
 
     void ColliderComponent::onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) {
         if (oldGameObject)
-            dynamic_cast<Internal::GameObject*>(oldGameObject)->unregisterObserver(this);
-        if (newGameObject)
-            dynamic_cast<Internal::GameObject*>(newGameObject)->registerObserver(this);
+            oldGameObject->unregisterObserver(this);
+        if (newGameObject && collider_)
+            newGameObject->registerObserver(this);
     }
 
     void ColliderComponent::extends(const Vec2D &extends) {
         extends_ = extends;
-        if(gameObject() && extends_.x == 0 && extends_.y == 0){
-            const Vec2D &scale = gameObject()->scale();
-            collider_->setSize(std::abs(scale.x)/2.f, std::abs(scale.y)/2.f);
-        }else
-            collider_->setSize(extends_.x/2.f, extends_.y/2.f);
+        if(collider_){
+            if(gameObject() && extends_.x == 0 && extends_.y == 0){
+                const Vec2D &scale = gameObject()->scale();
+                collider_->setSize(std::abs(scale.x)/2.f, std::abs(scale.y)/2.f);
+            }else
+                collider_->setSize(extends_.x/2.f, extends_.y/2.f);
+        }
     }
 
     Vec2D ColliderComponent::extends() const {
@@ -184,10 +182,9 @@ namespace {
         return offset_;
     }
     void ColliderComponent::shape(const std::string &colliderShape) {
-        if(!collider_)
-            collider_ = std::make_shared<Internal::Collider>();
-        collider_->setShape(stringToColliderShape(colliderShape));
         colliderShape_ = colliderShape;
+        if(collider_)
+            collider_->setShape(stringToColliderShape(colliderShape));
     }
 
     std::string ColliderComponent::shape() const {
@@ -195,11 +192,9 @@ namespace {
     }
 
     void ColliderComponent::type(const std::string &colliderType) {
-        if(!collider_)
-            collider_ = std::make_shared<Internal::Collider>();
-
-        collider_->setType(stringToColliderType(colliderType));
         colliderType_ = colliderType;
+        if(collider_)
+            collider_->setType(stringToColliderType(colliderType));
     }
 
     std::string ColliderComponent::type() const {
@@ -207,16 +202,30 @@ namespace {
     }
 
     void ColliderComponent::category(const std::string &colliderCategory) {
-        if(!collider_)
-            collider_ = std::make_shared<Internal::Collider>();
-        collider_->setCategory(colliderCategory);
+        if(collider_)
+            collider_->setCategory(colliderCategory);
         colliderCategory_ = colliderCategory;
     }
 
-
-
     std::string ColliderComponent::category() const {
         return colliderCategory_;
+    }
+
+    void ColliderComponent::updateColliderRef() {
+        if(collider_)
+            Internal::PhysicsEngine::GetInstance().unregisterCollider(collider_);
+
+        collider_ = std::make_shared<Internal::Collider>();
+        Internal::PhysicsEngine::GetInstance().registerCollider(collider_);
+        collider_->setShape(stringToColliderShape(colliderShape_));
+        collider_->setType(stringToColliderType(colliderType_));
+        collider_->setCategory(colliderCategory_);
+        collider_->setPosition(convertWorldToPhysicsPos(gameObject()->position()));
+        collider_->setActive(gameObject()->active());
+
+        collider_->registerObserver(this);
+
+        extends(extends_);
     }
 }
 
