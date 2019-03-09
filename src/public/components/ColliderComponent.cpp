@@ -219,6 +219,7 @@ namespace {
         collider_->setShape(stringToColliderShape(colliderShape_));
         collider_->setType(stringToColliderType(colliderType_));
         collider_->setCategory(colliderCategory_);
+        collider_->setComponent(shared_from_this());
 
         Internal::PhysicsEngine::GetInstance().registerCollider(collider_);
         collider_->setPosition(convertWorldToPhysicsPos(gameObject()->position()));
