@@ -108,6 +108,9 @@ namespace {
     ColliderComponent::~ColliderComponent() {
         if(collider_)
             Internal::PhysicsEngine::GetInstance().unregisterCollider(collider_);
+
+        if(onColliderEnterCallback_)
+            onColliderEnterCallback_ = nullptr;
     }
 
     void ColliderComponent::setVelocity(glm::vec3 velocity) {

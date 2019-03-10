@@ -76,10 +76,6 @@ namespace GameEngine {
         loopOnInit_ = loop;
     }
 
-    geComponentRef AudioComponent::instantiate() const {
-        return std::make_shared<AudioComponent>();
-    }
-
     bool AudioComponent::playOnInit() const {
         return playOnInit_;
     }

@@ -9,7 +9,7 @@
 #include <game-engine/geComponent.hpp>
 #include "../private/audio/AudioSource.hpp"
 namespace GameEngine {
-    class AudioComponent : public geComponent {
+    class AudioComponent : public geComponentInstantiable<AudioComponent> {
         std::string filePath_;
         std::shared_ptr<Internal::AudioSource> source_;
         bool playOnInit_;
@@ -35,8 +35,6 @@ namespace GameEngine {
         std::string filepath() const;
     protected:
         PropertySetBase *configureProperties() override;
-
-        geComponentRef instantiate() const override;
     };
 }
 
