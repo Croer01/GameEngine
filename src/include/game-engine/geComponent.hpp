@@ -19,14 +19,12 @@ namespace GameEngine {
     class geGameObject;
     class PUBLICAPI geComponent{
         GameEngine::geGameObject *gameObject_;
-        PropertySetBase* properties_;
+        std::unique_ptr<PropertySetBase> properties_;
     protected:
         virtual void onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) {};
         virtual PropertySetBase *configureProperties();
         virtual geComponentRef instantiate() const;
     public:
-        virtual ~geComponent();
-
         virtual void Update(float elapsedTime){};
         virtual void init(){};
         void gameObject(geGameObject *gameObject);
@@ -45,7 +43,6 @@ namespace GameEngine {
         virtual PropertySetBase *configureProperties() {
             return new PropertySet<T>(dynamic_cast<T*>(this));
         }
-
     };
 }
 #endif //SPACEINVADERS_GECOMPONENT_HPP

@@ -17,26 +17,17 @@ namespace GameEngine {
 
     PropertySetBase &geComponent::properties() {
         if(!properties_)
-            properties_ = configureProperties();
+            properties_ = std::unique_ptr<PropertySetBase>(configureProperties());
         return *properties_;
-    }
-    void geComponent::properties(PropertySetBase &properties) {
-        properties_ = &properties;
     }
 
     geComponentRef geComponent::clone() const {
         geComponentRef cloned = instantiate();
-        PropertySetBase *propertiesCloned = cloned->configureProperties();
-		cloned->properties(*propertiesCloned);
-		properties_->copy(*propertiesCloned);
+		properties_->copy(cloned->properties());
         return cloned;
     }
 
     PropertySetBase *geComponent::configureProperties() { return nullptr;}
-
-    geComponent::~geComponent() {
-        delete properties_;
-    }
 
     geComponentRef geComponent::instantiate() const {
         return std::make_shared<geComponent>();

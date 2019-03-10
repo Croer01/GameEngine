@@ -31,7 +31,7 @@ class GameObject : public geGameObject, private Observer<GameObjectEvent>, publi
         Vec2D position_;
         Vec2D rotation_;
         Vec2D scale_;
-        std::shared_ptr<GameObject> parent_;
+        std::weak_ptr<GameObject> parent_;
         glm::mat4 transform_;
 
         void fromYamlNode(const YAML::Node &node);
@@ -39,7 +39,7 @@ class GameObject : public geGameObject, private Observer<GameObjectEvent>, publi
     public:
 
         explicit GameObject(const std::string &prototype);
-        ~GameObject();
+        virtual ~GameObject();
 
         void Init();
 

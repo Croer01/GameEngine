@@ -8,6 +8,7 @@
 #include <game-engine/api.hpp>
 #include <game-engine/properties/Property.hpp>
 #include <vector>
+#include <memory>
 
 namespace GameEngine {
 
@@ -16,7 +17,9 @@ namespace GameEngine {
         void *target_;
     public:
         explicit PropertySetBase(void *target) : target_(target){};
-        virtual ~PropertySetBase() = default;
+        virtual ~PropertySetBase(){
+            target_ = nullptr;
+        };
 
         virtual void copy(PropertySetBase &other) const {
             throw std::runtime_error("not implemented. Need to cast this instance to PropertySet<Component>");
@@ -25,17 +28,21 @@ namespace GameEngine {
 
     template <typename Class>
     class PUBLICAPI PropertySet : public PropertySetBase {
-        std::vector<PropertyBase<Class>*> properties_;
+        std::vector<std::shared_ptr<PropertyBase<Class>>> properties_;
     public:
         explicit PropertySet(Class *target) : PropertySetBase(target)
         {};
+
+        virtual ~PropertySet(){
+            properties_.clear();
+        }
 
         int size() const{
             return properties_.size();
         }
 
         void add(GameEngine::PropertyBase<Class> *property) {
-            properties_.push_back(property);
+            properties_.emplace_back(std::move(property));
         };
 
         PropertyBase<Class>& get(int index){
@@ -60,8 +67,8 @@ namespace GameEngine {
 
         virtual void copy(PropertySetBase &other) const {
             auto otherCast = static_cast<PropertySet<Class>&>(other);
-            for (auto *property : properties_) {
-                otherCast.add(property->copy(static_cast<Class*>(otherCast.target_)));
+            for( int i = 0; i < properties_.size(); i++) {
+                otherCast.add(properties_[i]->copy(static_cast<Class*>(otherCast.target_)));
             }
         };
     };

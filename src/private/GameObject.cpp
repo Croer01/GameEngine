@@ -18,7 +18,6 @@ namespace Internal {
     int GameObject::ID_GENERATOR = 0;
 
     GameObject::GameObject(const std::string &prototype) : Observer<GameObjectEvent>(),
-            parent_(nullptr),
             prototype_(prototype),
             id_(ID_GENERATOR++),
             active_(true),
@@ -75,13 +74,13 @@ namespace Internal {
     }
 
     void GameObject::parent(const geGameObjectRef &goParent) {
-        if(parent_)
-            parent_->unregisterObserver(this);
+        if(auto parent = parent_.lock())
+            parent->unregisterObserver(this);
         parent_.reset();
         //goParent could be null
         if(goParent) {
             parent_ = std::dynamic_pointer_cast<GameObject>(goParent);
-            parent_->registerObserver(this);
+            parent_.lock()->registerObserver(this);
         }
         notify(GameObjectEvent::TransformChanged);
     }
@@ -134,8 +133,8 @@ namespace Internal {
 
     Vec2D GameObject::position() const {
         Vec2D position = position_;
-        if(parent_)
-            position += parent_->position_;
+        if(auto parent = parent_.lock())
+            position += parent->position_;
         return position;
     }
 
@@ -150,8 +149,8 @@ namespace Internal {
 
     Vec2D GameObject::rotation() const {
         Vec2D rotation = rotation_;
-        if(parent_)
-            rotation += parent_->rotation_;
+        if(auto parent = parent_.lock())
+            rotation += parent->rotation_;
         return rotation;
     }
 
@@ -166,8 +165,8 @@ namespace Internal {
 
     Vec2D GameObject::scale() const {
         Vec2D scale = scale_;
-        if(parent_)
-            scale *= parent_->scale_;
+        if(auto parent = parent_.lock())
+            scale *= parent->scale_;
         return scale;
     }
 
@@ -181,8 +180,8 @@ namespace Internal {
     }
 
     glm::mat4 GameObject::getTransform() {
-        if(parent_)
-            return parent_->getTransform() * transform_;
+        if(auto parent = parent_.lock())
+            return parent->getTransform() * transform_;
 
         return transform_;
     }

@@ -7,6 +7,7 @@
 
 #include <string>
 #include <game-engine/api.hpp>
+#include <vector>
 
 namespace GameEngine {
 
@@ -59,9 +60,14 @@ namespace GameEngine {
     public:
         explicit PropertyBase(const std::string &name) : PropertyBase(name, false){};
         PropertyBase(const std::string &name, bool required) : name_(name), required_(required), type_(PropertyTypes::UNKNOWN){};
+        virtual ~PropertyBase(){
+            target_ = nullptr;
+        };
+
         virtual PropertyBase<Class> *copy(Class *newTarget) const {
             throw std::runtime_error("not implemented. Cast to Property class to call this method");
         };
+
         void target(Class *target){
             target_ = target;
         };
@@ -123,7 +129,11 @@ namespace GameEngine {
             if(setter_ != nullptr)
                 set(default_);
         };
-
+        virtual ~Property(){
+            getter_ = nullptr;
+            setter_ = nullptr;
+            value_ = nullptr;
+        };
         MemberType get() const {
             if(useMethods){
                 if(getter_ == nullptr)
