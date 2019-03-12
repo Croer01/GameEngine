@@ -5,8 +5,8 @@
 #ifndef SPACEINVADERS_PROPERTY_HPP
 #define SPACEINVADERS_PROPERTY_HPP
 
-#include <string>
 #include <game-engine/api.hpp>
+#include <string>
 #include <vector>
 
 namespace GameEngine {

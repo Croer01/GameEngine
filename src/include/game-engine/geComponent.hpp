@@ -5,9 +5,9 @@
 #ifndef SPACEINVADERS_GECOMPONENT_HPP
 #define SPACEINVADERS_GECOMPONENT_HPP
 
-#include <memory>
 #include <game-engine/api.hpp>
 #include <game-engine/properties/PropertySet.hpp>
+#include <memory>
 
 #define COMPONENT(x) //the #x component has been registered
 

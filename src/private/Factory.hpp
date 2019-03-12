@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <memory>
 #include <yaml-cpp/node/node.h>
+#include "Data.hpp"
 
 namespace GameEngine {
 namespace Internal {
@@ -41,7 +42,7 @@ namespace Internal {
             if (it == builders_.end())
                 throw std::exception("builder doesn't exist");
 
-            return it->second->Create(data);
+            return it->second->Create(Data(data));
         };
     };
 }

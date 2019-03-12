@@ -33,5 +33,9 @@ namespace GameEngine {
     void geEnvironment::addScene(const std::string &name, const std::string &filePath) {
         Internal::SceneManager::GetInstance().registerScene(name, filePath);
     }
+
+    void geEnvironment::registerComponent(const std::string &idType, ComponentBuilder *builder) {
+        Internal::ObjectManager::GetInstance().registerComponentBuilder(idType, builder);
+    }
 }
 

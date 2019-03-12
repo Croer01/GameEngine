@@ -34,9 +34,6 @@ namespace Internal {
         ObjectManager::GetInstance().registerComponentBuilder("TextComponent", new ComponentTBuilder<TextComponent>());
         ObjectManager::GetInstance().registerComponentBuilder("AudioComponent",
                                                               new ComponentTBuilder<AudioComponent>());
-#ifdef REGISTER_COMPONENT_FN
-        REGISTER_COMPONENT_FN();
-#endif
     }
 
     void Game::init(const std::string &configRoot) {

@@ -9,8 +9,8 @@
 #include "Singleton.hpp"
 #include "Factory.hpp"
 #include <game-engine/geComponent.hpp>
+#include <game-engine/Builder.hpp>
 #include "GameObject.hpp"
-#include "Builder.hpp"
 #include <memory>
 namespace GameEngine {
 namespace Internal {

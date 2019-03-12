@@ -6,6 +6,7 @@
 #define SPACEINVADERS_GEENVIRONMENT_HPP
 
 #include <game-engine/api.hpp>
+#include <game-engine/Builder.hpp>
 #include <string>
 #include <vector>
 
@@ -17,7 +18,7 @@ namespace GameEngine {
     public:
         geEnvironment();
         virtual ~geEnvironment() = default;
-        virtual void registerComponent(){};
+        void registerComponent(const std::string &idType, ComponentBuilder *builder);
 
         void configurationPath(const std::string &config);
         std::string configurationPath() const;

@@ -6,21 +6,22 @@
 #define SPACEINVADERS_BUILDER_HPP
 
 
+#include <game-engine/geData.hpp>
 #include <game-engine/geComponent.hpp>
 #include <memory>
+
 namespace GameEngine {
-namespace Internal {
     class ComponentBuilder {
     public:
         virtual ~ComponentBuilder() = default;
 
-        virtual geComponentRef Create(const YAML::Node &data) = 0;
+        virtual geComponentRef Create(const geData &data) = 0;
     };
 
     template<typename ComponentType>
     class ComponentTBuilder : public ComponentBuilder {
     public:
-        virtual geComponentRef Create(const YAML::Node &data) {
+        virtual geComponentRef Create(const geData &data) {
 
             const std::shared_ptr<ComponentType> &instance = std::make_shared<ComponentType>();
             PropertySet<ComponentType> &properties = static_cast<PropertySet<ComponentType>&>(instance->properties());
@@ -28,7 +29,7 @@ namespace Internal {
             for(int i = 0; i < properties.size(); i++){
                 PropertyBase<ComponentType> &property = properties.get(i);
 
-                if(!data[property.name()]) {
+                if(!data.hasValue(property.name())) {
                     if(property.required())
                         throw std::logic_error("property " + property.name() + " is required but it isn't defined");
                     continue;
@@ -38,46 +39,38 @@ namespace Internal {
                     case PropertyTypes::INT:
                         {
                             auto propertyInt = static_cast<Property<ComponentType,int>&>(property);
-                            propertyInt.set(data[property.name()].as<int>(0));
+                            propertyInt.set(data.getInt(property.name()));
                         }
                         break;
                     case PropertyTypes::FLOAT:
                         {
                             auto propertyFloat = static_cast<Property<ComponentType,float>&>(property);
-                            propertyFloat.set(data[property.name()].as<float>(0.f));
+                            propertyFloat.set(data.getFloat(property.name()));
                         }
                         break;
                     case PropertyTypes::STRING:
                         {
                             auto propertyString = static_cast<Property<ComponentType,std::string>&>(property);
-                            propertyString.set(data[property.name()].as<std::string>(""));
+                            propertyString.set(data.getString(property.name()));
                         }
                         break;
                     case PropertyTypes::VEC2D:
                         {
                             auto propertyVec2d = static_cast<Property<ComponentType,Vec2D>&>(property);
-                            propertyVec2d.set({
-                                data[property.name()][0].as<float>(0),
-                                data[property.name()][1].as<float>(0)
-                            });
+                            propertyVec2d.set(data.getVec2D(property.name()));
                         }
                         break;
 
                     case PropertyTypes::BOOL:
                         {
                             auto propertyBool = static_cast<Property<ComponentType, bool>&>(property);
-                            propertyBool.set(data[property.name()].as<bool>(false));
+                            propertyBool.set(data.getBool(property.name()));
                         }
                         break;
                     case PropertyTypes::ARRAY_STRING:
                         {
-                            auto propertyArray = static_cast<Property<ComponentType,std::vector<std::string>&>(property);
-                            YAML::Node propertyNode = componentConfig[property.name()];
-                            const std::vector<std::string> &value;
-                            for (int i = 0; i < propertyNode.size(); ++i) {
-                                value.push_back(propertyNode[i].as<std::string>(""));
-                            }
-                            propertyArray.set(value);
+                            auto propertyArray = static_cast<Property<ComponentType, std::vector<std::string>>&>(property);
+                            propertyArray.set(data.getArrayString(property.name()));
                         }
                         break;
                     case PropertyTypes::UNKNOWN:
@@ -89,7 +82,6 @@ namespace Internal {
             return instance;
         };
     };
-}
 }
 
 #endif //SPACEINVADERS_BUILDER_HPP

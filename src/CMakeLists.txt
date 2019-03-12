@@ -37,8 +37,6 @@ set(ENGINE_SOURCES
         public/geComponent.cpp
         public/geEnvironment.cpp
         public/InputManager.cpp
-        public/properties/Property.cpp
-        public/properties/PropertySet.cpp
         public/components/SpriteComponent.cpp
         public/components/SpriteAnimatedComponent.cpp
         public/components/ColliderComponent.cpp
@@ -69,6 +67,7 @@ set(ENGINE_PRIVATE_SOURCES
         private/audio/AudioEngine.cpp
         private/audio/AudioSource.cpp
         private/audio/AudioBuffer.cpp
+        private/Data.cpp
         )
 
 add_library(GameEngine ${ENGINE_SOURCES} ${ENGINE_PRIVATE_SOURCES})
