@@ -4,22 +4,21 @@
 
 #include <iostream>
 #include <ctime>
+#include <game-engine/components/SpriteAnimatedComponent.hpp>
 #include "EnemyManagerComponent.hpp"
-#include "src/SceneManager.hpp"
-#include "src/components/SpriteAnimatedComponent.hpp"
 #include "EnemyComponent.hpp"
 #include "MotherShipComponent.hpp"
 
 void EnemyManagerComponent::init() {
     currentSpeed_ = speed_;
-    currentPosition_ = gameObject()->getPosition();
+    currentPosition_ = gameObject()->position();
     currentBulletFrequency_ = bulletFrequency_;
     mothershipCurrentFrequency_ = rnd_.getRange(mothershipFrequency_ - mothershipVariation_,mothershipFrequency_ + mothershipVariation_);
 
-    auto gameObject = SceneManager::GetInstance().findObjectByName("MotherShip");
-    if(gameObject){
-        mothership_ = gameObject->getComponent<MotherShipComponent>();
-        gameObject->setActive(false);
+    auto motherShip = gameObject()->game().findObjectByNameInCurrentScene("MotherShip");
+    if(motherShip){
+        mothership_ = motherShip->getComponent<MotherShipComponent>();
+        motherShip->active(false);
     }
 
     //generate enemies
@@ -29,19 +28,22 @@ void EnemyManagerComponent::init() {
 
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < columns; ++j) {
-            const std::shared_ptr<GameObject> &alien = SceneManager::GetInstance().createGameObject(rowsConfig_.enemiesType[i]);
+            const GameEngine::geGameObjectRef &alien = gameObject()->game().createFromPrototype(rowsConfig_.enemiesType[i]);
             enemies_.push_back(alien);
             if (auto enemy = alien->getComponent<EnemyComponent>().lock())
                 enemy->setEnemeyManager(manager);
         }
     }
-    if(auto firstEnemy = enemies_[0]->getComponent<SpriteAnimatedComponent>().lock())
-        boundingBox_ = glm::vec4(0.f, 0.f, firstEnemy->getWidth() * columns,firstEnemy->getHeight() * rows);
+
+    if(auto firstEnemy = enemies_[0]->getComponent<GameEngine::SpriteAnimatedComponent>().lock()){
+        boundingBoxMin_ = GameEngine::Vec2D(0.f,0.f);
+        boundingBoxMax_ = GameEngine::Vec2D(firstEnemy->getWidth() * columns,firstEnemy->getHeight() * rows);
+    }
 
     //generate bullets
     for(int i = 0; i < bulletsNum_; i++){
-        const std::shared_ptr<GameObject> &bullet= SceneManager::GetInstance().createGameObject("EnemyBullet");
-        bullet->setActive(false);
+        const GameEngine::geGameObjectRef &bullet = gameObject()->game().createFromPrototype("EnemyBullet");
+        bullet->active(false);
         bullets_.push_back(bullet);
     }
     paused_ = false;
@@ -55,15 +57,15 @@ void EnemyManagerComponent::Update(float elapsedTime) {
     constexpr float max = 224.f;
     constexpr float bottom = 256.f;
 
-    if(currentPosition_.y + boundingBox_.w >= bottom)
-        SceneManager::GetInstance().changeScene("StartMenu");
+    if(currentPosition_.y + boundingBoxMax_.y >= bottom)
+        gameObject()->game().changeScene("StartMenu");
 
-    if ((currentPosition_.x + boundingBox_.x <= min && currentSpeed_ < 0) || (currentPosition_.x + boundingBox_.z >= max && currentSpeed_ > 0)) {
+    if ((currentPosition_.x + boundingBoxMin_.x <= min && currentSpeed_ < 0) || (currentPosition_.x + boundingBoxMax_.x >= max && currentSpeed_ > 0)) {
         currentSpeed_ = -currentSpeed_;
-        if(auto firstEnemy = enemies_[0]->getComponent<SpriteAnimatedComponent>().lock())
-            currentPosition_ += glm::vec3(0, firstEnemy->getHeight(), 0);
+        if(auto firstEnemy = enemies_[0]->getComponent<GameEngine::SpriteAnimatedComponent>().lock())
+            currentPosition_ += GameEngine::Vec2D(0, firstEnemy->getHeight());
     }
-    currentPosition_ += glm::vec3(currentSpeed_ * elapsedTime, 0, 0);
+    currentPosition_ += GameEngine::Vec2D(currentSpeed_ * elapsedTime, 0);
 
     int rows = rowsConfig_.enemiesType.size();
     int columns = rowsConfig_.enemiesPerRow;
@@ -73,14 +75,13 @@ void EnemyManagerComponent::Update(float elapsedTime) {
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < columns; ++j) {
             int index = i * columns + j;
-            const std::shared_ptr<GameObject> &alien = enemies_[index];
-            if(auto sprite = alien->getComponent<SpriteAnimatedComponent>().lock()) {
-                alien->setPosition(currentPosition_ + glm::vec3(
-                        j * sprite->getWidth() + j * rowsConfig_.horizontalMargin,
-                        i * sprite->getHeight() + i * rowsConfig_.verticalMargin,
-                        0));
+            const GameEngine::geGameObjectRef &alien = enemies_[index];
+            if(auto sprite = alien->getComponent<GameEngine::SpriteAnimatedComponent>().lock()) {
+                alien->position(currentPosition_ + GameEngine::Vec2D(
+                        j * sprite->getWidth() + j * rowsConfig_.margins.x,
+                        i * sprite->getHeight() + i * rowsConfig_.margins.y));
             }
-            if(alien->isActive())
+            if(alien->active())
                 enemiesActive.push_back(index);
         }
     }
@@ -88,28 +89,28 @@ void EnemyManagerComponent::Update(float elapsedTime) {
     bulletTimeAcumulator_ += elapsedTime;
     if(currentBulletFrequency_ <= bulletTimeAcumulator_) {
         int i = 0;
-        std::shared_ptr<GameObject> bullet;
+        GameEngine::geGameObjectRef bullet;
         while(!bullet && i < bullets_.size()){
-            if(!bullets_[i]->isActive())
+            if(!bullets_[i]->active())
                 bullet = bullets_[i];
             i++;
         }
 
         if(bullet) {
             int index = rnd_.getRange(0,enemiesActive.size() - 1);
-            bullet->setPosition(enemies_[enemiesActive[index]]->getPosition());
-            bullet->setActive(true);
+            bullet->position(enemies_[enemiesActive[index]]->position());
+            bullet->active(true);
         }
         bulletTimeAcumulator_ = 0;
     }
 
     if(auto mothership = mothership_.lock()) {
-    if(!mothership->gameObject()->isActive())
-        mothershipTimeAcumulator_ += elapsedTime;
+        if(!mothership->gameObject()->active())
+            mothershipTimeAcumulator_ += elapsedTime;
 
         if(mothershipCurrentFrequency_ <= mothershipTimeAcumulator_) {
-            if(!mothership->gameObject()->isActive())
-                mothership->gameObject()->setActive(true);
+            if(!mothership->gameObject()->active())
+                mothership->gameObject()->active(true);
             mothershipTimeAcumulator_ = 0;
             mothershipCurrentFrequency_ = rnd_.getRange(mothershipFrequency_ - mothershipVariation_,mothershipFrequency_ + mothershipVariation_);
             std::cout << "mothershipCurrentFrequency_: " << std::to_string(mothershipCurrentFrequency_)<< std::endl;
@@ -122,46 +123,75 @@ void EnemyManagerComponent::setPause(bool pause) {
     if(paused_){
         mothership_.lock()->hide();
 
-        for (const std::shared_ptr<GameObject> &bullet : bullets_){
-            bullet->setActive(false);
+        for (const GameEngine::geGameObjectRef &bullet : bullets_){
+            bullet->active(false);
             bulletTimeAcumulator_ = 0;
         }
     }
 }
 
-std::shared_ptr<Component> EnemyManagerComponent::Clone() {
-    std::shared_ptr<EnemyManagerComponent> clone = std::make_shared<EnemyManagerComponent>();
-    clone->speed_ = speed_;
-    clone->scaleFactor_ = scaleFactor_;
-    clone->rowsConfig_ = rowsConfig_;
-    clone->bulletsNum_ = bulletsNum_;
-    clone->bulletFrequency_ = bulletFrequency_;
-    clone->mothershipFrequency_ = mothershipFrequency_;
-    clone->mothershipVariation_ = mothershipVariation_;
+GameEngine::PropertySetBase *EnemyManagerComponent::configureProperties() {
+    auto *properties = new GameEngine::PropertySet<EnemyManagerComponent>(this);
 
-    return clone;
-}
+    properties->add(new GameEngine::Property<EnemyManagerComponent, float>(
+            "speed",
+            this,
+            &EnemyManagerComponent::speed,
+            &EnemyManagerComponent::speed,
+            0));
+    properties->add(new GameEngine::Property<EnemyManagerComponent, float>(
+            "scaleFactor",
+            this,
+            &EnemyManagerComponent::scaleFactor,
+            &EnemyManagerComponent::scaleFactor,
+            0));
+    properties->add(new GameEngine::Property<EnemyManagerComponent, int>(
+            "bulletsNum",
+            this,
+            &EnemyManagerComponent::bulletNum,
+            &EnemyManagerComponent::bulletNum,
+            0));
+    properties->add(new GameEngine::Property<EnemyManagerComponent, float>(
+            "bulletFrequency",
+            this,
+            &EnemyManagerComponent::bulletFrequency,
+            &EnemyManagerComponent::bulletFrequency,
+            0));
+    properties->add(new GameEngine::Property<EnemyManagerComponent, float>(
+            "mothershipFrequency",
+            this,
+            &EnemyManagerComponent::mothershipFrequency,
+            &EnemyManagerComponent::mothershipFrequency,
+            0));
+    properties->add(new GameEngine::Property<EnemyManagerComponent, float>(
+            "mothershipVariation",
+            this,
+            &EnemyManagerComponent::mothershipVariation,
+            &EnemyManagerComponent::mothershipVariation,
+            0));
 
-void EnemyManagerComponent::fromFile(const YAML::Node &componentConfig) {
-    speed_ = componentConfig["speed"].as<float>();
-    scaleFactor_ = componentConfig["scaleFactor"].as<float>();
+    properties->add(new GameEngine::Property<EnemyManagerComponent, int>(
+            "enemiesPerRow",
+            this,
+            &EnemyManagerComponent::enemiesPerRow,
+            &EnemyManagerComponent::enemiesPerRow,
+            0));
 
-    bulletsNum_ = componentConfig["bulletsNum"].as<int>();
-    bulletFrequency_ = componentConfig["bulletFrequency"].as<float>();
+    properties->add(new GameEngine::Property<EnemyManagerComponent, std::vector<std::string>>(
+            "rowsConfig",
+            this,
+            &EnemyManagerComponent::rowsConfig,
+            &EnemyManagerComponent::rowsConfig,
+            std::vector<std::string>()));
 
-    mothershipFrequency_ = componentConfig["mothershipFrequency"].as<float>();
-    mothershipVariation_ = componentConfig["mothershipVariation"].as<float>();
 
-    rowsConfig_ = RowsConfig();
-    rowsConfig_.enemiesPerRow = componentConfig["enemiesPerRow"].as<int>();
-    rowsConfig_.horizontalMargin = componentConfig["margin"][0].as<int>();
-    rowsConfig_.verticalMargin = componentConfig["margin"][1].as<int>();
-
-    YAML::Node rowsConfigNode = componentConfig["rowsConfig"];
-
-    for (int i = 0; i < rowsConfigNode.size(); ++i) {
-        rowsConfig_.enemiesType.push_back(rowsConfigNode[i].as<std::string>());
-    }
+    properties->add(new GameEngine::Property<EnemyManagerComponent, GameEngine::Vec2D>(
+            "margin",
+            this,
+            &EnemyManagerComponent::margins,
+            &EnemyManagerComponent::margins,
+            GameEngine::Vec2D()));
+    return properties;
 }
 
 EnemyManagerComponent::~EnemyManagerComponent() {
@@ -179,35 +209,35 @@ void EnemyManagerComponent::enemyKilled(int EnemyKilledpoints) {
 
 void EnemyManagerComponent::updateBoundingBox() {
 
-    glm::vec3 min = glm::vec3(100000);
-    glm::vec3 max = glm::vec3(0);
+    GameEngine::Vec2D min(100000, 100000);
+    GameEngine::Vec2D max;
 
     //recalculate the bounding box
-    for(const std::shared_ptr<GameObject> &enemy : enemies_){
-        if(!enemy->isActive())
+    for(const GameEngine::geGameObjectRef &enemy : enemies_){
+        if(!enemy->active())
             continue;
 
-        if(min.x > enemy->getPosition().x)
-            min.x = enemy->getPosition().x;
+        if(min.x > enemy->position().x)
+            min.x = enemy->position().x;
 
-        if(max.x < enemy->getPosition().x)
-            max.x = enemy->getPosition().x;
+        if(max.x < enemy->position().x)
+            max.x = enemy->position().x;
 
 
-        if(min.y > enemy->getPosition().y)
-            min.y = enemy->getPosition().y;
+        if(min.y > enemy->position().y)
+            min.y = enemy->position().y;
 
-        if(max.y < enemy->getPosition().y)
-            max.y = enemy->getPosition().y;
+        if(max.y < enemy->position().y)
+            max.y = enemy->position().y;
     }
 
     //move the calculated box to the world origin and add the width of the enemies
     min -= currentPosition_;
     max -= currentPosition_;
-    if(auto firstEnemy = enemies_[0]->getComponent<SpriteAnimatedComponent>().lock())
-        boundingBox_ = glm::vec4(min.x , min.y,
-                             max.x + firstEnemy->getWidth(),
-                             max.y + firstEnemy->getHeight());
+    if(auto firstEnemy = enemies_[0]->getComponent<GameEngine::SpriteAnimatedComponent>().lock()) {
+        boundingBoxMin_ = GameEngine::Vec2D(min.x, min.y);
+        boundingBoxMax_ = GameEngine::Vec2D(max.x + firstEnemy->getWidth(), max.y + firstEnemy->getHeight());
+    }
 }
 
 void EnemyManagerComponent::checkMoveToNextLevel() {
@@ -215,13 +245,13 @@ void EnemyManagerComponent::checkMoveToNextLevel() {
     bool allEnemiesKilled = true;
     auto it = enemies_.begin();
     while (allEnemiesKilled && it != enemies_.end()){
-        if((*it)->isActive())
+        if((*it)->active())
             allEnemiesKilled = false;
         it++;
     }
 
     if(allEnemiesKilled){
-        currentPosition_ = gameObject()->getPosition();
+        currentPosition_ = gameObject()->position();
         currentSpeed_ = std::abs(currentSpeed_);
 
         int rows = rowsConfig_.enemiesType.size();
@@ -229,19 +259,18 @@ void EnemyManagerComponent::checkMoveToNextLevel() {
 
         for (int i = 0; i < rows; ++i) {
             for (int j = 0; j < columns; ++j) {
-                const std::shared_ptr<GameObject> &alien = enemies_[i * columns + j];
-                if(auto sprite = alien->getComponent<SpriteAnimatedComponent>().lock()) {
-                    alien->setPosition(currentPosition_ + glm::vec3(
-                            j * sprite->getWidth() + j * rowsConfig_.horizontalMargin,
-                            i * sprite->getHeight() + i * rowsConfig_.verticalMargin,
-                            0));
+                const GameEngine::geGameObjectRef &alien = enemies_[i * columns + j];
+                if(auto sprite = alien->getComponent<GameEngine::SpriteAnimatedComponent>().lock()) {
+                    alien->position(currentPosition_ + GameEngine::Vec2D(
+                            j * sprite->getWidth() + j * rowsConfig_.margins.x,
+                            i * sprite->getHeight() + i * rowsConfig_.margins.y));
                 }
-                alien->setActive(true);
+                alien->active(true);
             }
         }
 
-        for(const std::shared_ptr<GameObject> &bullet : bullets_){
-            bullet->setActive(false);
+        for(const GameEngine::geGameObjectRef &bullet : bullets_){
+            bullet->active(false);
         }
 
         if(auto mothership = mothership_.lock())
@@ -253,3 +282,68 @@ int EnemyManagerComponent::getScore() const {
     return score_;
 }
 
+void EnemyManagerComponent::speed(const float &speedValue){
+    speed_ = speedValue;
+}
+float EnemyManagerComponent::speed() const{
+    return speed_;
+}
+
+void EnemyManagerComponent::scaleFactor(const float &scaleValue){
+    scaleFactor_ = scaleValue;
+}
+float EnemyManagerComponent::scaleFactor() const{
+    return scaleFactor_;
+}
+
+void EnemyManagerComponent::bulletNum(const int &num){
+    bulletsNum_ = num;
+}
+int EnemyManagerComponent::bulletNum() const{
+    return bulletsNum_;
+}
+
+void EnemyManagerComponent::bulletFrequency(const float &frequency){
+    bulletFrequency_ = frequency;
+}
+float EnemyManagerComponent::bulletFrequency() const{
+    return bulletFrequency_;
+}
+
+void EnemyManagerComponent::mothershipFrequency(const float &frequency){
+    mothershipFrequency_ = frequency;
+}
+float EnemyManagerComponent::mothershipFrequency() const{
+    return mothershipFrequency_;
+}
+
+void EnemyManagerComponent::mothershipVariation(const float &variation){
+    mothershipVariation_ = variation;
+}
+float EnemyManagerComponent::mothershipVariation() const{
+    return mothershipVariation_;
+}
+
+void EnemyManagerComponent::enemiesPerRow(const int &num) {
+    rowsConfig_.enemiesPerRow = num;
+}
+
+int EnemyManagerComponent::enemiesPerRow() const {
+    return rowsConfig_.enemiesPerRow;
+}
+
+void EnemyManagerComponent::margins(const GameEngine::Vec2D &margin) {
+    rowsConfig_.margins = margin;
+}
+
+GameEngine::Vec2D EnemyManagerComponent::margins() const {
+    return rowsConfig_.margins;
+}
+
+void EnemyManagerComponent::rowsConfig(const std::vector<std::string> &config) {
+    rowsConfig_.enemiesType = config;
+}
+
+std::vector<std::string> EnemyManagerComponent::rowsConfig() const {
+    return rowsConfig_.enemiesType;
+}

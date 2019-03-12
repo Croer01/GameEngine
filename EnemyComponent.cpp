@@ -3,40 +3,44 @@
 //
 
 #include "EnemyComponent.hpp"
-#include "src/InputManager.hpp"
-#include "src/components/SpriteComponent.hpp"
-#include "src/SceneManager.hpp"
+#include <game-engine/components/SpriteComponent.hpp>
 
 void EnemyComponent::init() {
-    explosion_ = SceneManager::GetInstance().createGameObject("EnemyExplosion");
-    explosion_.lock()->setActive(false);
+    explosion_ = gameObject()->game().createFromPrototype("EnemyExplosion");
+    explosion_.lock()->active(false);
 }
-
-std::shared_ptr<Component> EnemyComponent::Clone() {
-    std::shared_ptr<EnemyComponent> clone = std::make_shared<EnemyComponent>();
-    clone->points_ = points_;
-    return clone;
-}
-
-int EnemyComponent::getPoints() const {
+int EnemyComponent::points() const {
     return points_;
 }
 
-void EnemyComponent::fromFile(const YAML::Node &componentConfig) {
-    points_ = componentConfig["points"].as<int>(0);
+void EnemyComponent::points(const int &pointsValue) {
+    points_ = pointsValue;
 }
 
 void EnemyComponent::kill() {
-    gameObject()->setActive(false);
+    gameObject()->active(false);
     if(auto enemyManager = enemyManager_.lock())
         enemyManager->enemyKilled(points_);
 
     if(auto explosion = explosion_.lock()){
-        explosion->setPosition(gameObject()->getPosition());
-        explosion->setActive(true);
+        explosion->position(gameObject()->position());
+        explosion->active(true);
     }
 }
 
 void EnemyComponent::setEnemeyManager(const std::shared_ptr<EnemyManagerComponent> &enemyManager) {
     enemyManager_ = enemyManager;
+}
+
+GameEngine::PropertySetBase *EnemyComponent::configureProperties() {
+    auto *properties = new GameEngine::PropertySet<EnemyComponent>(this);
+
+    properties->add(new GameEngine::Property<EnemyComponent, int>(
+            "points",
+            this,
+            &EnemyComponent::points,
+            &EnemyComponent::points,
+            0));
+
+    return properties;
 }

@@ -6,13 +6,12 @@
 #define SPACEINVADERS_HUDCOMPONENT_HPP
 
 
-#include "src/Component.hpp"
-#include "src/components/TextComponent.hpp"
+#include <game-engine/components/TextComponent.hpp>
 #include "EnemyManagerComponent.hpp"
 
 COMPONENT(HUDComponent)
-class HUDComponent : public Component, public Observer<EnemyManagerEvents>{
-    std::weak_ptr<TextComponent> playerScore_;
+class HUDComponent : public GameEngine::geComponentInstantiable<HUDComponent>, public GameEngine::Observer<EnemyManagerEvents>{
+    std::weak_ptr<GameEngine::TextComponent> playerScore_;
     std::weak_ptr<EnemyManagerComponent> enemyManager_;
     int score_;
 public:
@@ -20,9 +19,7 @@ public:
 
     void init() override;
 
-    std::shared_ptr<Component> Clone() override;
-
-    void onEvent(const Subject<EnemyManagerEvents> &target, const EnemyManagerEvents &event, void *args) override;
+    void onEvent(const GameEngine::Subject<EnemyManagerEvents> &target, const EnemyManagerEvents &event, void *args) override;
 };
 
 

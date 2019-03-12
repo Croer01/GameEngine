@@ -5,7 +5,7 @@
 #include "EnemyExplosionComponent.hpp"
 
 void EnemyExplosionComponent::init() {
-    sound_ = gameObject()->getComponent<AudioComponent>();
+    sound_ = gameObject()->getComponent<GameEngine::AudioComponent>();
     LifeTimeAcumulator = 0;
     gameObject()->registerObserver(this);
 }
@@ -15,19 +15,14 @@ void EnemyExplosionComponent::Update(float elapsedTime) {
 
     //150 ms
     if(LifeTimeAcumulator >= 0.15f)
-        gameObject()->setActive(false);
+        gameObject()->active(false);
 
 }
 
-void EnemyExplosionComponent::onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) {
-    if(event == GameObjectEvent::ActiveChanged && gameObject()->isActive()) {
+void EnemyExplosionComponent::onEvent(const GameEngine::Subject<GameEngine::GameObjectEvent> &target, const GameEngine::GameObjectEvent &event, void *args) {
+    if(event == GameEngine::GameObjectEvent::ActiveChanged && gameObject()->active()) {
         if(auto sound = sound_.lock())
             sound->play();
         LifeTimeAcumulator = 0;
     }
-}
-
-std::shared_ptr<Component> EnemyExplosionComponent::Clone() {
-    auto clone = std::make_shared<EnemyExplosionComponent>();
-    return clone;
 }

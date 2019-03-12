@@ -6,25 +6,25 @@
 #define SPACEINVADERS_STARTMENUCOMPONENT_HPP
 
 
-#include "src/Component.hpp"
-#include "glm/glm.hpp"
-#include "src/components/TextComponent.hpp"
-#include "src/components/AudioComponent.hpp"
+#include <game-engine/geComponent.hpp>
+#include <game-engine/components/TextComponent.hpp>
+#include <game-engine/components/AudioComponent.hpp>
 
 COMPONENT(StartMenuComponent)
-class StartMenuComponent : public Component {
-    std::weak_ptr<TextComponent> text_;
-    std::weak_ptr<AudioComponent> audioSource_;
+class StartMenuComponent : public GameEngine::geComponentInstantiable<StartMenuComponent> {
+    std::weak_ptr<GameEngine::TextComponent> text_;
+    std::weak_ptr<GameEngine::AudioComponent> audioSource_;
     float timeAcumulator_;
     float blinkTime_;
 public:
     void init() override;
 
-    void fromFile(const YAML::Node &componentConfig) override;
-
-    std::shared_ptr<Component> Clone() override;
-
     void Update(float elapsedTime) override;
+
+    virtual GameEngine::PropertySetBase *configureProperties();
+
+    void blinkTime(const float &time);
+    float blinkTime() const;
 };
 
 #endif //SPACEINVADERS_STARTMENUCOMPONENT_HPP

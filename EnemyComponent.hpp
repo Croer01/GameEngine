@@ -5,28 +5,27 @@
 #ifndef SPACEINVADERS_ENEMYCOMPONENT_HPP
 #define SPACEINVADERS_ENEMYCOMPONENT_HPP
 
-#include "src/Component.hpp"
+#include <game-engine/geComponent.hpp>
 #include "EnemyManagerComponent.hpp"
-#include "src/components/AudioComponent.hpp"
 
 COMPONENT(EnemyComponent);
-class EnemyComponent : public Component {
+class EnemyComponent : public GameEngine::geComponentInstantiable<EnemyComponent> {
     int points_;
     std::weak_ptr<EnemyManagerComponent> enemyManager_;
-    std::weak_ptr<GameObject> explosion_;
+    std::weak_ptr<GameEngine::geGameObject> explosion_;
 public:
     virtual ~EnemyComponent() = default;
 
     void init() override;
 
-    std::shared_ptr<Component> Clone() override;
-
-    void fromFile(const YAML::Node &componentConfig) override;
-
-    int getPoints() const;
+    int points() const;
+    void points(const int &pointsValue);
 
     void kill();
     void setEnemeyManager(const std::shared_ptr<EnemyManagerComponent> &enemyManager);
+
+protected:
+    GameEngine::PropertySetBase *configureProperties() override;
 };
 
 

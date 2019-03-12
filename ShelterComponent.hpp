@@ -5,23 +5,22 @@
 #ifndef SPACEINVADERS_SHELTERCOMPONENT_HPP
 #define SPACEINVADERS_SHELTERCOMPONENT_HPP
 
-#include "src/Component.hpp"
-#include "src/components/ColliderComponent.hpp"
-#include "src/components/SpriteAnimatedComponent.hpp"
-#include "src/components/AudioComponent.hpp"
+
+#include <game-engine/geComponent.hpp>
+#include <game-engine/components/ColliderComponent.hpp>
+#include <game-engine/components/SpriteAnimatedComponent.hpp>
+#include <game-engine/components/AudioComponent.hpp>
 
 COMPONENT(ShelterComponent);
-class ShelterComponent : public Component{
+class ShelterComponent : public GameEngine::geComponentInstantiable<ShelterComponent> {
     int maxHits_;
     int currentHits_;
-    std::weak_ptr<ColliderComponent> collider_;
-    std::weak_ptr<SpriteAnimatedComponent> sprite_;
-    std::weak_ptr<AudioComponent> audio_;
+    std::weak_ptr<GameEngine::ColliderComponent> collider_;
+    std::weak_ptr<GameEngine::SpriteAnimatedComponent> sprite_;
+    std::weak_ptr<GameEngine::AudioComponent> audio_;
 
 public:
     void init() override;
-
-    std::shared_ptr<Component> Clone() override;
 };
 
 

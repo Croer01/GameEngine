@@ -6,25 +6,27 @@
 #define SPACEINVADERS_BULLETCOMPONENT_HPP
 
 
-#include "src/Component.hpp"
-#include "src/components/ColliderComponent.hpp"
+#include <game-engine/geComponent.hpp>
+#include <game-engine/components/ColliderComponent.hpp>
 
 COMPONENT(BulletComponent)
-class BulletComponent : public Component{
+class BulletComponent : public GameEngine::geComponentInstantiable<BulletComponent>{
     float speed_;
-    std::weak_ptr<ColliderComponent> collider_;
+    std::weak_ptr<GameEngine::ColliderComponent> collider_;
 public:
     virtual ~BulletComponent() = default;
     void init() override;
 
     void Update(float elapsedTime) override;
 
-    std::shared_ptr<Component> Clone() override;
+    void onColliderEnter(GameEngine::ColliderComponent *other);
 
-    void fromFile(const YAML::Node &componentConfig) override;
+    void speed(const float &value);
 
-    void onColliderEnter(ColliderComponent *other);
+    float speed() const;
 
+protected:
+    GameEngine::PropertySetBase *configureProperties() override;
 };
 
 

@@ -8,8 +8,8 @@
 #include "MotherShipComponent.hpp"
 
 void BulletComponent::init() {
-    gameObject()->setActive(false);
-    collider_ = gameObject()->getComponent<ColliderComponent>();
+    gameObject()->active(false);
+    collider_ = gameObject()->getComponent<GameEngine::ColliderComponent>();
     if(auto collider = collider_.lock())
         collider->setOnColliderEnter(std::bind(&BulletComponent::onColliderEnter,this,std::placeholders::_1));
 }
@@ -19,23 +19,26 @@ void BulletComponent::Update(float elapsedTime) {
     if(auto collider = collider_.lock())
         collider->setVelocity(glm::vec3(0,-speed_,0));
 
-    const glm::vec3 &pos = gameObject()->getPosition();
+    const GameEngine::Vec2D &pos = gameObject()->position();
     if(pos.x < 0 || 224 < pos.x || pos.y < 0 || 256 < pos.y)
-        gameObject()->setActive(false);
+        gameObject()->active(false);
 }
 
-std::shared_ptr<Component> BulletComponent::Clone() {
-    auto clone = std::make_shared<BulletComponent>();
-    clone->speed_ = speed_;
-    return clone;
+GameEngine::PropertySetBase *BulletComponent::configureProperties() {
+    auto *properties = new GameEngine::PropertySet<BulletComponent>(this);
+
+    properties->add(new GameEngine::Property<BulletComponent, float>(
+            "speed",
+            this,
+            &BulletComponent::speed,
+            &BulletComponent::speed,
+            0));
+
+    return properties;
 }
 
-void BulletComponent::fromFile(const YAML::Node &componentConfig) {
-    speed_ = componentConfig["speed"].as<float>(0);
-}
-
-void BulletComponent::onColliderEnter(ColliderComponent *other) {
-    if(!gameObject()->isActive())
+void BulletComponent::onColliderEnter(GameEngine::ColliderComponent *other) {
+    if(!gameObject()->active())
         return;
 
     std::shared_ptr<EnemyComponent> enemy = other->gameObject()->getComponent<EnemyComponent>().lock();
@@ -58,6 +61,14 @@ void BulletComponent::onColliderEnter(ColliderComponent *other) {
         mothership->kill();
     }
 
-    gameObject()->setActive(false);
+    gameObject()->active(false);
+}
+
+void BulletComponent::speed(const float &value) {
+    speed_ = value;
+}
+
+float BulletComponent::speed() const {
+    return speed_;
 }
 

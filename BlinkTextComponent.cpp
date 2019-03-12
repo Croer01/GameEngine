@@ -8,19 +8,27 @@ void BlinkTextComponent::init() {
     timeToBlinkAcumulator_ = 0;
     durationAcumulator_ = 0;
     blinkElapsedTime_ = duration_/blinkTimes_;
-    text_ = gameObject()->getComponent<TextComponent>();
+    text_ = gameObject()->getComponent<GameEngine::TextComponent>();
 }
 
-std::shared_ptr<Component> BlinkTextComponent::Clone() {
-    auto clone = std::make_shared<BlinkTextComponent>();
-    clone->duration_ = duration_;
-    clone->blinkTimes_ = blinkTimes_;
-    return clone;
-}
+GameEngine::PropertySetBase *BlinkTextComponent::configureProperties() {
+    auto *properties = new GameEngine::PropertySet<BlinkTextComponent>(this);
 
-void BlinkTextComponent::fromFile(const YAML::Node &componentConfig) {
-    duration_ = componentConfig["duration"].as<float>(0);
-    blinkTimes_ = componentConfig["blinkTimes"].as<float>(0);
+    properties->add(new GameEngine::Property<BlinkTextComponent, float>(
+            "duration",
+            this,
+            &BlinkTextComponent::duration,
+            &BlinkTextComponent::duration,
+            0));
+
+    properties->add(new GameEngine::Property<BlinkTextComponent, float>(
+            "blinkTimes",
+            this,
+            &BlinkTextComponent::blinkTimes,
+            &BlinkTextComponent::blinkTimes,
+            0));
+
+    return properties;
 }
 
 void BlinkTextComponent::Update(float elapsedTime) {
@@ -34,7 +42,24 @@ void BlinkTextComponent::Update(float elapsedTime) {
     }
 
     if(durationAcumulator_ >= duration_) {
-        gameObject()->setActive(false);
+        gameObject()->active(false);
         durationAcumulator_ = 0;
     }
+}
+
+void BlinkTextComponent::blinkTimes(const float &times) {
+    blinkTimes_ = times;
+}
+
+float BlinkTextComponent::blinkTimes() const {
+    return blinkTimes_;
+}
+
+
+void BlinkTextComponent::duration(const float &dur) {
+    duration_ = dur;
+}
+
+float BlinkTextComponent::duration() const {
+    return duration_;
 }

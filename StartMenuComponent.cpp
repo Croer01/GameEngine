@@ -2,14 +2,27 @@
 // Created by adria on 17/11/2018.
 //
 
+#include <game-engine/KeyCodes.hpp>
+#include <game-engine/InputManager.hpp>
 #include "StartMenuComponent.hpp"
-#include "src/InputManager.hpp"
-#include "src/SceneManager.hpp"
 
 void StartMenuComponent::init() {
     timeAcumulator_ = 0;
-    text_ = gameObject()->getComponent<TextComponent>();
-    audioSource_ = gameObject()->getComponent<AudioComponent>();
+    text_ = gameObject()->getComponent<GameEngine::TextComponent>();
+    audioSource_ = gameObject()->getComponent<GameEngine::AudioComponent>();
+}
+
+GameEngine::PropertySetBase *StartMenuComponent::configureProperties() {
+    auto *properties = new GameEngine::PropertySet<StartMenuComponent>(this);
+
+    properties->add(new GameEngine::Property<StartMenuComponent, float>(
+            "blinkTime",
+            this,
+            &StartMenuComponent::blinkTime,
+            &StartMenuComponent::blinkTime,
+            0));
+
+    return properties;
 }
 
 void StartMenuComponent::Update(float elapsedTime) {
@@ -21,25 +34,24 @@ void StartMenuComponent::Update(float elapsedTime) {
         timeAcumulator_ = 0;
     }
 
-    if(InputManager::GetInstance().isKeyDown(SDLK_RETURN))
-        SceneManager::GetInstance().changeScene("Scene0");
+    if(GameEngine::InputManager::GetInstance().isKeyDown(GameEngine::KeyCode::KEY_RETURN))
+        gameObject()->game().changeScene("Scene0");
 
 
-    if(InputManager::GetInstance().isKeyDown(SDLK_SPACE)) {
-        if(auto audioSource = audioSource_.lock())
+    if(GameEngine::InputManager::GetInstance().isKeyDown(GameEngine::KeyCode::KEY_SPACE)) {
+        if(auto audioSource = audioSource_.lock()) {
             if(!audioSource->isPlaying())
                 audioSource->play();
             else
                 audioSource->stop();
+        }
     }
 }
 
-std::shared_ptr<Component> StartMenuComponent::Clone() {
-    std::shared_ptr<StartMenuComponent> clone = std::make_shared<StartMenuComponent>();
-    clone->blinkTime_ = blinkTime_;
-    return clone;
+void StartMenuComponent::blinkTime(const float &time) {
+    blinkTime_ = time;
 }
 
-void StartMenuComponent::fromFile(const YAML::Node &componentConfig) {
-    blinkTime_ = componentConfig["blinkTime"].as<float>();
+float StartMenuComponent::blinkTime() const {
+    return blinkTime_;
 }

@@ -6,25 +6,30 @@
 #define SPACEINVADERS_BLINKTEXTCOMPONENT_HPP
 
 
-#include "src/Component.hpp"
-#include "src/components/TextComponent.hpp"
+#include <game-engine/geComponent.hpp>
+#include <game-engine/components/TextComponent.hpp>
 
 COMPONENT(BlinkTextComponent)
-class BlinkTextComponent : public Component {
+class BlinkTextComponent : public GameEngine::geComponentInstantiable<BlinkTextComponent> {
     float duration_;
     float blinkTimes_;
     float timeToBlinkAcumulator_;
     float durationAcumulator_;
     float blinkElapsedTime_;
-    std::weak_ptr<TextComponent> text_;
+    std::weak_ptr<GameEngine::TextComponent> text_;
 public:
     void init() override;
 
-    std::shared_ptr<Component> Clone() override;
-
-    void fromFile(const YAML::Node &componentConfig) override;
-
     void Update(float elapsedTime) override;
+
+    void blinkTimes(const float &times);
+    float blinkTimes() const;
+
+    void duration(const float &dur);
+    float duration() const;
+
+protected:
+    GameEngine::PropertySetBase *configureProperties() override;
 };
 
 

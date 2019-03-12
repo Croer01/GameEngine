@@ -1,4 +1,4 @@
-//
+ //
 // Created by adria on 29/10/2018.
 //
 
@@ -6,21 +6,19 @@
 #define SPACEINVADERS_PLAYERCOMPONENT_HPP
 
 
-#include "src/Component.hpp"
 #include "BulletComponent.hpp"
-#include "src/components/AudioComponent.hpp"
-#include "src/components/TextComponent.hpp"
+#include <game-engine/components/AudioComponent.hpp>
 
 enum class PlayerEvents{
     KILLED
 };
 
 COMPONENT(PlayerComponent)
-class PlayerComponent : public Component , public Subject<PlayerEvents>{
-    std::shared_ptr<GameObject> bullet_;
-    std::weak_ptr<AudioComponent> shootSound_;
-    std::weak_ptr<SpriteComponent> sprite_;
-    std::weak_ptr<SpriteAnimatedComponent> spriteExplosion_;
+class PlayerComponent : public GameEngine::geComponentInstantiable<PlayerComponent> , public GameEngine::Subject<PlayerEvents>{
+    GameEngine::geGameObjectRef bullet_;
+    std::weak_ptr<GameEngine::AudioComponent> shootSound_;
+    std::weak_ptr<GameEngine::SpriteComponent> sprite_;
+    std::weak_ptr<GameEngine::SpriteAnimatedComponent> spriteExplosion_;
     float speed_;
     bool killed_;
 public:
@@ -30,14 +28,18 @@ public:
 
     void Update(float elapsedTime) override;
 
-    std::shared_ptr<Component> Clone() override;
-
-    void fromFile(const YAML::Node &componentConfig) override;
-
     //public player functions
     void kill();
 
     void restore();
+
+protected:
+    GameEngine::PropertySetBase *configureProperties() override;
+
+public:
+
+    void speed(const float &value);
+    float speed() const;
 };
 
 
