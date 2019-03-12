@@ -39,4 +39,4 @@ cmake-build-*/
 .idea/
 
 # remove generated files from engine
-componentsRegistered.cpp
+componentsRegistered.hpp
