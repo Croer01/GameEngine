@@ -43,6 +43,7 @@ set(ENGINE_SOURCES
         public/components/TextComponent.cpp
         public/components/AudioComponent.cpp
         public/Random.cpp
+        public/geAudio.cpp
         )
 
 # private stuff

@@ -10,6 +10,7 @@
 #include <string>
 #include <memory>
 #include "geScreen.hpp"
+#include "geAudio.hpp"
 
 namespace GameEngine {
     class geGame;
@@ -18,6 +19,7 @@ namespace GameEngine {
 
     class PUBLICAPI geGame {
         geEnvironment environment_;
+        std::unique_ptr<geAudio> audio_;
         bool initialized_;
     public:
         geGame();
@@ -33,6 +35,7 @@ namespace GameEngine {
         void changeScene(const std::string &name);
 
         geScreen &screen() const;
+        geAudio &audio() const;
     };
 }
 

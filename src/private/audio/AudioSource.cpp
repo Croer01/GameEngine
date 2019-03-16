@@ -4,6 +4,7 @@
 
 #include "AudioSource.hpp"
 #include "../utils.hpp"
+#include "AudioEngine.hpp"
 #include <exception>
 #include <chrono>
 #include <iostream>
@@ -20,6 +21,8 @@ namespace Internal {
         CheckAlError();
 
         alGenBuffers(AUDIOSOURCE_BUFFERS, streamBuffers_);
+
+        AudioEngine::GetInstance().registerSource(this);
     }
 
     AudioSource::~AudioSource() {
@@ -28,9 +31,13 @@ namespace Internal {
         streamRunning_ = false;
         if(streamThread_.joinable())
             streamThread_.join();
+        AudioEngine::GetInstance().unregisterSource(this);
     }
 
     void AudioSource::play() {
+        if(AudioEngine::GetInstance().muteAll())
+            return;
+
         //prepare data to stream sound
         currentChunk_ = 0;
 

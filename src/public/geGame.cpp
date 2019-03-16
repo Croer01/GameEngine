@@ -15,6 +15,7 @@ namespace GameEngine {
         //Force initialize the instance
         Internal::Game::GetInstance().context(this);
         initialized_ = false;
+        audio_ = std::unique_ptr<geAudio>(new geAudio());
     }
 
     geGame::~geGame() {
@@ -79,5 +80,9 @@ namespace GameEngine {
 
     geScreen &geGame::screen() const {
         return Internal::Game::GetInstance().screen();
+    }
+
+    geAudio &geGame::audio() const {
+        return *audio_;
     }
 }

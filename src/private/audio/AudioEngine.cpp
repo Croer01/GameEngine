@@ -32,5 +32,33 @@ namespace Internal {
 
         return std::make_shared<AudioSource>(buffer);
     }
+
+    void AudioEngine::onCreateInstance() {
+        mute_ = false;
+    }
+
+    void AudioEngine::muteAll(bool mute) {
+        mute_ = mute;
+        if(mute) {
+            for(AudioSource* source : sources_)
+                source->stop();
+        }
+    }
+
+    bool AudioEngine::muteAll() const {
+        return mute_;
+    }
+
+    void AudioEngine::registerSource(AudioSource *source) {
+        sources_.push_back(source);
+    }
+
+    void AudioEngine::unregisterSource(AudioSource *source) {
+        auto it = std::find(sources_.begin(), sources_.end(), source);
+        if (it != sources_.end()) {
+            std::swap(*it, *(--sources_.end()));
+            sources_.pop_back();
+        }
+    }
 }
 }

@@ -19,10 +19,22 @@ namespace Internal {
         ALCcontext *context_;
         ALCdevice *device_;
         std::map<std::string, std::shared_ptr<AudioBuffer>> buffers_;
+        std::vector<AudioSource*> sources_;
+        bool mute_;
     public:
         void init();
 
+    protected:
+        void onCreateInstance() override;
+
+    public:
         std::shared_ptr<AudioSource> getAudio(const std::string &filename);
+
+        void registerSource(AudioSource *source);
+        void unregisterSource(AudioSource *source);
+
+        void muteAll(bool mute);
+        bool muteAll() const;
 
         virtual ~AudioEngine();
     };
