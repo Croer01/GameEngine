@@ -10,6 +10,7 @@
 #include <string>
 #include <SDL2/SDL_video.h>
 #include <SDL2/SDL_events.h>
+#include <memory>
 
 namespace GameEngine {
 namespace Internal {
@@ -24,7 +25,6 @@ namespace Internal {
         int virtualWidth_;
         int virtualHeight_;
 
-        //TODO: create a list of possible configurations to set up virtual size and add a sender to will be able the Game aware of it.
         int calculatedX_;
         int calculatedY_;
         int calculatedWidth_;
@@ -66,6 +66,7 @@ namespace Internal {
 
         void makeCurrentContext();
         void swapWindow();
+        SDL_Window &sdlWindow() const;
     private:
         void recalculateWindow();
         void initSDLWindow();

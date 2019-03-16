@@ -57,6 +57,7 @@ namespace Internal {
 
     void Screen::title(const std::string &value) {
         title_ = value;
+        SDL_SetWindowTitle(mainWindow_.get(), title_.c_str());
     }
 
     int Screen::windowWidth() const {
@@ -227,6 +228,10 @@ namespace Internal {
     void Screen::resizable(bool value) {
         allowResize_ = value;
         SDL_SetWindowResizable(mainWindow_.get(), allowResize_? SDL_TRUE : SDL_FALSE);
+    }
+
+    SDL_Window &Screen::sdlWindow() const {
+        return *mainWindow_;
     }
 }
 }
