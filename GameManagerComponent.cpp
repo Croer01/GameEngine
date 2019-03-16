@@ -2,6 +2,7 @@
 // Created by adria on 12/01/2019.
 //
 
+#include <game-engine/InputManager.hpp>
 #include "GameManagerComponent.hpp"
 
 void GameManagerComponent::init() {
@@ -67,6 +68,10 @@ void GameManagerComponent::Update(float elapsedTime) {
             }
         }
         playerKilledTimeAcumulator_ += elapsedTime;
+    }
+
+    if(GameEngine::InputManager::GetInstance().isKeyDown(GameEngine::KeyCode::KEY_m)) {
+        gameObject()->game().audio().muteAll(!gameObject()->game().audio().muteAll());
     }
 }
 

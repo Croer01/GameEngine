@@ -11,3 +11,5 @@ prototypes:
     position: [76,121,0]
   - prototype: StartGameText
     position: [58,165,0]
+  - prototype: MuteDescriptionText
+    position: [34,224,0]

@@ -38,12 +38,15 @@ void StartMenuComponent::Update(float elapsedTime) {
         gameObject()->game().changeScene("Scene0");
 
 
-    if(GameEngine::InputManager::GetInstance().isKeyDown(GameEngine::KeyCode::KEY_SPACE)) {
+    if(GameEngine::InputManager::GetInstance().isKeyDown(GameEngine::KeyCode::KEY_m)) {
         if(auto audioSource = audioSource_.lock()) {
-            if(!audioSource->isPlaying())
+            if(!audioSource->isPlaying()) {
+                gameObject()->game().audio().muteAll(false);
                 audioSource->play();
-            else
+            } else {
+                gameObject()->game().audio().muteAll(true);
                 audioSource->stop();
+            }
         }
     }
 }
