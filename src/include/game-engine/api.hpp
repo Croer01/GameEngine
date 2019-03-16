@@ -80,6 +80,14 @@ struct PUBLICAPI Vec2D {
         return !(rhs == *this);
     }
 };
+
+struct PUBLICAPI geColor{
+    float r;
+    float g;
+    float b;
+    geColor() : r(0),g(0),b(0){};
+    geColor(float rValue, float gValue, float bValue) : r(rValue),g(gValue),b(rValue){};
+};
 }
 
 #endif //SPACEINVADERS_API_HPP
