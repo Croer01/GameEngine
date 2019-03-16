@@ -10,8 +10,8 @@
 namespace GameEngine{
     class PUBLICAPI geAudio {
     public:
-        void muteAll();
-        void unmuteAll();
+        void muteAll(bool mute);
+        bool muteAll() const;
     };
 }
 

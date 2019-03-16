@@ -6,11 +6,10 @@
 #include "../private/audio/AudioEngine.hpp"
 
 namespace GameEngine{
-    void geAudio::muteAll() {
-        GameEngine::Internal::AudioEngine::GetInstance().muteAll(true);
+    void geAudio::muteAll(bool mute) {
+        GameEngine::Internal::AudioEngine::GetInstance().muteAll(mute);
     }
-
-    void geAudio::unmuteAll() {
-        GameEngine::Internal::AudioEngine::GetInstance().muteAll(false);
+    bool geAudio::muteAll() const {
+        return GameEngine::Internal::AudioEngine::GetInstance().muteAll();
     }
 }
