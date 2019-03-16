@@ -9,6 +9,7 @@
 #include <game-engine/geEnvironment.hpp>
 #include <string>
 #include <memory>
+#include "geScreen.hpp"
 
 namespace GameEngine {
     class geGame;
@@ -24,12 +25,14 @@ namespace GameEngine {
         void init();
         int loop();
         void shutdown();
+
         geGameObjectRef createObject(const std::string &name);
         geGameObjectRef createFromPrototype(const std::string &prototype);
         void configEnvironment(const geEnvironment &environment);
-        // TODO: Improve this method or way to access an object of the currentScene (maybe using a "Context" object?)
         geGameObjectRef findObjectByNameInCurrentScene(const std::string &gameObjectName);
         void changeScene(const std::string &name);
+
+        geScreen &screen() const;
     };
 }
 

@@ -6,7 +6,6 @@
 #define SPACEINVADERS_GAME_HPP
 
 
-#include <SDL2/SDL_video.h>
 #include <game-engine/geGame.hpp>
 #include <memory>
 #include "Singleton.hpp"
@@ -16,21 +15,16 @@
 namespace GameEngine {
 namespace Internal {
     class Game : public Singleton<Game> {
-        std::shared_ptr<SDL_Window> mainWindow_;
-        SDL_GLContext mainContext_;
         bool running_;
         geGame *context_;
 
         std::unique_ptr<Screen> screen_;
 
-        void initSDLWindow();
-
         void initPhysics(const std::string &configFilePath);
-
-        void makeCurrentContext();
 
     protected:
         void onCreateInstance() override;
+
     public:
         void init(const std::string &configRoot);
 
@@ -40,6 +34,7 @@ namespace Internal {
 
         void context(geGame *context);
         geGame &context() const;
+        Screen &screen() const;
     };
 }
 }

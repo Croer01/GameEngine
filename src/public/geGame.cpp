@@ -76,4 +76,8 @@ namespace GameEngine {
     void geGame::changeScene(const std::string &name) {
         Internal::SceneManager::GetInstance().changeScene(name);
     }
+
+    geScreen &geGame::screen() const {
+        return Internal::Game::GetInstance().screen();
+    }
 }

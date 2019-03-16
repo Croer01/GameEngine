@@ -119,11 +119,11 @@ namespace Internal {
         CheckGlError();
 
         //init projection matrix
-        projMatrix_ = glm::ortho(0.0f, (float) screen.getVirtualWidth(), (float) screen.getVirtualHeight(), 0.0f, 0.f,
+        projMatrix_ = glm::ortho(0.0f, (float) screen.virtualWidth(), (float) screen.virtualHeight(), 0.0f, 0.f,
                                  1.f);
         CheckGlError();
 
-        pixelPerfect_ = screen.isPixelPerfect();
+        pixelPerfect_ = screen.pixelPerfect();
     }
 
     void GraphicsEngine::draw() {

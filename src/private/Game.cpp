@@ -43,71 +43,9 @@ namespace Internal {
             CheckSDLError();
         }
         screen_ = std::make_unique<Screen>(configRoot + "/screen.yaml");
-        initSDLWindow();
         initPhysics(configRoot + "/physics.yaml");
 
         AudioEngine::GetInstance().init();
-    }
-
-    void Game::initSDLWindow() {
-
-        //TODO: set the title of the window from global configuration
-        mainWindow_.reset(SDL_CreateWindow(screen_->getTitle().c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                                           screen_->getWindowWidth(), screen_->getWindowHeight(), SDL_WINDOW_OPENGL),
-                          [](SDL_Window *wind) { SDL_DestroyWindow(wind); });
-        CheckSDLError();
-
-        //configure Gl context from the SDL window
-
-        glViewport(screen_->getCalculatedX(), screen_->getCalculatedY(), screen_->getCalculatedWidth(),
-                   screen_->getCalculatedHeight());
-
-        // Decide GL+GLSL versions
-#if __APPLE__
-        // GL 3.2 Core + GLSL 150
-        const char* glsl_version = "#version 150";
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG); // Always required on Mac
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
-#else
-        // GL 3.0 + GLSL 130
-        const char *glsl_version = "#version 130";
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-#endif
-
-        // Create window with graphics context
-        SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-        SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-        SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-
-        mainContext_ = SDL_GL_CreateContext(mainWindow_.get());
-        makeCurrentContext();
-
-        // This makes our buffer swap synchronized with the monitor's vertical refresh
-        // Enable vsync
-        SDL_GL_SetSwapInterval(1);
-
-        // Init GLEW
-        // Apparently, this is needed for Apple. Thanks to Ross Vander for letting me know
-#ifndef __APPLE__
-        glewExperimental = GL_TRUE;
-        glewInit();
-#endif
-
-        //Initialize clear color
-        glm::vec3 backgroundColor = screen_->getBackgroundColor();
-        glClearColor(backgroundColor[0], backgroundColor[1], backgroundColor[2], 1.f);
-
-        CheckGlError();
-        CheckSDLError();
-
-        //TODO: move this outside the creation of the window?
-        GraphicsEngine::GetInstance().init(*screen_);
-
     }
 
     void Game::initPhysics(const std::string &configFilePath) {
@@ -143,10 +81,6 @@ namespace Internal {
         }
     }
 
-    void Game::makeCurrentContext() {
-        SDL_GL_MakeCurrent(mainWindow_.get(), mainContext_);
-    }
-
     void Game::loop() {
         unsigned int lastTime = 0, currentTime;
 
@@ -176,13 +110,13 @@ namespace Internal {
             PhysicsEngine::GetInstance().update(elapsedTime);
 
             glClear(GL_COLOR_BUFFER_BIT);
-            glViewport(screen_->getCalculatedX(), screen_->getCalculatedY(), screen_->getCalculatedWidth(),
-                       screen_->getCalculatedHeight());
+            glViewport(screen_->calculatedX(), screen_->calculatedY(), screen_->calculatedWidth(),
+                       screen_->calculatedHeight());
             GraphicsEngine::GetInstance().draw();
 #ifdef DEBUG
             PhysicsEngine::GetInstance().drawDebug();
 #endif
-            SDL_GL_SwapWindow(mainWindow_.get());
+            screen_->swapWindow();
             lastTime = currentTime;
 
             SceneManager::GetInstance().changeSceneInSafeMode();
@@ -195,8 +129,7 @@ namespace Internal {
         onCreateInstance();
 
         //TODO: Do physics and graphics engines shutdown?
-        SDL_GL_DeleteContext(mainContext_);
-        mainWindow_.reset();
+        screen_.reset();
 
         // Shutdown SDL 2
         SDL_Quit();
@@ -214,6 +147,10 @@ namespace Internal {
 
     geGame &Game::context() const {
         return *context_;
+    }
+
+    Screen &Game::screen() const {
+        return *screen_;
     }
 }
 }
