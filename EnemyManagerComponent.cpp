@@ -53,9 +53,11 @@ void EnemyManagerComponent::Update(float elapsedTime) {
     if(paused_)
         return;
 
+    const GameEngine::geScreen &screen = gameObject()->game().screen();
+
     constexpr float min = 0;
-    constexpr float max = 224.f;
-    constexpr float bottom = 256.f;
+    float max = screen.virtualWidth();
+    float bottom = screen.virtualHeight();
 
     if(currentPosition_.y + boundingBoxMax_.y >= bottom)
         gameObject()->game().changeScene("StartMenu");

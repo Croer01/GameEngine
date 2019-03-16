@@ -98,9 +98,10 @@ void MotherShipComponent::onEvent(const GameEngine::Subject<GameEngine::GameObje
 }
 
 void MotherShipComponent::hide() {
+    const GameEngine::geScreen &screen = gameObject()->game().screen();
     gameObject()->active(false);
     GameEngine::Vec2D vec = gameObject()->position();
-    vec.x = 244;
+    vec.x = screen.virtualWidth() + 20;
     gameObject()->position(vec);
     points_ = minPoints_;
 }

@@ -32,6 +32,8 @@ void PlayerComponent::Update(float elapsedTime) {
     if(killed_)
         return;
 
+    const GameEngine::geScreen &screen = gameObject()->game().screen();
+
     GameEngine::Vec2D translation;
     auto sprite = gameObject()->getComponent<GameEngine::SpriteComponent>().lock();
 
@@ -46,8 +48,8 @@ void PlayerComponent::Update(float elapsedTime) {
 
         if(desiredPos.x < 0)
             desiredPos.x = 0;
-        else if(desiredPos.x + sprite->getWidth() > 224)
-            desiredPos.x = 224 - sprite->getWidth();
+        else if(desiredPos.x + sprite->getWidth() > screen.virtualWidth())
+            desiredPos.x = screen.virtualWidth() - sprite->getWidth();
 
         gameObject()->position(desiredPos);
     }

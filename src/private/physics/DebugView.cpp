@@ -4,8 +4,11 @@
 
 #include "DebugView.hpp"
 #include "PhysicsEngine.hpp"
+#include "../Game.hpp"
 
 #include <GL\glew.h>
+#include <game-engine/geGameObject.hpp>
+
 namespace GameEngine {
 namespace Internal {
 //TODO: fill the rest of the methods
@@ -41,8 +44,10 @@ namespace Internal {
 
     void DebugView::beginDraw() {
         glPushMatrix(); // Push matrix so we can revert after doing some transformations
-        //TODO: set the size of the camera from virtual screen
-        glOrtho(0.0f, 224, 256, 0, 0.f, 1.f);
+
+        const Screen &screen = Game::GetInstance().screen();
+
+        glOrtho(0.0f, screen.virtualWidth(), screen.virtualHeight(), 0, 0.f, 1.f);
         glScalef(PhysicsEngine::getScalePixelsToMeter(), PhysicsEngine::getScalePixelsToMeter(), 1);
     }
 

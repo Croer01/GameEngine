@@ -15,12 +15,13 @@ void BulletComponent::init() {
 }
 
 void BulletComponent::Update(float elapsedTime) {
-    //TODO: create getters to get virtual screen size
+    const GameEngine::geScreen &screen = gameObject()->game().screen();
+
     if(auto collider = collider_.lock())
         collider->setVelocity(glm::vec3(0,-speed_,0));
 
     const GameEngine::Vec2D &pos = gameObject()->position();
-    if(pos.x < 0 || 224 < pos.x || pos.y < 0 || 256 < pos.y)
+    if(pos.x < 0 || screen.virtualWidth() < pos.x || pos.y < 0 || screen.virtualHeight() < pos.y)
         gameObject()->active(false);
 }
 
