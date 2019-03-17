@@ -6,17 +6,11 @@
 #include <sstream>
 #include <iostream>
 #include "Scene.hpp"
+#include "yamlConverters.hpp"
 #include "ObjectManager.hpp"
+
 namespace GameEngine {
 namespace Internal {
-    //TODO: create internal overload operator for serialize/deserialize using YAML
-    Vec2D readVec2D(const YAML::Node &node, float defaultValue) {
-        if (!node.IsSequence() || node.size() != 3) {
-            return Vec2D(defaultValue, defaultValue);
-        }
-
-        return Vec2D(node[0].as<float>(), node[1].as<float>());
-    }
 
     Scene::Scene(const std::string &filename) : filename_(filename) {
     }
@@ -53,11 +47,11 @@ namespace Internal {
 
                 //object properties
                 if (prototype["position"])
-                    gameObject->position(readVec2D(prototype["position"], 0));
+                    gameObject->position(prototype["position"].as<Vec2D>());
                 if (prototype["rotation"])
-                    gameObject->rotation(readVec2D(prototype["rotation"], 0));
+                    gameObject->rotation(prototype["rotation"].as<Vec2D>());
                 if (prototype["scale"])
-                    gameObject->scale(readVec2D(prototype["scale"], 1));
+                    gameObject->scale(prototype["scale"].as<Vec2D>());
 
                 std::cout << "object created " << prototype["prototype"].as<std::string>() << std::endl;
                 gameobjects_.push_back(gameObject);

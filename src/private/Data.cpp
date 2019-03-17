@@ -3,6 +3,7 @@
 //
 
 #include "Data.hpp"
+#include "yamlConverters.hpp"
 
 namespace GameEngine{
 namespace Internal{
@@ -28,10 +29,7 @@ namespace Internal{
     }
     
     GameEngine::Vec2D Data::getVec2D(const std::string &key) const {
-        return {
-            data_[key][0].as<float>(0),
-            data_[key][1].as<float>(0)
-        };
+        return data_[key].as<Vec2D>(Vec2D(0,0));
     }
     
     std::vector<std::string> Data::getArrayString(const std::string &key) const {

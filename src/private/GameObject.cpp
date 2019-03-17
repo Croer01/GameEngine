@@ -6,6 +6,7 @@
 #include <sstream>
 #include "GameObject.hpp"
 #include "Game.hpp"
+#include "yamlConverters.hpp"
 #include <game-engine/geComponent.hpp>
 #include "ObjectManager.hpp"
 #include <glm/glm.hpp>
@@ -207,26 +208,15 @@ namespace Internal {
         if(node["name"])
             name_ = node["name"].as<std::string>();
 
-        // TODO: refactor the position, the rotation and the scale to get arrays of length 2
         //object properties
-        if(node["position"]){
-            YAML::Node position = node["position"];
-            if(!position.IsSequence() || position.size() != 3)
-                throw std::runtime_error("position must be a sequence of 3 numeric values.");
-            this->position(Vec2D(position[0].as<float>(), position[1].as<float>()));
-        }
-        if(node["rotation"]){
-            YAML::Node rotation = node["rotation"];
-            if(!rotation.IsSequence() || rotation.size() != 3)
-                throw std::runtime_error("rotation must be a sequence of 3 numeric values.");
-            this->rotation(Vec2D(rotation[0].as<float>(), rotation[1].as<float>()));
-        }
-        if(node["scale"]){
-            YAML::Node scale = node["scale"];
-            if(!scale.IsSequence() || scale.size() != 3)
-                throw std::runtime_error("scale must be a sequence of 3 numeric values.");
-            this->scale(Vec2D(scale[0].as<float>(), scale[1].as<float>()));
-        }
+        if(node["position"])
+            this->position(node["position"].as<Vec2D>());
+
+        if(node["rotation"])
+            this->rotation(node["rotation"].as<Vec2D>());
+
+        if(node["scale"])
+            this->scale(node["scale"].as<Vec2D>());
 
         //load components
         YAML::Node components = node["components"];

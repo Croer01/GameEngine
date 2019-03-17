@@ -1,5 +1,5 @@
 prototypes:
   - prototype: ObjectTest
     name: ObjectTest
-    scale: [10,10,10]
-    position: [256, 256, 0]
+    scale: [10,10]
+    position: [256, 256]

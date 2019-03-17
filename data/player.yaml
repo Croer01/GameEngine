@@ -1,4 +1,4 @@
-scale: [13, 8, 1]
+scale: [13, 8]
 components:
   - type: PlayerComponent
     speed: 175

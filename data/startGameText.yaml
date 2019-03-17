@@ -1,4 +1,4 @@
-scale: [0.16,0.16,0.16]
+scale: [0.16,0.16]
 components:
   - type: TextComponent
     text: "press <return> to start"
