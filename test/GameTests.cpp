@@ -33,8 +33,6 @@ TEST(Game, renderSprite)
     environment.firstScene("testScene");
 
     game.configEnvironment(environment);
-    game.init();
-    //TODO: fix how to register prototypes (maybe can add a flag into graphics to know when the gl context is created
     environment.addPrototype(prototype, "data/spriteComponentLoadTest.yaml");
 
     std::thread t([&](){
@@ -59,8 +57,6 @@ TEST(Game, playSound)
     environment.firstScene("testScene");
 
     game.configEnvironment(environment);
-    game.init();
-    //TODO: fix how to register prototypes (maybe can add a flag into graphics to know when the gl context is created
     environment.addPrototype(prototype, "data/audioComponentLoadTest.yaml");
 
     std::thread t([&](){

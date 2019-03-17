@@ -118,8 +118,6 @@ TEST(SpriteComponent, load)
     GameEngine::geEnvironment environment;
 
     game.configEnvironment(environment);
-    game.init();
-    //TODO: fix how to register prototypes (maybe can add a flag into graphics to know when the gl context is created
     environment.addPrototype(prototype, "data/spriteComponentLoadTest.yaml");
 
     GameEngine::geGameObjectRef gameObject = game.createFromPrototype(prototype);
