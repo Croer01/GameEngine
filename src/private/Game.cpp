@@ -53,7 +53,12 @@ namespace Internal {
     void Game::initPhysics(const std::string &configFilePath) {
         PhysicsEngine::GetInstance().init(1.f / 60.f);
 
-        YAML::Node physicsConfig = YAML::LoadFile(configFilePath);
+        YAML::Node physicsConfig;
+        try {
+            physicsConfig = YAML::LoadFile(configFilePath);
+        } catch (const YAML::BadFile &e){
+            std::cout << "the file \"" << configFilePath << "\" not found. Using default configuration." << std::endl;
+        }
 
         //TODO: implement category/mask configuration as a object
         if (physicsConfig["categories"]) {
