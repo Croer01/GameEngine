@@ -43,6 +43,8 @@ namespace Internal {
             CheckSDLError();
         }
         screen_ = std::make_unique<Screen>(configRoot + "/screen.yaml");
+        GraphicsEngine::GetInstance().init(*screen_);
+
         initPhysics(configRoot + "/physics.yaml");
 
         AudioEngine::GetInstance().init();

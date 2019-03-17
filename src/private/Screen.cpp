@@ -9,7 +9,8 @@
 #include <functional>
 #include "Screen.hpp"
 #include "utils.hpp"
-#include "graphics/GraphicsEngine.hpp"
+
+#define DEFAULT_WINDOW_SIZE 512
 
 namespace GameEngine {
 namespace Internal {
@@ -26,26 +27,44 @@ namespace Internal {
     }
 
     Screen::Screen(const std::string &filePath) {
-        //TODO: set default values to manage better screen configuration
-        YAML::Node screenConfig = YAML::LoadFile(filePath);
+        YAML::Node screenConfig;
+        try {
+            screenConfig = YAML::LoadFile(filePath);
+        } catch (const YAML::BadFile &e){
+            std::cout << "the file \"" << filePath << "\" not found. Using default configuration." << std::endl;
+        }
 
-        title_ = screenConfig["title"].as<std::string>();
 
-        YAML::Node windowSize = screenConfig["windowSize"];
-        YAML::Node virtualSize = screenConfig["virtualSize"];
+        title_ = screenConfig["title"].as<std::string>("Game");
 
-        deviceWidth_ = windowSize[0].as<int>();
-        deviceHeight_ = windowSize[1].as<int>();
-        virtualWidth_ = virtualSize[0].as<int>();
-        virtualHeight_ = virtualSize[1].as<int>();
+        if(screenConfig["windowSize"]){
+            YAML::Node windowSize = screenConfig["windowSize"];
+            deviceWidth_ = windowSize[0].as<int>();
+            deviceHeight_ = windowSize[1].as<int>();
+        } else{
+            deviceWidth_ = DEFAULT_WINDOW_SIZE;
+            deviceHeight_ = DEFAULT_WINDOW_SIZE;
+        }
 
+        if(screenConfig["virtualSize"]) {
+            YAML::Node virtualSize = screenConfig["virtualSize"];
+            virtualWidth_ = virtualSize[0].as<int>();
+            virtualHeight_ = virtualSize[1].as<int>();
+        } else {
+            virtualWidth_ = DEFAULT_WINDOW_SIZE;
+            virtualHeight_ = DEFAULT_WINDOW_SIZE;
+        }
         recalculateWindow();
 
-        YAML::Node backgroundColor = screenConfig["backgroundColor"];
-        background_ = geColor(backgroundColor[0].as<float>(), backgroundColor[1].as<float>(),
-                                backgroundColor[2].as<float>());
-
-        pixelPerfect_ = screenConfig["pixelPerfect"].as<bool>();
+        if(screenConfig["backgroundColor"]){
+            YAML::Node backgroundColor = screenConfig["backgroundColor"];
+            background_ = geColor(backgroundColor[0].as<float>(), backgroundColor[1].as<float>(),
+                                    backgroundColor[2].as<float>());
+        } else {
+            // blue corn color by default
+            background_ = geColor(0.3922f, 0.5843f,0.9294f);
+        }
+        pixelPerfect_ = screenConfig["pixelPerfect"].as<bool>(false);
         allowResize_ = screenConfig["resizable"].as<bool>(false);
 
         initSDLWindow();
@@ -147,8 +166,6 @@ namespace Internal {
     }
 
     void Screen::initSDLWindow() {
-
-        //TODO: set the title of the window from global configuration
         uint32_t flags = SDL_WINDOW_OPENGL;
         if(allowResize_)
             flags |= SDL_WINDOW_RESIZABLE;
@@ -203,9 +220,6 @@ namespace Internal {
 
         CheckGlError();
         CheckSDLError();
-
-        //TODO: move this outside the creation of the window?
-        GraphicsEngine::GetInstance().init(*this);
     }
 
     void Screen::makeCurrentContext() {
