@@ -9,9 +9,6 @@
 
 namespace GameEngine {
     namespace Internal {
-
-        //TODO: Map of the GameEngine keys and SDL keycodes
-// https://github.com/ocornut/imgui/blob/master/examples/imgui_impl_sdl.cpp
         class KeyMap {
             std::map<SDL_Keycode, KeyCode> map;
         public:
