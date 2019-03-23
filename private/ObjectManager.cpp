@@ -4,6 +4,8 @@
 
 #include "ObjectManager.hpp"
 #include <exception>
+#include <memory>
+
 namespace GameEngine {
 namespace Internal {
     void ObjectManager::registerComponentBuilder(const std::string &idType, ComponentBuilder *builder) {
@@ -23,9 +25,10 @@ namespace Internal {
         auto it = prototypes_.find(objectType);
 
         if (it != prototypes_.end())
-            throw std::exception(("prototype " + objectType + " already registered").c_str());
+            throw std::runtime_error(("prototype " + objectType + " already registered").c_str());
 
-        std::unique_ptr<GameObject> prototype = std::make_unique<GameObject>(objectType);
+        std::unique_ptr<GameObject> prototype;
+        prototype.reset(new GameObject(objectType));
         prototype->fromFile(filename);
         prototypes_.insert(std::make_pair(objectType, std::move(prototype)));
     }
@@ -34,7 +37,7 @@ namespace Internal {
         auto it = prototypes_.find(objectType);
 
         if (it == prototypes_.end())
-            throw std::exception(("prototype " + objectType + " not found").c_str());
+            throw std::runtime_error(("prototype " + objectType + " not found").c_str());
 
 
         return it->second->Clone();

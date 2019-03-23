@@ -9,6 +9,7 @@
 #include <map>
 #include <vector>
 #include <functional>
+#include <algorithm>
 #include <game-engine/events/Observer.hpp>
 
 namespace GameEngine {

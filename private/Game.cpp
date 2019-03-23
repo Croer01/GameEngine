@@ -42,7 +42,7 @@ namespace Internal {
         if (SDL_Init(SDL_INIT_VIDEO) < 0) {
             CheckSDLError();
         }
-        screen_ = std::make_unique<Screen>(configRoot + "/screen.yaml");
+        screen_.reset( new Screen(configRoot + "/screen.yaml"));
         GraphicsEngine::GetInstance().init(*screen_);
 
         initPhysics(configRoot + "/physics.yaml");

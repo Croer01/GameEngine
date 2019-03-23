@@ -20,7 +20,7 @@ namespace Internal {
             auto it = builders_.find(type);
 
             if (it != builders_.end())
-                throw std::exception("builder already exist");
+                throw std::runtime_error("builder already exist");
 
             builders_.insert(std::pair<IdType, BuilderType *>(type, builder));
 
@@ -30,7 +30,7 @@ namespace Internal {
             auto it = builders_.find(type);
 
             if (it == builders_.end())
-                throw std::exception("builder doesn't exist");
+                throw std::runtime_error("builder doesn't exist");
 
             delete it->second;
             builders_.erase(type);
@@ -40,7 +40,7 @@ namespace Internal {
             auto it = builders_.find(type);
 
             if (it == builders_.end())
-                throw std::exception("builder doesn't exist");
+                throw std::runtime_error("builder doesn't exist");
 
             return it->second->Create(Data(data));
         };

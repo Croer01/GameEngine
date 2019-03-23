@@ -3,6 +3,7 @@
 //
 
 #include <vector>
+#include <chrono>
 #include "AudioBuffer.hpp"
 #include "../utils.hpp"
 
@@ -48,10 +49,9 @@ namespace Internal {
     }
 
     bool AudioBuffer::fillBuffer(ALuint buffer, int chunk) const {
-        using namespace std::chrono_literals;
 
         while(!loaded_ && chunk >= chunks_.size()){
-            std::this_thread::sleep_for(10ms);
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
 
         if(chunk >= chunks_.size())

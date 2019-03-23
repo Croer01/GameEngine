@@ -8,6 +8,7 @@
 #include <game-engine/api.hpp>
 #include <string>
 #include <vector>
+#include <stdexcept>
 
 namespace GameEngine {
 
@@ -100,7 +101,7 @@ namespace GameEngine {
         };
 
         Property(const std::string &name, Class *target, Member value, MemberType defaultValue, bool required) :
-                PropertyBase(name, required),
+                PropertyBase<Class>(name,required),
                 value_(value),
                 getter_(nullptr),
                 setter_(nullptr),
@@ -108,8 +109,8 @@ namespace GameEngine {
             if(value == nullptr)
                 throw std::invalid_argument("the member must not be null.");
             default_ = defaultValue;
-            target_ = target;
-            type_ = PropertyTypeDeductive<MemberType>::type;
+            this->target_ = target;
+            this->type_ = PropertyTypeDeductive<MemberType>::type;
             set(default_);
         };
 
@@ -118,14 +119,14 @@ namespace GameEngine {
         };
 
         Property(const std::string &name, Class *target, Getter getter, Setter setter, MemberType defaultValue, bool required) :
-                PropertyBase(name, required),
+                PropertyBase<Class>(name, required),
                 value_(nullptr),
                 getter_(getter),
                 setter_(setter),
                 useMethods(true) {
             default_ = defaultValue;
-            target_ = target;
-            type_ = PropertyTypeDeductive<MemberType>::type;
+            this->target_ = target;
+            this->type_ = PropertyTypeDeductive<MemberType>::type;
             if(setter_ != nullptr)
                 set(default_);
         };
@@ -137,11 +138,11 @@ namespace GameEngine {
         MemberType get() const {
             if(useMethods){
                 if(getter_ == nullptr)
-                    throw std::runtime_error("There is not a getter registered to use in property " + name_);
+                    throw std::runtime_error("There is not a getter registered to use in property " + this->name_);
 
-                return (target_->*getter_)();
+                return (this->target_->*getter_)();
             } else {
-                return target_->*value_;
+                return this->target_->*value_;
             }
         };
 
@@ -152,19 +153,19 @@ namespace GameEngine {
         void set(MemberType value) {
             if(useMethods) {
                 if(setter_ == nullptr)
-                    throw std::runtime_error("There is not a setter registered to use in property " + name_);
-                (target_->*setter_)(value);
+                    throw std::runtime_error("There is not a setter registered to use in property " + this->name_);
+                (this->target_->*setter_)(value);
             } else {
-                target_->*value_ = value;
+                this->target_->*value_ = value;
             }
         };
 
         virtual PropertyBase<Class> *copy(Class *newTarget) const override {
             Property<Class, MemberType> *clone = nullptr;
             if (useMethods)
-                clone = new Property<Class, MemberType>(name_, newTarget, getter_, setter_, default_, required_);
+                clone = new Property<Class, MemberType>(this->name_, newTarget, getter_, setter_, default_, this->required_);
             else
-                clone = new Property<Class, MemberType>(name_, newTarget, value_, default_, required_);
+                clone = new Property<Class, MemberType>(this->name_, newTarget, value_, default_, this->required_);
 
             clone->set(get());
             return clone;

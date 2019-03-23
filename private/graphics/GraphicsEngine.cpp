@@ -3,10 +3,12 @@
 //
 
 #include <GL/glew.h>
+#include <algorithm>
 #include <glm/gtc/matrix_transform.hpp>
 #include "GraphicsEngine.hpp"
 #include "../utils.hpp"
 #include "font/FontManager.hpp"
+
 namespace GameEngine {
 namespace Internal {
     void GraphicsEngine::init(const Screen &screen) {

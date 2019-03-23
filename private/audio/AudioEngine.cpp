@@ -2,6 +2,7 @@
 // Created by adria on 29/11/2018.
 //
 
+#include <algorithm>
 #include "AudioEngine.hpp"
 #include "../utils.hpp"
 

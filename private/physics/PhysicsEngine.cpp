@@ -12,10 +12,10 @@ namespace Internal {
         positionIterations_ = 2;
         colliders_.clear();
 
-        world_ = std::make_unique<b2World>(b2Vec2(0, 9.8f));
+        world_.reset(new b2World(b2Vec2(0, 9.8f)));
         world_->SetContactListener(this);
 #ifdef DEBUG
-        debugView_ = std::make_unique<DebugView>();
+        debugView_.reset(new DebugView());
         world_->SetDebugDraw(debugView_.get());
         debugView_->SetFlags(b2Draw::e_shapeBit);
 #endif
@@ -90,7 +90,8 @@ namespace Internal {
         //start the bit shifted from 1 position to avoid use the default mask as a category
         int bitsToShift = 1;
         for (const std::string &categoryName : categories) {
-            ColliderCategory category = {1 << bitsToShift};
+            ColliderCategory category;
+            category.categoryBit = static_cast<uint16>(1 << bitsToShift);
             categories_.insert(std::pair<std::string, ColliderCategory>(categoryName, category));
             bitsToShift++;
         }

@@ -5,6 +5,7 @@
 #include <ctime>
 #include <string>
 #include <game-engine/Random.hpp>
+#include <stdexcept>
 
 namespace GameEngine {
     Random::Random() : generator_(std::random_device()()),
