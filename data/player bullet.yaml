@@ -1,9 +1,0 @@
-scale: [1, 6]
-components:
-  - type: BulletComponent
-    speed: 15
-  - type: SpriteComponent
-    filePath: assets\\player bullet.png
-  - type: ColliderComponent
-    colliderType: Dynamic
-    category: playerBullet

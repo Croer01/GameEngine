@@ -1,6 +1,0 @@
-scale: [0.16,0.16]
-components:
-  - type: TextComponent
-    text: "press <M> to mute or not the game"
-    font: assets\\fonts\\slkscr.ttf
-    fontSize: 48

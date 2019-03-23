@@ -1,5 +1,0 @@
-components:
-  - type: GameManagerComponent
-    lives: 3
-  - type: AudioComponent
-    filePath: assets/sounds/explosion.wav

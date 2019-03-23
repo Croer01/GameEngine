@@ -1,7 +1,0 @@
-scale: [16, 8]
-components:
-  - type: EnemyExplosionComponent
-  - type: SpriteComponent
-    filePath: assets\\enemy killed.png
-  - type: AudioComponent
-    filePath: assets/sounds/invaderkilled.wav

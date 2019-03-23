@@ -1,8 +1,0 @@
-scale: [0.16,0.16]
-position: [4,4]
-components:
-  - type: TextComponent
-    text: "score: 0"
-    font: assets\\fonts\\slkscr.ttf
-    fontSize: 48
-  - type: HUDComponent

@@ -1,6 +1,0 @@
-title: Space Invaders
-pixelPerfect: true
-backgroundColor: [0,0,0]
-windowSize: [672, 768]
-virtualSize: [224, 256]
-resizable: true
