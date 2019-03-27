@@ -46,5 +46,9 @@ namespace Internal{
     bool Data::hasValue(const std::string &key) const {
         return static_cast<bool>(data_[key]);
     }
+
+    YAML::Node Data::yamlNode() const {
+        return data_;
+    }
 }
 }

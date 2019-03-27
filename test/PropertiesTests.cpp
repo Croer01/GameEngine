@@ -1,8 +1,10 @@
 #include "gtest/gtest.h"
+#include "../private/Data.hpp"
 #include <game-engine/properties/PropertySet.hpp>
 #include <game-engine/properties/Property.hpp>
 #include <thread>
 #include <chrono>
+#include <game-engine/geIO.hpp>
 
 struct TestData{
 private:
@@ -65,4 +67,20 @@ TEST(Properties, getValueFromPropertyGetterAndEdited)
     property.set(newValue);
     EXPECT_EQ(property.get(), newValue);
     EXPECT_EQ(instance.getPrivate(), property.get());
+}
+
+
+TEST(Data, writeValuesIntoData)
+{
+    const YAML::Node &node = YAML::Node();
+    const auto &data = std::make_shared<GameEngine::Internal::Data>(node);
+    
+    GameEngine::geDataWriter writer(data);
+
+    EXPECT_EQ(data->hasValue("float"), false);
+    
+    writer.writeFloat("float",2.5f);
+    EXPECT_EQ(data->hasValue("float"), true);
+    EXPECT_EQ(data->getFloat("float"), 2.5f);
+    
 }

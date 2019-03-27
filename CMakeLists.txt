@@ -44,7 +44,7 @@ set(ENGINE_SOURCES
         public/components/AudioComponent.cpp
         public/Random.cpp
         public/geAudio.cpp
-        )
+        public/geIO.cpp)
 
 # private stuff
 set(ENGINE_PRIVATE_SOURCES

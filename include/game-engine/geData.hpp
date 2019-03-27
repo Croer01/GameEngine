@@ -8,8 +8,13 @@
 #include <game-engine/api.hpp>
 #include <string>
 #include <vector>
+#include <memory>
 
 namespace GameEngine {
+    class geData;
+
+    typedef std::shared_ptr<geData> geDataRef;
+
     class PUBLICAPI geData {
     public:
         virtual ~geData(){};
