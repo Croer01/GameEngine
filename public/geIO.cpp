@@ -11,7 +11,13 @@
 namespace GameEngine {
 
     geDataRef geIO::load(const std::string &filename) {
-        const YAML::Node &node = YAML::LoadFile(filename);
+        std::ifstream infile(filename);
+        YAML::Node node;
+
+        if(infile.good()) {
+            node = YAML::Load(infile);
+        }
+
         return std::make_shared<Internal::Data>(node);
     }
 
