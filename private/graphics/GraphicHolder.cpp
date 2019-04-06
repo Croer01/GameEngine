@@ -34,7 +34,8 @@ namespace Internal {
 
         //remember the order of matrix multiplication is from right to left
         modelTransform_ = glm::translate(glm::mat4(1), desiredPosition) * glm::mat4_cast(glm::quat(glm::vec3(rotation.x, rotation.y,0.f))) *
-                          glm::scale(glm::mat4(1), glm::vec3(scale.x, scale.y, 1.f));
+                glm::scale(glm::mat4(1), glm::vec3(graphic_->getWidth(), graphic_->getHeight(), 1.f));
+        modelTransform_ = glm::scale(modelTransform_, glm::vec3(scale.x, scale.y, 1.f));
     }
 
     void GraphicHolder::setGraphic(const std::shared_ptr<Graphic> &graphic) {
