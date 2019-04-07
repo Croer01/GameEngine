@@ -65,5 +65,14 @@ namespace Internal {
     bool SceneManager::isSceneLoaded() const {
         return (bool)currentScene_;
     }
+
+    std::shared_ptr<Camera> SceneManager::getCameraOfCurrentScene() const {
+        std::shared_ptr<Camera> cam;
+
+        if(currentScene_)
+            cam = std::dynamic_pointer_cast<Camera>(currentScene_->cam());
+
+        return cam;
+    }
 }
 }

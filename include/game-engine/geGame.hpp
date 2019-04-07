@@ -11,6 +11,7 @@
 #include <memory>
 #include "geScreen.hpp"
 #include "geAudio.hpp"
+#include "geCamera.hpp"
 
 namespace GameEngine {
     class geGame;
@@ -33,6 +34,7 @@ namespace GameEngine {
         void configEnvironment(const geEnvironment &environment);
         geGameObjectRef findObjectByNameInCurrentScene(const std::string &gameObjectName);
         void changeScene(const std::string &name);
+        std::weak_ptr<geCamera> cameraOfCurrentScene() const;
 
         geScreen &screen() const;
         geAudio &audio() const;

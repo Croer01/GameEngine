@@ -119,7 +119,7 @@ namespace Internal {
             glClear(GL_COLOR_BUFFER_BIT);
             glViewport(screen_->calculatedX(), screen_->calculatedY(), screen_->calculatedWidth(),
                        screen_->calculatedHeight());
-            GraphicsEngine::GetInstance().draw();
+            GraphicsEngine::GetInstance().draw(SceneManager::GetInstance().getCameraOfCurrentScene());
 #ifdef DEBUG
             PhysicsEngine::GetInstance().drawDebug();
 #endif

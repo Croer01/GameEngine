@@ -85,4 +85,8 @@ namespace GameEngine {
     geAudio &geGame::audio() const {
         return *audio_;
     }
+
+    std::weak_ptr<geCamera> geGame::cameraOfCurrentScene() const {
+        return GameEngine::Internal::SceneManager::GetInstance().getCameraOfCurrentScene();
+    }
 }

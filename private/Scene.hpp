@@ -10,11 +10,14 @@
 #include <vector>
 #include <memory>
 #include "GameObject.hpp"
+#include "graphics/Camera.hpp"
+
 namespace GameEngine {
 namespace Internal {
     class Scene {
         std::string filename_;
         std::vector<std::shared_ptr<GameObject>> gameobjects_;
+        std::shared_ptr<Camera> cam_;
 
         void loadFile();
 
@@ -30,6 +33,8 @@ namespace Internal {
         std::shared_ptr<GameObject> findObjectByName(const std::string &gameObjectName) const;
 
         void shutDown();
+
+        std::shared_ptr<GameEngine::geCamera> cam() const;
     };
 }
 }

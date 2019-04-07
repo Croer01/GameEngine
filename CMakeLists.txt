@@ -69,7 +69,7 @@ set(ENGINE_PRIVATE_SOURCES
         private/audio/AudioSource.cpp
         private/audio/AudioBuffer.cpp
         private/Data.cpp
-        )
+        private/graphics/Camera.cpp)
 
 add_library(GameEngine ${ENGINE_SOURCES} ${ENGINE_PRIVATE_SOURCES})
 

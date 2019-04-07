@@ -16,6 +16,7 @@ namespace Internal {
     }
 
     void Scene::init() {
+        cam_.reset(new Camera());
         gameobjects_.clear();
         loadFile();
 
@@ -83,6 +84,10 @@ namespace Internal {
         }
 
         return found;
+    }
+
+    std::shared_ptr<GameEngine::geCamera> Scene::cam() const {
+        return cam_;
     }
 }
 }

@@ -121,17 +121,21 @@ namespace Internal {
         CheckGlError();
 
         //init projection matrix
-        projMatrix_ = glm::ortho(0.0f, (float) screen.virtualWidth(), (float) screen.virtualHeight(), 0.0f, 0.f,
-                                 1.f);
+        projMatrix_ = glm::ortho(0.0f, (float) screen.virtualWidth(), (float) screen.virtualHeight(), 0.0f, 0.f, 1.f);
         CheckGlError();
 
         pixelPerfect_ = screen.pixelPerfect();
     }
 
-    void GraphicsEngine::draw() {
+    void GraphicsEngine::draw(const std::shared_ptr<Camera> &cam) {
+        glm::mat4 projViewMatrix = projMatrix_;
+
+        if(cam)
+            projViewMatrix = projMatrix_ * cam->getViewMatrix();
+
         spriteShader_->bind();
 
-        spriteShader_->setUniform("projView", projMatrix_);
+        spriteShader_->setUniform("projView", projViewMatrix);
 
         spriteShader_->setAttribute(Shader::Attributes::Vertex, mesh_.vbo);
         spriteShader_->setAttribute(Shader::Attributes::UV, mesh_.vbo);
@@ -146,7 +150,7 @@ namespace Internal {
         //draw text
         textShader_->bind();
 
-        textShader_->setUniform("projView", projMatrix_);
+        textShader_->setUniform("projView", projViewMatrix);
 
         for (const std::shared_ptr<Text> &text : texts_) {
             text->draw(textShader_);

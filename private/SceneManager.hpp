@@ -35,6 +35,8 @@ namespace Internal {
         void clear();
 
         bool isSceneLoaded() const;
+
+        std::shared_ptr<Camera> getCameraOfCurrentScene() const;
     };
 }
 }

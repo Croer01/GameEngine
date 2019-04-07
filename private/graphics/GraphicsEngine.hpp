@@ -13,6 +13,8 @@
 #include "../Singleton.hpp"
 #include "../Screen.hpp"
 #include "font/Text.hpp"
+#include "Camera.hpp"
+
 namespace GameEngine {
 namespace Internal {
     class GraphicsEngine : public Singleton<GraphicsEngine> {
@@ -34,7 +36,7 @@ namespace Internal {
 
         void init(const Screen &screen);
 
-        void draw();
+        void draw(const std::shared_ptr<Camera> &cam);
 
         void registerGraphic(const std::shared_ptr<GraphicHolder> &graphic);
 
