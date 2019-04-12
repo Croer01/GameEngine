@@ -6,7 +6,6 @@
 #define SPACEINVADERS_GEGAMEOBJECT_HPP
 
 #include <game-engine/api.hpp>
-#include <game-engine/geComponent.hpp>
 #include <memory>
 #include <vector>
 #include <string>
@@ -14,6 +13,8 @@
 #include <game-engine/events/Subject.hpp>
 
 namespace GameEngine {
+
+    class geComponent;
 
     enum class GameObjectEvent{
         TransformChanged,
@@ -47,7 +48,7 @@ namespace GameEngine {
 
         virtual void parent(const geGameObjectRef &gameObject) = 0;
 
-        virtual void addComponent(const geComponentRef &component) = 0;
+        virtual void addComponent(const std::shared_ptr<geComponent> &component) = 0;
 
         virtual geGameObjectRef findChildByName(const std::string &name) = 0;
 
@@ -66,7 +67,7 @@ namespace GameEngine {
             return std::shared_ptr<T>();
         }
     protected:
-        std::vector<geComponentRef> components_;
+        std::vector<std::shared_ptr<geComponent>> components_;
     private:
     virtual void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) = 0;
     };

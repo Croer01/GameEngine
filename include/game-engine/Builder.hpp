@@ -7,10 +7,13 @@
 
 
 #include <game-engine/geData.hpp>
-#include <game-engine/geComponent.hpp>
 #include <memory>
 
 namespace GameEngine {
+
+    class geComponent;
+    typedef std::shared_ptr<geComponent> geComponentRef;
+
     class ComponentBuilder {
     public:
         virtual ~ComponentBuilder() = default;

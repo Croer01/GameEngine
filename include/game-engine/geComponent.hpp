@@ -6,6 +6,7 @@
 #define SPACEINVADERS_GECOMPONENT_HPP
 
 #include <game-engine/api.hpp>
+#include <game-engine/geGameObject.hpp>
 #include <game-engine/properties/PropertySet.hpp>
 #include <memory>
 
@@ -16,7 +17,6 @@ namespace GameEngine {
     class geComponent;
     typedef std::shared_ptr<geComponent> geComponentRef;
 
-    class geGameObject;
     class PUBLICAPI geComponent{
         GameEngine::geGameObject *gameObject_;
         std::unique_ptr<PropertySetBase> properties_;
