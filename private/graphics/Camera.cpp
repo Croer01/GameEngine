@@ -25,7 +25,7 @@ namespace Internal {
     }
 
     void Camera::calculateMatrix() {
-        viewMatrix_ = glm::translate(glm::mat4(1), glm::vec3(position_.x, position_.y,0.f));
+        viewMatrix_ = glm::translate(glm::mat4(1), glm::vec3(-position_.x, -position_.y,0.f));
     }
 }
 }
