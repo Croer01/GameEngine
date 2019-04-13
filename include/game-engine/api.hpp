@@ -10,6 +10,9 @@
 #else
 #  define PUBLICAPI
 #endif
+
+#include <cmath>
+
 namespace GameEngine {
 
 //TODO: Move Vec2D into math header
@@ -19,6 +22,15 @@ struct PUBLICAPI Vec2D {
 
     Vec2D() : x(0), y(0){};
     Vec2D(float x, float y) : x(x), y(y){};
+
+    float sqrMagnitude() const{
+        return x*x + y*y;
+    }
+
+
+    float magnitude() const{
+        return std::sqrt(sqrMagnitude());
+    }
 
     Vec2D operator+(const Vec2D &other) const {
         return Vec2D(x + other.x, y + other.y);
@@ -39,7 +51,6 @@ struct PUBLICAPI Vec2D {
         y -= other.y;
         return *this;
     };
-
 
     Vec2D operator*(const Vec2D &other) const {
         return Vec2D(x * other.x, y * other.y);
