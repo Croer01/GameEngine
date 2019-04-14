@@ -32,9 +32,15 @@ namespace Internal {
         if (GraphicsEngine::GetInstance().isPixelPerfect())
             desiredPosition = glm::round(desiredPosition);
 
+        glm::mat4 anchorTransform = glm::translate(glm::mat4(1), glm::vec3(anchor_, 0.f));
+
         //remember the order of matrix multiplication is from right to left
-        modelTransform_ = glm::translate(glm::mat4(1), desiredPosition) * glm::mat4_cast(glm::quat(glm::vec3(rotation.x, rotation.y,0.f))) *
-                glm::scale(glm::mat4(1), glm::vec3(graphic_->getWidth(), graphic_->getHeight(), 1.f));
+        modelTransform_ = glm::translate(glm::mat4(1), desiredPosition) *
+                anchorTransform *
+                glm::mat4_cast(glm::quat(glm::vec3(rotation.x, rotation.y,0.f))) *
+                glm::scale(glm::mat4(1), glm::vec3(graphic_->getWidth(), graphic_->getHeight(), 1.f)) *
+                glm::inverse(anchorTransform);
+
         modelTransform_ = glm::scale(modelTransform_, glm::vec3(scale.x, scale.y, 1.f));
     }
 
@@ -65,6 +71,38 @@ namespace Internal {
 
     int GraphicHolder::getCellHeight() const {
         return cellSize_.y;
+    }
+
+    void GraphicHolder::setAnchor(GameEngine::Internal::GraphicAnchor anchor) {
+        switch (anchor){
+            case GameEngine::Internal::GraphicAnchor::TOP_LEFT:
+                anchor_ = glm::vec2(0.f, 0.f);
+                break;
+            case GameEngine::Internal::GraphicAnchor::TOP_CENTER:
+                anchor_ = glm::vec2(0.5f, 0.f);
+                break;
+            case GameEngine::Internal::GraphicAnchor::TOP_RIGHT:
+                anchor_ = glm::vec2(1.f, 0.f);
+                break;
+            case GameEngine::Internal::GraphicAnchor::MIDDLE_LEFT:
+                anchor_ = glm::vec2(0.f, 0.5f);
+                break;
+            case GameEngine::Internal::GraphicAnchor::MIDDLE_CENTER:
+                anchor_ = glm::vec2(0.5f, 0.5f);
+                break;
+            case GameEngine::Internal::GraphicAnchor::MIDDLE_RIGHT:
+                anchor_ = glm::vec2(1.f, 0.5f);
+                break;
+            case GameEngine::Internal::GraphicAnchor::BOTTOM_LEFT:
+                anchor_ = glm::vec2(0.f, 1.f);
+                break;
+            case GameEngine::Internal::GraphicAnchor::BOTTOM_CENTER:
+                anchor_ = glm::vec2(0.5f, 1.f);
+                break;
+            case GameEngine::Internal::GraphicAnchor::BOTTOM_RIGHT:
+                anchor_ = glm::vec2(1.f, 1.f);
+                break;
+        }
     }
 }
 }

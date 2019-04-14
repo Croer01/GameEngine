@@ -11,6 +11,18 @@
 #include "Graphic.hpp"
 namespace GameEngine {
 namespace Internal {
+    enum class GraphicAnchor {
+        TOP_LEFT,
+        TOP_CENTER,
+        TOP_RIGHT,
+        MIDDLE_LEFT,
+        MIDDLE_CENTER,
+        MIDDLE_RIGHT,
+        BOTTOM_LEFT,
+        BOTTOM_CENTER,
+        BOTTOM_RIGHT,
+    };
+
     class GraphicHolder {
         bool active_;
         std::shared_ptr<Graphic> graphic_;
@@ -18,6 +30,7 @@ namespace Internal {
         glm::vec2 cellSize_;
         glm::vec2 texOffset_;
         glm::vec2 texScale_;
+        glm::vec2 anchor_;
 
     public:
         explicit GraphicHolder(const std::shared_ptr<Graphic> &graphic);
@@ -39,6 +52,8 @@ namespace Internal {
         int getCellHeight() const;
 
         void setActive(bool active);
+
+        void setAnchor(GameEngine::Internal::GraphicAnchor anchor);
     };
 }
 }
