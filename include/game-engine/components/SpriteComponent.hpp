@@ -13,18 +13,24 @@
 #include "../private/graphics/GraphicHolder.hpp"
 
 namespace GameEngine {
-class PUBLICAPI SpriteComponent : public geComponentInstantiable<SpriteComponent>, public Observer<GameObjectEvent> {
-    std::shared_ptr<Internal::Graphic> graphicLoaded_;
-    std::shared_ptr<Internal::GraphicHolder> graphic_;
-    bool visible_;
-    std::string filePath_;
 
-    void updateGraphicRef();
-protected:
-    void onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) override;
-    virtual PropertySetBase *configureProperties() override;
+    class PUBLICAPI SpriteComponent
+            : public geComponentInstantiable<SpriteComponent>, public Observer<GameObjectEvent> {
+        std::shared_ptr<Internal::Graphic> graphicLoaded_;
+        std::shared_ptr<Internal::GraphicHolder> graphic_;
+        bool visible_;
+        std::string filePath_;
+        std::string anchor_;
 
-public:
+        void updateGraphicRef();
+
+    protected:
+        void
+        onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) override;
+
+        virtual PropertySetBase *configureProperties() override;
+
+    public:
         virtual ~SpriteComponent();
 
         void init() override;
@@ -40,7 +46,12 @@ public:
         void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
 
         void filepath(const std::string &path);
+
         std::string filepath() const;
+
+        void anchor(const std::string &anchor);
+
+        std::string anchor() const;
     };
 }
 
