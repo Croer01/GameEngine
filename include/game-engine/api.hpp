@@ -90,6 +90,14 @@ struct PUBLICAPI Vec2D {
     bool operator!=(const Vec2D &rhs) const {
         return !(rhs == *this);
     }
+
+    void normalize() {
+        if(x != 0 || y != 0) {
+            float m = magnitude();
+            x /= m;
+            y /= m;
+        }
+    }
 };
 
 struct PUBLICAPI geColor{

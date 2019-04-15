@@ -15,6 +15,7 @@ endmacro()
 CreateTestTarget(GameObject GameObjectTests.cpp)
 CreateTestTarget(Game GameTests.cpp)
 CreateTestTarget(Properties PropertiesTests.cpp)
+CreateTestTarget(Math MathTests.cpp)
 
 add_custom_target(copyTestData
     COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_CURRENT_BINARY_DIR}/data
