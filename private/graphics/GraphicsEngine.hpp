@@ -14,19 +14,15 @@
 #include "../Screen.hpp"
 #include "font/Text.hpp"
 #include "Camera.hpp"
+#include "MeshData.hpp"
 
 namespace GameEngine {
 namespace Internal {
     class GraphicsEngine : public Singleton<GraphicsEngine> {
-        struct InternalMesh {
-            unsigned int VAO;
-            unsigned int vbo;
-            unsigned int ibo;
-        };
 
         std::vector<std::shared_ptr<GraphicHolder>> graphics_;
         std::vector<std::shared_ptr<Text>> texts_;
-        InternalMesh mesh_;
+        std::unique_ptr<MeshData> mesh_;
         std::shared_ptr<Shader> spriteShader_;
         std::shared_ptr<Shader> textShader_;
         glm::mat4 projMatrix_;

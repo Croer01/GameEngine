@@ -32,22 +32,7 @@ namespace Internal {
                                                                       });
 
 
-        glGenVertexArrays(1, &mesh_.VAO);
-
-        //  Set vertex data
-        glBindVertexArray(mesh_.VAO);
-
-        //Create VBO
-        glGenBuffers(1, &mesh_.vbo);
-        glBindBuffer(GL_ARRAY_BUFFER, mesh_.vbo);
-
-        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat), &vertices.front(), GL_STREAM_DRAW);
-
-        //Create IBO
-        glGenBuffers(1, &mesh_.ibo);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_.ibo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), &indices.front(), GL_STREAM_DRAW);
-        CheckGlError();
+        mesh_ = std::unique_ptr<MeshData>(new MeshData(vertices, indices));
 
         spriteShader_ = std::make_shared<Shader>("Basic");
         spriteShader_->setVertexShader(R"EOF(
@@ -137,9 +122,7 @@ namespace Internal {
 
         spriteShader_->setUniform("projView", projViewMatrix);
 
-        spriteShader_->setAttribute(Shader::Attributes::Vertex, mesh_.vbo);
-        spriteShader_->setAttribute(Shader::Attributes::UV, mesh_.vbo);
-        spriteShader_->setAttribute(Shader::Attributes::Indices, mesh_.ibo);
+        mesh_->draw(spriteShader_);
 
         for (const std::shared_ptr<GraphicHolder> &graphic : graphics_) {
             graphic->draw(spriteShader_);
@@ -160,10 +143,6 @@ namespace Internal {
     }
 
     GraphicsEngine::~GraphicsEngine() {
-
-        glDeleteBuffers(1, &mesh_.ibo);
-        glDeleteBuffers(1, &mesh_.vbo);
-        glDeleteVertexArrays(1, &mesh_.VAO);
     }
 
     void GraphicsEngine::registerGraphic(const std::shared_ptr<GraphicHolder> &graphic) {
