@@ -22,7 +22,6 @@ namespace Internal {
 
         std::vector<std::shared_ptr<GraphicHolder>> graphics_;
         std::vector<std::shared_ptr<Text>> texts_;
-        std::unique_ptr<MeshData> mesh_;
         std::shared_ptr<Shader> spriteShader_;
         std::shared_ptr<Shader> textShader_;
         glm::mat4 projMatrix_;

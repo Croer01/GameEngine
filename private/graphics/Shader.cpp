@@ -163,11 +163,11 @@ namespace Internal {
         setUniform("Color", glm::vec4(1, 1, 1, 1));
     }
 
-    void Shader::draw() {
+    void Shader::draw() const {
 
-        GLsizei stride = (attributes[Attributes::UV] ? 5 : 3) * sizeof(GLfloat);
+        GLsizei stride = (attributes.at(Attributes::UV) ? 5 : 3) * sizeof(GLfloat);
 
-        glBindBuffer(GL_ARRAY_BUFFER, attributes[Attributes::Vertex]);
+        glBindBuffer(GL_ARRAY_BUFFER, attributes.at(Attributes::Vertex));
 
         //Set the vertex attributes pointers
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void *) nullptr);
@@ -176,7 +176,7 @@ namespace Internal {
         CheckGlError();
 
         //Set the uv
-        if (attributes[Attributes::UV]) {
+        if (attributes.at(Attributes::UV)) {
             glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void *) (3 * sizeof(float)));
             glEnableVertexAttribArray(1);
         }
@@ -184,7 +184,7 @@ namespace Internal {
         CheckGlError();
 
         //set indices
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, attributes[Attributes::Indices]);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, attributes.at(Attributes::Indices));
         int size = 0;
         glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
         glDrawElements(GL_TRIANGLES, size, GL_UNSIGNED_INT, 0);
@@ -194,7 +194,7 @@ namespace Internal {
         //Disable vertex position
         glDisableVertexAttribArray(0);
         //Disable uv
-        if (attributes[Attributes::UV])
+        if (attributes.at(Attributes::UV))
             glDisableVertexAttribArray(1);
     }
 

@@ -17,23 +17,6 @@ namespace Internal {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        //The order of the vertices are fliped to from "n" to "u" way to deal with the inverted y axis
-        //VBO data
-        std::vector<float> vertices = std::vector<float>({ //vertex(3) | uv(2)
-                                                                 0.f, 1.f, 0.f, 0.f, 1.f,
-                                                                 0.f, 0.f, 0.f, 0.f, 0.f,
-                                                                 1.f, 0.f, 0.f, 1.f, 0.f,
-                                                                 1.f, 1.f, 0.f, 1.f, 1.f
-                                                         });
-        //IBO data
-        std::vector<unsigned int> indices = std::vector<unsigned int>({
-                                                                              0, 1, 2,
-                                                                              0, 2, 3
-                                                                      });
-
-
-        mesh_ = std::unique_ptr<MeshData>(new MeshData(vertices, indices));
-
         spriteShader_ = std::make_shared<Shader>("Basic");
         spriteShader_->setVertexShader(R"EOF(
         #version 330 core
@@ -121,8 +104,6 @@ namespace Internal {
         spriteShader_->bind();
 
         spriteShader_->setUniform("projView", projViewMatrix);
-
-        mesh_->draw(spriteShader_);
 
         for (const std::shared_ptr<GraphicHolder> &graphic : graphics_) {
             graphic->draw(spriteShader_);

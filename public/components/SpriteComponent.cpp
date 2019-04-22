@@ -5,6 +5,7 @@
 #include <game-engine/components/SpriteComponent.hpp>
 #include "../private/graphics/GraphicsEngine.hpp"
 #include "../private/GameObject.hpp"
+#include "../../private/graphics/GraphicSprite.hpp"
 
 namespace GameEngine {
     void SpriteComponent::init() {
@@ -104,7 +105,7 @@ namespace GameEngine {
             graphicLoaded_.reset();
             graphic_.reset();
         } else {
-            graphicLoaded_ = std::make_shared<Internal::Graphic>(filePath_);
+            graphicLoaded_ = std::make_shared<Internal::GraphicSprite>(filePath_);
             graphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
             Internal::GraphicsEngine::GetInstance().registerGraphic(graphic_);
         }

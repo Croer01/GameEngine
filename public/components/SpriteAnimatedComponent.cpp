@@ -5,6 +5,7 @@
 #include <game-engine/components/SpriteAnimatedComponent.hpp>
 #include "../private/graphics/GraphicsEngine.hpp"
 #include "../../private/GameObject.hpp"
+#include "../../private/graphics/GraphicSprite.hpp"
 
 namespace GameEngine {
     void SpriteAnimatedComponent::init() {
@@ -220,7 +221,7 @@ namespace GameEngine {
             graphicLoaded_.reset();
             graphic_.reset();
         } else {
-            graphicLoaded_ = std::make_shared<Internal::Graphic>(filePath_);
+            graphicLoaded_ = std::make_shared<Internal::GraphicSprite>(filePath_);
             graphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
             graphic_->setGrid(columns_, rows_);
             resetAnimation();

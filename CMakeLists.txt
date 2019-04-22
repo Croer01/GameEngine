@@ -55,7 +55,6 @@ set(ENGINE_PRIVATE_SOURCES
         private/Scene.cpp
         private/utils.cpp
         private/graphics/GraphicsEngine.cpp
-        private/graphics/Graphic.cpp
         private/graphics/Shader.cpp
         private/graphics/GraphicHolder.cpp
         private/Screen.cpp
@@ -70,7 +69,8 @@ set(ENGINE_PRIVATE_SOURCES
         private/audio/AudioBuffer.cpp
         private/Data.cpp
         private/graphics/Camera.cpp
-        private/graphics/MeshData.cpp)
+        private/graphics/MeshData.cpp
+        private/graphics/GraphicSprite.cpp)
 
 add_library(GameEngine ${ENGINE_SOURCES} ${ENGINE_PRIVATE_SOURCES})
 

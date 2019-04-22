@@ -50,7 +50,7 @@ namespace Internal {
 
         void build();
 
-        void draw();
+        void draw() const;
 
         void bind();
 

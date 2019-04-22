@@ -13,19 +13,14 @@
 namespace GameEngine {
 namespace Internal {
     class Graphic {
-        unsigned int textureID_;
-        int width_;
-        int height_;
     public:
-        explicit Graphic(std::string filename);
+        virtual ~Graphic(){};
 
-        ~Graphic();
+        virtual void draw(const std::shared_ptr<Shader> &shader) const = 0;
 
-        void draw(std::shared_ptr<Shader> shader);
+        virtual int getWidth() const = 0;
 
-        int getWidth() const;
-
-        int getHeight() const;
+        virtual int getHeight() const = 0;
     };
 }
 }
