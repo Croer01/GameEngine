@@ -98,9 +98,10 @@ namespace GameEngine {
     }
 
     void SpriteComponent::updateGraphicRef() {
+        if(graphic_)
+            Internal::GraphicsEngine::GetInstance().unregisterGraphic(graphic_);
+
         if(filePath_.empty()){
-            if(graphic_)
-                Internal::GraphicsEngine::GetInstance().unregisterGraphic(graphic_);
 
             graphicLoaded_.reset();
             graphic_.reset();

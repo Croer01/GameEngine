@@ -19,6 +19,7 @@
 #include <game-engine/components/AudioComponent.hpp>
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
+#include <game-engine/components/GeometryComponent.hpp>
 
 namespace GameEngine {
 namespace Internal {
@@ -27,6 +28,8 @@ namespace Internal {
         //Register engine default components
         ObjectManager::GetInstance().registerComponentBuilder("SpriteComponent",
                                                               new ComponentTBuilder<SpriteComponent>());
+        ObjectManager::GetInstance().registerComponentBuilder("GeometryComponent",
+                                                              new ComponentTBuilder<GeometryComponent>());
         ObjectManager::GetInstance().registerComponentBuilder("SpriteAnimatedComponent",
                                                               new ComponentTBuilder<SpriteAnimatedComponent>());
         ObjectManager::GetInstance().registerComponentBuilder("ColliderComponent",
