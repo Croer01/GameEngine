@@ -101,15 +101,14 @@ namespace Internal {
         if(cam)
             projViewMatrix = projMatrix_ * cam->getViewMatrix();
 
-        spriteShader_->bind();
-
-        spriteShader_->setUniform("projView", projViewMatrix);
-
         for (const std::shared_ptr<GraphicHolder> &graphic : graphics_) {
+            spriteShader_->bind();
+            spriteShader_->setUniform("projView", projViewMatrix);
             graphic->draw(spriteShader_);
+            spriteShader_->unbind();
         }
 
-        spriteShader_->unbind();
+
 
         //draw text
         textShader_->bind();

@@ -153,7 +153,6 @@ namespace Internal {
         glGenTextures(1, &dummyTextureID_);
         glBindTexture(GL_TEXTURE_2D, dummyTextureID_);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &white);
-
     }
 
     void Shader::bind() {
@@ -182,13 +181,11 @@ namespace Internal {
         }
 
         CheckGlError();
-
         //set indices
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, attributes.at(Attributes::Indices));
         int size = 0;
         glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
         glDrawElements(GL_TRIANGLES, size, GL_UNSIGNED_INT, 0);
-
         CheckGlError();
 
         //Disable vertex position
@@ -196,6 +193,9 @@ namespace Internal {
         //Disable uv
         if (attributes.at(Attributes::UV))
             glDisableVertexAttribArray(1);
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
     void Shader::unbind() {
