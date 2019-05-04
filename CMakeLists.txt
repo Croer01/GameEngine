@@ -70,7 +70,8 @@ set(ENGINE_PRIVATE_SOURCES
         private/Data.cpp
         private/graphics/Camera.cpp
         private/graphics/MeshData.cpp
-        private/graphics/GraphicSprite.cpp)
+        private/graphics/GraphicSprite.cpp
+        private/graphics/GraphicGeometry.cpp)
 
 add_library(GameEngine ${ENGINE_SOURCES} ${ENGINE_PRIVATE_SOURCES})
 

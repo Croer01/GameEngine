@@ -23,12 +23,12 @@ namespace GameEngine {
 
             // the vertices and uvs are set in the same array ( 3 vertex coords + 2 uv coords)
             //TODO: review GL_STREAM_DRAW option
-            glBufferData(GL_ARRAY_BUFFER, verticesAndUV_.size() * sizeof(GLfloat), &verticesAndUV_.front(), GL_STREAM_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, verticesAndUV_.size() * sizeof(GLfloat), &verticesAndUV_.front(), GL_STATIC_DRAW);
 
             //Create IBO
             glGenBuffers(1, &ibo);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_.size() * sizeof(GLuint), &indices_.front(), GL_STREAM_DRAW);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_.size() * sizeof(GLuint), &indices_.front(), GL_STATIC_DRAW);
             CheckGlError();
         }
 
