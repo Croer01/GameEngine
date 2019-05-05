@@ -35,8 +35,8 @@ namespace GameEngine {
             vertices.reserve(points_.size()*5);
             for(auto & point : points_){
                 // vertex
-                vertices.push_back(point.x);
-                vertices.push_back(point.y);
+                vertices.push_back(point.x/ width_);
+                vertices.push_back(point.y/ height_);
                 vertices.push_back(0.f);
 
                 // uv
