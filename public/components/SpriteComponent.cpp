@@ -102,7 +102,6 @@ namespace GameEngine {
             Internal::GraphicsEngine::GetInstance().unregisterGraphic(graphic_);
 
         if(filePath_.empty()){
-
             graphicLoaded_.reset();
             graphic_.reset();
         } else {

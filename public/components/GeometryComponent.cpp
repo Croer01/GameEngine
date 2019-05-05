@@ -8,29 +8,51 @@
 namespace GameEngine {
     void GeometryComponent::init() {
         updateGraphicRef();
-        visible_ = true; //TODO: remove this line after set properties
-        setVisible(visible_);
-        graphic_->setAnchor(Internal::GraphicAnchor::TOP_LEFT);
+        visible(visible_);
+        anchor(anchor_);
         graphic_->setModelTransform(gameObject()->position(), gameObject()->rotation(), gameObject()->scale());
         gameObject()->registerObserver(this);
+    }
+
+    PropertySetBase *GeometryComponent::configureProperties() {
+        auto *properties = new PropertySet<GeometryComponent>(this);
+
+        properties->add(new Property<GeometryComponent, std::vector<Vec2D>>(
+                "path",
+                this,
+                &GeometryComponent::path,
+                &GeometryComponent::path,
+                {},
+                true));
+        properties->add(new Property<GeometryComponent, bool>(
+                "visible",
+                this,
+                &GeometryComponent::visible,
+                &GeometryComponent::visible,
+                true));
+
+        properties->add(new Property<GeometryComponent, std::string>(
+                "anchor",
+                this,
+                &GeometryComponent::anchor,
+                &GeometryComponent::anchor,
+                "",
+                false));
+        return properties;
     }
 
     void GeometryComponent::updateGraphicRef() {
         if (graphic_)
             Internal::GraphicsEngine::GetInstance().unregisterGraphic(graphic_);
 
-        std::vector<Vec2D> path = std::vector<Vec2D>({
-                                                             Vec2D(3, 0),
-                                                             Vec2D(6, 0),
-                                                             Vec2D(9, 4.5f),
-                                                             Vec2D(6, 9),
-                                                             Vec2D(3, 9),
-                                                             Vec2D(0, 4.5f)
-                                                     });
-
-        graphicLoaded_ = std::make_shared<Internal::GraphicGeometry>(path);
-        graphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
-        Internal::GraphicsEngine::GetInstance().registerGraphic(graphic_);
+        if(path_.empty()){
+            graphicLoaded_.reset();
+            graphic_.reset();
+        } else {
+            graphicLoaded_ = std::make_shared<Internal::GraphicGeometry>(path_);
+            graphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
+            Internal::GraphicsEngine::GetInstance().registerGraphic(graphic_);
+        }
     }
 
     void GeometryComponent::onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) {
@@ -66,14 +88,57 @@ namespace GameEngine {
         Internal::GraphicsEngine::GetInstance().unregisterGraphic(graphic_);
     }
 
-    void GeometryComponent::setVisible(const bool &visible) {
+    void GeometryComponent::visible(const bool &visible) {
         visible_ = visible;
         if(graphic_)
             graphic_->setActive(gameObject() && gameObject()->active() && visible_);
     }
 
-    bool GeometryComponent::isVisible() const {
+    bool GeometryComponent::visible() const {
         return visible_;
+    }
+
+    void GeometryComponent::path(const std::vector<Vec2D> &pathArray) {
+        path_ = pathArray;
+    }
+
+    std::vector<Vec2D> GeometryComponent::path() const {
+        return path_;
+    }
+
+    std::string GeometryComponent::anchor() const {
+        return anchor_;
+    }
+
+    void GeometryComponent::anchor(const std::string &anchor) {
+
+        GameEngine::Internal::GraphicAnchor graphicAnchor;
+
+        if(anchor == "TOP_LEFT")
+            graphicAnchor = GameEngine::Internal::GraphicAnchor::TOP_LEFT;
+        else if(anchor == "TOP_CENTER")
+            graphicAnchor = GameEngine::Internal::GraphicAnchor::TOP_CENTER;
+        else if(anchor == "TOP_RIGHT")
+            graphicAnchor = GameEngine::Internal::GraphicAnchor::TOP_RIGHT;
+        else if(anchor == "MIDDLE_LEFT")
+            graphicAnchor = GameEngine::Internal::GraphicAnchor::MIDDLE_LEFT;
+        else if(anchor == "MIDDLE_CENTER")
+            graphicAnchor = GameEngine::Internal::GraphicAnchor::MIDDLE_CENTER;
+        else if(anchor == "MIDDLE_RIGHT")
+            graphicAnchor = GameEngine::Internal::GraphicAnchor::MIDDLE_RIGHT;
+        else if(anchor == "BOTTOM_LEFT")
+            graphicAnchor = GameEngine::Internal::GraphicAnchor::BOTTOM_LEFT;
+        else if(anchor == "BOTTOM_CENTER")
+            graphicAnchor = GameEngine::Internal::GraphicAnchor::BOTTOM_CENTER;
+        else if(anchor == "BOTTOM_RIGHT")
+            graphicAnchor = GameEngine::Internal::GraphicAnchor::BOTTOM_RIGHT;
+        else
+            graphicAnchor = GameEngine::Internal::GraphicAnchor::TOP_LEFT;
+
+        if(graphic_)
+            graphic_->setAnchor(graphicAnchor);
+
+        anchor_ = anchor;
     }
 }
 

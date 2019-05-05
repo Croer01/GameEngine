@@ -15,12 +15,17 @@ namespace GameEngine {
     class PUBLICAPI GeometryComponent : public geComponentInstantiable<GeometryComponent>, public Observer<GameObjectEvent> {
         std::shared_ptr<Internal::Graphic> graphicLoaded_;
         std::shared_ptr<Internal::GraphicHolder> graphic_;
+        std::vector<Vec2D> path_;
+        std::string anchor_;
         bool visible_;
         void updateGraphicRef();
 
     protected:
         void
         onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) override;
+
+        PropertySetBase *configureProperties() override;
+
     public:
         virtual ~GeometryComponent();
 
@@ -30,9 +35,16 @@ namespace GameEngine {
 
         int getHeight() const;
 
-        void setVisible(const bool &visible);
+        void visible(const bool &visible);
 
-        bool isVisible() const;
+        bool visible() const;
+
+        void path (const std::vector<Vec2D> &pathArray);
+        std::vector<Vec2D> path () const;
+
+        void anchor(const std::string &anchor);
+
+        std::string anchor() const;
 
         void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
     };
