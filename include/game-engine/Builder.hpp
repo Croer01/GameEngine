@@ -76,6 +76,12 @@ namespace GameEngine {
                             propertyArray.set(data.getArrayString(property.name()));
                         }
                         break;
+                    case PropertyTypes::ARRAY_VEC2D:
+                        {
+                            auto propertyArray = static_cast<Property<ComponentType, std::vector<Vec2D>>&>(property);
+                            propertyArray.set(data.getArrayVec2D(property.name()));
+                        }
+                        break;
                     case PropertyTypes::UNKNOWN:
                         throw std::runtime_error("the property " + property.name() + " has unknown type");
                         break;

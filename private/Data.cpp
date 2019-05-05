@@ -43,6 +43,17 @@ namespace Internal{
         return value;
     }
 
+    std::vector<Vec2D> Data::getArrayVec2D(const std::string &key) const {
+        YAML::Node propertyNode = data_[key];
+        std::vector<Vec2D> value;
+        value.reserve(propertyNode.size());
+
+        for (int i = 0; i < propertyNode.size(); ++i) {
+            value.push_back(propertyNode[i].as<Vec2D>(Vec2D(0,0)));
+        }
+        return value;
+    }
+
     bool Data::hasValue(const std::string &key) const {
         return static_cast<bool>(data_[key]);
     }
