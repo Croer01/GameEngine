@@ -4,6 +4,7 @@
 
 #include <yaml-cpp/yaml.h>
 #include <sstream>
+#include <algorithm>
 #include <iostream>
 #include "Scene.hpp"
 #include "yamlConverters.hpp"
@@ -27,9 +28,20 @@ namespace Internal {
     }
 
     void Scene::update(float elapsedTime) {
-        for (auto &gameobject : gameobjects_) {
-            gameobject->Update(elapsedTime);
+
+        // get the current lenght of the objects list to avoid issues related to adding items
+        // while iterate the list
+        auto length = gameobjects_.size();
+
+        for(auto i=0; i < length; i++){
+            gameobjects_[i]->Update(elapsedTime);
         }
+
+        // process all the objects destroyed in this frame
+        gameobjects_.erase(std::remove_if( gameobjects_.begin(), gameobjects_.end(),
+            [](const std::shared_ptr<GameObject>& go) {
+                return go->isDestroyed();
+            }), gameobjects_.end());
     }
 
     void Scene::loadFile() {
@@ -63,6 +75,9 @@ namespace Internal {
     }
 
     void Scene::shutDown() {
+        for (auto &gameobject : gameobjects_) {
+            gameobject->destroy();
+        }
         gameobjects_.clear();
     }
 

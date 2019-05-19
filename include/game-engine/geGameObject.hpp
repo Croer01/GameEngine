@@ -54,6 +54,9 @@ namespace GameEngine {
 
         virtual geGame &game() const = 0;
 
+        virtual bool isDestroyed() const = 0;
+        virtual void destroy() = 0;
+
         template <typename T>
         std::weak_ptr<T> getComponent() const {
             if(!std::is_base_of<geComponent,T>::value)

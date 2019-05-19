@@ -19,7 +19,7 @@
 namespace GameEngine {
 namespace Internal {
 
-class GameObject : public geGameObject, private Observer<GameObjectEvent>, public std::enable_shared_from_this<GameObject> {
+    class GameObject : public geGameObject, private Observer<GameObjectEvent>, public std::enable_shared_from_this<GameObject> {
         static int ID_GENERATOR;
         int id_;
         bool active_;
@@ -33,6 +33,7 @@ class GameObject : public geGameObject, private Observer<GameObjectEvent>, publi
         Vec2D scale_;
         std::weak_ptr<GameObject> parent_;
         glm::mat4 transform_;
+        bool destroyed_;
 
         void fromYamlNode(const YAML::Node &node);
 
@@ -81,6 +82,9 @@ class GameObject : public geGameObject, private Observer<GameObjectEvent>, publi
         void name(const std::string &name) override;
 
         virtual geGame &game() const;
+
+        virtual bool isDestroyed() const;
+        virtual void destroy();
 
     private:
         void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;

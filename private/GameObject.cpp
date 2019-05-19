@@ -26,7 +26,8 @@ namespace Internal {
             hasActiveValueToSetInSafeMode_(false),
             position_(0.f, 0.f),
             rotation_(0.f, 0.f),
-            scale_(1.f,1.f) {
+            scale_(1.f,1.f),
+            destroyed_(false){
         computeTransform();
     }
 
@@ -86,7 +87,9 @@ namespace Internal {
         notify(GameObjectEvent::TransformChanged);
     }
 
-    GameObject::~GameObject() {
+    GameObject::~GameObject(){
+        if(!destroyed_)
+            std::cerr << "You are trying to destroy a GameObject that still alive in current Scene" << std::endl;
         for (auto &component : components_) {
             component->gameObject(nullptr);
         }
@@ -263,6 +266,14 @@ namespace Internal {
 
     geGame &GameObject::game() const {
         return Internal::Game::GetInstance().context();
+    }
+
+    bool GameObject::isDestroyed() const {
+        return destroyed_;
+    }
+
+    void GameObject::destroy() {
+        destroyed_ = true;
     }
 }
 }
