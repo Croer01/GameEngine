@@ -69,7 +69,7 @@ namespace Internal {
 
     Font::~Font() {
         for (auto character : characters_)
-            glDeleteTextures(0, &character.second.TextureID);
+            glDeleteTextures(1, &character.second.TextureID);
 
     }
 

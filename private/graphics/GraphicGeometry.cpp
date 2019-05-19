@@ -51,9 +51,9 @@ namespace GameEngine {
             // skip the first point
             for(size_t i = 1; i < points_.size()-1; i++){
                 // all the triangles start from the first point ( aka index 0)
-                    indices.push_back(0);
-                    indices.push_back(i);
-                    indices.push_back(i + 1);
+                indices.push_back(0);
+                indices.push_back(i);
+                indices.push_back(i + 1);
             }
 
             mesh_ = std::make_shared<MeshData>(vertices, indices);
@@ -63,7 +63,6 @@ namespace GameEngine {
             glBindTexture(GL_TEXTURE_2D, textureID_);
             mesh_->draw(shader);
             shader->draw();
-
             CheckGlError();
         }
 
@@ -76,7 +75,7 @@ namespace GameEngine {
         }
 
         GraphicGeometry::~GraphicGeometry() {
-            glDeleteTextures(0, &textureID_);
+            glDeleteTextures(1, &textureID_);
         }
     }
 }

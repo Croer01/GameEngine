@@ -29,6 +29,8 @@ namespace GameEngine {
             glGenBuffers(1, &ibo);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_.size() * sizeof(GLuint), &indices_.front(), GL_STATIC_DRAW);
+
+            glBindVertexArray(0);
             CheckGlError();
         }
 
@@ -41,6 +43,8 @@ namespace GameEngine {
         }
 
         void MeshData::draw(const std::shared_ptr<Shader> &shader) const {
+            glBindVertexArray(VAO);
+
             shader->setAttribute(Shader::Attributes::Vertex, vbo);
             shader->setAttribute(Shader::Attributes::UV, vbo);
             shader->setAttribute(Shader::Attributes::Indices, ibo);

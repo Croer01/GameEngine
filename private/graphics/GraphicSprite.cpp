@@ -65,7 +65,7 @@ namespace GameEngine {
         }
 
         GraphicSprite::~GraphicSprite() {
-            glDeleteTextures(0, &textureID_);
+            glDeleteTextures(1, &textureID_);
         }
 
         void GraphicSprite::draw(const std::shared_ptr<Shader> &shader) const {
@@ -73,7 +73,6 @@ namespace GameEngine {
 
             mesh_->draw(shader);
             shader->draw();
-
             CheckGlError();
         }
 
