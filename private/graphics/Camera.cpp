@@ -27,5 +27,13 @@ namespace Internal {
     void Camera::calculateMatrix() {
         viewMatrix_ = glm::translate(glm::mat4(1), glm::vec3(-position_.x, -position_.y,0.f));
     }
+
+    Vec2D Camera::worldToScreen(const GameEngine::Vec2D &posWorld) {
+        return posWorld - position_;
+    }
+
+    Vec2D Camera::ScreenToWorld(const GameEngine::Vec2D &posScreen) {
+        return posScreen + position_;
+    }
 }
 }

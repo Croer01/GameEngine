@@ -21,6 +21,8 @@ namespace Internal {
 
         void position(const GameEngine::Vec2D &pos) override;
 
+        Vec2D worldToScreen(const GameEngine::Vec2D &posWorld) override;
+        Vec2D ScreenToWorld(const GameEngine::Vec2D &posScreen) override;
     private:
         void calculateMatrix();
     };
