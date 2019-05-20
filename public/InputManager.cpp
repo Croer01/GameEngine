@@ -27,11 +27,15 @@ namespace GameEngine {
 
     bool InputManager::isMouseButtonUp(MouseButton mouseButton) {
         return mouseState[mouseButton] == InputState::UP;
-
     }
 
     bool InputManager::isMouseButtonDown(MouseButton mouseButton) {
         return mouseState[mouseButton] == InputState::DOWN;
+    }
+
+
+    bool InputManager::isMouseButtonPressed(MouseButton mouseButton) {
+        return mouseState[mouseButton] == InputState::PRESSED || isMouseButtonDown(mouseButton);
     }
 
     Vec2D InputManager::getMousePosition() {
@@ -115,7 +119,10 @@ namespace GameEngine {
             }
             //reset mouse state
             for (auto iterator : mouseState) {
-                mouseState[iterator.first] = InputState::NONE;
+                if (iterator.second == InputState::DOWN || iterator.second == InputState::PRESSED)
+                    mouseState[iterator.first] = InputState::PRESSED;
+                else
+                    mouseState[iterator.first] = InputState::NONE;
             }
         }
 

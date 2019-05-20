@@ -39,6 +39,8 @@ class InputManager : public Internal::Singleton<InputManager> {
 
         bool isMouseButtonUp(MouseButton mouseButton);
 
+        bool isMouseButtonPressed(MouseButton mouseButton);
+
         Vec2D getMousePosition();
 
         void update();
