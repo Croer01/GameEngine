@@ -26,6 +26,7 @@ namespace Internal {
         GLuint dummyTextureID_;
         GLuint vertexShader_;
         GLuint fragmentShader_;
+        GLenum mode_;
         std::map<Attributes, unsigned int> attributes;
 
         void buildVertexShader();
@@ -40,6 +41,8 @@ namespace Internal {
         void setVertexShader(const char *vertexShader) { vertexShaderSource_ = vertexShader; };
 
         void setFragmentShader(const char *fragmentShader) { fragmentShaderSource_ = fragmentShader; };
+
+        void setElementMode(GLenum mode);
 
         void setAttribute(Shader::Attributes attribute, GLuint glPointer);
 

@@ -160,6 +160,7 @@ namespace Internal {
         glUseProgram(programId_);
         glBindTexture(GL_TEXTURE_2D, dummyTextureID_);
         setUniform("Color", glm::vec4(1, 1, 1, 1));
+        CheckGlError();
     }
 
     void Shader::draw() const {
@@ -182,11 +183,21 @@ namespace Internal {
 
         CheckGlError();
         //set indices
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, attributes.at(Attributes::Indices));
-        int size = 0;
-        glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
-        glDrawElements(GL_TRIANGLES, size, GL_UNSIGNED_INT, 0);
-        CheckGlError();
+        if (attributes.count(Attributes::Indices)) {
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, attributes.at(Attributes::Indices));
+            CheckGlError();
+
+            int size = 0;
+            glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
+            glDrawElements(mode_, size, GL_UNSIGNED_INT, 0);
+            CheckGlError();
+        } else {
+            int size = 0;
+
+            glBindBuffer(GL_ARRAY_BUFFER, attributes.at(Attributes::Vertex));
+            glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
+            glDrawArrays(mode_,0,size/stride);
+        }
 
         //Disable vertex position
         glDisableVertexAttribArray(0);
@@ -196,12 +207,14 @@ namespace Internal {
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        CheckGlError();
     }
 
     void Shader::unbind() {
         clear();
         //Unbind program
         glUseProgram(NULL);
+        CheckGlError();
     }
 
     void Shader::setAttribute(Shader::Attributes attribute, GLuint glPointer) {
@@ -209,7 +222,8 @@ namespace Internal {
     }
 
 
-    Shader::Shader(const char *name) : name_(name) {
+    Shader::Shader(const char *name) : name_(name),
+                                       mode_(GL_TRIANGLES){
     }
 
     const char *Shader::getName() const {
@@ -221,6 +235,10 @@ namespace Internal {
         glBindTexture(GL_TEXTURE_2D, dummyTextureID_);
         setUniform("Color", glm::vec4(1, 1, 1, 1));
         CheckGlError();
+    }
+
+    void Shader::setElementMode(GLenum mode) {
+        mode_ = mode;
     }
 }
 }

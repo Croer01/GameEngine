@@ -26,16 +26,23 @@ namespace GameEngine {
             glBufferData(GL_ARRAY_BUFFER, verticesAndUV_.size() * sizeof(GLfloat), &verticesAndUV_.front(), GL_STATIC_DRAW);
 
             //Create IBO
-            glGenBuffers(1, &ibo);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_.size() * sizeof(GLuint), &indices_.front(), GL_STATIC_DRAW);
+            if(!indices_.empty()) {
+                glGenBuffers(1, &ibo);
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+                glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_.size() * sizeof(GLuint), &indices_.front(),
+                             GL_STATIC_DRAW);
+            } else{
+                ibo = -1;
+            }
 
             glBindVertexArray(0);
             CheckGlError();
         }
 
         MeshData::~MeshData() {
-            glDeleteBuffers(1, &ibo);
+            if(ibo != -1)
+                glDeleteBuffers(1, &ibo);
+
             glDeleteBuffers(1, &vbo);
             glDeleteVertexArrays(1, &VAO);
             verticesAndUV_.clear();
@@ -47,7 +54,8 @@ namespace GameEngine {
 
             shader->setAttribute(Shader::Attributes::Vertex, vbo);
             shader->setAttribute(Shader::Attributes::UV, vbo);
-            shader->setAttribute(Shader::Attributes::Indices, ibo);
+            if(ibo != -1)
+                shader->setAttribute(Shader::Attributes::Indices, ibo);
         }
 
     }
