@@ -5,13 +5,84 @@
 #include <GL/glew.h>
 #include <algorithm>
 #include <glm/gtc/matrix_transform.hpp>
+#include <iostream>
 #include "GraphicsEngine.hpp"
 #include "../utils.hpp"
 #include "font/FontManager.hpp"
 
 namespace GameEngine {
 namespace Internal {
+
+#if _DEBUG
+    // base on code from https://blog.nobel-joergensen.com/2013/02/17/debugging-opengl-part-2-using-gldebugmessagecallback/
+    void openglCallbackFunction(GLenum source,
+                                GLenum type,
+                                GLuint id,
+                                GLenum severity,
+                                GLsizei length,
+                                const GLchar* message,
+                                const void* userParam){
+
+        std::cout << "---------------------opengl-callback-start------------" << std::endl;
+        std::cout << "message: "<< message << std::endl;
+        std::cout << "type: ";
+        switch (type) {
+            case GL_DEBUG_TYPE_ERROR:
+                std::cout << "ERROR";
+                break;
+            case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
+                std::cout << "DEPRECATED_BEHAVIOR";
+                break;
+            case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
+                std::cout << "UNDEFINED_BEHAVIOR";
+                break;
+            case GL_DEBUG_TYPE_PORTABILITY:
+                std::cout << "PORTABILITY";
+                break;
+            case GL_DEBUG_TYPE_PERFORMANCE:
+                std::cout << "PERFORMANCE";
+                break;
+            case GL_DEBUG_TYPE_OTHER:
+                std::cout << "OTHER";
+                break;
+        }
+        std::cout << std::endl;
+
+        std::cout << "id: " << id << std::endl;
+        std::cout << "severity: ";
+        switch (severity){
+            case GL_DEBUG_SEVERITY_LOW:
+                std::cout << "LOW";
+                break;
+            case GL_DEBUG_SEVERITY_MEDIUM:
+                std::cout << "MEDIUM";
+                break;
+            case GL_DEBUG_SEVERITY_HIGH:
+                std::cout << "HIGH";
+                break;
+        }
+        std::cout << std::endl;
+        std::cout << "---------------------opengl-callback-end--------------" << std::endl;
+    }
+#endif
+
     void GraphicsEngine::init(const Screen &screen) {
+
+#if _DEBUG
+        if(glDebugMessageCallback) {
+            glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+            glDebugMessageCallback(openglCallbackFunction, nullptr);
+            GLuint unusedIds = 0;
+            glDebugMessageControl(GL_DONT_CARE,
+                                  GL_DONT_CARE,
+                                  GL_DONT_CARE,
+                                  0,
+                                  &unusedIds,
+                                  true);
+        }
+        else
+            std::cerr << "glDebugMessageCallback not available" << std::endl;
+#endif
 
         //set alpha blending
         glEnable(GL_BLEND);
@@ -98,14 +169,18 @@ namespace Internal {
     void GraphicsEngine::draw(const std::shared_ptr<Camera> &cam) {
         glm::mat4 projViewMatrix = projMatrix_;
 
+        CheckGlError();
         if(cam)
             projViewMatrix = projMatrix_ * cam->getViewMatrix();
 
+        CheckGlError();
         for (const std::shared_ptr<GraphicHolder> &graphic : graphics_) {
+            CheckGlError();
             spriteShader_->bind();
             spriteShader_->setUniform("projView", projViewMatrix);
             graphic->draw(spriteShader_);
             spriteShader_->unbind();
+            CheckGlError();
         }
 
 
@@ -114,12 +189,13 @@ namespace Internal {
         textShader_->bind();
 
         textShader_->setUniform("projView", projViewMatrix);
-
+        CheckGlError();
         for (const std::shared_ptr<Text> &text : texts_) {
             text->draw(textShader_);
+            CheckGlError();
         }
-
         textShader_->unbind();
+        CheckGlError();
     }
 
     GraphicsEngine::~GraphicsEngine() {

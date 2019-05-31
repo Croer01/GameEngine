@@ -45,7 +45,7 @@ namespace GameEngine {
             // use this static variable to avoid create multiple instances of the same mesh
             static std::shared_ptr<MeshData> meshInstance;
             if(!meshInstance) {
-                //The order of the vertices are fliped to from "n" to "u" way to deal with the inverted y axis
+                //The order of the vertices are flipped to from "n" to "u" way to deal with the inverted y axis
                 //VBO data
                 std::vector<float> vertices = std::vector<float>({ //vertex(3) | uv(2)
                                                                          0.f, 1.f, 0.f, 0.f, 1.f,

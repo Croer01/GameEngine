@@ -18,8 +18,7 @@ namespace GameEngine {
 class ColliderComponent : public geComponentInstantiable<ColliderComponent>, public Observer<Internal::ColliderEvent>, public Observer<GameObjectEvent>, public std::enable_shared_from_this<ColliderComponent> {
         std::shared_ptr<Internal::Collider> collider_;
         OnColliderEventCallback onColliderEnterCallback_;
-        std::weak_ptr<SpriteComponent> sprite_;
-        std::weak_ptr<SpriteAnimatedComponent> spriteAnimated_;
+        Vec2D size_;
         Vec2D extends_;
         Vec2D offset_;
         std::string colliderShape_;

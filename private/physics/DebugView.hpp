@@ -6,14 +6,23 @@
 #define SPACEINVADERS_DEBUGVIEW_HPP
 
 #include <Box2D\Box2D.h>
+#include "../graphics/Shader.h"
+#include "../graphics/Camera.hpp"
+
 namespace GameEngine {
 namespace Internal {
     class DebugView : public b2Draw {
+        std::shared_ptr<Shader> shader_;
+        std::shared_ptr<Camera> cam_;
+
+        // common instructions required before draw something
         void beginDraw();
 
+        // common instructions required after draw something
         void endDraw();
 
     public:
+        DebugView();
         // We won't be implementing all of these, but if we don't declare them here we'll get an override error
         void DrawSolidPolygon(const b2Vec2 *vertices, int32 vertexCount, const b2Color &color) override;
 
@@ -28,6 +37,8 @@ namespace Internal {
         void DrawTransform(const b2Transform &xf) override;
 
         void DrawPoint(const b2Vec2 &p, float32 size, const b2Color &color) override;
+
+        void setCamera(const std::shared_ptr<Camera> &cam);
     };
 }
 }

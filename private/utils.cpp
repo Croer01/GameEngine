@@ -8,6 +8,7 @@
 #include <iostream>
 #include <SDL2/SDL_error.h>
 #include <Al/al.h>
+#include <sstream>
 #include "utils.hpp"
 namespace GameEngine {
 namespace Internal {
@@ -17,9 +18,16 @@ namespace Internal {
 
         while (err != GL_NO_ERROR) {
 
-            std::cerr << "GL_" << glewGetErrorString(err) << " - " << file << ":" << line << std::endl;
+            std::stringstream buffer;
+
+            buffer << "GL_" << glewGetErrorString(err) << " - " << file << ":" << line << std::endl;
+            std::cerr << buffer.rdbuf()->str();
             err = glGetError();
+#ifdef DEBUG
+            throw std::runtime_error(buffer.rdbuf()->str());
+#endif
         }
+
     }
 
     void _CheckSDLError(int line) {

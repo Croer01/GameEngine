@@ -82,7 +82,8 @@ namespace Internal {
         }
     }
 
-    void PhysicsEngine::drawDebug() {
+    void PhysicsEngine::drawDebug(const std::shared_ptr<Camera> &cam) {
+        debugView_->setCamera(cam);
         world_->DrawDebugData();
     }
 

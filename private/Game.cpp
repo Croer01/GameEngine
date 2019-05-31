@@ -122,9 +122,10 @@ namespace Internal {
             glClear(GL_COLOR_BUFFER_BIT);
             glViewport(screen_->calculatedX(), screen_->calculatedY(), screen_->calculatedWidth(),
                        screen_->calculatedHeight());
-            GraphicsEngine::GetInstance().draw(SceneManager::GetInstance().getCameraOfCurrentScene());
+            const std::shared_ptr<Camera> &cam = SceneManager::GetInstance().getCameraOfCurrentScene();
+            GraphicsEngine::GetInstance().draw(cam);
 #ifdef DEBUG
-            PhysicsEngine::GetInstance().drawDebug();
+            PhysicsEngine::GetInstance().drawDebug(cam);
 #endif
             screen_->swapWindow();
             lastTime = currentTime;

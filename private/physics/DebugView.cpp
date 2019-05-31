@@ -5,9 +5,12 @@
 #include "DebugView.hpp"
 #include "PhysicsEngine.hpp"
 #include "../Game.hpp"
+#include "../utils.hpp"
+#include "../graphics/MeshData.hpp"
 
 #include <GL\glew.h>
 #include <game-engine/geGameObject.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace GameEngine {
 namespace Internal {
@@ -15,16 +18,22 @@ namespace Internal {
     void DebugView::DrawSolidPolygon(const b2Vec2 *vertices, int32 vertexCount, const b2Color &color) {
         beginDraw();
 
-        // Standard OpenGL rendering stuff
-        glColor4f(color.r, color.g, color.b, color.a);
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-        glBegin(GL_POLYGON);
+        //The order of the vertices are flipped to from "n" to "u" way to deal with the inverted y axis
+        //VBO data
+        std::vector<float> verticesUVs;
         for (int i = 0; i < vertexCount; i++) {
-            glVertex2f(vertices[i].x, vertices[i].y);
+            //vertex(3) | uv(2)
+            verticesUVs.push_back(vertices[i].x);
+            verticesUVs.push_back(vertices[i].y);
+            verticesUVs.push_back(0.f);
+            verticesUVs.push_back(0.f);
+            verticesUVs.push_back(0.f);
         }
-        glEnd();
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+        MeshData mesh(verticesUVs, std::vector<unsigned int> ());
+        shader_->setUniform("Color", glm::vec4(color.r, color.g, color.b, color.a));
+        mesh.draw(shader_);
+        shader_->draw();
 
         endDraw();
     }
@@ -43,17 +52,57 @@ namespace Internal {
     void DebugView::DrawPoint(const b2Vec2 &p, float32 size, const b2Color &color) {}
 
     void DebugView::beginDraw() {
-        glPushMatrix(); // Push matrix so we can revert after doing some transformations
-
         const Screen &screen = Game::GetInstance().screen();
 
-        glOrtho(0.0f, screen.virtualWidth(), screen.virtualHeight(), 0, 0.f, 1.f);
-        glScalef(PhysicsEngine::getScalePixelsToMeter(), PhysicsEngine::getScalePixelsToMeter(), 1);
+//        glm::mat4 transform = glm::scale(
+//                        glm::ortho(0.0f, static_cast<float>(screen.virtualWidth()), static_cast<float>(screen.virtualHeight()), 0.f, 0.f, 1.f),
+//                        glm::vec3(PhysicsEngine::getScalePixelsToMeter(), PhysicsEngine::getScalePixelsToMeter(), 1)
+//                     );
+//        glm::mat4 transform = glm::scale(glm::mat4(1), glm::vec3(PhysicsEngine::getScalePixelsToMeter(), PhysicsEngine::getScalePixelsToMeter(), 1));
+        // glm::mat4 transform = glm::scale(glm::mat4(1), glm::vec3(PhysicsEngine::getScalePixelsToMeter(), PhysicsEngine::getScalePixelsToMeter(), 1));
+        glm::mat4 transform = glm::ortho<float>(0.0f, static_cast<float>(screen.virtualWidth()), static_cast<float>(screen.virtualHeight()), 0.f, 0.f, 1.f) *
+                cam_->getViewMatrix();
+        transform = glm::scale(transform , glm::vec3(PhysicsEngine::getScalePixelsToMeter(), PhysicsEngine::getScalePixelsToMeter(), 1));
+        shader_->bind();
+        shader_->setUniform("transform", transform);
     }
 
 
     void DebugView::endDraw() {
-        glPopMatrix(); // Revert transformations
+        shader_->unbind();
+    }
+
+    DebugView::DebugView() {
+        shader_ = std::make_shared<Shader>("Basic");
+        shader_->setVertexShader(R"EOF(
+        #version 330 core
+
+        layout (location = 0) in vec3 aPos;
+
+        uniform mat4 transform;
+
+        void main() {
+            gl_Position = transform * vec4(aPos, 1.0);
+        }
+        )EOF");
+        shader_->setFragmentShader(R"EOF(
+        #version 330 core
+        out vec4 FragColor;
+
+        uniform vec4 Color;
+
+        void main() {
+            FragColor = Color;
+        }
+        )EOF");
+        shader_->build();
+//        shader_->setElementMode(GL_LINE_LOOP);
+        shader_->setElementMode(GL_LINES);
+        CheckGlError();
+    }
+
+    void DebugView::setCamera(const std::shared_ptr<Camera> &cam) {
+        cam_ = cam;
     }
 }
 }

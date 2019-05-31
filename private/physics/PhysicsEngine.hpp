@@ -13,6 +13,8 @@
 #include "Collider.hpp"
 #ifdef DEBUG
 #include "DebugView.hpp"
+#include "../graphics/Camera.hpp"
+
 #endif
 namespace GameEngine {
 namespace Internal {
@@ -48,7 +50,7 @@ namespace Internal {
 
         void update(float elapsedTime);
 
-        void drawDebug();
+        void drawDebug(const std::shared_ptr<Camera> &cam);
 
         void registerCollider(const std::shared_ptr<Collider> &collider);
 
