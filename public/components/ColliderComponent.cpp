@@ -3,6 +3,7 @@
 //
 
 #include <game-engine/components/ColliderComponent.hpp>
+#include <game-engine/components/GeometryComponent.hpp>
 #include "../private/physics/PhysicsEngine.hpp"
 #include "../../private/GameObject.hpp"
 
@@ -67,8 +68,23 @@ namespace {
     }
 
     void ColliderComponent::init() {
-        sprite_ = gameObject()->getComponent<SpriteComponent>();
-        spriteAnimated_ = gameObject()->getComponent<SpriteAnimatedComponent>();
+        if(auto sprite = gameObject()->getComponent<SpriteComponent>().lock()) {
+            size_ = GameEngine::Vec2D(sprite->getWidth(), sprite->getHeight());
+            offset_ = GameEngine::Vec2D(sprite->getWidth(), sprite->getHeight());
+        }
+
+        if(auto spriteAnimated = gameObject()->getComponent<SpriteAnimatedComponent>().lock())
+            size_ = GameEngine::Vec2D(spriteAnimated->getWidth(), spriteAnimated->getHeight());
+
+        if(auto geometry = gameObject()->getComponent<GeometryComponent>().lock())
+            size_ = GameEngine::Vec2D(geometry->getWidth(), geometry->getHeight());
+
+        // size is 0
+        if(size_.sqrMagnitude() <= 1e-6){
+            throw std::runtime_error(std::string("Can not set the size of the collider because there isn't a SpriteComponent, "
+                                     "SpriteAnimatedComponent or GeometryComponent attached in the GameObject ") +
+                                     gameObject()->name());
+        }
 
         updateColliderRef();
         gameObject()->registerObserver(this);
@@ -98,7 +114,7 @@ namespace {
         }
         else if(event == GameObjectEvent::ScaleChanged){
             const Vec2D &scale = gameObject()->scale();
-            collider_->setSize(std::abs(scale.x)/2.f, std::abs(scale.y)/2.f);
+            collider_->setSize(std::abs(scale.x * size_.x)/2.f, std::abs(scale.y * size_.y)/2.f);
         }
         else if(event == GameObjectEvent::ActiveChanged){
             collider_->setActive(gameObject()->active());
@@ -106,11 +122,16 @@ namespace {
     }
 
     ColliderComponent::~ColliderComponent() {
-        if(collider_)
+        if(collider_) {
             Internal::PhysicsEngine::GetInstance().unregisterCollider(collider_);
+            collider_->unregisterObserver(this);
+        }
 
         if(onColliderEnterCallback_)
             onColliderEnterCallback_ = nullptr;
+
+        if(gameObject())
+            gameObject()->unregisterObserver(this);
     }
 
     void ColliderComponent::setVelocity(glm::vec3 velocity) {
@@ -124,16 +145,9 @@ namespace {
     Vec2D ColliderComponent::convertWorldToPhysicsPos(const Vec2D &worldPos) const {
         Vec2D result = worldPos + offset_;
 
-        if(auto sprite = sprite_.lock()) {
-            float xOffset = sprite->getWidth() / 2.f;
-            float yOffset = sprite->getHeight() / 2.f;
-            result += Vec2D(xOffset, yOffset);
-        }
-        else if(auto sprite = spriteAnimated_.lock()) {
-            float xOffset = sprite->getWidth() / 2.f;
-            float yOffset = sprite->getHeight() / 2.f;
-            result += Vec2D(xOffset, yOffset);
-        }
+        float xOffset = size_.x / 2.f;
+        float yOffset = size_.y / 2.f;
+        result += Vec2D(xOffset, yOffset);
 
         return result;
     }
@@ -141,16 +155,11 @@ namespace {
     Vec2D ColliderComponent::convertPhysicsToWorldPos(const Vec2D &physicsPos) const {
         Vec2D result = physicsPos - offset_;
 
-        if(auto sprite = sprite_.lock()) {
-            float xOffset = sprite->getWidth()/2.f;
-            float yOffset = sprite->getHeight()/2.f;
-            result -= Vec2D(xOffset,yOffset);
-        }
-        else if(auto sprite = spriteAnimated_.lock()) {
-            float xOffset = sprite->getWidth()/2.f;
-            float yOffset = sprite->getHeight()/2.f;
-            result -= Vec2D(xOffset, yOffset);
-        }
+
+        float xOffset = size_.x/2.f;
+        float yOffset = size_.y/2.f;
+        result -= Vec2D(xOffset, yOffset);
+
 
         return result;
     }
@@ -167,7 +176,7 @@ namespace {
         if(collider_){
             if(gameObject() && extends_.x == 0 && extends_.y == 0){
                 const Vec2D &scale = gameObject()->scale();
-                collider_->setSize(std::abs(scale.x)/2.f, std::abs(scale.y)/2.f);
+                collider_->setSize(std::abs(scale.x * size_.x)/2.f, std::abs(scale.y * size_.y)/2.f);
             }else
                 collider_->setSize(extends_.x/2.f, extends_.y/2.f);
         }
