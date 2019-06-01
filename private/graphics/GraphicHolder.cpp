@@ -2,8 +2,8 @@
 // Created by adria on 27/10/2018.
 //
 
-#include "GraphicHolder.hpp"
 #include "GraphicsEngine.hpp"
+#include "GraphicHolder.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
 namespace GameEngine {
@@ -74,35 +74,69 @@ namespace Internal {
     }
 
     void GraphicHolder::setAnchor(GameEngine::Internal::GraphicAnchor anchor) {
+        anchor_ = parseGraphicPositionToVec2D(anchor);
+    }
+
+    GraphicAnchor parseStringToGraphicAnchor(const std::string &anchorName) {
+        GameEngine::Internal::GraphicAnchor graphicAnchor;
+
+        if(anchorName == "TOP_LEFT")
+            graphicAnchor = GameEngine::Internal::GraphicAnchor::TOP_LEFT;
+        else if(anchorName == "TOP_CENTER")
+            graphicAnchor = GameEngine::Internal::GraphicAnchor::TOP_CENTER;
+        else if(anchorName == "TOP_RIGHT")
+            graphicAnchor = GameEngine::Internal::GraphicAnchor::TOP_RIGHT;
+        else if(anchorName == "MIDDLE_LEFT")
+            graphicAnchor = GameEngine::Internal::GraphicAnchor::MIDDLE_LEFT;
+        else if(anchorName == "MIDDLE_CENTER")
+            graphicAnchor = GameEngine::Internal::GraphicAnchor::MIDDLE_CENTER;
+        else if(anchorName == "MIDDLE_RIGHT")
+            graphicAnchor = GameEngine::Internal::GraphicAnchor::MIDDLE_RIGHT;
+        else if(anchorName == "BOTTOM_LEFT")
+            graphicAnchor = GameEngine::Internal::GraphicAnchor::BOTTOM_LEFT;
+        else if(anchorName == "BOTTOM_CENTER")
+            graphicAnchor = GameEngine::Internal::GraphicAnchor::BOTTOM_CENTER;
+        else if(anchorName == "BOTTOM_RIGHT")
+            graphicAnchor = GameEngine::Internal::GraphicAnchor::BOTTOM_RIGHT;
+        else
+            graphicAnchor = GameEngine::Internal::GraphicAnchor::TOP_LEFT;
+
+        return graphicAnchor;
+    }
+
+    glm::vec2 parseGraphicPositionToVec2D(GameEngine::Internal::GraphicAnchor anchor) {
+        glm::vec2 position;
         switch (anchor){
             case GameEngine::Internal::GraphicAnchor::TOP_LEFT:
-                anchor_ = glm::vec2(0.f, 0.f);
+                position = glm::vec2(0.f, 0.f);
                 break;
             case GameEngine::Internal::GraphicAnchor::TOP_CENTER:
-                anchor_ = glm::vec2(0.5f, 0.f);
+                position = glm::vec2(0.5f, 0.f);
                 break;
             case GameEngine::Internal::GraphicAnchor::TOP_RIGHT:
-                anchor_ = glm::vec2(1.f, 0.f);
+                position = glm::vec2(1.f, 0.f);
                 break;
             case GameEngine::Internal::GraphicAnchor::MIDDLE_LEFT:
-                anchor_ = glm::vec2(0.f, 0.5f);
+                position = glm::vec2(0.f, 0.5f);
                 break;
             case GameEngine::Internal::GraphicAnchor::MIDDLE_CENTER:
-                anchor_ = glm::vec2(0.5f, 0.5f);
+                position = glm::vec2(0.5f, 0.5f);
                 break;
             case GameEngine::Internal::GraphicAnchor::MIDDLE_RIGHT:
-                anchor_ = glm::vec2(1.f, 0.5f);
+                position = glm::vec2(1.f, 0.5f);
                 break;
             case GameEngine::Internal::GraphicAnchor::BOTTOM_LEFT:
-                anchor_ = glm::vec2(0.f, 1.f);
+                position = glm::vec2(0.f, 1.f);
                 break;
             case GameEngine::Internal::GraphicAnchor::BOTTOM_CENTER:
-                anchor_ = glm::vec2(0.5f, 1.f);
+                position = glm::vec2(0.5f, 1.f);
                 break;
             case GameEngine::Internal::GraphicAnchor::BOTTOM_RIGHT:
-                anchor_ = glm::vec2(1.f, 1.f);
+                position = glm::vec2(1.f, 1.f);
                 break;
         }
+
+        return position;
     }
 }
 }

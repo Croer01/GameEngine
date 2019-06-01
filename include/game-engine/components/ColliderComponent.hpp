@@ -19,6 +19,7 @@ class ColliderComponent : public geComponentInstantiable<ColliderComponent>, pub
         std::shared_ptr<Internal::Collider> collider_;
         OnColliderEventCallback onColliderEnterCallback_;
         Vec2D size_;
+        Vec2D offsetFromRender_;
         Vec2D extends_;
         Vec2D offset_;
         std::string colliderShape_;

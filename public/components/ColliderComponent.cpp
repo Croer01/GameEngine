@@ -70,14 +70,19 @@ namespace {
     void ColliderComponent::init() {
         if(auto sprite = gameObject()->getComponent<SpriteComponent>().lock()) {
             size_ = GameEngine::Vec2D(sprite->getWidth(), sprite->getHeight());
-            offset_ = GameEngine::Vec2D(sprite->getWidth(), sprite->getHeight());
+            glm::vec2 offset = Internal::parseGraphicPositionToVec2D(Internal::parseStringToGraphicAnchor(sprite->anchor()));
+            offsetFromRender_ = Vec2D(offset.x, offset.y) * size_;
         }
 
-        if(auto spriteAnimated = gameObject()->getComponent<SpriteAnimatedComponent>().lock())
+        if(auto spriteAnimated = gameObject()->getComponent<SpriteAnimatedComponent>().lock()){
             size_ = GameEngine::Vec2D(spriteAnimated->getWidth(), spriteAnimated->getHeight());
+        }
 
-        if(auto geometry = gameObject()->getComponent<GeometryComponent>().lock())
+        if(auto geometry = gameObject()->getComponent<GeometryComponent>().lock()){
             size_ = GameEngine::Vec2D(geometry->getWidth(), geometry->getHeight());
+            glm::vec2 offset = Internal::parseGraphicPositionToVec2D(Internal::parseStringToGraphicAnchor(geometry->anchor()));
+            offsetFromRender_ = Vec2D(offset.x, offset.y) * size_;
+        }
 
         // size is 0
         if(size_.sqrMagnitude() <= 1e-6){
@@ -143,7 +148,7 @@ namespace {
     }
 
     Vec2D ColliderComponent::convertWorldToPhysicsPos(const Vec2D &worldPos) const {
-        Vec2D result = worldPos + offset_;
+        Vec2D result = worldPos + offset_ - offsetFromRender_;
 
         float xOffset = size_.x / 2.f;
         float yOffset = size_.y / 2.f;
@@ -153,7 +158,7 @@ namespace {
     }
 
     Vec2D ColliderComponent::convertPhysicsToWorldPos(const Vec2D &physicsPos) const {
-        Vec2D result = physicsPos - offset_;
+        Vec2D result = physicsPos - offset_ + offsetFromRender_;
 
 
         float xOffset = size_.x/2.f;

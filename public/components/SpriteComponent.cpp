@@ -116,32 +116,8 @@ namespace GameEngine {
     }
 
     void SpriteComponent::anchor(const std::string &anchor) {
-
-        GameEngine::Internal::GraphicAnchor graphicAnchor;
-
-        if(anchor == "TOP_LEFT")
-            graphicAnchor = GameEngine::Internal::GraphicAnchor::TOP_LEFT;
-        else if(anchor == "TOP_CENTER")
-            graphicAnchor = GameEngine::Internal::GraphicAnchor::TOP_CENTER;
-        else if(anchor == "TOP_RIGHT")
-            graphicAnchor = GameEngine::Internal::GraphicAnchor::TOP_RIGHT;
-        else if(anchor == "MIDDLE_LEFT")
-            graphicAnchor = GameEngine::Internal::GraphicAnchor::MIDDLE_LEFT;
-        else if(anchor == "MIDDLE_CENTER")
-            graphicAnchor = GameEngine::Internal::GraphicAnchor::MIDDLE_CENTER;
-        else if(anchor == "MIDDLE_RIGHT")
-            graphicAnchor = GameEngine::Internal::GraphicAnchor::MIDDLE_RIGHT;
-        else if(anchor == "BOTTOM_LEFT")
-            graphicAnchor = GameEngine::Internal::GraphicAnchor::BOTTOM_LEFT;
-        else if(anchor == "BOTTOM_CENTER")
-            graphicAnchor = GameEngine::Internal::GraphicAnchor::BOTTOM_CENTER;
-        else if(anchor == "BOTTOM_RIGHT")
-            graphicAnchor = GameEngine::Internal::GraphicAnchor::BOTTOM_RIGHT;
-        else
-            graphicAnchor = GameEngine::Internal::GraphicAnchor::TOP_LEFT;
-
         if(graphic_)
-            graphic_->setAnchor(graphicAnchor);
+            graphic_->setAnchor(Internal::parseStringToGraphicAnchor(anchor));
 
         anchor_ = anchor;
     }
