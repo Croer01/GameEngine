@@ -14,7 +14,7 @@
 
 namespace GameEngine {
 namespace Internal {
-//TODO: fill the rest of the methods
+    //TODO: fill the rest of the methods
     void DebugView::DrawSolidPolygon(const b2Vec2 *vertices, int32 vertexCount, const b2Color &color) {
         beginDraw();
 
@@ -54,12 +54,6 @@ namespace Internal {
     void DebugView::beginDraw() {
         const Screen &screen = Game::GetInstance().screen();
 
-//        glm::mat4 transform = glm::scale(
-//                        glm::ortho(0.0f, static_cast<float>(screen.virtualWidth()), static_cast<float>(screen.virtualHeight()), 0.f, 0.f, 1.f),
-//                        glm::vec3(PhysicsEngine::getScalePixelsToMeter(), PhysicsEngine::getScalePixelsToMeter(), 1)
-//                     );
-//        glm::mat4 transform = glm::scale(glm::mat4(1), glm::vec3(PhysicsEngine::getScalePixelsToMeter(), PhysicsEngine::getScalePixelsToMeter(), 1));
-        // glm::mat4 transform = glm::scale(glm::mat4(1), glm::vec3(PhysicsEngine::getScalePixelsToMeter(), PhysicsEngine::getScalePixelsToMeter(), 1));
         glm::mat4 transform = glm::ortho<float>(0.0f, static_cast<float>(screen.virtualWidth()), static_cast<float>(screen.virtualHeight()), 0.f, 0.f, 1.f) *
                 cam_->getViewMatrix();
         transform = glm::scale(transform , glm::vec3(PhysicsEngine::getScalePixelsToMeter(), PhysicsEngine::getScalePixelsToMeter(), 1));
@@ -96,8 +90,7 @@ namespace Internal {
         }
         )EOF");
         shader_->build();
-//        shader_->setElementMode(GL_LINE_LOOP);
-        shader_->setElementMode(GL_LINES);
+        shader_->setElementMode(GL_LINE_LOOP);
         CheckGlError();
     }
 
