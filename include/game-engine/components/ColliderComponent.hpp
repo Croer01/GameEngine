@@ -42,9 +42,9 @@ class ColliderComponent : public geComponentInstantiable<ColliderComponent>, pub
         //Component collider public API
         void setOnColliderEnter(const OnColliderEventCallback &callback);
 
-        void setVelocity(glm::vec3 velocity);
+        void setVelocity(const Vec2D &velocity);
 
-        void applyForce(glm::vec3 force);
+        void applyForce(const Vec2D &force);
 
         Vec2D extends() const;
         void extends(const Vec2D &extends);

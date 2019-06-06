@@ -139,11 +139,11 @@ namespace {
             gameObject()->unregisterObserver(this);
     }
 
-    void ColliderComponent::setVelocity(glm::vec3 velocity) {
+    void ColliderComponent::setVelocity(const Vec2D &velocity) {
         collider_->getBody()->SetLinearVelocity(b2Vec2(velocity.x,velocity.y));
     }
 
-    void ColliderComponent::applyForce(glm::vec3 force) {
+    void ColliderComponent::applyForce(const Vec2D &force) {
         collider_->getBody()->ApplyForceToCenter(b2Vec2(force.x,force.y), true);
     }
 
