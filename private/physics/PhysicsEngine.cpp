@@ -82,10 +82,12 @@ namespace Internal {
         }
     }
 
+#ifdef DEBUG
     void PhysicsEngine::drawDebug(const std::shared_ptr<Camera> &cam) {
         debugView_->setCamera(cam);
         world_->DrawDebugData();
     }
+#endif
 
     void PhysicsEngine::createCategories(const std::vector<std::string> &categories) {
         //start the bit shifted from 1 position to avoid use the default mask as a category
