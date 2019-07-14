@@ -10,14 +10,15 @@ sceneRegisters = []
 
 for filename in glob.iglob("data/**/*.yaml", recursive=True):
     prototypeName = Path(filename).stem
-    prototypeName = prototypeName.capitalize().replace(' ', '')
+    prototypeName = prototypeName[:1].upper() + prototypeName[1:]
+
     if os.name == 'nt':
         filename = filename.replace('\\', "/")
 
-    if not "scene" in prototypeName.lower():
+    if not "Scene" in prototypeName:
         prototypeRegisters.append("\tenv->addPrototype(\"" + prototypeName + "\", \"" + filename + "\");")
     else:
-        prototypeName = prototypeName.replace("scene", "")
+        prototypeName = prototypeName.replace("Scene", "")
         sceneRegisters.append("\tenv->addScene(\"" + prototypeName + "\", \"" + filename + "\");")
 
 print("#ifndef DATA_REGISTERS_GENERATED_HPP")
