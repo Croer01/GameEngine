@@ -90,3 +90,32 @@ function(generate_components_register file_name generated_file)
     )
     set(${generated_file} ${COMPONENTS_REGISTERED_HPP} PARENT_SCOPE)
 endfunction()
+
+
+function(generate_data_register file_name generated_file)
+    cmake_parse_arguments(
+            GEN_DATA
+            ""
+            ""
+            "COMPONENTS"
+            ${ARGN}
+    )
+
+    if(NOT DEFINED GEN_DATA_COMPONENTS)
+        message( FATAL_ERROR "The list of data files to generate register file is empty" )
+    endif()
+
+    set(COMPONENTS_REGISTERED_HPP ${CMAKE_CURRENT_SOURCE_DIR}/${file_name}.hpp)
+    file(GLOB COMPONENTS_REGISTERED_HEADERS "${GEN_DATA_COMPONENTS}")
+    # ensure the COMPONENTS_REGISTERED_HEADERS's dependency list doesn't include file_name
+    list(REMOVE_ITEM COMPONENTS_REGISTERED_HEADERS ${COMPONENTS_REGISTERED_HPP})
+
+    add_custom_command(
+            COMMAND ${PYTHON_EXECUTABLE} ${TOOLS_SOURCE_DIR}/data_register_generator.py > ${COMPONENTS_REGISTERED_HPP}
+            DEPENDS ${COMPONENTS_REGISTERED_HEADERS}
+            OUTPUT ${COMPONENTS_REGISTERED_HPP}
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+            COMMENT "Generating code to register data into the object manager"
+    )
+    set(${generated_file} ${COMPONENTS_REGISTERED_HPP} PARENT_SCOPE)
+endfunction()
