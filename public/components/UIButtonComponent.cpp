@@ -4,7 +4,7 @@
 
 #include <game-engine/InputManager.hpp>
 #include <iostream>
-#include "UIButtonComponent.hpp"
+#include "game-engine/components/UIButtonComponent.hpp"
 #include "../../private/graphics/GraphicGeometry.hpp"
 #include "../../private/graphics/GraphicsEngine.hpp"
 
@@ -25,10 +25,12 @@ void UIButtonComponent::Update(float elapsedTime)
         changeColor(hover_);
 
     if(hover_ && InputManager::GetInstance().isMouseButtonDown(MouseButton::LEFT))
-        std::cout << "click" << std::endl;
-        //TODO: mouse hover
-    //TODO: mouse click
-    //TODO: command
+    {
+        if(command_)
+            command_->execute();
+        else
+            std::cerr << "warning: " << gameObject()->name() << " doesn't have a command" << std::endl;
+    }
 }
 
 void UIButtonComponent::init()
@@ -40,7 +42,6 @@ void UIButtonComponent::init()
         Vec2D(.0f, 1.f)
     };
 
-
     graphicLoaded_ = std::make_shared<Internal::GraphicGeometry>(path_);
     graphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
     graphic_->setModelTransform(gameObject()->position(), gameObject()->rotation(), gameObject()->scale());
@@ -50,5 +51,16 @@ void UIButtonComponent::init()
 void UIButtonComponent::changeColor(bool isHover)
 {
     graphic_->setTintColor(geColor(isHover ? .8f : 1.f));
+}
+
+void UIButtonComponent::setCommand(const CommandRef &command)
+{
+    command_ = command;
+}
+
+UIButtonComponent::~UIButtonComponent()
+{
+    if (graphic_)
+        Internal::GraphicsEngine::GetInstance().unregisterGraphic(graphic_);
 }
 }
