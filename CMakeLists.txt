@@ -43,10 +43,10 @@ set(ENGINE_SOURCES
         public/components/TextComponent.cpp
         public/components/AudioComponent.cpp
         public/components/GeometryComponent.cpp
+        public/components/UIButtonComponent.cpp
         public/Random.cpp
         public/geAudio.cpp
-        public/geIO.cpp
-        )
+        public/geIO.cpp)
 
 # private stuff
 set(ENGINE_PRIVATE_SOURCES
