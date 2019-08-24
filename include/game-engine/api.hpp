@@ -105,6 +105,7 @@ struct PUBLICAPI geColor{
     float g;
     float b;
     geColor() : r(0),g(0),b(0){};
+    geColor(float greyValue) : r(greyValue),g(greyValue),b(greyValue){};
     geColor(float rValue, float gValue, float bValue) : r(rValue),g(gValue),b(bValue){};
 };
 }
