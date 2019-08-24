@@ -59,7 +59,7 @@ endfunction()
 # This utility helps register the components of a game. The generated header can be included and expose
 # "RegisterComponents" method to register the components in the desired game's environment.
 #
-# \arg:file_name name of the fill will be generated
+# \arg:file_name name of the file will be generated
 # \arg:generated_file output variable contains the full path of the generated file
 # \param:COMPONENTS list of files will be processed by the generator
 #
