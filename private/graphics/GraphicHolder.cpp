@@ -13,7 +13,10 @@ namespace Internal {
             modelTransform_(glm::mat4(1)),
             active_(true),
             texOffset_(0),
-            texScale_(1) {
+            texScale_(1),
+            anchor_(glm::vec2(0.f)),
+            tintColor_(glm::vec4(1.f))
+            {
     }
 
     void GraphicHolder::draw(const std::shared_ptr<Shader> &shader) {
@@ -22,6 +25,7 @@ namespace Internal {
         shader->setUniform("transform", modelTransform_);
         shader->setUniform("TexOffest", texOffset_);
         shader->setUniform("TexCoordScale", texScale_);
+        shader->setUniform("Color", tintColor_);
         graphic_->draw(shader);
     }
 
@@ -77,7 +81,12 @@ namespace Internal {
         anchor_ = parseGraphicPositionToVec2D(anchor);
     }
 
-    GraphicAnchor parseStringToGraphicAnchor(const std::string &anchorName) {
+void GraphicHolder::setTintColor(geColor tint)
+{
+   tintColor_ = glm::vec4(tint.r,tint.g,tint.b,1.f);
+}
+
+GraphicAnchor parseStringToGraphicAnchor(const std::string &anchorName) {
         GameEngine::Internal::GraphicAnchor graphicAnchor;
 
         if(anchorName == "TOP_LEFT")

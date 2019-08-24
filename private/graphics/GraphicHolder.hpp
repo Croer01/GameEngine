@@ -35,6 +35,7 @@ namespace Internal {
         glm::vec2 texOffset_;
         glm::vec2 texScale_;
         glm::vec2 anchor_;
+        glm::vec4 tintColor_;
 
     public:
         explicit GraphicHolder(const std::shared_ptr<Graphic> &graphic);
@@ -58,6 +59,8 @@ namespace Internal {
         void setActive(bool active);
 
         void setAnchor(GameEngine::Internal::GraphicAnchor anchor);
+
+        void setTintColor(geColor tint);
     };
 }
 }
