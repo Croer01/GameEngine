@@ -10,9 +10,10 @@
 namespace GameEngine {
 namespace Internal {
     Font::Font(const FT_Face &face, unsigned int pixelsSize) {
+        //based on "Learn OpenGl": https://learnopengl.com/In-Practice/Text-Rendering
         // Set size to load glyphs as
         FT_Set_Pixel_Sizes(face, 0, pixelsSize);
-
+        pixelHeight_ = pixelsSize;
         //FreeType scale the metrics 1/64: https://www.freetype.org/freetype2/docs/tutorial/step2.html
         lineSpacing_ = face->size->metrics.height / 64;
 
@@ -92,12 +93,12 @@ namespace Internal {
             FontCharacter ch = characters_[*c];
 
             GLfloat xpos = x + ch.Bearing.x;
-            GLfloat ypos = y - (ch.Size.y - ch.Bearing.y);
+            GLfloat ypos = y - ch.Bearing.y + pixelHeight_;
 
             GLfloat w = ch.Size.x;
             GLfloat h = ch.Size.y;
 
-            //The order of the vertices are fliped to from "n" to "u" way to deal with the inverted y axis
+            //The order of the vertices are flipped from "n" to "u" way to deal with the inverted y axis
             // Update VBO for each character. vertex(3) | uv(2)
             std::array<float, 20> quadVertices = {
                     xpos, ypos + h, 0.0f, 0.f, 1.f,

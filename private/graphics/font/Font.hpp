@@ -30,6 +30,7 @@ namespace Internal {
     class Font : public std::enable_shared_from_this<Font> {
         std::map<char, FontCharacter> characters_;
         int lineSpacing_;
+        int pixelHeight_;
     public:
         explicit Font(const FT_Face &face, unsigned int pixelsSize);
 
