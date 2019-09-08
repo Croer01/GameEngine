@@ -57,6 +57,8 @@ namespace Internal {
 
         assert(textDef_.textureIds.size() == textDef_.verticesByCharacter.size());
 
+        glBindVertexArray(VAO);
+
         for (auto i = 0; i < textDef_.textureIds.size(); i++) {
             glBindTexture(GL_TEXTURE_2D, textDef_.textureIds[i]);
 
@@ -68,7 +70,7 @@ namespace Internal {
         }
     }
 
-    void Text::setModelTransform(const Vec2D &position, const Vec2D &rotation, const Vec2D &scale) {
+void Text::setModelTransform(const Vec2D &position, const Vec2D &rotation, const Vec2D &scale) {
         glm::vec3 desiredPosition = glm::vec3(position.x,position.y,0.f);
 
         if (GraphicsEngine::GetInstance().isPixelPerfect())
