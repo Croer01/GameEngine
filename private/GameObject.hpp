@@ -34,6 +34,7 @@ namespace Internal {
         std::weak_ptr<GameObject> parent_;
         glm::mat4 transform_;
         bool destroyed_;
+        bool initializating_;
 
         void fromYamlNode(const YAML::Node &node);
 

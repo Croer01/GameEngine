@@ -27,18 +27,27 @@ namespace Internal {
             position_(0.f, 0.f),
             rotation_(0.f, 0.f),
             scale_(1.f,1.f),
-            destroyed_(false){
+            destroyed_(false),
+            initializating_(false){
         computeTransform();
     }
 
     void GameObject::Init() {
+        initializating_ = true;
         std::cout << "Object " << prototype_.c_str() << " initialized" << std::endl;
-        for (auto &component : components_) {
-            component->init();
+        // Use conventional for-loop to avoid access violation of components have added by others components in init time
+        auto componentSize = components_.size();
+        for (auto i = 0; i < componentSize; i++)
+        {
+            components_[i]->init();
         }
-        for (auto &child : children_) {
+
+        for (auto &child : children_)
+        {
             child->Init();
         }
+
+        initializating_ = false;
     }
 
     void GameObject::Update(float elapsedTime){
@@ -65,6 +74,9 @@ namespace Internal {
             return;
         component->gameObject(this);
         components_.push_back(component);
+        //Ensure the component is initializated if this is added during the GameObject's init process
+        if(initializating_)
+            component->init();
     }
 
     void GameObject::addChild(std::shared_ptr<GameObject> child) {
