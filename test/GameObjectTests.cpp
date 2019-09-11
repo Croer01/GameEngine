@@ -1,7 +1,36 @@
 #include "gtest/gtest.h"
+#include "../private/GameObject.hpp"
 #include <game-engine/geGame.hpp>
 #include <game-engine/geGameObject.hpp>
 #include <game-engine/components/SpriteComponent.hpp>
+
+class InitializeCheckComponent : public GameEngine::geComponentInstantiable<InitializeCheckComponent>
+{
+    bool initialized_;
+
+    void init() override
+    {
+        initialized_ = true;
+    }
+public:
+    InitializeCheckComponent() :
+        initialized_(false)
+    { }
+
+    bool getInitialized() const
+    {
+        return initialized_;
+    }
+};
+
+class AddOnInitializeComponent : public GameEngine::geComponentInstantiable<AddOnInitializeComponent>
+{
+    void init() override
+    {
+        auto component = std::make_shared<InitializeCheckComponent>();
+        gameObject()->addComponent(component);
+    }
+};
 
 TEST(GameObject, createObject)
 {
@@ -108,6 +137,22 @@ TEST(GameObject, loadGameObject)
     ASSERT_EQ(gameObject->name(), "loadedFromFile");
 }
 
+
+TEST(GameObject, addChildDuringInitialization)
+{
+    GameEngine::geGame game;
+    GameEngine::geGameObjectRef go = game.createObject("test");
+    auto component = std::make_shared<AddOnInitializeComponent>();
+    go->addComponent(component);
+
+    // force initialize object
+    std::dynamic_pointer_cast<GameEngine::Internal::GameObject>(go)->Init();
+
+    // We ensure a component added by other during the init process of a GameObject is correctly initialized too.
+    auto initializedComponent = go->getComponent<InitializeCheckComponent>();
+    ASSERT_FALSE(initializedComponent.expired());
+    ASSERT_TRUE(initializedComponent.lock()->getInitialized());
+}
 
 TEST(SpriteComponent, load)
 {
