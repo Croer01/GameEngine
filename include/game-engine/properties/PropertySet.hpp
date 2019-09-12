@@ -24,6 +24,10 @@ namespace GameEngine {
         virtual void copy(PropertySetBase &other) const {
             throw std::runtime_error("not implemented. Need to cast this instance to PropertySet<Component>");
         };
+
+        virtual void fillFrom(const geData &data) const {
+            throw std::runtime_error("not implemented. Need to cast this instance to PropertySet<Component>");
+        };
     };
 
     template <typename Class>
@@ -89,6 +93,71 @@ namespace GameEngine {
                 otherCast.add(properties_[i]->copy(static_cast<Class*>(otherCast.target_)));
             }
         };
+
+        virtual void fillFrom(const geData &data) const
+        {
+            if(parent_)
+                parent_->fillFrom(data);
+
+            for(int i = 0; i < properties_.size(); i++)
+            {
+                auto property = properties_[i];
+
+                if(!data.hasValue(property->name())) {
+                    if(property->required())
+                        throw std::logic_error("property " + property->name() + " is required but it isn't defined");
+                    continue;
+                }
+
+                switch (property->type()){
+                    case PropertyTypes::INT:
+                    {
+                        auto propertyInt = std::dynamic_pointer_cast<Property<Class,int>>(property);
+                        propertyInt->set(data.getInt(property->name()));
+                    }
+                        break;
+                    case PropertyTypes::FLOAT:
+                    {
+                        auto propertyFloat = std::dynamic_pointer_cast<Property<Class,float>>(property);
+                        propertyFloat->set(data.getFloat(property->name()));
+                    }
+                        break;
+                    case PropertyTypes::STRING:
+                    {
+                        auto propertyString = std::dynamic_pointer_cast<Property<Class,std::string>>(property);
+                        propertyString->set(data.getString(property->name()));
+                    }
+                        break;
+                    case PropertyTypes::VEC2D:
+                    {
+                        auto propertyVec2d = std::dynamic_pointer_cast<Property<Class,Vec2D>>(property);
+                        propertyVec2d->set(data.getVec2D(property->name()));
+                    }
+                        break;
+                    case PropertyTypes::BOOL:
+                    {
+                        auto propertyBool = std::dynamic_pointer_cast<Property<Class, bool>>(property);
+                        propertyBool->set(data.getBool(property->name()));
+                    }
+                        break;
+                    case PropertyTypes::ARRAY_STRING:
+                    {
+                        auto propertyArray = std::dynamic_pointer_cast<Property<Class, std::vector<std::string>>>(property);
+                        propertyArray->set(data.getArrayString(property->name()));
+                    }
+                        break;
+                    case PropertyTypes::ARRAY_VEC2D:
+                    {
+                        auto propertyArray = std::dynamic_pointer_cast<Property<Class, std::vector<Vec2D>>>(property);
+                        propertyArray->set(data.getArrayVec2D(property->name()));
+                    }
+                        break;
+                    case PropertyTypes::UNKNOWN:
+                        throw std::runtime_error("the property " + property->name() + " has unknown type");
+                        break;
+                }
+            }
+        }
     };
 }
 #endif //SPACEINVADERS_PROPERTYSET_HPP
