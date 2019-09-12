@@ -29,8 +29,16 @@ namespace GameEngine {
     template <typename Class>
     class PUBLICAPI PropertySet : public PropertySetBase {
         std::vector<std::shared_ptr<PropertyBase<Class>>> properties_;
+        std::unique_ptr<PropertySetBase> parent_;
     public:
-        explicit PropertySet(Class *target) : PropertySetBase(target)
+        explicit PropertySet(Class *target) :
+        PropertySetBase(target),
+        parent_(nullptr)
+        {};
+
+        PropertySet(Class *target, PropertySetBase *parent) :
+            PropertySetBase(target),
+            parent_(parent)
         {};
 
         virtual ~PropertySet(){
@@ -66,7 +74,17 @@ namespace GameEngine {
         };
 
         virtual void copy(PropertySetBase &other) const {
-            auto otherCast = static_cast<PropertySet<Class>&>(other);
+            auto &otherCast = static_cast<PropertySet<Class>&>(other);
+
+            if(parent_)
+            {
+                if(otherCast.parent_){
+                    parent_->copy(*otherCast.parent_);
+                } else{
+                    throw new std::invalid_argument("other doesn't have the same parent structure");
+                }
+            }
+
             for( int i = 0; i < properties_.size(); i++) {
                 otherCast.add(properties_[i]->copy(static_cast<Class*>(otherCast.target_)));
             }
