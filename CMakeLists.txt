@@ -45,6 +45,7 @@ set(ENGINE_SOURCES
         public/components/GeometryComponent.cpp
         public/components/UIButtonComponent.cpp
         public/components/ui/UIControlComponent.cpp
+        public/components/ui/UITextComponent.cpp
         public/Random.cpp
         public/geAudio.cpp
         public/geIO.cpp)
