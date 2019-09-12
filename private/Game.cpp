@@ -16,7 +16,7 @@
 #include <game-engine/components/TextComponent.hpp>
 #include <game-engine/components/SpriteAnimatedComponent.hpp>
 #include "audio/AudioEngine.hpp"
-#include "game-engine/components/UIButtonComponent.hpp"
+#include "game-engine/components/ui/UIButtonComponent.hpp"
 #include "game-engine/components/ui/UITextComponent.hpp"
 #include <game-engine/components/AudioComponent.hpp>
 #include <SDL2/SDL.h>
