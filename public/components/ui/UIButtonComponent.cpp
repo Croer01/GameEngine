@@ -102,6 +102,20 @@ void UIButtonComponent::createGeomGraphic()
     graphicGeom_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
     graphicGeom_->setModelTransform(screenPos(), Vec2D(0.f, 0.f), screenSize());
     Internal::GraphicsEngine::GetInstance().registerGraphic(graphicGeom_);
+
+    // move the text position to center inside the button
+    Vec2D textMargins = screenSize() - getTextSize();
+    if(textMargins.x > 0 )
+        textMargins.x /=2;
+    else
+        textMargins.x = 0;
+
+    if(textMargins.y > 0 )
+        textMargins.y /=2;
+    else
+        textMargins.y = 0;
+
+    setTextModelTransform(screenPos() + textMargins, Vec2D(), Vec2D(1, 1));
 }
 
 void UIButtonComponent::background(const geColor &color)

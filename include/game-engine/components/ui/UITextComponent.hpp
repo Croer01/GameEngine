@@ -21,6 +21,7 @@ class UITextComponent : public UIControlComponent
 protected:
     geComponentRef instantiate() const override;
     PropertySetBase *configureProperties() override;
+    void setTextModelTransform(const Vec2D &position, const Vec2D &rotation, const Vec2D &scale);
 public:
     virtual ~UITextComponent();
     void init() override;
@@ -33,6 +34,8 @@ public:
 
     void text(const std::string &value);
     std::string text() const;
+
+    Vec2D getTextSize() const;
 };
 }
 

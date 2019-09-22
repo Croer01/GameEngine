@@ -100,8 +100,18 @@ void UITextComponent::UpdateTextGraphic()
     if(!font_.empty())
     {
         graphicText_ = Internal::FontManager::GetInstance().getFont(font_, fontSize_)->createText(text_);
-        graphicText_->setModelTransform(screenPos(), Vec2D(), Vec2D(1, 1));
+        setTextModelTransform(screenPos(), Vec2D(), Vec2D(1, 1));
         Internal::GraphicsEngine::GetInstance().registerText(graphicText_);
     }
+}
+
+void UITextComponent::setTextModelTransform(const Vec2D &position, const Vec2D &rotation, const Vec2D &scale)
+{
+    graphicText_->setModelTransform(position, rotation, scale);
+}
+
+Vec2D UITextComponent::getTextSize() const
+{
+    return Vec2D(graphicText_->width(), graphicText_->height());
 }
 }
