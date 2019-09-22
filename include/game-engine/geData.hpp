@@ -27,6 +27,7 @@ namespace GameEngine {
         virtual Vec2D getVec2D(const std::string &key) const = 0;
         virtual std::vector<std::string> getArrayString(const std::string &key) const = 0;
         virtual std::vector<Vec2D> getArrayVec2D(const std::string &key) const = 0;
+        virtual geColor getColor(const std::string &key) const = 0;
     };
 }
 #endif //SPACEINVADERS_GEDATA_HPP

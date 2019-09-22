@@ -20,7 +20,8 @@ namespace GameEngine {
         BOOL,
         VEC2D,
         ARRAY_STRING,
-        ARRAY_VEC2D
+        ARRAY_VEC2D,
+        COLOR
     };
 
     template <typename ValueType>
@@ -54,6 +55,10 @@ namespace GameEngine {
     template <>
     struct PropertyTypeDeductive<std::vector<Vec2D>>{
         static constexpr PropertyTypes type = PropertyTypes::ARRAY_VEC2D;
+    };
+    template <>
+    struct PropertyTypeDeductive<geColor>{
+        static constexpr PropertyTypes type = PropertyTypes::COLOR;
     };
 
     template <typename Class>

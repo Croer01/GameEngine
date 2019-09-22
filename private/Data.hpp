@@ -24,6 +24,7 @@ namespace Internal{
         virtual Vec2D getVec2D(const std::string &key) const;
         virtual std::vector<std::string> getArrayString(const std::string &key) const;
         virtual std::vector<Vec2D> getArrayVec2D(const std::string &key) const;
+        virtual geColor getColor(const std::string &key) const;
 
         YAML::Node yamlNode() const;
     };

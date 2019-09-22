@@ -152,6 +152,12 @@ namespace GameEngine {
                         propertyArray->set(data.getArrayVec2D(property->name()));
                     }
                         break;
+                    case PropertyTypes::COLOR:
+                    {
+                        auto propertyColor = std::dynamic_pointer_cast<Property<Class, geColor>>(property);
+                        propertyColor->set(data.getColor(property->name()));
+                    }
+                        break;
                     case PropertyTypes::UNKNOWN:
                         throw std::runtime_error("the property " + property->name() + " has unknown type");
                         break;

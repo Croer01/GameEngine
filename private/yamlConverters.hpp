@@ -25,6 +25,29 @@ namespace YAML {
             return true;
         }
     };
+
+
+template<>
+struct convert<GameEngine::geColor> {
+    static Node encode(const GameEngine::geColor &rhs) {
+        Node node;
+        node.push_back(rhs.r);
+        node.push_back(rhs.g);
+        node.push_back(rhs.b);
+        return node;
+    }
+
+    static bool decode(const Node &node, GameEngine::geColor &rhs) {
+        if (!node.IsSequence() || node.size() != 3) {
+            return false;
+        }
+
+        rhs.r = node[0].as<float>(0);
+        rhs.g = node[1].as<float>(0);
+        rhs.b = node[1].as<float>(0);
+        return true;
+    }
+};
 }
 
 #endif //SPACEINVADERS_YAMLCONVERTERS_HPP

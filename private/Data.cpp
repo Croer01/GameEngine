@@ -54,6 +54,10 @@ namespace Internal{
         return value;
     }
 
+    geColor Data::getColor(const std::string &key) const {
+        return data_[key].as<geColor>(geColor());
+    }
+
     bool Data::hasValue(const std::string &key) const {
         return static_cast<bool>(data_[key]);
     }
