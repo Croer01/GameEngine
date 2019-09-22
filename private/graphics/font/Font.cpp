@@ -78,13 +78,16 @@ namespace Internal {
         TextDef textDef;
         std::vector<std::array<float, 20>> vertices;
         std::vector<GLuint> textureIds;
-
+        int maxWidth = 0;
         // Iterate through all characters
         std::string::const_iterator c;
         float x = 0.f;
         float y = 0.f;
         for (c = text.begin(); c != text.end(); c++) {
             if (*c == '\n') {
+                if(x > maxWidth)
+                    maxWidth = std::ceil(x);
+
                 y += lineSpacing_;
                 x = 0;
                 continue;
@@ -116,6 +119,10 @@ namespace Internal {
 
         textDef.verticesByCharacter = vertices;
         textDef.textureIds = textureIds;
+        // the first line never calculate the maxWidth
+        textDef.width = y == 0? x : maxWidth;
+        // the first line is not included in "y"
+        textDef.height = std::ceil(lineSpacing_ + y);
 
         return textDef;
     }

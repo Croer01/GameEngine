@@ -88,5 +88,15 @@ void Text::setModelTransform(const Vec2D &position, const Vec2D &rotation, const
     void Text::setText(const std::string &text) {
         textDef_ = font_->createTextDef(text);
     }
+
+    int Text::width() const
+    {
+        return textDef_.width;
+    }
+
+    int Text::height() const
+    {
+        return textDef_.height;
+    }
 }
 }

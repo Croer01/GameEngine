@@ -26,6 +26,8 @@ namespace Internal {
     struct TextDef {
         std::vector<std::array<float, 20>> verticesByCharacter;
         std::vector<unsigned int> textureIds;
+        int width;
+        int height;
     };
 
     class Text {
@@ -49,6 +51,9 @@ namespace Internal {
         void setModelTransform(const Vec2D &position, const Vec2D &rotation, const Vec2D &scale);
 
         void setActive(bool active);
+
+        int width() const;
+        int height() const;
     };
 }
 }
