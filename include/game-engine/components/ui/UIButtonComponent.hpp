@@ -17,17 +17,26 @@ class UIButtonComponent : public UITextComponent
     CommandRef command_;
     void changeColor(bool isHover);
     std::shared_ptr<Internal::GraphicHolder> graphicGeom_;
-public:
-    UIButtonComponent();
-    virtual ~UIButtonComponent();
+    geColor background_;
+    geColor hoverBackground_;
+
 protected:
     geComponentRef instantiate() const override;
     PropertySetBase *configureProperties() override;
     void createGeomGraphic();
+
 public:
+    UIButtonComponent();
+    virtual ~UIButtonComponent();
     void init() override;
     void Update(float elapsedTime) override;
     void setCommand(const CommandRef &command);
+
+    void background(const geColor &color);
+    geColor background() const;
+
+    void hoverBackground(const geColor &color);
+    geColor hoverBackground() const;
 };
 }
 

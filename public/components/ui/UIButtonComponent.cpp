@@ -44,7 +44,7 @@ void UIButtonComponent::init()
 void UIButtonComponent::changeColor(bool isHover)
 {
     createGeomGraphic();
-    graphicGeom_->setTintColor(geColor(isHover ? .8f : 1.f));
+    graphicGeom_->setTintColor(isHover ? hoverBackground_ : background_);
 }
 
 void UIButtonComponent::setCommand(const CommandRef &command)
@@ -67,6 +67,22 @@ PropertySetBase *UIButtonComponent::configureProperties()
     auto *base = UITextComponent::configureProperties();
     auto *properties = new PropertySet<UIButtonComponent>(this, base);
 
+    properties->add(new Property<UIButtonComponent, geColor>(
+        "background",
+        this,
+        &UIButtonComponent::background,
+        &UIButtonComponent::background,
+        geColor(1.f)
+    ));
+
+    properties->add(new Property<UIButtonComponent, geColor>(
+        "hoverBackground",
+        this,
+        &UIButtonComponent::hoverBackground,
+        &UIButtonComponent::hoverBackground,
+        geColor(.8f)
+    ));
+
     return properties;
 }
 
@@ -86,5 +102,25 @@ void UIButtonComponent::createGeomGraphic()
     graphicGeom_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
     graphicGeom_->setModelTransform(screenPos(), Vec2D(0.f, 0.f), screenSize());
     Internal::GraphicsEngine::GetInstance().registerGraphic(graphicGeom_);
+}
+
+void UIButtonComponent::background(const geColor &color)
+{
+    background_ = color;
+}
+
+geColor UIButtonComponent::background() const
+{
+    return background_;
+}
+
+void UIButtonComponent::hoverBackground(const geColor &color)
+{
+    hoverBackground_ = color;
+}
+
+geColor UIButtonComponent::hoverBackground() const
+{
+    return hoverBackground_;
 }
 }
