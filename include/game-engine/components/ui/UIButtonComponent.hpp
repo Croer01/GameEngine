@@ -7,30 +7,27 @@
 
 #include <game-engine/Command.hpp>
 #include "UITextComponent.hpp"
+#include "../../../../private/graphics/GraphicHolder.hpp"
 
 namespace GameEngine {
 class UIButtonComponent : public UITextComponent
 {
     bool pressed_;
     bool hover_;
-    std::vector<Vec2D> path_;
     CommandRef command_;
-    std::string text_;
     void changeColor(bool isHover);
-    std::shared_ptr<Internal::Text> graphicText_;
     std::shared_ptr<Internal::GraphicHolder> graphicGeom_;
 public:
     UIButtonComponent();
     virtual ~UIButtonComponent();
 protected:
+    geComponentRef instantiate() const override;
     PropertySetBase *configureProperties() override;
+    void createGeomGraphic();
 public:
     void init() override;
     void Update(float elapsedTime) override;
     void setCommand(const CommandRef &command);
-
-    std::string text() const;
-    void text(const std::string &value);
 };
 }
 

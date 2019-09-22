@@ -18,8 +18,8 @@ UIButtonComponent::UIButtonComponent()
 void UIButtonComponent::Update(float elapsedTime)
 {
     const Vec2D &mousePos = InputManager::GetInstance().getMousePosition();
-    Vec2D min = gameObject()->position();
-    Vec2D max = min + gameObject()->scale();
+    Vec2D min = screenPos();
+    Vec2D max = min + screenSize();
     bool prevHover = hover_;
     hover_ = min.x <= mousePos.x && mousePos.x <= max.x && min.y <= mousePos.y && mousePos.y <= max.y;
 
@@ -37,29 +37,14 @@ void UIButtonComponent::Update(float elapsedTime)
 
 void UIButtonComponent::init()
 {
-    path_ = {
-        Vec2D(.0f, .0f),
-        Vec2D(10.f, .0f),
-        Vec2D(10.f, 10.f),
-        Vec2D(.0f, 10.f)
-    };
-
-    auto geomComponent = std::make_shared<GeometryComponent>();
-    geomComponent->path(path_);
-    gameObject()->addComponent(geomComponent);
-
-    auto textComponent = std::make_shared<TextComponent>();
-    textComponent->font("assets/arial.ttf");
-    textComponent->fontSize(std::max(gameObject()->scale().y -2,1.f));
-    textComponent->fontSize(20.f);
-    textComponent->text(text());
-    gameObject()->addComponent(textComponent);
+    UITextComponent::init();
+    createGeomGraphic();
 }
 
 void UIButtonComponent::changeColor(bool isHover)
 {
-    if(graphicGeom_)
-        graphicGeom_->setTintColor(geColor(isHover ? .8f : 1.f));
+    createGeomGraphic();
+    graphicGeom_->setTintColor(geColor(isHover ? .8f : 1.f));
 }
 
 void UIButtonComponent::setCommand(const CommandRef &command)
@@ -69,34 +54,37 @@ void UIButtonComponent::setCommand(const CommandRef &command)
 
 UIButtonComponent::~UIButtonComponent()
 {
-    if (graphicGeom_)
-        Internal::GraphicsEngine::GetInstance().unregisterGraphic(graphicGeom_);
+    Internal::GraphicsEngine::GetInstance().unregisterGraphic(graphicGeom_);
+}
 
-    if (graphicText_)
-        Internal::GraphicsEngine::GetInstance().unregisterText(graphicText_);
+geComponentRef UIButtonComponent::instantiate() const
+{
+    return std::make_shared<UIButtonComponent>();
 }
 
 PropertySetBase *UIButtonComponent::configureProperties()
 {
-    auto *properties = new PropertySet<UIButtonComponent>(this);
-
-    properties->add(new Property<UIButtonComponent, std::string>(
-        "text",
-        this,
-        &UIButtonComponent::text,
-        &UIButtonComponent::text,
-        ""));
+    auto *base = UITextComponent::configureProperties();
+    auto *properties = new PropertySet<UIButtonComponent>(this, base);
 
     return properties;
 }
 
-std::string UIButtonComponent::text() const
+void UIButtonComponent::createGeomGraphic()
 {
-    return text_;
-}
+    if(graphicGeom_)
+        return;
 
-void UIButtonComponent::text(const std::string &value)
-{
-    text_ = value;
+    std::vector<Vec2D> path = {
+        Vec2D(.0f, .0f),
+        Vec2D(1.f, .0f),
+        Vec2D(1.f, 1.f),
+        Vec2D(.0f, 1.f)
+    };
+
+    auto graphicLoaded_ = std::make_shared<Internal::GraphicGeometry>(path);
+    graphicGeom_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
+    graphicGeom_->setModelTransform(screenPos(), Vec2D(0.f, 0.f), screenSize());
+    Internal::GraphicsEngine::GetInstance().registerGraphic(graphicGeom_);
 }
 }
