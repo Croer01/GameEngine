@@ -16,6 +16,7 @@ namespace GameEngine {
     protected:
         PropertySetBase *configureProperties() override;
     public:
+        virtual ~UIControlComponent() = default;
         void screenPos(const Vec2D &pos);
         Vec2D screenPos() const;
 

@@ -21,6 +21,7 @@ protected:
     PropertySetBase *configureProperties() override;
     void UpdateTextGraphic();
 public:
+    virtual ~UITextComponent();
     void init() override;
 
     int fontSize() const;

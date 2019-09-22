@@ -8,6 +8,12 @@
 
 namespace GameEngine
 {
+UITextComponent::~UITextComponent()
+{
+    if(graphicText_)
+        Internal::GraphicsEngine::GetInstance().unregisterText(graphicText_);
+}
+
 geComponentRef UITextComponent::instantiate() const
 {
     return std::make_shared<UITextComponent>();
