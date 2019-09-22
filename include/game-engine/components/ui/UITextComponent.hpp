@@ -16,10 +16,11 @@ class UITextComponent : public UIControlComponent
     std::string text_;
     std::string font_;
     int fontSize_;
+
+    void UpdateTextGraphic();
 protected:
     geComponentRef instantiate() const override;
     PropertySetBase *configureProperties() override;
-    void UpdateTextGraphic();
 public:
     virtual ~UITextComponent();
     void init() override;

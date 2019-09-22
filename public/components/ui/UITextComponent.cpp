@@ -59,7 +59,8 @@ PropertySetBase *UITextComponent::configureProperties()
 void UITextComponent::text(const std::string &value)
 {
     text_ = value;
-    UpdateTextGraphic();
+    if(graphicText_)
+        UpdateTextGraphic();
 }
 
 std::string UITextComponent::text() const
@@ -75,7 +76,8 @@ int UITextComponent::fontSize() const
 void UITextComponent::fontSize(const int &size)
 {
     fontSize_ = size;
-    UpdateTextGraphic();
+    if(graphicText_)
+        UpdateTextGraphic();
 }
 
 std::string UITextComponent::font() const
@@ -86,7 +88,8 @@ std::string UITextComponent::font() const
 void UITextComponent::font(const std::string &fontName)
 {
     font_ = fontName;
-    UpdateTextGraphic();
+    if(graphicText_)
+        UpdateTextGraphic();
 }
 
 void UITextComponent::UpdateTextGraphic()
