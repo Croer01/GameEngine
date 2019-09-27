@@ -12,28 +12,7 @@
 
 namespace GameEngine {
 UIButtonComponent::UIButtonComponent()
-    : pressed_(false)
 {}
-
-void UIButtonComponent::Update(float elapsedTime)
-{
-    const Vec2D &mousePos = InputManager::GetInstance().getMousePosition();
-    Vec2D min = screenPos();
-    Vec2D max = min + screenSize();
-    bool prevHover = hover_;
-    hover_ = min.x <= mousePos.x && mousePos.x <= max.x && min.y <= mousePos.y && mousePos.y <= max.y;
-
-    if(prevHover != hover_)
-        changeColor(hover_);
-
-    if(hover_ && InputManager::GetInstance().isMouseButtonDown(MouseButton::LEFT))
-    {
-        if(command_)
-            command_->execute();
-        else
-            std::cerr << "warning: " << gameObject()->name() << " doesn't have a command" << std::endl;
-    }
-}
 
 void UIButtonComponent::init()
 {
@@ -136,5 +115,23 @@ void UIButtonComponent::hoverBackground(const geColor &color)
 geColor UIButtonComponent::hoverBackground() const
 {
     return hoverBackground_;
+}
+
+void UIButtonComponent::onClick()
+{
+    if(command_)
+        command_->execute();
+    else
+        std::cerr << "warning: " << gameObject()->name() << " doesn't have a command" << std::endl;
+}
+
+void UIButtonComponent::onHoverIn()
+{
+    changeColor(true);
+}
+
+void UIButtonComponent::onHoverOut()
+{
+    changeColor(false);
 }
 }

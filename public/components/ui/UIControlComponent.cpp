@@ -2,6 +2,7 @@
 // Created by adria on 11/09/2019.
 //
 
+#include <game-engine/InputManager.hpp>
 #include "game-engine/components/ui/UIControlComponent.hpp"
 
 namespace GameEngine {
@@ -47,5 +48,25 @@ void UIControlComponent::screenSize(const Vec2D &size)
 Vec2D UIControlComponent::screenSize() const
 {
     return screenSize_;
+}
+
+void UIControlComponent::Update(float elapsedTime)
+{
+
+    const Vec2D &mousePos = InputManager::GetInstance().getMousePosition();
+    Vec2D min = screenPos();
+    Vec2D max = min + screenSize();
+    bool prevHover = hover_;
+    hover_ = min.x <= mousePos.x && mousePos.x <= max.x && min.y <= mousePos.y && mousePos.y <= max.y;
+
+    if(prevHover != hover_){
+        if(hover_)
+            onHoverIn();
+        else
+            onHoverOut();
+    }
+
+    if(hover_ && InputManager::GetInstance().isMouseButtonDown(MouseButton::LEFT))
+        onClick();
 }
 }

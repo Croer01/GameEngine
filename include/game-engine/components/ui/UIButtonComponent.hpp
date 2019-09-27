@@ -12,8 +12,6 @@
 namespace GameEngine {
 class PUBLICAPI UIButtonComponent : public UITextComponent
 {
-    bool pressed_;
-    bool hover_;
     CommandRef command_;
     void changeColor(bool isHover);
     std::shared_ptr<Internal::GraphicHolder> graphicGeom_;
@@ -24,12 +22,13 @@ protected:
     geComponentRef instantiate() const override;
     PropertySetBase *configureProperties() override;
     void createGeomGraphic();
-
+    void onClick() override;
+    void onHoverIn() override;
+    void onHoverOut() override;
 public:
     UIButtonComponent();
     virtual ~UIButtonComponent();
     void init() override;
-    void Update(float elapsedTime) override;
     void setCommand(const CommandRef &command);
 
     void background(const geColor &color);

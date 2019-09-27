@@ -13,9 +13,15 @@ namespace GameEngine {
     {
         Vec2D screenPos_;
         Vec2D screenSize_;
+        bool hover_;
+
     protected:
         PropertySetBase *configureProperties() override;
+        virtual void onClick() {};
+        virtual void onHoverIn() {};
+        virtual void onHoverOut() {};
     public:
+        void Update(float elapsedTime) override;
         virtual ~UIControlComponent() = default;
         void screenPos(const Vec2D &pos);
         Vec2D screenPos() const;
