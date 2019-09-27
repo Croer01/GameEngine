@@ -17,7 +17,8 @@ namespace GameEngine {
 
 enum class InputTextSubjectEvent
 {
-    INPUT
+    INPUT,
+    ERASE
 };
 class InputTextSubject;
 typedef std::shared_ptr<InputTextSubject> InputTextSubjectRef;

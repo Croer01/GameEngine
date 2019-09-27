@@ -78,6 +78,21 @@ void InputManager::update()
                     keyboardState[keyMap[event.key.keysym.sym]] = InputState::DOWN;
                 else
                     keyboardState[keyMap[event.key.keysym.sym]] = InputState::PRESSED;
+
+                if(inputSubject_)
+                {
+                    if(event.key.keysym.sym == SDLK_RETURN)
+                    {
+                        std::string NewLine = "\n";
+                        inputSubject_->notify(InputTextSubjectEvent::INPUT, (void *)NewLine.c_str());
+                    }
+
+                    if(event.key.keysym.sym == SDLK_BACKSPACE)
+                    {
+                        inputSubject_->notify(InputTextSubjectEvent::ERASE);
+                    }
+                }
+
                 break;
             case SDL_KEYUP:
                 keyboardState[keyMap[event.key.keysym.sym]] = InputState::UP;
@@ -160,6 +175,8 @@ bool InputManager::isQuitDown()
 
 void InputManager::startRecordingTextInput(const InputTextSubjectRef &subject)
 {
+    if(!subject)
+        throw std::invalid_argument("subject is required to enable \"text input\" mode");
     inputSubject_ = subject;
     SDL_StartTextInput();
 }
