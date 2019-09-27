@@ -10,41 +10,59 @@
 #include "../private/Singleton.hpp"
 #include <game-engine/api.hpp>
 #include <game-engine/KeyCodes.hpp>
+#include <game-engine/events/Subject.hpp>
+#include <memory>
 
 namespace GameEngine {
 
-class InputManager : public Internal::Singleton<InputManager> {
-        enum class InputState {
-            NONE, UP, DOWN, PRESSED
-        };
-        bool quit_;
-        Vec2D mousePosition_;
-        std::map<MouseButton, InputState> mouseState;
-        std::map<KeyCode, InputState> keyboardState;
+enum class InputTextSubjectEvent
+{
+    INPUT
+};
+class InputTextSubject;
+typedef std::shared_ptr<InputTextSubject> InputTextSubjectRef;
+class InputTextSubject : public Subject<InputTextSubjectEvent>
+{
 
-        void reset();
+};
 
-    public:
-        InputManager();
-
-        bool isQuitDown();
-
-        bool isKeyDown(KeyCode keyCode);
-
-        bool isKeyPressed(KeyCode keyCode);
-
-        bool isKeyUp(KeyCode keyCode);
-
-        bool isMouseButtonDown(MouseButton mouseButton);
-
-        bool isMouseButtonUp(MouseButton mouseButton);
-
-        bool isMouseButtonPressed(MouseButton mouseButton);
-
-        Vec2D getMousePosition();
-
-        void update();
+class InputManager : public Internal::Singleton<InputManager>
+{
+    enum class InputState
+    {
+        NONE, UP, DOWN, PRESSED
     };
+    bool quit_;
+    Vec2D mousePosition_;
+    std::map<MouseButton, InputState> mouseState;
+    std::map<KeyCode, InputState> keyboardState;
+    InputTextSubjectRef inputSubject_;
+    void reset();
+
+public:
+    InputManager();
+
+    bool isQuitDown();
+
+    bool isKeyDown(KeyCode keyCode);
+
+    bool isKeyPressed(KeyCode keyCode);
+
+    bool isKeyUp(KeyCode keyCode);
+
+    bool isMouseButtonDown(MouseButton mouseButton);
+
+    bool isMouseButtonUp(MouseButton mouseButton);
+
+    bool isMouseButtonPressed(MouseButton mouseButton);
+
+    Vec2D getMousePosition();
+
+    void update();
+
+    void startRecordingTextInput(const InputTextSubjectRef &subject);
+    void stopRecordingTextInput();
+};
 }
 
 #endif //SPACEINVADERS_INPUTMANAGER_HPP
