@@ -18,6 +18,8 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 find_path(SDL2_IMAGE_INCLUDE SDL2/SDL_image.h)
 find_library(SDL2_IMAGE_LIBRARY SDL2_image)
 
+find_path(UTF8_CPP_INCLUDE utf8/core.h)
+
 find_package(SDL2 CONFIG REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glm CONFIG REQUIRED)
@@ -28,7 +30,7 @@ find_package(unofficial-box2d CONFIG REQUIRED)
 find_package(Freetype REQUIRED)
 find_package(LibSndFile CONFIG REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIRS})
-include_directories(${SDL2_INCLUDE_DIR} ${SDL2_IMAGE_INCLUDE} ${GLEW_INCLUDE_DIR} ${glm_INCLUDE_DIR})
+include_directories(${SDL2_INCLUDE_DIR} ${SDL2_IMAGE_INCLUDE} ${GLEW_INCLUDE_DIR} ${glm_INCLUDE_DIR} ${UTF8_CPP_INCLUDE})
 include_directories(${SDL2_ROOT}/include)
 
 # public stuff
