@@ -9,7 +9,7 @@
 #include <game-engine/geComponent.hpp>
 
 namespace GameEngine {
-    class UIControlComponent : public geComponentInstantiable<UIControlComponent>
+    class PUBLICAPI UIControlComponent : public geComponentInstantiable<UIControlComponent>
     {
         Vec2D screenPos_;
         Vec2D screenSize_;

@@ -10,7 +10,7 @@
 #include "../../../../private/graphics/font/Text.hpp"
 
 namespace GameEngine {
-class UITextComponent : public UIControlComponent
+class PUBLICAPI UITextComponent : public UIControlComponent
 {
     std::shared_ptr<Internal::Text> graphicText_;
     std::string text_;

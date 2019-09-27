@@ -10,7 +10,7 @@
 #include "../../../../private/graphics/GraphicHolder.hpp"
 
 namespace GameEngine {
-class UIButtonComponent : public UITextComponent
+class PUBLICAPI UIButtonComponent : public UITextComponent
 {
     bool pressed_;
     bool hover_;

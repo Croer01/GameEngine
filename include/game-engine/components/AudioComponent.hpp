@@ -9,7 +9,7 @@
 #include <game-engine/geComponent.hpp>
 #include "../private/audio/AudioSource.hpp"
 namespace GameEngine {
-    class AudioComponent : public geComponentInstantiable<AudioComponent> {
+    class PUBLICAPI AudioComponent : public geComponentInstantiable<AudioComponent> {
         std::string filePath_;
         std::shared_ptr<Internal::AudioSource> source_;
         bool playOnInit_;

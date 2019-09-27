@@ -12,7 +12,7 @@
 #include "../private/graphics/font/Text.hpp"
 
 namespace GameEngine {
-class TextComponent : public geComponentInstantiable<TextComponent>, public Observer<GameObjectEvent> {
+class PUBLICAPI TextComponent : public geComponentInstantiable<TextComponent>, public Observer<GameObjectEvent> {
         Internal::TextParameters textParams_;
         std::shared_ptr<Internal::Text> textGraphic_;
         bool visible_;
