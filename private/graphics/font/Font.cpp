@@ -4,18 +4,36 @@
 
 #include <vector>
 #include <array>
+#include <utf8.h>
 #include "Font.hpp"
 #include "../../utils.hpp"
 #include "Text.hpp"
 namespace GameEngine {
 namespace Internal {
-    Font::Font(const FT_Face &face, unsigned int pixelsSize) {
+
+namespace {
+/* Get from cinderlib Unicode header */
+std::u32string toUtf32( const std::string &utf8Str )
+{
+    std::u32string result;
+    utf8::utf8to32( utf8Str.begin(), utf8Str.end(), back_inserter( result ));
+    return result;
+}
+}
+
+Font::Font(const FT_Library &ftLibrary, const std::string &fontPath, unsigned int pixelsSize)
+    {
+        //TODO: get system fonts from system https://github.com/cinder/Cinder/blob/35e555f1c631cc58a7f2bf3ea916ddbdf74ba477/src/cinder/Font.cpp#L341
+        if (FT_New_Face(ftLibrary, fontPath.c_str(), 0, &face_))
+            throw std::runtime_error("ERROR::FREETYPE: Failed to load font");
+
         //based on "Learn OpenGl": https://learnopengl.com/In-Practice/Text-Rendering
         // Set size to load glyphs as
-        FT_Set_Pixel_Sizes(face, 0, pixelsSize);
+        FT_Set_Pixel_Sizes(face_, 0, pixelsSize);
+//        FT_Select_Charmap(face_, FT_Encoding::FT_ENCODING_UNICODE);
         pixelHeight_ = pixelsSize;
         //FreeType scale the metrics 1/64: https://www.freetype.org/freetype2/docs/tutorial/step2.html
-        lineSpacing_ = face->size->metrics.height / 64;
+        lineSpacing_ = face_->size->metrics.height / 64;
 
         int pixelStoreValue;
         glGetIntegerv(GL_UNPACK_ALIGNMENT, &pixelStoreValue);
@@ -23,55 +41,61 @@ namespace Internal {
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
         // Load first 128 characters of ASCII set
-        for (GLubyte c = 0; c < 128; c++) {
-            // Load character glyph
-            if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {
-                throw std::runtime_error("ERROR::FREETYTPE: Failed to load Glyph");
-            }
-            // Generate texture
-            GLuint texture;
-            glGenTextures(1, &texture);
-            glBindTexture(GL_TEXTURE_2D, texture);
-            glTexImage2D(
-                    GL_TEXTURE_2D,
-                    0,
-                    GL_RED,
-                    face->glyph->bitmap.width,
-                    face->glyph->bitmap.rows,
-                    0,
-                    GL_RED,
-                    GL_UNSIGNED_BYTE,
-                    face->glyph->bitmap.buffer
-            );
-            // Set texture options
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            CheckGlError();
-
-            // Now store character for later use
-            FontCharacter character = {
-                    texture,
-                    glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
-                    glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
-                    static_cast<GLuint>(face->glyph->advance.x)
-            };
-            characters_.insert(std::pair<GLchar, FontCharacter>(c, character));
+        for (GLubyte c = 0; c < 255; c++) {
+            registerCharacter(FT_Get_Char_Index(face_,c));
         }
         glBindTexture(GL_TEXTURE_2D, 0);
         glPixelStorei(GL_UNPACK_ALIGNMENT, pixelStoreValue);
         CheckGlError();
     }
 
-    std::shared_ptr<Text> Font::createText(const std::string &text) {
-        return std::make_shared<Text>(shared_from_this(), createTextDef(text));
+    void Font::registerCharacter(FT_UInt glyph)
+    {
+        // Load character glyph
+        if (FT_Load_Glyph(face_, glyph, FT_LOAD_RENDER)) {
+            throw std::runtime_error("ERROR::FREETYTPE: Failed to load Glyph");
+        }
+        // Generate texture
+        GLuint texture;
+        glGenTextures(1, &texture);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexImage2D(
+            GL_TEXTURE_2D,
+            0,
+            GL_RED,
+            face_->glyph->bitmap.width,
+            face_->glyph->bitmap.rows,
+            0,
+            GL_RED,
+            GL_UNSIGNED_BYTE,
+            face_->glyph->bitmap.buffer
+        );
+        // Set texture options
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        CheckGlError();
+
+        // Now store character for later use
+        FontCharacter fCharacter = {
+            texture,
+            glm::ivec2(face_->glyph->bitmap.width, face_->glyph->bitmap.rows),
+            glm::ivec2(face_->glyph->bitmap_left, face_->glyph->bitmap_top),
+            static_cast<GLuint>(face_->glyph->advance.x)
+        };
+        characters_.insert(std::pair<GLchar, FontCharacter>(glyph, fCharacter));
     }
+
+std::shared_ptr<Text> Font::createText(const std::string &text) {
+    return std::make_shared<Text>(shared_from_this(), createTextDef(text));
+}
 
     Font::~Font() {
         for (auto character : characters_)
             glDeleteTextures(1, &character.second.TextureID);
 
+        FT_Done_Face(face_);
     }
 
     const TextDef Font::createTextDef(const std::string &text) {
@@ -79,13 +103,17 @@ namespace Internal {
         std::vector<std::array<float, 20>> vertices;
         std::vector<GLuint> textureIds;
         int maxWidth = 0;
+
         // Iterate through all characters
-        std::string::const_iterator c;
+        std::u32string::const_iterator c;
         float x = 0.f;
         float y = 0.f;
-        for (c = text.begin(); c != text.end(); c++) {
-            if (*c == '\n') {
-                if(x > maxWidth)
+        auto u32Text = toUtf32(text);
+        for (c = u32Text.begin(); c != u32Text.end(); c++)
+        {
+            if (*c == '\n')
+            {
+                if (x > maxWidth)
                     maxWidth = std::ceil(x);
 
                 y += lineSpacing_;
@@ -93,7 +121,18 @@ namespace Internal {
                 continue;
             }
 
-            FontCharacter ch = characters_[*c];
+            FT_UInt glyph = FT_Get_Char_Index(face_, *c);
+            auto it = characters_.find(glyph);
+
+            FontCharacter ch;
+
+            if (it == characters_.end())
+            {
+                registerCharacter(glyph);
+                ch = characters_[glyph];
+            }
+            else
+                ch = it->second;
 
             GLfloat xpos = x + ch.Bearing.x;
             GLfloat ypos = y - ch.Bearing.y + pixelHeight_;

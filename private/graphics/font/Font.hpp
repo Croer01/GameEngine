@@ -28,11 +28,13 @@ namespace Internal {
     };
 
     class Font : public std::enable_shared_from_this<Font> {
-        std::map<char, FontCharacter> characters_;
+        std::map<FT_UInt, FontCharacter> characters_;
         int lineSpacing_;
         int pixelHeight_;
+        FT_Face face_;
+        void registerCharacter(FT_UInt glyph);
     public:
-        explicit Font(const FT_Face &face, unsigned int pixelsSize);
+        Font(const FT_Library &ftLibrary, const std::string &fontPath, unsigned int pixelsSize);
 
         ~Font();
 
