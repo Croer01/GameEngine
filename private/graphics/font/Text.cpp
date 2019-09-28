@@ -55,17 +55,19 @@ namespace Internal {
         shader->setAttribute(Shader::Attributes::UV, vbo);
         shader->setAttribute(Shader::Attributes::Indices, ibo);
 
-        assert(textDef_.textureIds.size() == textDef_.verticesByCharacter.size());
-
         glBindVertexArray(VAO);
 
-        for (auto i = 0; i < textDef_.textureIds.size(); i++) {
-            glBindTexture(GL_TEXTURE_2D, textDef_.textureIds[i]);
+        for(const CharDef &charDef : textDef_.characters)
+        {
+            if(charDef.isBreakLine)
+                continue;
+
+            glBindTexture(GL_TEXTURE_2D, charDef.textureId);
 
             // Update content of VBO memory
             glBindBuffer(GL_ARRAY_BUFFER, vbo);
-            glBufferSubData(GL_ARRAY_BUFFER, 0, textDef_.verticesByCharacter[i].size() * sizeof(GLfloat),
-                            textDef_.verticesByCharacter[i].data());
+            glBufferSubData(GL_ARRAY_BUFFER, 0, charDef.vertices.size() * sizeof(GLfloat),
+                            charDef.vertices.data());
             shader->draw();
         }
     }
@@ -98,5 +100,30 @@ void Text::setModelTransform(const Vec2D &position, const Vec2D &rotation, const
     {
         return textDef_.height;
     }
+
+Vec2D Text::getPixelPosFromTextIndex(int index) const
+{
+    Vec2D pos;
+
+    if (textDef_.characters[index].isBreakLine)
+    {
+        //get the Y from the previous char if it exists
+        float y = 0.f;
+        if(index-1 >= 0)
+        {
+            std::array<float, 20> vertices = textDef_.characters[index - 1].vertices;
+            y = vertices[6];
+        }
+        pos = Vec2D(textDef_.width,y);
+    }
+    else
+    {
+        std::array<float,20> vertices = textDef_.characters[index].vertices;
+        //get the position of the top-left vertex
+        pos = Vec2D(vertices[5],vertices[6]);
+    }
+    return pos;
+}
+
 }
 }

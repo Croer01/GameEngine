@@ -118,6 +118,8 @@ std::shared_ptr<Text> Font::createText(const std::string &text) {
 
                 y += lineSpacing_;
                 x = 0;
+
+                textDef.characters.emplace_back(true, std::array<float, 20>(), -1);
                 continue;
             }
 
@@ -148,16 +150,13 @@ std::shared_ptr<Text> Font::createText(const std::string &text) {
                     xpos + w, ypos, 0.0f, 1.f, 0.f,
                     xpos + w, ypos + h, 0.0f, 1.f, 1.f
             };
-            vertices.push_back(quadVertices);
-
-            textureIds.push_back(ch.TextureID);
             //FREE_TYPE: Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
             x += (ch.Advance
                     >> 6); // Bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
+
+            textDef.characters.emplace_back(false, quadVertices,ch.TextureID);
         }
 
-        textDef.verticesByCharacter = vertices;
-        textDef.textureIds = textureIds;
         // the first line never calculate the maxWidth
         textDef.width = y == 0? x : maxWidth;
         // the first line is not included in "y"

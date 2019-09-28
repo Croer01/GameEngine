@@ -23,9 +23,20 @@ namespace Internal {
         bool visible;
     };
 
-    struct TextDef {
-        std::vector<std::array<float, 20>> verticesByCharacter;
-        std::vector<unsigned int> textureIds;
+    struct CharDef
+    {
+        bool isBreakLine;
+        std::array<float, 20> vertices;
+        unsigned int textureId;
+
+        CharDef(bool isBreakLine, const std::array<float, 20> &vertices, unsigned int textureId) :
+            isBreakLine(isBreakLine), vertices(vertices), textureId(textureId)
+        {}
+    };
+
+    struct TextDef
+    {
+        std::vector<CharDef> characters;
         int width;
         int height;
     };
@@ -52,6 +63,7 @@ namespace Internal {
 
         void setActive(bool active);
 
+        Vec2D getPixelPosFromTextIndex(int index) const;
         int width() const;
         int height() const;
     };
