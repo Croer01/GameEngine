@@ -18,6 +18,7 @@
 #include "audio/AudioEngine.hpp"
 #include "game-engine/components/ui/UIButtonComponent.hpp"
 #include "game-engine/components/ui/UITextComponent.hpp"
+#include "game-engine/components/ui/UITextInputComponent.hpp"
 #include <game-engine/components/AudioComponent.hpp>
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
@@ -42,6 +43,7 @@ namespace Internal {
         //GUI Components
         ObjectManager::GetInstance().registerComponentBuilder("UIButtonComponent", new ComponentTBuilder<UIButtonComponent>());
         ObjectManager::GetInstance().registerComponentBuilder("UITextComponent", new ComponentTBuilder<UITextComponent>());
+        ObjectManager::GetInstance().registerComponentBuilder("UITextInputComponent", new ComponentTBuilder<UITextInputComponent>());
     }
 
     void Game::init(const std::string &configRoot) {

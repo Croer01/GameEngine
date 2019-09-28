@@ -114,4 +114,9 @@ Vec2D UITextComponent::getTextSize() const
 {
     return Vec2D(graphicText_->width(), graphicText_->height());
 }
+
+std::shared_ptr<Internal::Text> UITextComponent::getGraphicText() const
+{
+    return graphicText_;
+}
 }

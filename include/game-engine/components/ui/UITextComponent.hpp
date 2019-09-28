@@ -22,6 +22,7 @@ protected:
     geComponentRef instantiate() const override;
     PropertySetBase *configureProperties() override;
     void setTextModelTransform(const Vec2D &position, const Vec2D &rotation, const Vec2D &scale);
+    std::shared_ptr<Internal::Text> getGraphicText() const;
 public:
     virtual ~UITextComponent();
     void init() override;

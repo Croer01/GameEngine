@@ -48,6 +48,7 @@ set(ENGINE_SOURCES
         public/components/ui/UIControlComponent.cpp
         public/components/ui/UIButtonComponent.cpp
         public/components/ui/UITextComponent.cpp
+        public/components/ui/UITextInputComponent.cpp
         public/Random.cpp
         public/geAudio.cpp
         public/geIO.cpp)
