@@ -164,7 +164,7 @@ std::shared_ptr<Text> Font::createText(const std::string &text) {
         textDef.width = y == 0? x : maxWidth;
         // the first line is not included in "y"
         textDef.height = std::ceil(lineSpacing_ + y);
-
+        textDef.lineHeight = lineSpacing_;
         return textDef;
     }
 }

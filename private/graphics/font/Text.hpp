@@ -39,6 +39,7 @@ namespace Internal {
         std::vector<CharDef> characters;
         int width;
         int height;
+        int lineHeight;
     };
 
     class Text {
