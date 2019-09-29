@@ -52,7 +52,6 @@ Vec2D UIControlComponent::screenSize() const
 
 void UIControlComponent::Update(float elapsedTime)
 {
-
     const Vec2D &mousePos = InputManager::GetInstance().getMousePosition();
     Vec2D min = screenPos();
     Vec2D max = min + screenSize();
@@ -67,6 +66,27 @@ void UIControlComponent::Update(float elapsedTime)
     }
 
     if(hover_ && InputManager::GetInstance().isMouseButtonDown(MouseButton::LEFT))
+    {
         onClick();
+        if(!focused_)
+        {
+            focused_ = true;
+            onFocusChanged();
+        }
+    }
+    //TODO: change this to a Centralized Focus Manager
+    else if(!hover_ && InputManager::GetInstance().isMouseButtonDown(MouseButton::LEFT))
+    {
+        if(focused_)
+        {
+            focused_ = false;
+            onFocusChanged();
+        }
+    }
+}
+
+bool UIControlComponent::isFocused() const
+{
+    return focused_;
 }
 }

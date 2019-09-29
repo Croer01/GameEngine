@@ -14,12 +14,14 @@ namespace GameEngine {
         Vec2D screenPos_;
         Vec2D screenSize_;
         bool hover_;
+        bool focused_;
 
     protected:
         PropertySetBase *configureProperties() override;
         virtual void onClick() {};
         virtual void onHoverIn() {};
         virtual void onHoverOut() {};
+        virtual void onFocusChanged() {};
     public:
         void Update(float elapsedTime) override;
         virtual ~UIControlComponent() = default;
@@ -28,6 +30,8 @@ namespace GameEngine {
 
         void screenSize(const Vec2D &size);
         Vec2D screenSize() const;
+
+        bool isFocused() const;
     };
 
 }
