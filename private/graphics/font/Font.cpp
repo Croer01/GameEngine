@@ -142,6 +142,9 @@ std::shared_ptr<Text> Font::createText(const std::string &text) {
             GLfloat w = ch.Size.x;
             GLfloat h = ch.Size.y;
 
+            if(*c == ' ')
+                w += ch.Advance >> 6;
+
             //The order of the vertices are flipped from "n" to "u" way to deal with the inverted y axis
             // Update VBO for each character. vertex(3) | uv(2)
             std::array<float, 20> quadVertices = {
