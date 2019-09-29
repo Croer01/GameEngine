@@ -29,18 +29,7 @@ void UITextInputComponent::init()
     inputFocus_ = false;
     moveCursor(0);
     keyStepCounter_ = 0.f;
-}
-
-void UITextInputComponent::onClick()
-{
-    inputFocus_ = !inputFocus_;
-    if(inputFocus_){
-        InputTextSubjectRef subject = std::make_shared<InputTextSubject>();
-        subject->registerObserver(this);
-        InputManager::GetInstance().startRecordingTextInput(subject);
-    }
-    else
-        InputManager::GetInstance().stopRecordingTextInput();
+    graphicCursor_->setActive(false);
 }
 
 void UITextInputComponent::onEvent(const Subject<InputTextSubjectEvent> &target, const InputTextSubjectEvent &event,
@@ -86,19 +75,22 @@ void UITextInputComponent::Update(float elapsedTime)
     constexpr float KEY_STEP_TIME_SECONDS = 0.06f;
     UIControlComponent::Update(elapsedTime);
 
-    if(keyStepCounter_ <= 0.f)
+    if(isFocused())
     {
-        if (InputManager::GetInstance().isKeyPressed(KeyCode::KEY_LEFT))
+        if(keyStepCounter_ <= 0.f)
         {
-            moveCursor(-1);
-            keyStepCounter_ = KEY_STEP_TIME_SECONDS;
-        } else if (InputManager::GetInstance().isKeyPressed(KeyCode::KEY_RIGHT))
-        {
-            moveCursor(1);
-            keyStepCounter_ = KEY_STEP_TIME_SECONDS;
+            if (InputManager::GetInstance().isKeyPressed(KeyCode::KEY_LEFT))
+            {
+                moveCursor(-1);
+                keyStepCounter_ = KEY_STEP_TIME_SECONDS;
+            } else if (InputManager::GetInstance().isKeyPressed(KeyCode::KEY_RIGHT))
+            {
+                moveCursor(1);
+                keyStepCounter_ = KEY_STEP_TIME_SECONDS;
+            }
+        } else{
+            keyStepCounter_ -= elapsedTime;
         }
-    } else{
-        keyStepCounter_ -= elapsedTime;
     }
 }
 
@@ -136,5 +128,23 @@ UITextInputComponent::~UITextInputComponent()
 {
     if(graphicCursor_)
         Internal::GraphicsEngine::GetInstance().unregisterGraphic(graphicCursor_);
+}
+
+void UITextInputComponent::onFocusChanged()
+{
+    if(isFocused())
+    {
+        InputTextSubjectRef subject = std::make_shared<InputTextSubject>();
+        subject->registerObserver(this);
+        InputManager::GetInstance().startRecordingTextInput(subject);
+        graphicCursor_->setActive(true);
+    }
+    else
+    {
+        InputManager::GetInstance().stopRecordingTextInput();
+        graphicCursor_->setActive(false);
+        moveCursor(-cursorPos_);
+        keyStepCounter_ = 0;
+    }
 }
 }

@@ -22,7 +22,7 @@ class PUBLICAPI UITextInputComponent : public UITextComponent, public Observer<I
 protected:
     geComponentRef instantiate() const override;
     PropertySetBase *configureProperties() override;
-    void onClick() override;
+    void onFocusChanged() override;
 public:
     virtual ~UITextInputComponent();
 
