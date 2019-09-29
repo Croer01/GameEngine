@@ -30,7 +30,7 @@ Font::Font(const FT_Library &ftLibrary, const std::string &fontPath, unsigned in
         //based on "Learn OpenGl": https://learnopengl.com/In-Practice/Text-Rendering
         // Set size to load glyphs as
         FT_Set_Pixel_Sizes(face_, 0, pixelsSize);
-//        FT_Select_Charmap(face_, FT_Encoding::FT_ENCODING_UNICODE);
+
         pixelHeight_ = pixelsSize;
         //FreeType scale the metrics 1/64: https://www.freetype.org/freetype2/docs/tutorial/step2.html
         lineSpacing_ = face_->size->metrics.height / 64;
@@ -119,7 +119,14 @@ std::shared_ptr<Text> Font::createText(const std::string &text) {
                 y += lineSpacing_;
                 x = 0;
 
-                textDef.characters.emplace_back(true, std::array<float, 20>(), -1);
+                // all the vertex are in the same position
+                std::array<float, 20> quadVertices = {
+                    x, y, 0.0f, 0.f, 1.f,
+                    x, y, 0.0f, 0.f, 0.f,
+                    x, y, 0.0f, 1.f, 0.f,
+                    x, y, 0.0f, 1.f, 1.f
+                };
+                textDef.characters.emplace_back(true, quadVertices, -1);
                 continue;
             }
 
