@@ -65,8 +65,10 @@ namespace Internal {
         void setActive(bool active);
 
         Vec2D getPixelPosFromTextIndex(int index) const;
+        Vec2D getPixelSizeFromTextIndex(int index) const;
         int width() const;
         int height() const;
+        size_t size() const;
     };
 }
 }

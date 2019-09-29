@@ -4,6 +4,7 @@
 
 #include <game-engine/InputManager.hpp>
 #include <game-engine/components/ui/UITextInputComponent.hpp>
+#include <utf8.h>
 #include "../../../private/graphics/GraphicGeometry.hpp"
 #include "../../../private/graphics/GraphicsEngine.hpp"
 
@@ -46,12 +47,35 @@ void UITextInputComponent::onEvent(const Subject<InputTextSubjectEvent> &target,
 {
     if(event == InputTextSubjectEvent::INPUT)
     {
-        text(text().insert(cursorPos_, static_cast<char *>(args)));
+        // calculate the Unicode length to set the new char
+        std::string tmpText = text();
+        auto it = tmpText.begin();
+        int i = 0;
+        while(i < cursorPos_)
+        {
+            utf8::next(it, tmpText.end());
+            i++;
+        }
+        tmpText.insert(it - tmpText.begin(), std::string(static_cast<char *>(args)));
+        text(tmpText);
         moveCursor(1);
     }
     else if(event == InputTextSubjectEvent::ERASE && cursorPos_ > 0)
     {
-        text(text().erase(cursorPos_-1, 1));
+        // calculate the Unicode length to erase the char in the cursor position
+        std::string tmpText = text();
+        auto it = tmpText.begin();
+        int i = 0;
+        while(i < cursorPos_ - 1)
+        {
+            utf8::next(it, tmpText.end());
+            i++;
+        }
+
+        // calculate the Unicode size of the char to remove from the cursor position
+        auto itEnd = it;
+        utf8::next(itEnd,tmpText.end());
+        text(tmpText.erase(it - tmpText.begin(), itEnd - it));
         moveCursor(-1);
     }
 }
@@ -69,12 +93,12 @@ void UITextInputComponent::Update(float elapsedTime)
 void UITextInputComponent::moveCursor(int movement)
 {
     createCursorGeometry();
-    cursorPos_ = std::max(0,std::min(static_cast<int>(text().size()),cursorPos_ + movement));
+    cursorPos_ = std::max(0,std::min(static_cast<int>(getGraphicText()->size()), cursorPos_ + movement));
     Vec2D cursorPixelPos;
-    if(cursorPos_ == text().size())
-        cursorPixelPos = Vec2D(getTextSize().x,getGraphicText()->getPixelPosFromTextIndex(cursorPos_ -1).y);
-    else
-        cursorPixelPos = getGraphicText()->getPixelPosFromTextIndex(cursorPos_);
+
+    cursorPixelPos = getGraphicText()->getPixelPosFromTextIndex(cursorPos_ - 1);
+    cursorPixelPos.x += getGraphicText()->getPixelSizeFromTextIndex(cursorPos_ - 1).x;
+
     graphicCursor_->setModelTransform(screenPos() + cursorPixelPos, Vec2D(0.f, 0.f), Vec2D(1,fontSize()));
 }
 

@@ -104,26 +104,34 @@ void Text::setModelTransform(const Vec2D &position, const Vec2D &rotation, const
 Vec2D Text::getPixelPosFromTextIndex(int index) const
 {
     Vec2D pos;
+    int desiredIndex = index >= 0 && textDef_.characters[index].isBreakLine? index - 1 : index;
 
-    if (textDef_.characters[index].isBreakLine)
-    {
-        //get the Y from the previous char if it exists
-        float y = 0.f;
-        if(index-1 >= 0)
-        {
-            std::array<float, 20> vertices = textDef_.characters[index - 1].vertices;
-            y = vertices[6];
-        }
-        pos = Vec2D(textDef_.width,y);
-    }
-    else
+    if(desiredIndex >= 0)
     {
         std::array<float,20> vertices = textDef_.characters[index].vertices;
         //get the position of the top-left vertex
-        pos = Vec2D(vertices[5],vertices[6]);
+        pos = Vec2D(vertices[5],(static_cast<int>(vertices[6]) / textDef_.lineHeight) * textDef_.lineHeight);
     }
+
     return pos;
 }
 
+Vec2D Text::getPixelSizeFromTextIndex(int index) const
+{
+    Vec2D size;
+    int desiredIndex = index >= 0 && textDef_.characters[index].isBreakLine? index - 1 : index;
+
+    if(desiredIndex >= 0)
+    {
+        std::array<float, 20> vertices = textDef_.characters[index].vertices;
+        size = Vec2D(vertices[10] - vertices[0], vertices[1] - vertices[6]);
+    }
+    return size;
+}
+
+size_t Text::size() const
+{
+    return textDef_.characters.size();
+}
 }
 }
