@@ -15,6 +15,7 @@ class PUBLICAPI UITextInputComponent : public UITextComponent, public Observer<I
     bool inputFocus_;
     int cursorPos_;
     std::shared_ptr<Internal::GraphicHolder> graphicCursor_;
+    float keyStepCounter_;
 
     void moveCursor(int movement);
     void createCursorGeometry();

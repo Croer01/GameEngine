@@ -28,6 +28,7 @@ void UITextInputComponent::init()
     UITextComponent::init();
     inputFocus_ = false;
     moveCursor(0);
+    keyStepCounter_ = 0.f;
 }
 
 void UITextInputComponent::onClick()
@@ -82,12 +83,23 @@ void UITextInputComponent::onEvent(const Subject<InputTextSubjectEvent> &target,
 
 void UITextInputComponent::Update(float elapsedTime)
 {
+    constexpr float KEY_STEP_TIME_SECONDS = 0.06f;
     UIControlComponent::Update(elapsedTime);
 
-    if(InputManager::GetInstance().isKeyDown(KeyCode::KEY_LEFT))
-        moveCursor(-1);
-    else if(InputManager::GetInstance().isKeyDown(KeyCode::KEY_RIGHT))
-        moveCursor(1);
+    if(keyStepCounter_ <= 0.f)
+    {
+        if (InputManager::GetInstance().isKeyPressed(KeyCode::KEY_LEFT))
+        {
+            moveCursor(-1);
+            keyStepCounter_ = KEY_STEP_TIME_SECONDS;
+        } else if (InputManager::GetInstance().isKeyPressed(KeyCode::KEY_RIGHT))
+        {
+            moveCursor(1);
+            keyStepCounter_ = KEY_STEP_TIME_SECONDS;
+        }
+    } else{
+        keyStepCounter_ -= elapsedTime;
+    }
 }
 
 void UITextInputComponent::moveCursor(int movement)
