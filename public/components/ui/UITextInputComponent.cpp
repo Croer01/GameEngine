@@ -43,6 +43,7 @@ void UITextInputComponent::init()
     cursorBlinkCounter_ = BLINK_TIME_SECONDS;
 
     createBottomLineGeometry();
+    updateBottomLineGeometry();
 }
 
 void UITextInputComponent::onEvent(const Subject<InputTextSubjectEvent> &target, const InputTextSubjectEvent &event,
