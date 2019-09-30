@@ -41,6 +41,8 @@ void UITextInputComponent::init()
     keyStepCounter_ = 0.f;
     graphicCursor_->setActive(false);
     cursorBlinkCounter_ = BLINK_TIME_SECONDS;
+
+    createBottomLineGeometry();
 }
 
 void UITextInputComponent::onEvent(const Subject<InputTextSubjectEvent> &target, const InputTextSubjectEvent &event,
@@ -79,6 +81,8 @@ void UITextInputComponent::onEvent(const Subject<InputTextSubjectEvent> &target,
         text(tmpText.erase(it - tmpText.begin(), itEnd - it));
         moveCursor(-1);
     }
+    // always update the bottom line
+    updateBottomLineGeometry();
 }
 
 void UITextInputComponent::Update(float elapsedTime)
@@ -132,6 +136,30 @@ void UITextInputComponent::moveCursor(int movement)
     cursorPixelPos.x += getGraphicText()->getPixelSizeFromTextIndex(cursorPos_ - 1).x;
 
     graphicCursor_->setModelTransform(screenPos() + cursorPixelPos, Vec2D(0.f, 0.f), Vec2D(1,fontSize()));
+}
+
+void UITextInputComponent::createBottomLineGeometry()
+{
+    if(graphicBottomLine_)
+        return;
+
+    std::vector<Vec2D> path = {
+        Vec2D(.0f, .0f),
+        Vec2D(1.f, .0f),
+        Vec2D(1.f, 1.f),
+        Vec2D(.0f, 1.f)
+    };
+
+    auto graphicLoaded_ = std::make_shared<Internal::GraphicGeometry>(path);
+    graphicBottomLine_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
+    graphicBottomLine_->setModelTransform(Vec2D(0,0), Vec2D(0.f, 0.f), Vec2D(1,1));
+    Internal::GraphicsEngine::GetInstance().registerGraphic(graphicBottomLine_);
+}
+
+void UITextInputComponent::updateBottomLineGeometry()
+{
+    const std::shared_ptr<Internal::Text> &textGraphic = getGraphicText();
+    graphicBottomLine_->setModelTransform(screenPos() + Vec2D(0, textGraphic->height()), Vec2D(0.f, 0.f), Vec2D(textGraphic->width(), 1));
 }
 
 void UITextInputComponent::createCursorGeometry()

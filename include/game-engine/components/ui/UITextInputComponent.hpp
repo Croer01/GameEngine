@@ -16,12 +16,15 @@ class PUBLICAPI UITextInputComponent : public UITextComponent, public Observer<I
     float cursorBlinkCounter_;
     int cursorPos_;
     std::shared_ptr<Internal::GraphicHolder> graphicCursor_;
+    std::shared_ptr<Internal::GraphicHolder> graphicBottomLine_;
     std::shared_ptr<Internal::GraphicHolder> backgroundGraphic_;
     geColor background_;
     float keyStepCounter_;
 
     void moveCursor(int movement);
     void createCursorGeometry();
+    void createBottomLineGeometry();
+    void updateBottomLineGeometry();
     void createBackgroundGraphic();
 protected:
     geComponentRef instantiate() const override;
