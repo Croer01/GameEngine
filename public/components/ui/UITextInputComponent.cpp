@@ -30,6 +30,7 @@ void UITextInputComponent::init()
     moveCursor(0);
     keyStepCounter_ = 0.f;
     graphicCursor_->setActive(false);
+    cursorBlinkCounter_ = BLINK_TIME_SECONDS;
 }
 
 void UITextInputComponent::onEvent(const Subject<InputTextSubjectEvent> &target, const InputTextSubjectEvent &event,
@@ -83,14 +84,31 @@ void UITextInputComponent::Update(float elapsedTime)
             {
                 moveCursor(-1);
                 keyStepCounter_ = KEY_STEP_TIME_SECONDS;
-            } else if (InputManager::GetInstance().isKeyPressed(KeyCode::KEY_RIGHT))
+
+                // Ensure the cursor is visible after it is moved
+                graphicCursor_->setActive(true);
+                cursorBlinkCounter_ = BLINK_TIME_SECONDS;
+            }
+            else if (InputManager::GetInstance().isKeyPressed(KeyCode::KEY_RIGHT))
             {
                 moveCursor(1);
                 keyStepCounter_ = KEY_STEP_TIME_SECONDS;
+
+                // Ensure the cursor is visible after it is moved
+                graphicCursor_->setActive(true);
+                cursorBlinkCounter_ = BLINK_TIME_SECONDS;
             }
         } else{
             keyStepCounter_ -= elapsedTime;
         }
+
+        if(cursorBlinkCounter_ <= 0.f)
+        {
+            graphicCursor_->setActive(!graphicCursor_->getActive());
+            cursorBlinkCounter_ = BLINK_TIME_SECONDS;
+        }
+
+        cursorBlinkCounter_ -= elapsedTime;
     }
 }
 
@@ -145,6 +163,7 @@ void UITextInputComponent::onFocusChanged()
         graphicCursor_->setActive(false);
         moveCursor(-cursorPos_);
         keyStepCounter_ = 0;
+        cursorBlinkCounter_ = BLINK_TIME_SECONDS;
     }
 }
 }

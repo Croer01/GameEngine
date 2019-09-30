@@ -12,6 +12,8 @@
 namespace GameEngine {
 class PUBLICAPI UITextInputComponent : public UITextComponent, public Observer<InputTextSubjectEvent>
 {
+    const float BLINK_TIME_SECONDS = 0.5;
+    float cursorBlinkCounter_;
     bool inputFocus_;
     int cursorPos_;
     std::shared_ptr<Internal::GraphicHolder> graphicCursor_;

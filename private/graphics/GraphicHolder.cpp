@@ -60,6 +60,11 @@ namespace Internal {
         active_ = active;
     }
 
+    bool GraphicHolder::getActive() const
+    {
+        return active_;
+    }
+
     void GraphicHolder::setGrid(int columns, int rows) {
         cellSize_ = glm::vec2(graphic_->getWidth() / columns, graphic_->getHeight() / rows);
         texScale_ = glm::vec2(cellSize_.x / graphic_->getWidth(), cellSize_.y / graphic_->getHeight());

@@ -58,6 +58,8 @@ namespace Internal {
 
         void setActive(bool active);
 
+        bool getActive() const;
+
         void setAnchor(GameEngine::Internal::GraphicAnchor anchor);
 
         void setTintColor(geColor tint);
