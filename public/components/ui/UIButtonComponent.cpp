@@ -17,13 +17,13 @@ UIButtonComponent::UIButtonComponent()
 void UIButtonComponent::init()
 {
     UITextComponent::init();
-    createGeomGraphic();
+    createBackgroundGraphic();
 }
 
 void UIButtonComponent::changeColor(bool isHover)
 {
-    createGeomGraphic();
-    graphicGeom_->setTintColor(isHover ? hoverBackground_ : background_);
+    createBackgroundGraphic();
+    backgroundGraphic_->setTintColor(isHover ? hoverBackground_ : background_);
 }
 
 void UIButtonComponent::setCommand(const CommandRef &command)
@@ -33,7 +33,7 @@ void UIButtonComponent::setCommand(const CommandRef &command)
 
 UIButtonComponent::~UIButtonComponent()
 {
-    Internal::GraphicsEngine::GetInstance().unregisterGraphic(graphicGeom_);
+    Internal::GraphicsEngine::GetInstance().unregisterGraphic(backgroundGraphic_);
 }
 
 geComponentRef UIButtonComponent::instantiate() const
@@ -65,9 +65,9 @@ PropertySetBase *UIButtonComponent::configureProperties()
     return properties;
 }
 
-void UIButtonComponent::createGeomGraphic()
+void UIButtonComponent::createBackgroundGraphic()
 {
-    if(graphicGeom_)
+    if(backgroundGraphic_)
         return;
 
     std::vector<Vec2D> path = {
@@ -78,9 +78,9 @@ void UIButtonComponent::createGeomGraphic()
     };
 
     auto graphicLoaded_ = std::make_shared<Internal::GraphicGeometry>(path);
-    graphicGeom_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
-    graphicGeom_->setModelTransform(screenPos(), Vec2D(0.f, 0.f), screenSize());
-    Internal::GraphicsEngine::GetInstance().registerGraphic(graphicGeom_);
+    backgroundGraphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
+    backgroundGraphic_->setModelTransform(screenPos(), Vec2D(0.f, 0.f), screenSize());
+    Internal::GraphicsEngine::GetInstance().registerGraphic(backgroundGraphic_);
 
     // move the text position to center inside the button
     Vec2D textMargins = screenSize() - getTextSize();

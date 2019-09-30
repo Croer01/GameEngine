@@ -20,13 +20,23 @@ PropertySetBase *UITextInputComponent::configureProperties()
     auto *base = UITextComponent::configureProperties();
     auto *properties = new PropertySet<UITextInputComponent>(this, base);
 
+    properties->add(new Property<UITextInputComponent, geColor>(
+        "background",
+        this,
+        &UITextInputComponent::background,
+        &UITextInputComponent::background,
+        geColor(1.f)
+    ));
+
     return properties;
 }
 
 void UITextInputComponent::init()
 {
     UITextComponent::init();
-    inputFocus_ = false;
+    createBackgroundGraphic();
+    backgroundGraphic_->setTintColor(background_);
+
     moveCursor(0);
     keyStepCounter_ = 0.f;
     graphicCursor_->setActive(false);
@@ -165,5 +175,33 @@ void UITextInputComponent::onFocusChanged()
         keyStepCounter_ = 0;
         cursorBlinkCounter_ = BLINK_TIME_SECONDS;
     }
+}
+
+void UITextInputComponent::createBackgroundGraphic()
+{
+    if(backgroundGraphic_)
+        return;
+
+    std::vector<Vec2D> path = {
+        Vec2D(.0f, .0f),
+        Vec2D(1.f, .0f),
+        Vec2D(1.f, 1.f),
+        Vec2D(.0f, 1.f)
+    };
+
+    auto graphicLoaded_ = std::make_shared<Internal::GraphicGeometry>(path);
+    backgroundGraphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
+    backgroundGraphic_->setModelTransform(screenPos(), Vec2D(0.f, 0.f), screenSize());
+    Internal::GraphicsEngine::GetInstance().registerGraphic(backgroundGraphic_);
+}
+
+void UITextInputComponent::background(const geColor &color)
+{
+    background_ = color;
+}
+
+geColor UITextInputComponent::background() const
+{
+    return background_;
 }
 }

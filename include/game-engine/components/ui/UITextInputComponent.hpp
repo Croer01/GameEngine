@@ -14,13 +14,15 @@ class PUBLICAPI UITextInputComponent : public UITextComponent, public Observer<I
 {
     const float BLINK_TIME_SECONDS = 0.5;
     float cursorBlinkCounter_;
-    bool inputFocus_;
     int cursorPos_;
     std::shared_ptr<Internal::GraphicHolder> graphicCursor_;
+    std::shared_ptr<Internal::GraphicHolder> backgroundGraphic_;
+    geColor background_;
     float keyStepCounter_;
 
     void moveCursor(int movement);
     void createCursorGeometry();
+    void createBackgroundGraphic();
 protected:
     geComponentRef instantiate() const override;
     PropertySetBase *configureProperties() override;
@@ -31,6 +33,9 @@ public:
     void Update(float elapsedTime) override;
     void init() override;
     void onEvent(const Subject<InputTextSubjectEvent> &target, const InputTextSubjectEvent &event, void *args) override;
+
+    void background(const geColor &color);
+    geColor background() const;
 };
 }
 
