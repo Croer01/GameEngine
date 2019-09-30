@@ -167,6 +167,10 @@ std::shared_ptr<Text> Font::createText(const std::string &text) {
             textDef.characters.emplace_back(false, quadVertices,ch.TextureID);
         }
 
+        // compare the last width
+        if(x > maxWidth)
+            maxWidth = x;
+
         // the first line never calculate the maxWidth
         textDef.width = y == 0? x : maxWidth;
         // the first line is not included in "y"
