@@ -64,7 +64,6 @@ namespace GameEngine {
     template <typename Class>
     class PUBLICAPI PropertyBase{
     protected:
-        Class *target_;
         PropertyTypes type_;
         std::string name_;
         bool required_;
@@ -72,16 +71,10 @@ namespace GameEngine {
         explicit PropertyBase(const std::string &name) : PropertyBase(name, false){};
         PropertyBase(const std::string &name, bool required) : name_(name), required_(required), type_(PropertyTypes::UNKNOWN){};
         virtual ~PropertyBase(){
-            target_ = nullptr;
         };
 
-        virtual PropertyBase<Class> *copy(Class *newTarget) const {
-            throw std::runtime_error("not implemented. Cast to Property class to call this method");
-        };
+        virtual void copy(const std::shared_ptr<Class> &original, const std::shared_ptr<Class> &target) const = 0;
 
-        void target(Class *target){
-            target_ = target;
-        };
         PropertyTypes type() const {
             return type_;
         };
@@ -96,91 +89,51 @@ namespace GameEngine {
     template <typename Class, typename MemberType>
     class PUBLICAPI Property : public PropertyBase<Class>{
     public:
-        typedef MemberType Class::*Member;
         typedef MemberType (Class::*Getter)() const;
         typedef void (Class::*Setter)(const MemberType &);
     private:
-        Member value_;
         Getter getter_;
         Setter setter_;
         MemberType default_;
-        bool useMethods;
     public:
-        Property(const std::string &name, Class *target, Member value, MemberType defaultValue) :
-                Property(name, target, value, defaultValue, false){
+        Property(const std::string &name, Getter getter, Setter setter, MemberType defaultValue) :
+                Property(name, getter, setter, defaultValue, false){
         };
 
-        Property(const std::string &name, Class *target, Member value, MemberType defaultValue, bool required) :
-                PropertyBase<Class>(name,required),
-                value_(value),
-                getter_(nullptr),
-                setter_(nullptr),
-                useMethods(false) {
-            if(value == nullptr)
-                throw std::invalid_argument("the member must not be null.");
-            default_ = defaultValue;
-            this->target_ = target;
-            this->type_ = PropertyTypeDeductive<MemberType>::type;
-            set(default_);
-        };
-
-        Property(const std::string &name, Class *target, Getter getter, Setter setter, MemberType defaultValue) :
-                Property(name, target, getter, setter, defaultValue, false){
-        };
-
-        Property(const std::string &name, Class *target, Getter getter, Setter setter, MemberType defaultValue, bool required) :
+        Property(const std::string &name, Getter getter, Setter setter, MemberType defaultValue, bool required) :
                 PropertyBase<Class>(name, required),
-                value_(nullptr),
                 getter_(getter),
-                setter_(setter),
-                useMethods(true) {
+                setter_(setter)
+        {
             default_ = defaultValue;
-            this->target_ = target;
             this->type_ = PropertyTypeDeductive<MemberType>::type;
-            if(setter_ != nullptr)
-                set(default_);
         };
         virtual ~Property(){
             getter_ = nullptr;
             setter_ = nullptr;
-            value_ = nullptr;
         };
-        MemberType get() const {
-            if(useMethods){
-                if(getter_ == nullptr)
-                    throw std::runtime_error("There is not a getter registered to use in property " + this->name_);
+        MemberType get(Class *target) const {
+            if(getter_ == nullptr)
+                throw std::runtime_error("There is not a getter registered to use in property " + this->name_);
 
-                return (this->target_->*getter_)();
-            } else {
-                return this->target_->*value_;
-            }
+            return (target->*getter_)();
         };
 
         MemberType defaultValue() const {
             return default_;
         };
 
-        void set(MemberType value) {
-            if(useMethods) {
-                if(setter_ == nullptr)
-                    throw std::runtime_error("There is not a setter registered to use in property " + this->name_);
-                (this->target_->*setter_)(value);
-            } else {
-                this->target_->*value_ = value;
-            }
+        void set(Class *target, MemberType value) const{
+            if(setter_ == nullptr)
+                throw std::runtime_error("There is not a setter registered to use in property " + this->name_);
+            (target->*setter_)(value);
         };
 
-        virtual PropertyBase<Class> *copy(Class *newTarget) const override {
-            Property<Class, MemberType> *clone = nullptr;
-            if (useMethods)
-                clone = new Property<Class, MemberType>(this->name_, newTarget, getter_, setter_, default_, this->required_);
-            else
-                clone = new Property<Class, MemberType>(this->name_, newTarget, value_, default_, this->required_);
-
-            clone->set(get());
-            return clone;
+        virtual void copy(const std::shared_ptr<Class> &original, const std::shared_ptr<Class> &target) const {
+            set(target.get(), get(original.get()));
         }
     };
+
 }
 
 #endif //SPACEINVADERS_PROPERTY_HPP

@@ -20,7 +20,7 @@ class PUBLICAPI UIButtonComponent : public UITextComponent
     void changeColor(bool isHover);
 protected:
     geComponentRef instantiate() const override;
-    PropertySetBase *configureProperties() override;
+    PropertySetBase *instantiateProperties() override;
     void createBackgroundGraphic();
     void onClick() override;
     void onHoverIn() override;

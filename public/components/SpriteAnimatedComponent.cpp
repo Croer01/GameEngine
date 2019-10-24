@@ -19,12 +19,11 @@ namespace GameEngine {
         gameObject()->registerObserver(this);
     }
 
-    PropertySetBase *SpriteAnimatedComponent::configureProperties() {
-        auto *properties = new PropertySet<SpriteAnimatedComponent>(this);
+    PropertySetBase *SpriteAnimatedComponent::instantiateProperties() {
+        auto *properties = new PropertySet<SpriteAnimatedComponent>();
 
         properties->add(new Property<SpriteAnimatedComponent, std::string>(
                 "filePath",
-                this,
                 &SpriteAnimatedComponent::filepath,
                 &SpriteAnimatedComponent::filepath,
                 "",
@@ -32,14 +31,12 @@ namespace GameEngine {
 
         properties->add(new Property<SpriteAnimatedComponent, int>(
                 "rows",
-                this,
                 &SpriteAnimatedComponent::rows,
                 &SpriteAnimatedComponent::rows,
                 1));
 
         properties->add(new Property<SpriteAnimatedComponent, int>(
                 "columns",
-                this,
                 &SpriteAnimatedComponent::columns,
                 &SpriteAnimatedComponent::columns,
                 1));
@@ -47,21 +44,18 @@ namespace GameEngine {
         //get the time between frames. default is 1 sec.
         properties->add(new Property<SpriteAnimatedComponent, float>(
                 "framesPerSecond",
-                this,
                 &SpriteAnimatedComponent::framesPerSecond,
                 &SpriteAnimatedComponent::framesPerSecond,
                 1.f));
 
         properties->add(new Property<SpriteAnimatedComponent, bool>(
                 "visible",
-                this,
                 &SpriteAnimatedComponent::isVisible,
                 &SpriteAnimatedComponent::setVisible,
                 true));
 
         properties->add(new Property<SpriteAnimatedComponent, bool>(
                 "playOnInit",
-                this,
                 &SpriteAnimatedComponent::playOnInit,
                 &SpriteAnimatedComponent::playOnInit,
                 true));

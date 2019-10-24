@@ -24,14 +24,13 @@ void UITextComponent::init()
     UpdateTextGraphic();
 }
 
-PropertySetBase *UITextComponent::configureProperties()
+PropertySetBase *UITextComponent::instantiateProperties()
 {
-    PropertySetBase *base = UIControlComponent::configureProperties();
-    auto *properties = new PropertySet<UITextComponent>(this, base);
+    PropertySetBase *base = UIControlComponent::instantiateProperties();
+    auto *properties = new PropertySet<UITextComponent>(base);
 
     properties->add(new Property<UITextComponent, std::string>(
         "text",
-        this,
         &UITextComponent::text,
         &UITextComponent::text,
         "",
@@ -40,7 +39,6 @@ PropertySetBase *UITextComponent::configureProperties()
 
     properties->add(new Property<UITextComponent, std::string>(
         "font",
-        this,
         &UITextComponent::font,
         &UITextComponent::font,
         "",
@@ -48,7 +46,6 @@ PropertySetBase *UITextComponent::configureProperties()
 
     properties->add(new Property<UITextComponent, int>(
         "fontSize",
-        this,
         &UITextComponent::fontSize,
         &UITextComponent::fontSize,
         0));

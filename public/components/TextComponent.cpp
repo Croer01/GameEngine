@@ -17,12 +17,11 @@ namespace GameEngine {
         gameObject()->registerObserver(this);
     }
 
-    PropertySetBase *TextComponent::configureProperties() {
-        auto *properties = new PropertySet<TextComponent>(this);
+    PropertySetBase *TextComponent::instantiateProperties() {
+        auto *properties = new PropertySet<TextComponent>();
 
         properties->add(new Property<TextComponent, std::string>(
                 "font",
-                this,
                 &TextComponent::font,
                 &TextComponent::font,
                 "",
@@ -30,14 +29,12 @@ namespace GameEngine {
 
         properties->add(new Property<TextComponent, int>(
                 "fontSize",
-                this,
                 &TextComponent::fontSize,
                 &TextComponent::fontSize,
                 0));
 
         properties->add(new Property<TextComponent, std::string>(
                 "text",
-                this,
                 &TextComponent::text,
                 &TextComponent::text,
                 ""));

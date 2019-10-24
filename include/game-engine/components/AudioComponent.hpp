@@ -34,7 +34,7 @@ namespace GameEngine {
         void filepath(const std::string &path);
         std::string filepath() const;
     protected:
-        PropertySetBase *configureProperties() override;
+        PropertySetBase *instantiateProperties() override;
     };
 }
 

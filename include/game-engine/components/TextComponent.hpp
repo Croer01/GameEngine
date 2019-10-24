@@ -43,7 +43,7 @@ class PUBLICAPI TextComponent : public geComponentInstantiable<TextComponent>, p
         bool isVisible() const;
 
 protected:
-    PropertySetBase *configureProperties() override;
+    PropertySetBase *instantiateProperties() override;
 
 protected:
         void onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) override;

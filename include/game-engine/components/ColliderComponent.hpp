@@ -58,7 +58,7 @@ class PUBLICAPI ColliderComponent : public geComponentInstantiable<ColliderCompo
         void category(const std::string &colliderCategory);
 
     protected:
-        PropertySetBase *configureProperties() override;
+        PropertySetBase *instantiateProperties() override;
 
     protected:
         void onEvent(const Subject<Internal::ColliderEvent> &target, const Internal::ColliderEvent &event, void *args) override;

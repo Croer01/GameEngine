@@ -24,7 +24,7 @@ namespace GameEngine {
         void
         onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) override;
 
-        PropertySetBase *configureProperties() override;
+        PropertySetBase *instantiateProperties() override;
 
     public:
         virtual ~GeometryComponent();

@@ -25,10 +25,9 @@ namespace GameEngine {
         void updateGraphicRef();
 
     protected:
-        void
-        onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) override;
+        void onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) override;
 
-        virtual PropertySetBase *configureProperties() override;
+        virtual PropertySetBase *instantiateProperties();
 
     public:
         virtual ~SpriteComponent();

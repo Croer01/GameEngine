@@ -28,18 +28,16 @@ namespace {
     }
 }
 
-    PropertySetBase *ColliderComponent::configureProperties() {
-        auto *properties = new PropertySet<ColliderComponent>(this);
+    PropertySetBase *ColliderComponent::instantiateProperties() {
+        auto *properties = new PropertySet<ColliderComponent>();
 
         properties->add(new Property<ColliderComponent, Vec2D>(
                 "extends",
-                this,
                 &ColliderComponent::extends,
                 &ColliderComponent::extends,
                 Vec2D()));
         properties->add(new Property<ColliderComponent, Vec2D>(
                 "offset",
-                this,
                 &ColliderComponent::offset,
                 &ColliderComponent::offset,
                 Vec2D()));
@@ -47,19 +45,16 @@ namespace {
         // Collider configuration
         properties->add(new Property<ColliderComponent, std::string>(
                 "colliderShape",
-                this,
                 &ColliderComponent::shape,
                 &ColliderComponent::shape,
                 "Box"));
         properties->add(new Property<ColliderComponent, std::string>(
                 "colliderType",
-                this,
                 &ColliderComponent::type,
                 &ColliderComponent::type,
                 "Static"));
         properties->add(new Property<ColliderComponent, std::string>(
                 "category",
-                this,
                 &ColliderComponent::category,
                 &ColliderComponent::category,
                 ""));

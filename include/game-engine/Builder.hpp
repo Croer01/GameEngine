@@ -27,10 +27,7 @@ namespace GameEngine {
         virtual geComponentRef Create(const geData &data) {
 
             const std::shared_ptr<ComponentType> &instance = std::make_shared<ComponentType>();
-            PropertySet<ComponentType> &properties = static_cast<PropertySet<ComponentType>&>(instance->properties());
-
-            properties.fillFrom(data);
-
+            instance->copy(data);
             return instance;
         };
     };

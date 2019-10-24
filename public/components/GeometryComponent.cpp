@@ -14,26 +14,23 @@ namespace GameEngine {
         gameObject()->registerObserver(this);
     }
 
-    PropertySetBase *GeometryComponent::configureProperties() {
-        auto *properties = new PropertySet<GeometryComponent>(this);
+    PropertySetBase *GeometryComponent::instantiateProperties() {
+        auto *properties = new PropertySet<GeometryComponent>();
 
         properties->add(new Property<GeometryComponent, std::vector<Vec2D>>(
                 "path",
-                this,
                 &GeometryComponent::path,
                 &GeometryComponent::path,
                 {},
                 true));
         properties->add(new Property<GeometryComponent, bool>(
                 "visible",
-                this,
                 &GeometryComponent::visible,
                 &GeometryComponent::visible,
                 true));
 
         properties->add(new Property<GeometryComponent, std::string>(
                 "anchor",
-                this,
                 &GeometryComponent::anchor,
                 &GeometryComponent::anchor,
                 "",

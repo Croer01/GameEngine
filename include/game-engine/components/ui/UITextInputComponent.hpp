@@ -28,7 +28,7 @@ class PUBLICAPI UITextInputComponent : public UITextComponent, public Observer<I
     void createBackgroundGraphic();
 protected:
     geComponentRef instantiate() const override;
-    PropertySetBase *configureProperties() override;
+    PropertySetBase *instantiateProperties() override;
     void onFocusChanged() override;
 public:
     virtual ~UITextInputComponent();

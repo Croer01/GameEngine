@@ -29,7 +29,7 @@ namespace GameEngine {
         void updateGraphicRef();
 
     protected:
-        PropertySetBase *configureProperties() override;
+        PropertySetBase *instantiateProperties() override;
 
         void
         onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) override;

@@ -15,14 +15,13 @@ geComponentRef UITextInputComponent::instantiate() const
     return std::make_shared<UITextInputComponent>();
 }
 
-PropertySetBase *UITextInputComponent::configureProperties()
+PropertySetBase *UITextInputComponent::instantiateProperties()
 {
-    auto *base = UITextComponent::configureProperties();
-    auto *properties = new PropertySet<UITextInputComponent>(this, base);
+    auto *base = UITextComponent::instantiateProperties();
+    auto *properties = new PropertySet<UITextInputComponent>(base);
 
     properties->add(new Property<UITextInputComponent, geColor>(
         "background",
-        this,
         &UITextInputComponent::background,
         &UITextInputComponent::background,
         geColor(1.f)

@@ -19,30 +19,66 @@ namespace GameEngine {
 
     class PUBLICAPI geComponent{
         GameEngine::geGameObject *gameObject_;
-        std::unique_ptr<PropertySetBase> properties_;
     protected:
         virtual void onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) {};
-        virtual PropertySetBase *configureProperties();
-        virtual geComponentRef instantiate() const;
+        virtual PropertySetBase *instantiateProperties();
+        virtual geComponentRef instantiate() const = 0;
     public:
+        virtual ~geComponent(){};
         virtual void Update(float elapsedTime){};
         virtual void init(){};
         void gameObject(geGameObject *gameObject);
         geGameObject *gameObject() const;
-        PropertySetBase &properties();
-        void properties(PropertySetBase &properties);
-        geComponentRef clone() const;
+        virtual geComponentRef clone() const = 0;
+        virtual void copy(const geData& data) = 0;
     };
 
     template<typename T>
-    class PUBLICAPI geComponentInstantiable : public geComponent{
-    protected:
-        geComponentRef instantiate() const override {
-            return std::make_shared<T>();
+    class PUBLICAPI geComponentInstantiable : public geComponent
+    {
+        static std::shared_ptr<PropertySetBase> PROPERTIES;
+        std::unique_ptr<PropertiesBinderBase> properties_;
+
+    public:
+        virtual void copy(const geData& data)
+        {
+            properties_->fillFrom(data);
         }
-        virtual PropertySetBase *configureProperties() {
-            return new PropertySet<T>(dynamic_cast<T*>(this));
+    protected:
+        geComponentRef instantiate() const override
+        {
+            auto instance = std::make_shared<T>();
+            auto compInstance = std::dynamic_pointer_cast<geComponentInstantiable<T>>(instance);
+            auto propertiesInstance = std::dynamic_pointer_cast<PropertySet<T>>(PROPERTIES);
+            PropertiesBinderBase *binding = new PropertiesBinder<T>(instance, propertiesInstance);
+            compInstance->properties_ = std::unique_ptr<PropertiesBinderBase>(binding);
+            return instance;
+        }
+        virtual PropertySetBase *instantiateProperties()
+        {
+            return new PropertySet<T>();
+        }
+
+        virtual std::weak_ptr<PropertySetBase> getProperties()
+        {
+            if(!PROPERTIES)
+                PROPERTIES.reset(instantiateProperties());
+
+            return PROPERTIES;
+        }
+
+        virtual geComponentRef clone() const {
+            geComponentRef cloned = instantiate();
+            auto compCloned = std::dynamic_pointer_cast<T>(cloned);
+
+            auto properties = dynamic_cast<PropertiesBinder<T> *>(properties_.get());
+            properties->fillFrom(compCloned);
+
+            return cloned;
         }
     };
+
+template<typename T>
+std::shared_ptr<PropertySetBase> geComponentInstantiable<T>::PROPERTIES;
 }
 #endif //SPACEINVADERS_GECOMPONENT_HPP

@@ -17,7 +17,7 @@ namespace GameEngine {
         bool focused_;
 
     protected:
-        PropertySetBase *configureProperties() override;
+        PropertySetBase *instantiateProperties() override;
         virtual void onClick() {};
         virtual void onHoverIn() {};
         virtual void onHoverOut() {};

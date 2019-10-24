@@ -13,21 +13,8 @@
 namespace GameEngine {
 
     class PUBLICAPI PropertySetBase {
-    protected:
-        void *target_;
     public:
-        explicit PropertySetBase(void *target) : target_(target){};
-        virtual ~PropertySetBase(){
-            target_ = nullptr;
-        };
-
-        virtual void copy(PropertySetBase &other) const {
-            throw std::runtime_error("not implemented. Need to cast this instance to PropertySet<Component>");
-        };
-
-        virtual void fillFrom(const geData &data) const {
-            throw std::runtime_error("not implemented. Need to cast this instance to PropertySet<Component>");
-        };
+        virtual ~PropertySetBase(){};
     };
 
     template <typename Class>
@@ -35,13 +22,11 @@ namespace GameEngine {
         std::vector<std::shared_ptr<PropertyBase<Class>>> properties_;
         std::unique_ptr<PropertySetBase> parent_;
     public:
-        explicit PropertySet(Class *target) :
-        PropertySetBase(target),
+        PropertySet() :
         parent_(nullptr)
         {};
 
-        PropertySet(Class *target, PropertySetBase *parent) :
-            PropertySetBase(target),
+        explicit PropertySet(PropertySetBase *parent) :
             parent_(parent)
         {};
 
@@ -75,29 +60,28 @@ namespace GameEngine {
                 throw std::runtime_error("property " + name + " not found");
 
             return  *properties_[index];
-        };
+        }
 
-        virtual void copy(PropertySetBase &other) const {
-            auto &otherCast = static_cast<PropertySet<Class>&>(other);
-
+        void copy(const std::shared_ptr<Class> &original, const std::shared_ptr<Class> &target) const {
             if(parent_)
             {
-                if(otherCast.parent_){
-                    parent_->copy(*otherCast.parent_);
-                } else{
-                    throw new std::invalid_argument("other doesn't have the same parent structure");
-                }
+                auto parent = dynamic_cast<PropertySet<Class> *>(parent_.get());
+                parent->copy(original, target);
             }
 
             for( int i = 0; i < properties_.size(); i++) {
-                otherCast.add(properties_[i]->copy(static_cast<Class*>(otherCast.target_)));
+                const std::shared_ptr<PropertyBase<Class>> property = properties_[i];
+                property->copy(original, target);
             }
         };
 
-        virtual void fillFrom(const geData &data) const
+        void copy(const geData &data, const std::shared_ptr<Class> &target) const
         {
             if(parent_)
-                parent_->fillFrom(data);
+            {
+                auto parent = dynamic_cast<PropertySet<Class> *>(parent_.get());
+                parent->copy(data, target);
+            }
 
             for(int i = 0; i < properties_.size(); i++)
             {
@@ -113,49 +97,49 @@ namespace GameEngine {
                     case PropertyTypes::INT:
                     {
                         auto propertyInt = std::dynamic_pointer_cast<Property<Class,int>>(property);
-                        propertyInt->set(data.getInt(property->name()));
+                        propertyInt->set(target.get(), data.getInt(property->name()));
                     }
                         break;
                     case PropertyTypes::FLOAT:
                     {
                         auto propertyFloat = std::dynamic_pointer_cast<Property<Class,float>>(property);
-                        propertyFloat->set(data.getFloat(property->name()));
+                        propertyFloat->set(target.get(), data.getFloat(property->name()));
                     }
                         break;
                     case PropertyTypes::STRING:
                     {
                         auto propertyString = std::dynamic_pointer_cast<Property<Class,std::string>>(property);
-                        propertyString->set(data.getString(property->name()));
+                        propertyString->set(target.get(), data.getString(property->name()));
                     }
                         break;
                     case PropertyTypes::VEC2D:
                     {
                         auto propertyVec2d = std::dynamic_pointer_cast<Property<Class,Vec2D>>(property);
-                        propertyVec2d->set(data.getVec2D(property->name()));
+                        propertyVec2d->set(target.get(), data.getVec2D(property->name()));
                     }
                         break;
                     case PropertyTypes::BOOL:
                     {
                         auto propertyBool = std::dynamic_pointer_cast<Property<Class, bool>>(property);
-                        propertyBool->set(data.getBool(property->name()));
+                        propertyBool->set(target.get(), data.getBool(property->name()));
                     }
                         break;
                     case PropertyTypes::ARRAY_STRING:
                     {
                         auto propertyArray = std::dynamic_pointer_cast<Property<Class, std::vector<std::string>>>(property);
-                        propertyArray->set(data.getArrayString(property->name()));
+                        propertyArray->set(target.get(), data.getArrayString(property->name()));
                     }
                         break;
                     case PropertyTypes::ARRAY_VEC2D:
                     {
                         auto propertyArray = std::dynamic_pointer_cast<Property<Class, std::vector<Vec2D>>>(property);
-                        propertyArray->set(data.getArrayVec2D(property->name()));
+                        propertyArray->set(target.get(), data.getArrayVec2D(property->name()));
                     }
                         break;
                     case PropertyTypes::COLOR:
                     {
                         auto propertyColor = std::dynamic_pointer_cast<Property<Class, geColor>>(property);
-                        propertyColor->set(data.getColor(property->name()));
+                        propertyColor->set(target.get(), data.getColor(property->name()));
                     }
                         break;
                     case PropertyTypes::UNKNOWN:
@@ -165,5 +149,34 @@ namespace GameEngine {
             }
         }
     };
+
+class PUBLICAPI PropertiesBinderBase
+{
+public:
+    virtual ~PropertiesBinderBase() {};
+
+    virtual void fillFrom(const geData &data) const = 0;
+};
+template<typename Class>
+class PUBLICAPI PropertiesBinder : public PropertiesBinderBase
+{
+    std::weak_ptr<Class> target_;
+    std::weak_ptr<PropertySet<Class>> properties_;
+public:
+    PropertiesBinder(const std::weak_ptr<Class> target, const std::weak_ptr<PropertySet<Class>> &properties) :
+    target_(target), properties_(properties)
+    {};
+
+    virtual void fillFrom(const geData &data) const
+    {
+        properties_.lock()->copy(data, target_.lock());
+    }
+
+    void fillFrom(const std::shared_ptr<Class> &other) const
+    {
+        properties_.lock()->copy(other, target_.lock());
+    };
+
+};
 }
 #endif //SPACEINVADERS_PROPERTYSET_HPP
