@@ -6,42 +6,19 @@
 #include <chrono>
 #include <game-engine/geIO.hpp>
 
-struct TestData{
-private:
+class TestData : public GameEngine::PropertiesHolder<TestData>{
     int privateIntValue_;
 public:
-    int intValue;
-
     int getPrivate() const { return privateIntValue_; };
     void setPrivate(const int &value){ privateIntValue_ = value; };
+private:
+    GameEngine::PropertySetBase *instantiateProperties() override
+    {
+        auto properties = new GameEngine::PropertySet<TestData>();
+
+        return properties;
+    }
 };
-
-TEST(Properties, setValueFromProperty)
-{
-    int defaultValue = -1;
-    int newValue = 10;
-    TestData instance;
-    instance.intValue = defaultValue;
-    GameEngine::Property<TestData, int> property("value",&instance,&TestData::intValue,0);
-    EXPECT_EQ(instance.intValue, property.get());
-    property.set(newValue);
-    EXPECT_EQ(instance.intValue, newValue);
-    EXPECT_EQ(instance.intValue, property.get());
-}
-
-TEST(Properties, getValueFromPropertyEdited)
-{
-    int defaultValue = -1;
-    int newValue = 10;
-    TestData instance;
-    instance.intValue = defaultValue;
-    GameEngine::Property<TestData, int> property("value",&instance,&TestData::intValue,0);
-    EXPECT_EQ(instance.intValue, property.get());
-    instance.intValue = newValue;
-    EXPECT_EQ(property.get(), newValue);
-    EXPECT_EQ(instance.intValue, property.get());
-}
-
 
 TEST(Properties, setValueFromPropertySetter)
 {
@@ -49,11 +26,11 @@ TEST(Properties, setValueFromPropertySetter)
     int newValue = 10;
     TestData instance;
     instance.setPrivate(defaultValue);
-    GameEngine::Property<TestData, int> property("value",&instance,&TestData::getPrivate,&TestData::setPrivate,0);
-    EXPECT_EQ(instance.getPrivate(), property.get());
-    property.set(newValue);
+    GameEngine::Property<TestData, int> property("value", &TestData::getPrivate, &TestData::setPrivate,0);
+    EXPECT_EQ(instance.getPrivate(), property.get(&instance));
+    property.set(&instance, newValue);
     EXPECT_EQ(instance.getPrivate(), newValue);
-    EXPECT_EQ(instance.getPrivate(), property.get());
+    EXPECT_EQ(instance.getPrivate(), property.get(&instance));
 }
 
 TEST(Properties, getValueFromPropertyGetterAndEdited)
@@ -62,11 +39,11 @@ TEST(Properties, getValueFromPropertyGetterAndEdited)
     int newValue = 10;
     TestData instance;
     instance.setPrivate(defaultValue);
-    GameEngine::Property<TestData, int> property("value",&instance,&TestData::getPrivate,&TestData::setPrivate,0);
-    EXPECT_EQ(instance.getPrivate(), property.get());
-    property.set(newValue);
-    EXPECT_EQ(property.get(), newValue);
-    EXPECT_EQ(instance.getPrivate(), property.get());
+    GameEngine::Property<TestData, int> property("value", &TestData::getPrivate, &TestData::setPrivate,0);
+    EXPECT_EQ(instance.getPrivate(), property.get(&instance));
+    property.set(&instance, newValue);
+    EXPECT_EQ(property.get(&instance), newValue);
+    EXPECT_EQ(instance.getPrivate(), property.get(&instance));
 }
 
 GameEngine::PropertySet<TestData> *createPropertySet(TestData &target, int privateFieldValue, GameEngine::PropertySet<TestData> *parent)
@@ -74,15 +51,15 @@ GameEngine::PropertySet<TestData> *createPropertySet(TestData &target, int priva
     GameEngine::PropertySet<TestData> *set = nullptr;
     if(parent)
     {
-       set = new GameEngine::PropertySet<TestData>(&target, parent);
+       set = new GameEngine::PropertySet<TestData>(parent);
     }
     else
     {
-        set = new GameEngine::PropertySet<TestData>(&target);
+        set = new GameEngine::PropertySet<TestData>();
     }
 
-    auto property = new GameEngine::Property<TestData, int>("value",&target,&TestData::getPrivate,&TestData::setPrivate,0);
-    property->set(privateFieldValue);
+    auto property = new GameEngine::Property<TestData, int>("value", &TestData::getPrivate, &TestData::setPrivate,0);
+    property->set(&target, privateFieldValue);
     set->add(property);
     return set;
 }
@@ -100,24 +77,24 @@ TEST(Properties, copyPropertyTree)
     auto &parentProp = dynamic_cast<GameEngine::Property<TestData, int>&>(parentPropSet->get(0));
 
     EXPECT_NE(instance.getPrivate(), parent.getPrivate());
-    EXPECT_EQ(instance.getPrivate(), instanceProp.get());
-    EXPECT_EQ(parent.getPrivate(), parentProp.get());
+    EXPECT_EQ(instance.getPrivate(), instanceProp.get(&instance));
+    EXPECT_EQ(parent.getPrivate(), parentProp.get(&parent));
 
     // prepare copy with the same struct but different targets
     TestData parentCopy;
     TestData instanceCopy;
-    auto parentPropSetCopy = new GameEngine::PropertySet<TestData>(&parentCopy);
-    auto instancePropSetCopy = new GameEngine::PropertySet<TestData>(&instanceCopy, parentPropSetCopy);
+    auto parentPropSetCopy = new GameEngine::PropertySet<TestData>();
+    auto instancePropSetCopy = new GameEngine::PropertySet<TestData>(parentPropSetCopy);
 
     // Do the copy and check all works fine
-    instancePropSet->copy(*instancePropSetCopy);
+    instancePropSet->copy(std::shared_ptr<TestData>(&instance),std::shared_ptr<TestData>(&instanceCopy));
 
     auto &instancePropCopy = dynamic_cast<GameEngine::Property<TestData, int>&>(instancePropSetCopy->get(0));
     auto &parentPropCopy = dynamic_cast<GameEngine::Property<TestData, int>&>(parentPropSetCopy->get(0));
 
     EXPECT_NE(instanceCopy.getPrivate(), parentCopy.getPrivate());
-    EXPECT_EQ(instanceCopy.getPrivate(), instancePropCopy.get());
-    EXPECT_EQ(parentCopy.getPrivate(), parentPropCopy.get());
+    EXPECT_EQ(instanceCopy.getPrivate(), instancePropCopy.get(&instanceCopy));
+    EXPECT_EQ(parentCopy.getPrivate(), parentPropCopy.get(&parentCopy));
 }
 
 TEST(Data, writeValuesIntoData)
