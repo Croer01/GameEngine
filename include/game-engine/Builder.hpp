@@ -27,7 +27,7 @@ namespace GameEngine {
         virtual geComponentRef Create(const geData &data) {
 
             const std::shared_ptr<ComponentType> &instance = std::make_shared<ComponentType>();
-            instance->copy(data);
+            instance->copyProperties(data);
             return instance;
         };
     };

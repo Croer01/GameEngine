@@ -15,7 +15,7 @@ namespace GameEngine {
 
     typedef std::function<void(ColliderComponent *)> OnColliderEventCallback;
 
-class PUBLICAPI ColliderComponent : public geComponentInstantiable<ColliderComponent>, public Observer<Internal::ColliderEvent>, public Observer<GameObjectEvent>, public std::enable_shared_from_this<ColliderComponent> {
+class PUBLICAPI ColliderComponent : public geComponentInstantiable<ColliderComponent>, public Observer<Internal::ColliderEvent>, public Observer<GameObjectEvent> {
         std::shared_ptr<Internal::Collider> collider_;
         OnColliderEventCallback onColliderEnterCallback_;
         Vec2D size_;

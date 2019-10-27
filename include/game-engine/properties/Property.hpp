@@ -73,7 +73,7 @@ namespace GameEngine {
         virtual ~PropertyBase(){
         };
 
-        virtual void copy(const std::shared_ptr<Class> &original, const std::shared_ptr<Class> &target) const = 0;
+        virtual void copy(const std::shared_ptr<const Class> &original, const std::shared_ptr<Class> &target) const = 0;
 
         PropertyTypes type() const {
             return type_;
@@ -112,7 +112,7 @@ namespace GameEngine {
             getter_ = nullptr;
             setter_ = nullptr;
         };
-        MemberType get(Class *target) const {
+        MemberType get(const Class *target) const {
             if(getter_ == nullptr)
                 throw std::runtime_error("There is not a getter registered to use in property " + this->name_);
 
@@ -129,7 +129,7 @@ namespace GameEngine {
             (target->*setter_)(value);
         };
 
-        virtual void copy(const std::shared_ptr<Class> &original, const std::shared_ptr<Class> &target) const {
+        virtual void copy(const std::shared_ptr<const Class> &original, const std::shared_ptr<Class> &target) const {
             set(target.get(), get(original.get()));
         }
     };

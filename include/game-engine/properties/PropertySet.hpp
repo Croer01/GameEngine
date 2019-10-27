@@ -62,7 +62,7 @@ namespace GameEngine {
             return  *properties_[index];
         }
 
-        void copy(const std::shared_ptr<Class> &original, const std::shared_ptr<Class> &target) const {
+        void copy(const std::shared_ptr<const Class> &original, const std::shared_ptr<Class> &target) const {
             if(parent_)
             {
                 auto parent = dynamic_cast<PropertySet<Class> *>(parent_.get());
@@ -172,11 +172,62 @@ public:
         properties_.lock()->copy(data, target_.lock());
     }
 
-    void fillFrom(const std::shared_ptr<Class> &other) const
+    void fillFrom(const std::shared_ptr<const Class> &other) const
     {
         properties_.lock()->copy(other, target_.lock());
     };
 
 };
+
+template<typename T>
+class PUBLICAPI PropertiesHolder : protected std::enable_shared_from_this<PropertiesHolder<T>>
+{
+    static std::shared_ptr<PropertySetBase> PROPERTIES;
+    std::unique_ptr<PropertiesBinderBase> properties_;
+
+    void initializePropertiesBinding()
+    {
+        auto propertiesInstance = std::dynamic_pointer_cast<PropertySet<T>>(getProperties().lock());
+        const std::shared_ptr<T> &propertiesTarget = std::dynamic_pointer_cast<T>(shared_from_this());
+        properties_.reset(new PropertiesBinder<T>(propertiesTarget, propertiesInstance));
+    }
+protected:
+    virtual PropertySetBase *instantiateProperties()
+    {
+        return new PropertySet<T>();
+    }
+public:
+
+    virtual ~PropertiesHolder() {}
+
+    void copyProperties(const geData& data)
+    {
+        if(!properties_)
+            initializePropertiesBinding();
+        properties_->fillFrom(data);
+    }
+
+    void copyProperties(const std::shared_ptr<const T>& other)
+    {
+        if(!properties_)
+            initializePropertiesBinding();
+
+        auto properties = dynamic_cast<PropertiesBinder<T> *>(properties_.get());
+        if (properties)
+            properties->fillFrom(other);
+    }
+
+    std::weak_ptr<PropertySetBase> getProperties()
+    {
+        if(!PROPERTIES)
+            PROPERTIES.reset(instantiateProperties());
+
+        return PROPERTIES;
+    }
+};
+
+template<typename T>
+std::shared_ptr<PropertySetBase> PropertiesHolder<T>::PROPERTIES;
+
 }
 #endif //SPACEINVADERS_PROPERTYSET_HPP
