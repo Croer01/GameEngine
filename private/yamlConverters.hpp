@@ -20,8 +20,8 @@ namespace YAML {
                 return false;
             }
 
-            rhs.x = node[0].as<float>(0);
-            rhs.y = node[1].as<float>(0);
+            rhs.x = node[0].as<float>(0.f);
+            rhs.y = node[1].as<float>(0.f);
             return true;
         }
     };
@@ -42,9 +42,9 @@ struct convert<GameEngine::geColor> {
             return false;
         }
 
-        rhs.r = node[0].as<float>(0);
-        rhs.g = node[1].as<float>(0);
-        rhs.b = node[1].as<float>(0);
+        rhs.r = node[0].as<float>(0.f);
+        rhs.g = node[1].as<float>(0.f);
+        rhs.b = node[1].as<float>(0.f);
         return true;
     }
 };

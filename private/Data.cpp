@@ -21,7 +21,7 @@ namespace Internal{
     }
     
     float Data::getFloat(const std::string &key) const {
-        return data_[key].as<float>(0);
+        return data_[key].as<float>(0.f);
     }
     
     bool Data::getBool(const std::string &key) const {
@@ -29,7 +29,7 @@ namespace Internal{
     }
     
     GameEngine::Vec2D Data::getVec2D(const std::string &key) const {
-        return data_[key].as<Vec2D>(Vec2D(0,0));
+        return data_[key].as<Vec2D>(Vec2D(0.f,0.f));
     }
     
     std::vector<std::string> Data::getArrayString(const std::string &key) const {
@@ -49,7 +49,7 @@ namespace Internal{
         value.reserve(propertyNode.size());
 
         for (int i = 0; i < propertyNode.size(); ++i) {
-            value.push_back(propertyNode[i].as<Vec2D>(Vec2D(0,0)));
+            value.push_back(propertyNode[i].as<Vec2D>(Vec2D(0.f,0.f)));
         }
         return value;
     }
