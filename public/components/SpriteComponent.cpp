@@ -16,30 +16,6 @@ namespace GameEngine {
         gameObject()->registerObserver(this);
     }
 
-    PropertySetBase *SpriteComponent::instantiateProperties() {
-        auto *properties = new PropertySet<SpriteComponent>();
-
-        properties->add(new Property<SpriteComponent, std::string>(
-                        "filePath",
-                        &SpriteComponent::filepath,
-                        &SpriteComponent::filepath,
-                        "",
-                        true));
-        properties->add(new Property<SpriteComponent, bool>(
-                        "visible",
-                        &SpriteComponent::isVisible,
-                        &SpriteComponent::setVisible,
-                        true));
-
-        properties->add(new Property<SpriteComponent, std::string>(
-                "anchor",
-                &SpriteComponent::anchor,
-                &SpriteComponent::anchor,
-                "",
-                false));
-        return properties;
-    }
-
     int SpriteComponent::getWidth() const {
         return graphicLoaded_->getWidth();
     }

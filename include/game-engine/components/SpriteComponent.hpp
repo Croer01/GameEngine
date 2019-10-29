@@ -11,6 +11,7 @@
 #include <game-engine/events/Observer.hpp>
 #include "../private/graphics/Graphic.hpp"
 #include "../private/graphics/GraphicHolder.hpp"
+#include <game-engine/properties/PropertiesRegister.hpp>
 
 namespace GameEngine {
 
@@ -26,8 +27,6 @@ namespace GameEngine {
 
     protected:
         void onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) override;
-
-        virtual PropertySetBase *instantiateProperties();
 
     public:
         virtual ~SpriteComponent();
@@ -52,6 +51,35 @@ namespace GameEngine {
 
         std::string anchor() const;
     };
+
+template <>
+struct PropertyInstantiator<SpriteComponent>
+{
+    static PropertySetBase* instantiate()
+    {
+        auto *properties = new PropertySet<SpriteComponent>();
+
+        properties->add(new Property<SpriteComponent, std::string>(
+            "filePath",
+            &SpriteComponent::filepath,
+            &SpriteComponent::filepath,
+            "",
+            true));
+        properties->add(new Property<SpriteComponent, bool>(
+            "visible",
+            &SpriteComponent::isVisible,
+            &SpriteComponent::setVisible,
+            true));
+
+        properties->add(new Property<SpriteComponent, std::string>(
+            "anchor",
+            &SpriteComponent::anchor,
+            &SpriteComponent::anchor,
+            "",
+            false));
+        return properties;
+    }
+};
 }
 
 #endif //SPACEINVADERS_SPRITECOMPONENT_HPP

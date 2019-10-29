@@ -41,28 +41,6 @@ geComponentRef UIButtonComponent::instantiate() const
     return std::make_shared<UIButtonComponent>();
 }
 
-PropertySetBase *UIButtonComponent::instantiateProperties()
-{
-    auto *base = UITextComponent::instantiateProperties();
-    auto *properties = new PropertySet<UIButtonComponent>(base);
-
-    properties->add(new Property<UIButtonComponent, geColor>(
-        "background",
-        &UIButtonComponent::background,
-        &UIButtonComponent::background,
-        geColor(1.f)
-    ));
-
-    properties->add(new Property<UIButtonComponent, geColor>(
-        "hoverBackground",
-        &UIButtonComponent::hoverBackground,
-        &UIButtonComponent::hoverBackground,
-        geColor(.8f)
-    ));
-
-    return properties;
-}
-
 void UIButtonComponent::createBackgroundGraphic()
 {
     if(backgroundGraphic_)

@@ -7,6 +7,7 @@
 
 #include <game-engine/geComponent.hpp>
 #include <game-engine/components/SpriteComponent.hpp>
+#include <game-engine/properties/PropertiesRegister.hpp>
 #include "../private/physics/Collider.hpp"
 #include "SpriteAnimatedComponent.hpp"
 
@@ -58,15 +59,51 @@ class PUBLICAPI ColliderComponent : public geComponentInstantiable<ColliderCompo
         void category(const std::string &colliderCategory);
 
     protected:
-        PropertySetBase *instantiateProperties() override;
-
-    protected:
         void onEvent(const Subject<Internal::ColliderEvent> &target, const Internal::ColliderEvent &event, void *args) override;
 
         void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
 
         void onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) override;
     };
+
+template <>
+struct PropertyInstantiator<ColliderComponent>
+{
+    static PropertySetBase* instantiate()
+    {
+        auto *properties = new PropertySet<ColliderComponent>();
+
+        properties->add(new Property<ColliderComponent, Vec2D>(
+            "extends",
+            &ColliderComponent::extends,
+            &ColliderComponent::extends,
+            Vec2D()));
+        properties->add(new Property<ColliderComponent, Vec2D>(
+            "offset",
+            &ColliderComponent::offset,
+            &ColliderComponent::offset,
+            Vec2D()));
+
+        // Collider configuration
+        properties->add(new Property<ColliderComponent, std::string>(
+            "colliderShape",
+            &ColliderComponent::shape,
+            &ColliderComponent::shape,
+            "Box"));
+        properties->add(new Property<ColliderComponent, std::string>(
+            "colliderType",
+            &ColliderComponent::type,
+            &ColliderComponent::type,
+            "Static"));
+        properties->add(new Property<ColliderComponent, std::string>(
+            "category",
+            &ColliderComponent::category,
+            &ColliderComponent::category,
+            ""));
+
+        return properties;
+    }
+};
 }
 
 #endif //SPACEINVADERS_COLLIDERCOMPONENT_HPP

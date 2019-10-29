@@ -24,35 +24,6 @@ void UITextComponent::init()
     UpdateTextGraphic();
 }
 
-PropertySetBase *UITextComponent::instantiateProperties()
-{
-    PropertySetBase *base = UIControlComponent::instantiateProperties();
-    auto *properties = new PropertySet<UITextComponent>(base);
-
-    properties->add(new Property<UITextComponent, std::string>(
-        "text",
-        &UITextComponent::text,
-        &UITextComponent::text,
-        "",
-        true
-        ));
-
-    properties->add(new Property<UITextComponent, std::string>(
-        "font",
-        &UITextComponent::font,
-        &UITextComponent::font,
-        "",
-        true));
-
-    properties->add(new Property<UITextComponent, int>(
-        "fontSize",
-        &UITextComponent::fontSize,
-        &UITextComponent::fontSize,
-        0));
-
-    return properties;
-}
-
 void UITextComponent::text(const std::string &value)
 {
     text_ = value;

@@ -8,6 +8,7 @@
 
 #include "UIControlComponent.hpp"
 #include "../../../../private/graphics/font/Text.hpp"
+#include <game-engine/properties/PropertiesRegister.hpp>
 
 namespace GameEngine {
 class PUBLICAPI UITextComponent : public UIControlComponent
@@ -20,7 +21,6 @@ class PUBLICAPI UITextComponent : public UIControlComponent
     void UpdateTextGraphic();
 protected:
     geComponentRef instantiate() const override;
-    PropertySetBase *instantiateProperties() override;
     void setTextModelTransform(const Vec2D &position, const Vec2D &rotation, const Vec2D &scale);
     std::shared_ptr<Internal::Text> getGraphicText() const;
 public:
@@ -37,6 +37,39 @@ public:
     std::string text() const;
 
     Vec2D getTextSize() const;
+};
+
+template <>
+struct PropertyInstantiator<UITextComponent>
+{
+    static PropertySetBase* instantiate()
+    {
+        PropertySetBase *base = PropertyInstantiator<UIControlComponent>::instantiate();
+        auto *properties = new PropertySet<UITextComponent>(base);
+
+        properties->add(new Property<UITextComponent, std::string>(
+            "text",
+            &UITextComponent::text,
+            &UITextComponent::text,
+            "",
+            true
+        ));
+
+        properties->add(new Property<UITextComponent, std::string>(
+            "font",
+            &UITextComponent::font,
+            &UITextComponent::font,
+            "",
+            true));
+
+        properties->add(new Property<UITextComponent, int>(
+            "fontSize",
+            &UITextComponent::fontSize,
+            &UITextComponent::fontSize,
+            0));
+
+        return properties;
+    }
 };
 }
 

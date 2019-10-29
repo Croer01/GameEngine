@@ -14,30 +14,6 @@ namespace GameEngine {
         gameObject()->registerObserver(this);
     }
 
-    PropertySetBase *GeometryComponent::instantiateProperties() {
-        auto *properties = new PropertySet<GeometryComponent>();
-
-        properties->add(new Property<GeometryComponent, std::vector<Vec2D>>(
-                "path",
-                &GeometryComponent::path,
-                &GeometryComponent::path,
-                {},
-                true));
-        properties->add(new Property<GeometryComponent, bool>(
-                "visible",
-                &GeometryComponent::visible,
-                &GeometryComponent::visible,
-                true));
-
-        properties->add(new Property<GeometryComponent, std::string>(
-                "anchor",
-                &GeometryComponent::anchor,
-                &GeometryComponent::anchor,
-                "",
-                false));
-        return properties;
-    }
-
     void GeometryComponent::updateGraphicRef() {
         if (graphic_)
             Internal::GraphicsEngine::GetInstance().unregisterGraphic(graphic_);

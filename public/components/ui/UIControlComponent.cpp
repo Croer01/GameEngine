@@ -6,27 +6,6 @@
 #include "game-engine/components/ui/UIControlComponent.hpp"
 
 namespace GameEngine {
-PropertySetBase *UIControlComponent::instantiateProperties()
-{
-    auto *properties = new PropertySet<UIControlComponent>();
-
-    properties->add(new Property<UIControlComponent, Vec2D>(
-        "screenPos",
-        &UIControlComponent::screenPos,
-        &UIControlComponent::screenPos,
-        Vec2D(),
-        true
-        ));
-
-    properties->add(new Property<UIControlComponent, Vec2D>(
-        "screenSize",
-        &UIControlComponent::screenSize,
-        &UIControlComponent::screenSize,
-        Vec2D(),
-        true
-    ));
-    return properties;
-}
 
 void UIControlComponent::screenPos(const Vec2D &pos)
 {

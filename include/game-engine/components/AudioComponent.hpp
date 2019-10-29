@@ -7,6 +7,7 @@
 
 
 #include <game-engine/geComponent.hpp>
+#include <game-engine/properties/PropertiesRegister.hpp>
 #include "../private/audio/AudioSource.hpp"
 namespace GameEngine {
     class PUBLICAPI AudioComponent : public geComponentInstantiable<AudioComponent> {
@@ -33,8 +34,34 @@ namespace GameEngine {
 
         void filepath(const std::string &path);
         std::string filepath() const;
-    protected:
-        PropertySetBase *instantiateProperties() override;
+    };
+
+    template <>
+    struct PropertyInstantiator<AudioComponent>
+    {
+        static PropertySetBase* instantiate()
+        {
+            auto *properties = new PropertySet<AudioComponent>();
+
+            properties->add(new Property<AudioComponent, std::string>(
+                "filePath",
+                &AudioComponent::filepath,
+                &AudioComponent::filepath,
+                "",
+                true));
+            properties->add(new Property<AudioComponent, bool>(
+                "playOnInit",
+                &AudioComponent::playOnInit,
+                &AudioComponent::playOnInit,
+                false));
+            properties->add(new Property<AudioComponent, bool>(
+                "loopOnInit",
+                &AudioComponent::loopOnInit,
+                &AudioComponent::loopOnInit,
+                false));
+
+            return properties;
+        }
     };
 }
 

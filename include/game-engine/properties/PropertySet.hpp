@@ -191,10 +191,9 @@ class PUBLICAPI PropertiesHolder : protected std::enable_shared_from_this<Proper
         const std::shared_ptr<T> &propertiesTarget = std::dynamic_pointer_cast<T>(shared_from_this());
         properties_.reset(new PropertiesBinder<T>(propertiesTarget, propertiesInstance));
     }
-protected:
-    virtual PropertySetBase *instantiateProperties()
+    static PropertySetBase *instantiateProperties()
     {
-        return new PropertySet<T>();
+        return PropertyInstantiator<T>::instantiate();
     }
 public:
 
@@ -217,7 +216,7 @@ public:
             properties->fillFrom(other);
     }
 
-    std::weak_ptr<PropertySetBase> getProperties()
+    static std::weak_ptr<PropertySetBase> getProperties()
     {
         if(!PROPERTIES)
             PROPERTIES.reset(instantiateProperties());

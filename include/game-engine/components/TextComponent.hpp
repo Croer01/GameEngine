@@ -10,6 +10,7 @@
 #include <game-engine/geGameObject.hpp>
 #include <game-engine/events/Observer.hpp>
 #include "../private/graphics/font/Text.hpp"
+#include <game-engine/properties/PropertiesRegister.hpp>
 
 namespace GameEngine {
 class PUBLICAPI TextComponent : public geComponentInstantiable<TextComponent>, public Observer<GameObjectEvent> {
@@ -41,13 +42,39 @@ class PUBLICAPI TextComponent : public geComponentInstantiable<TextComponent>, p
         void setVisible(bool visible);
 
         bool isVisible() const;
-
-protected:
-    PropertySetBase *instantiateProperties() override;
-
 protected:
         void onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) override;
     };
+
+template <>
+struct PropertyInstantiator<TextComponent>
+{
+    static PropertySetBase* instantiate()
+    {
+        auto *properties = new PropertySet<TextComponent>();
+
+        properties->add(new Property<TextComponent, std::string>(
+            "font",
+            &TextComponent::font,
+            &TextComponent::font,
+            "",
+            true));
+
+        properties->add(new Property<TextComponent, int>(
+            "fontSize",
+            &TextComponent::fontSize,
+            &TextComponent::fontSize,
+            0));
+
+        properties->add(new Property<TextComponent, std::string>(
+            "text",
+            &TextComponent::text,
+            &TextComponent::text,
+            ""));
+
+        return properties;
+    }
+};
 }
 
 #endif //SPACEINVADERS_TEXTCOMPONENT_HPP

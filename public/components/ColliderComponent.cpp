@@ -28,40 +28,6 @@ namespace {
     }
 }
 
-    PropertySetBase *ColliderComponent::instantiateProperties() {
-        auto *properties = new PropertySet<ColliderComponent>();
-
-        properties->add(new Property<ColliderComponent, Vec2D>(
-                "extends",
-                &ColliderComponent::extends,
-                &ColliderComponent::extends,
-                Vec2D()));
-        properties->add(new Property<ColliderComponent, Vec2D>(
-                "offset",
-                &ColliderComponent::offset,
-                &ColliderComponent::offset,
-                Vec2D()));
-
-        // Collider configuration
-        properties->add(new Property<ColliderComponent, std::string>(
-                "colliderShape",
-                &ColliderComponent::shape,
-                &ColliderComponent::shape,
-                "Box"));
-        properties->add(new Property<ColliderComponent, std::string>(
-                "colliderType",
-                &ColliderComponent::type,
-                &ColliderComponent::type,
-                "Static"));
-        properties->add(new Property<ColliderComponent, std::string>(
-                "category",
-                &ColliderComponent::category,
-                &ColliderComponent::category,
-                ""));
-
-        return properties;
-    }
-
     void ColliderComponent::init() {
         if(auto sprite = gameObject()->getComponent<SpriteComponent>().lock()) {
             size_ = GameEngine::Vec2D(sprite->getWidth(), sprite->getHeight());

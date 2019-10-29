@@ -7,6 +7,7 @@
 
 
 #include <game-engine/geComponent.hpp>
+#include <game-engine/properties/PropertiesRegister.hpp>
 
 namespace GameEngine {
     class PUBLICAPI UIControlComponent : public geComponentInstantiable<UIControlComponent>
@@ -17,7 +18,6 @@ namespace GameEngine {
         bool focused_;
 
     protected:
-        PropertySetBase *instantiateProperties() override;
         virtual void onClick() {};
         virtual void onHoverIn() {};
         virtual void onHoverOut() {};
@@ -34,6 +34,31 @@ namespace GameEngine {
         bool isFocused() const;
     };
 
+template <>
+struct PropertyInstantiator<UIControlComponent>
+{
+    static PropertySetBase* instantiate()
+    {
+        auto *properties = new PropertySet<UIControlComponent>();
+
+        properties->add(new Property<UIControlComponent, Vec2D>(
+            "screenPos",
+            &UIControlComponent::screenPos,
+            &UIControlComponent::screenPos,
+            Vec2D(),
+            true
+        ));
+
+        properties->add(new Property<UIControlComponent, Vec2D>(
+            "screenSize",
+            &UIControlComponent::screenSize,
+            &UIControlComponent::screenSize,
+            Vec2D(),
+            true
+        ));
+        return properties;
+    }
+};
 }
 
 #endif //GAMEENGINEEDITOR_UICONTROLCOMPONENT_HPP

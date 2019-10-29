@@ -12,29 +12,6 @@ namespace GameEngine {
         setLooping(loopOnInit_);
     }
 
-    PropertySetBase *AudioComponent::instantiateProperties() {
-        auto *properties = new PropertySet<AudioComponent>();
-
-        properties->add(new Property<AudioComponent, std::string>(
-                "filePath",
-                &AudioComponent::filepath,
-                &AudioComponent::filepath,
-                "",
-                true));
-        properties->add(new Property<AudioComponent, bool>(
-                "playOnInit",
-                &AudioComponent::playOnInit,
-                &AudioComponent::playOnInit,
-                false));
-        properties->add(new Property<AudioComponent, bool>(
-                "loopOnInit",
-                &AudioComponent::loopOnInit,
-                &AudioComponent::loopOnInit,
-                false));
-
-        return properties;
-    }
-
     void AudioComponent::play() {
         stop();
         source_->play();
