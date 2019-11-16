@@ -35,8 +35,13 @@ namespace GameEngine {
     };
 
 template <>
-struct PropertyInstantiator<UIControlComponent>
+class PropertyInstantiator<UIControlComponent>
 {
+public:
+    static std::string getTargetName()
+    {
+        return "UIControlComponent";
+    }
     static PropertySetBase* instantiate()
     {
         auto *properties = new PropertySet<UIControlComponent>();

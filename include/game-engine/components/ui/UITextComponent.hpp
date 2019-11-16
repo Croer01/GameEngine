@@ -40,8 +40,13 @@ public:
 };
 
 template <>
-struct PropertyInstantiator<UITextComponent>
+class PropertyInstantiator<UITextComponent>
 {
+public:
+    static std::string getTargetName()
+    {
+        return "UITextComponent";
+    }
     static PropertySetBase* instantiate()
     {
         PropertySetBase *base = PropertyInstantiator<UIControlComponent>::instantiate();

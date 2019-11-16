@@ -13,6 +13,8 @@
 namespace GameEngine {
 class PUBLICAPI UITextInputComponent : public UITextComponent, public Observer<InputTextSubjectEvent>
 {
+    static PropertyInstantiator<UITextInputComponent> registrator_;
+
     const float BLINK_TIME_SECONDS = 0.5;
     float cursorBlinkCounter_;
     int cursorPos_;
@@ -42,8 +44,13 @@ public:
 };
 
 template <>
-struct PropertyInstantiator<UITextInputComponent>
+class PropertyInstantiator<UITextInputComponent>
 {
+public:
+    static std::string getTargetName()
+    {
+        return "UITextInputComponent";
+    }
     static PropertySetBase* instantiate()
     {
         auto *base = PropertyInstantiator<UITextComponent>::instantiate();

@@ -7,6 +7,8 @@
 #include <chrono>
 #include <game-engine/geIO.hpp>
 
+
+
 class TestData : public GameEngine::PropertiesHolder<TestData>{
     int privateIntValue_;
 public:
@@ -19,8 +21,21 @@ class TestDataChild : public TestData{
 
 namespace GameEngine {
 template <>
-struct PropertyInstantiator<TestData>
+class PropertyInstantiator<TestData>
 {
+public:
+    PropertyInstantiator()
+    {
+        PropertySetBase *propertiesSet = instantiate();
+        auto propertiesSetRef = std::shared_ptr<PropertySetBase>(propertiesSet);
+        PropertiesRegister::GetInstance().addProperty(getTargetName(), propertiesSetRef);
+    }
+
+    static std::string getTargetName()
+    {
+        return "TestData";
+    }
+
     static PropertySetBase* instantiate()
     {
         auto properties = new GameEngine::PropertySet<TestData>();
@@ -35,6 +50,7 @@ struct PropertyInstantiator<TestData>
     }
 };
 }
+
 
 TEST(Properties, setValueFromPropertySetter)
 {

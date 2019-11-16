@@ -37,8 +37,14 @@ namespace GameEngine {
     };
 
     template <>
-    struct PropertyInstantiator<AudioComponent>
+    class PropertyInstantiator<AudioComponent>
     {
+    public:
+        static std::string getTargetName()
+        {
+            return "AudioComponent";
+        }
+
         static PropertySetBase* instantiate()
         {
             auto *properties = new PropertySet<AudioComponent>();

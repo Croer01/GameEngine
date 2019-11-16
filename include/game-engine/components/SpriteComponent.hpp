@@ -53,8 +53,14 @@ namespace GameEngine {
     };
 
 template <>
-struct PropertyInstantiator<SpriteComponent>
+class PropertyInstantiator<SpriteComponent>
 {
+public:
+    static std::string getTargetName()
+    {
+        return "SpriteComponent";
+    }
+
     static PropertySetBase* instantiate()
     {
         auto *properties = new PropertySet<SpriteComponent>();

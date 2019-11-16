@@ -39,8 +39,13 @@ public:
 };
 
 template <>
-struct PropertyInstantiator<UIButtonComponent>
+class PropertyInstantiator<UIButtonComponent>
 {
+public:
+    static std::string getTargetName()
+    {
+        return "UIButtonComponent";
+    }
     static PropertySetBase* instantiate()
     {
         auto *base = PropertyInstantiator<UITextComponent>::instantiate();

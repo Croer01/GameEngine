@@ -47,8 +47,13 @@ protected:
     };
 
 template <>
-struct PropertyInstantiator<TextComponent>
+class PropertyInstantiator<TextComponent>
 {
+public:
+    static std::string getTargetName()
+    {
+        return "TextComponent";
+    }
     static PropertySetBase* instantiate()
     {
         auto *properties = new PropertySet<TextComponent>();

@@ -67,8 +67,14 @@ class PUBLICAPI ColliderComponent : public geComponentInstantiable<ColliderCompo
     };
 
 template <>
-struct PropertyInstantiator<ColliderComponent>
+class PropertyInstantiator<ColliderComponent>
 {
+public:
+    static std::string getTargetName()
+    {
+        return "ColliderComponent";
+    }
+
     static PropertySetBase* instantiate()
     {
         auto *properties = new PropertySet<ColliderComponent>();
