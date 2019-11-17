@@ -179,54 +179,5 @@ public:
 
 };
 
-template<typename T>
-class PUBLICAPI PropertiesHolder : protected std::enable_shared_from_this<PropertiesHolder<T>>
-{
-    static std::shared_ptr<PropertySetBase> PROPERTIES;
-    std::unique_ptr<PropertiesBinderBase> properties_;
-
-    void initializePropertiesBinding()
-    {
-        auto propertiesInstance = std::dynamic_pointer_cast<PropertySet<T>>(getProperties().lock());
-        const std::shared_ptr<T> &propertiesTarget = std::dynamic_pointer_cast<T>(shared_from_this());
-        properties_.reset(new PropertiesBinder<T>(propertiesTarget, propertiesInstance));
-    }
-    static PropertySetBase *instantiateProperties()
-    {
-        return PropertyInstantiator<T>::instantiate();
-    }
-public:
-
-    virtual ~PropertiesHolder() {}
-
-    void copyProperties(const geData& data)
-    {
-        if(!properties_)
-            initializePropertiesBinding();
-        properties_->fillFrom(data);
-    }
-
-    void copyProperties(const std::shared_ptr<const T>& other)
-    {
-        if(!properties_)
-            initializePropertiesBinding();
-
-        auto properties = dynamic_cast<PropertiesBinder<T> *>(properties_.get());
-        if (properties)
-            properties->fillFrom(other);
-    }
-
-    static std::weak_ptr<PropertySetBase> getProperties()
-    {
-        if(!PROPERTIES)
-            PROPERTIES.reset(instantiateProperties());
-
-        return PROPERTIES;
-    }
-};
-
-template<typename T>
-std::shared_ptr<PropertySetBase> PropertiesHolder<T>::PROPERTIES;
-
 }
 #endif //SPACEINVADERS_PROPERTYSET_HPP

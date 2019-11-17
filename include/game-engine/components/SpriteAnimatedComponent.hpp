@@ -79,16 +79,11 @@ namespace GameEngine {
         void playOnInit(const bool &play);
     };
 
-template <>
-class PropertyInstantiator<SpriteAnimatedComponent>
+PROPERTIES(SpriteAnimatedComponentProperties)
+class SpriteAnimatedComponentProperties : public PropertyInstantiator
 {
 public:
-    static std::string getTargetName()
-    {
-        return "SpriteAnimatedComponent";
-    }
-
-    static PropertySetBase* instantiate()
+    virtual PropertySetBase* instantiateProperties()
     {
         auto *properties = new PropertySet<SpriteAnimatedComponent>();
 

@@ -39,18 +39,14 @@ public:
     Vec2D getTextSize() const;
 };
 
-template <>
-class PropertyInstantiator<UITextComponent>
+PROPERTIES(UITextComponentProperties)
+class UITextComponentProperties : public PropertyInstantiator
 {
 public:
-    static std::string getTargetName()
+    virtual PropertySetBase *instantiateProperties()
     {
-        return "UITextComponent";
-    }
-    static PropertySetBase* instantiate()
-    {
-        PropertySetBase *base = PropertyInstantiator<UIControlComponent>::instantiate();
-        auto *properties = new PropertySet<UITextComponent>(base);
+        std::shared_ptr<PropertySetBase> base = PropertiesRegister::GetInstance().instantiate("UIControlComponentProperties");
+        auto *properties = new PropertySet<UITextComponent>(base.get());
 
         properties->add(new Property<UITextComponent, std::string>(
             "text",

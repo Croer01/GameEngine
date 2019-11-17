@@ -8,6 +8,7 @@
 #include <game-engine/api.hpp>
 #include <game-engine/geGameObject.hpp>
 #include <game-engine/properties/PropertySet.hpp>
+#include <game-engine/properties/PropertiesHolder.hpp>
 #include <memory>
 
 #define COMPONENT(x) //the #x component has been registered

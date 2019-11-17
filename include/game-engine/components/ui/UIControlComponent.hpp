@@ -34,15 +34,11 @@ namespace GameEngine {
         bool isFocused() const;
     };
 
-template <>
-class PropertyInstantiator<UIControlComponent>
+PROPERTIES(UIControlComponentProperties)
+class UIControlComponentProperties : public PropertyInstantiator
 {
 public:
-    static std::string getTargetName()
-    {
-        return "UIControlComponent";
-    }
-    static PropertySetBase* instantiate()
+    virtual PropertySetBase* instantiateProperties()
     {
         auto *properties = new PropertySet<UIControlComponent>();
 

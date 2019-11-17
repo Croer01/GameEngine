@@ -38,18 +38,14 @@ public:
     geColor hoverBackground() const;
 };
 
-template <>
-class PropertyInstantiator<UIButtonComponent>
+PROPERTIES(UIButtonComponentProperties)
+class UIButtonComponentProperties : public PropertyInstantiator
 {
 public:
-    static std::string getTargetName()
+    virtual PropertySetBase *instantiatePropertie()
     {
-        return "UIButtonComponent";
-    }
-    static PropertySetBase* instantiate()
-    {
-        auto *base = PropertyInstantiator<UITextComponent>::instantiate();
-        auto *properties = new PropertySet<UIButtonComponent>(base);
+        std::shared_ptr<PropertySetBase> base = PropertiesRegister::GetInstance().instantiate("UITextComponentProperties");
+        auto *properties = new PropertySet<UIButtonComponent>(base.get());
 
         properties->add(new Property<UIButtonComponent, geColor>(
             "background",

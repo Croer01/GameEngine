@@ -46,15 +46,11 @@ protected:
         void onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) override;
     };
 
-template <>
-class PropertyInstantiator<TextComponent>
+PROPERTIES(TextComponentProperties)
+class TextComponentProperties : public PropertyInstantiator
 {
 public:
-    static std::string getTargetName()
-    {
-        return "TextComponent";
-    }
-    static PropertySetBase* instantiate()
+    virtual PropertySetBase* instantiateProperties()
     {
         auto *properties = new PropertySet<TextComponent>();
 

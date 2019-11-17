@@ -48,16 +48,11 @@ namespace GameEngine {
         void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
     };
 
-template <>
-class PropertyInstantiator<GeometryComponent>
+PROPERTIES(GeometryComponentProperties)
+class GeometryComponentProperties : public PropertyInstantiator
 {
 public:
-    static std::string getTargetName()
-    {
-        return "GeometryComponent";
-    }
-
-    static PropertySetBase* instantiate()
+    virtual PropertySetBase* instantiateProperties()
     {
         auto *properties = new PropertySet<GeometryComponent>();
 

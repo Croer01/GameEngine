@@ -66,16 +66,11 @@ class PUBLICAPI ColliderComponent : public geComponentInstantiable<ColliderCompo
         void onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) override;
     };
 
-template <>
-class PropertyInstantiator<ColliderComponent>
+PROPERTIES(ColliderComponentProperties)
+class ColliderComponentProperties : public PropertyInstantiator
 {
 public:
-    static std::string getTargetName()
-    {
-        return "ColliderComponent";
-    }
-
-    static PropertySetBase* instantiate()
+    virtual PropertySetBase* instantiateProperties()
     {
         auto *properties = new PropertySet<ColliderComponent>();
 

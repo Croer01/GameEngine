@@ -9,45 +9,43 @@
 #include <game-engine/properties/PropertySet.hpp>
 #include "../../../private/Singleton.hpp"
 
+#define PROPERTIES(x) //the #x properties set has been registered
+
 namespace GameEngine
 {
 
+class PropertyInstantiator
+{
+    std::shared_ptr<PropertySetBase> properties_;
+public:
+    std::shared_ptr<PropertySetBase> create()
+    {
+        if(!properties_)
+        {
+            PropertySetBase *instance = instantiateProperties();
+            properties_.reset(instance);
+        }
+        return properties_;
+    };
+
+    virtual PropertySetBase *instantiateProperties() = 0;
+};
+
 class PropertiesRegister : public Internal::Singleton<PropertiesRegister>
 {
-    std::map<std::string, std::shared_ptr<PropertySetBase>> properties_;
+    std::map<std::string, std::shared_ptr<PropertyInstantiator>> properties_;
 
 public:
-    void addProperty(const std::string &targetName, const std::shared_ptr<PropertySetBase> &properties)
+    void addProperty(const std::string &targetName, const std::shared_ptr<PropertyInstantiator> &properties)
     {
         properties_[targetName] = properties;
     }
-};
 
-template <typename Target>
-class PropertyInstantiator
-{
-    static PropertyInstantiator<Target> regitser_;
-public:
-    PropertyInstantiator()
+    std::shared_ptr<PropertySetBase> instantiate(const std::string &targetName)
     {
-        PropertySetBase *propertiesSet = instantiate();
-        auto propertiesSetRef = std::make_shared<PropertySetBase>(propertiesSet);
-        PropertiesRegister::GetInstance().addProperty(getTargetName(), propertiesSetRef);
-    }
-
-    static std::string getTargetName()
-    {
-        throw std::runtime_error("PropertyInstantiatior not implemented for type " + std::type_info<Target>().name());
-    }
-
-    static PropertySetBase *instantiate()
-    {
-        throw std::runtime_error("PropertyInstantiatior not implemented for type " + std::type_info<Target>().name());
+        return properties_[targetName]->create();
     }
 };
-
-template <typename Target>
-PropertyInstantiator<Target> PropertyInstantiator<Target>::regitser_;
 
 }
 #endif //GAMEENGINEEDITOR_PROPERTIESREGISTER_HPP

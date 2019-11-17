@@ -2,6 +2,7 @@
 #include "../private/Data.hpp"
 #include <game-engine/properties/PropertySet.hpp>
 #include <game-engine/properties/Property.hpp>
+#include <game-engine/properties/PropertiesHolder.hpp>
 #include <game-engine/properties/PropertiesRegister.hpp>
 #include <thread>
 #include <chrono>
@@ -20,23 +21,11 @@ class TestDataChild : public TestData{
 };
 
 namespace GameEngine {
-template <>
-class PropertyInstantiator<TestData>
+PROPERTIES(TestDataProperties)
+class TestDataProperties : public PropertyInstantiator
 {
 public:
-    PropertyInstantiator()
-    {
-        PropertySetBase *propertiesSet = instantiate();
-        auto propertiesSetRef = std::shared_ptr<PropertySetBase>(propertiesSet);
-        PropertiesRegister::GetInstance().addProperty(getTargetName(), propertiesSetRef);
-    }
-
-    static std::string getTargetName()
-    {
-        return "TestData";
-    }
-
-    static PropertySetBase* instantiate()
+    virtual PropertySetBase *instantiateProperties()
     {
         auto properties = new GameEngine::PropertySet<TestData>();
         properties->add(new GameEngine::Property<TestData, int>(
@@ -82,8 +71,9 @@ TEST(Properties, copyPropertyTree)
 {
     std::shared_ptr<TestDataChild> instance(new TestDataChild());
 
-    // cretae the original data structure
-    auto instancePropSet = std::dynamic_pointer_cast<GameEngine::PropertySet<TestData>>(TestData::getProperties().lock());
+    // create the original data structure
+    GameEngine::TestDataProperties propertiesInstantiator;
+    auto instancePropSet = std::dynamic_pointer_cast<GameEngine::PropertySet<TestData>>(propertiesInstantiator.create());
 
     auto &instanceProp = dynamic_cast<GameEngine::Property<TestData, int>&>(instancePropSet->get(0));
 

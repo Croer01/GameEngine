@@ -13,8 +13,6 @@
 namespace GameEngine {
 class PUBLICAPI UITextInputComponent : public UITextComponent, public Observer<InputTextSubjectEvent>
 {
-    static PropertyInstantiator<UITextInputComponent> registrator_;
-
     const float BLINK_TIME_SECONDS = 0.5;
     float cursorBlinkCounter_;
     int cursorPos_;
@@ -43,18 +41,14 @@ public:
     geColor background() const;
 };
 
-template <>
-class PropertyInstantiator<UITextInputComponent>
+PROPERTIES(UITextInputComponentProperties)
+class UITextInputComponentProperties : public PropertyInstantiator
 {
 public:
-    static std::string getTargetName()
+    virtual PropertySetBase *instantiateProperties()
     {
-        return "UITextInputComponent";
-    }
-    static PropertySetBase* instantiate()
-    {
-        auto *base = PropertyInstantiator<UITextComponent>::instantiate();
-        auto *properties = new PropertySet<UITextInputComponent>(base);
+        std::shared_ptr<PropertySetBase> base = PropertiesRegister::GetInstance().instantiate("UITextComponentProperties");
+        auto *properties = new PropertySet<UITextInputComponent>(base.get());
 
         properties->add(new Property<UITextInputComponent, geColor>(
             "background",

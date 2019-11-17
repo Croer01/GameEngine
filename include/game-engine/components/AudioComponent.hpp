@@ -36,16 +36,11 @@ namespace GameEngine {
         std::string filepath() const;
     };
 
-    template <>
-    class PropertyInstantiator<AudioComponent>
+    PROPERTIES(AudioComponentProperties)
+    class AudioComponentProperties : public PropertyInstantiator
     {
     public:
-        static std::string getTargetName()
-        {
-            return "AudioComponent";
-        }
-
-        static PropertySetBase* instantiate()
+        PropertySetBase *instantiateProperties() override
         {
             auto *properties = new PropertySet<AudioComponent>();
 
