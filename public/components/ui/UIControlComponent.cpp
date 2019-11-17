@@ -66,4 +66,9 @@ bool UIControlComponent::isFocused() const
 {
     return focused_;
 }
+
+std::string UIControlComponent::getPropertiesName() const
+{
+    return "UIControlComponentProperties";
+}
 }

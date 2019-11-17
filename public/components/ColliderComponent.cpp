@@ -207,5 +207,10 @@ namespace {
 
         extends(extends_);
     }
+
+std::string ColliderComponent::getPropertiesName() const
+{
+    return "ColliderComponentProperties";
+}
 }
 

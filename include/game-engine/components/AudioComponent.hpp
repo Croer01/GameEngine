@@ -17,6 +17,8 @@ namespace GameEngine {
         bool loopOnInit_;
     public:
         void init() override;
+        
+        std::string getPropertiesName() const override;
 
         //AudioComponent public API
         void play();

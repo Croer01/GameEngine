@@ -36,6 +36,8 @@ namespace GameEngine {
     public:
         ~SpriteAnimatedComponent();
 
+        std::string getPropertiesName() const override;
+
         void init() override;
 
         void Update(float elapsedTime) override;

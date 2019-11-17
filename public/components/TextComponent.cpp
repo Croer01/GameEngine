@@ -98,4 +98,9 @@ namespace GameEngine {
             textGraphic_.reset();
         }
     }
+
+std::string TextComponent::getPropertiesName() const
+{
+    return "TextComponentProperties";
+}
 }

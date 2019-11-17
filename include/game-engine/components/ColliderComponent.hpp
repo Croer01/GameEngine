@@ -47,6 +47,8 @@ class PUBLICAPI ColliderComponent : public geComponentInstantiable<ColliderCompo
 
         void applyForce(const Vec2D &force);
 
+        std::string getPropertiesName() const override;
+
         Vec2D extends() const;
         void extends(const Vec2D &extends);
         Vec2D offset() const;

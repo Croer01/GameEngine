@@ -178,4 +178,9 @@ namespace GameEngine {
             Internal::GraphicsEngine::GetInstance().registerGraphic(graphic_);
         }
     }
+
+std::string SpriteAnimatedComponent::getPropertiesName() const
+{
+    return "SpriteAnimatedComponentProperties";
+}
 }

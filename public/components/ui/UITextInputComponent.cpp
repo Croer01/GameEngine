@@ -217,4 +217,9 @@ geColor UITextInputComponent::background() const
 {
     return background_;
 }
+
+std::string UITextInputComponent::getPropertiesName() const
+{
+    return "UITextInputComponentProperties";
+}
 }

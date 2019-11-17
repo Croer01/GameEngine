@@ -31,6 +31,8 @@ namespace GameEngine {
     public:
         virtual ~SpriteComponent();
 
+        std::string getPropertiesName() const override;
+
         void init() override;
 
         int getWidth() const;

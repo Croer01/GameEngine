@@ -110,4 +110,9 @@ void UIButtonComponent::onHoverOut()
 {
     changeColor(false);
 }
+
+std::string UIButtonComponent::getPropertiesName() const
+{
+    return "UIButtonComponentProperties";
+}
 }

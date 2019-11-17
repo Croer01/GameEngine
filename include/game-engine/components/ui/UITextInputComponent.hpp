@@ -33,6 +33,8 @@ protected:
 public:
     virtual ~UITextInputComponent();
 
+    std::string getPropertiesName() const override;
+
     void Update(float elapsedTime) override;
     void init() override;
     void onEvent(const Subject<InputTextSubjectEvent> &target, const InputTextSubjectEvent &event, void *args) override;

@@ -94,4 +94,9 @@ namespace GameEngine {
 
         anchor_ = anchor;
     }
+
+std::string SpriteComponent::getPropertiesName() const
+{
+    return "SpriteComponentProperties";
+}
 }

@@ -25,6 +25,9 @@ protected:
     std::shared_ptr<Internal::Text> getGraphicText() const;
 public:
     virtual ~UITextComponent();
+
+    std::string getPropertiesName() const override;
+
     void init() override;
 
     int fontSize() const;

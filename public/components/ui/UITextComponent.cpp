@@ -87,4 +87,9 @@ std::shared_ptr<Internal::Text> UITextComponent::getGraphicText() const
 {
     return graphicText_;
 }
+
+std::string UITextComponent::getPropertiesName() const
+{
+    return "UITextComponentProperties";
+}
 }

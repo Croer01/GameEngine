@@ -23,8 +23,9 @@ namespace GameEngine {
         virtual void onHoverOut() {};
         virtual void onFocusChanged() {};
     public:
-        void Update(float elapsedTime) override;
         virtual ~UIControlComponent() = default;
+        std::string getPropertiesName() const override;
+        void Update(float elapsedTime) override;
         void screenPos(const Vec2D &pos);
         Vec2D screenPos() const;
 

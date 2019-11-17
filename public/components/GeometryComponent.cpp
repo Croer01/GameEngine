@@ -113,5 +113,10 @@ namespace GameEngine {
 
         anchor_ = anchor;
     }
+
+std::string GeometryComponent::getPropertiesName() const
+{
+    return "GeometryComponentProperties";
+}
 }
 

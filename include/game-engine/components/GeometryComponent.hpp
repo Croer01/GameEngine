@@ -28,6 +28,8 @@ namespace GameEngine {
     public:
         virtual ~GeometryComponent();
 
+        std::string getPropertiesName() const override;
+
         void init() override;
 
         int getWidth() const;

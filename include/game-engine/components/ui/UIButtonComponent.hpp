@@ -28,6 +28,7 @@ protected:
 public:
     UIButtonComponent();
     virtual ~UIButtonComponent();
+    std::string getPropertiesName() const override;
     void init() override;
     void setCommand(const CommandRef &command);
 
@@ -42,7 +43,7 @@ PROPERTIES(UIButtonComponentProperties)
 class UIButtonComponentProperties : public PropertyInstantiator
 {
 public:
-    virtual PropertySetBase *instantiatePropertie()
+    virtual PropertySetBase *instantiateProperties()
     {
         std::shared_ptr<PropertySetBase> base = PropertiesManager::GetInstance().instantiate("UITextComponentProperties");
         auto *properties = new PropertySet<UIButtonComponent>(base.get());

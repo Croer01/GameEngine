@@ -57,4 +57,9 @@ namespace GameEngine {
     bool AudioComponent::loopOnInit() const {
         return loopOnInit_;
     }
+
+std::string AudioComponent::getPropertiesName() const
+{
+    return "AudioComponentProperties";
+}
 }

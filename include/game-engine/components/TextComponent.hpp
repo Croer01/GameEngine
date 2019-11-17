@@ -25,6 +25,8 @@ class PUBLICAPI TextComponent : public geComponentInstantiable<TextComponent>, p
     public:
         virtual ~TextComponent();
 
+        std::string getPropertiesName() const override;
+
         void init() override;
 
         void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;

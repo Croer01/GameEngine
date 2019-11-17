@@ -52,6 +52,10 @@ namespace GameEngine {
 
             return cloned;
         }
+
+    public:
+        virtual std::string getPropertiesName() const = 0;
+
     };
 }
 #endif //SPACEINVADERS_GECOMPONENT_HPP
