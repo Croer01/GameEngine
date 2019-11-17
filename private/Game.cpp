@@ -41,6 +41,7 @@ namespace Internal {
         PropertiesManager::GetInstance().registerPropertiesSetBuilder("AudioComponentProperties",
                                                               std::make_shared<AudioComponentProperties>());
         //GUI Properties
+        PropertiesManager::GetInstance().registerPropertiesSetBuilder("UIControlComponentProperties", std::make_shared<UIControlComponentProperties>());
         PropertiesManager::GetInstance().registerPropertiesSetBuilder("UIButtonComponentProperties", std::make_shared<UIButtonComponentProperties>());
         PropertiesManager::GetInstance().registerPropertiesSetBuilder("UITextComponentProperties", std::make_shared<UITextComponentProperties>());
         PropertiesManager::GetInstance().registerPropertiesSetBuilder("UITextInputComponentProperties", std::make_shared<UITextInputComponentProperties>());

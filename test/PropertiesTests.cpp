@@ -8,11 +8,14 @@
 #include <chrono>
 #include <game-engine/geIO.hpp>
 
-
-
 class TestData : public GameEngine::PropertiesHolder<TestData>{
     int privateIntValue_;
 public:
+    std::string getPropertiesName() const override
+    {
+        return "TestDataProperties";
+    }
+
     int getPrivate() const { return privateIntValue_; };
     void setPrivate(const int &value){ privateIntValue_ = value; };
 };
@@ -40,6 +43,17 @@ public:
 };
 }
 
+class Environment : public ::testing::Environment {
+public:
+    virtual ~Environment() {}
+
+    void SetUp() override {
+        GameEngine::PropertiesManager::GetInstance().registerPropertiesSetBuilder("TestDataProperties", std::make_shared<GameEngine::TestDataProperties>());
+    }
+};
+
+// initialize global environment
+testing::Environment* const foo_env = testing::AddGlobalTestEnvironment(new Environment());
 
 TEST(Properties, setValueFromPropertySetter)
 {
@@ -72,8 +86,8 @@ TEST(Properties, copyPropertyTree)
     std::shared_ptr<TestDataChild> instance(new TestDataChild());
 
     // create the original data structure
-    GameEngine::TestDataProperties propertiesInstantiator;
-    auto instancePropSet = std::dynamic_pointer_cast<GameEngine::PropertySet<TestData>>(propertiesInstantiator.create());
+    auto properties = GameEngine::PropertiesManager::GetInstance().instantiate("TestDataProperties");
+    auto instancePropSet = std::dynamic_pointer_cast<GameEngine::PropertySet<TestData>>(properties);
 
     auto &instanceProp = dynamic_cast<GameEngine::Property<TestData, int>&>(instancePropSet->get(0));
 
