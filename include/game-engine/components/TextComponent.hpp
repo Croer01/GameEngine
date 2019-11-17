@@ -10,7 +10,7 @@
 #include <game-engine/geGameObject.hpp>
 #include <game-engine/events/Observer.hpp>
 #include "../private/graphics/font/Text.hpp"
-#include <game-engine/properties/PropertiesRegister.hpp>
+#include <game-engine/properties/PropertiesManager.hpp>
 
 namespace GameEngine {
 class PUBLICAPI TextComponent : public geComponentInstantiable<TextComponent>, public Observer<GameObjectEvent> {

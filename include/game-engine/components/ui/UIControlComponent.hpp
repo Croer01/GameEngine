@@ -7,7 +7,7 @@
 
 
 #include <game-engine/geComponent.hpp>
-#include <game-engine/properties/PropertiesRegister.hpp>
+#include <game-engine/properties/PropertiesManager.hpp>
 
 namespace GameEngine {
     class PUBLICAPI UIControlComponent : public geComponentInstantiable<UIControlComponent>

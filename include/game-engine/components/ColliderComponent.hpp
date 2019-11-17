@@ -7,7 +7,7 @@
 
 #include <game-engine/geComponent.hpp>
 #include <game-engine/components/SpriteComponent.hpp>
-#include <game-engine/properties/PropertiesRegister.hpp>
+#include <game-engine/properties/PropertiesManager.hpp>
 #include "../private/physics/Collider.hpp"
 #include "SpriteAnimatedComponent.hpp"
 

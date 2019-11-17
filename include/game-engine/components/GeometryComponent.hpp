@@ -8,7 +8,7 @@
 #include <vector>
 #include <game-engine/api.hpp>
 #include <game-engine/geComponent.hpp>
-#include <game-engine/properties/PropertiesRegister.hpp>
+#include <game-engine/properties/PropertiesManager.hpp>
 #include "../../../private/graphics/GraphicGeometry.hpp"
 #include "../../../private/graphics/GraphicHolder.hpp"
 

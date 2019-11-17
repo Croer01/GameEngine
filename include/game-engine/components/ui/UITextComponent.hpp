@@ -8,7 +8,7 @@
 
 #include "UIControlComponent.hpp"
 #include "../../../../private/graphics/font/Text.hpp"
-#include <game-engine/properties/PropertiesRegister.hpp>
+#include <game-engine/properties/PropertiesManager.hpp>
 
 namespace GameEngine {
 class PUBLICAPI UITextComponent : public UIControlComponent
@@ -45,7 +45,7 @@ class UITextComponentProperties : public PropertyInstantiator
 public:
     virtual PropertySetBase *instantiateProperties()
     {
-        std::shared_ptr<PropertySetBase> base = PropertiesRegister::GetInstance().instantiate("UIControlComponentProperties");
+        std::shared_ptr<PropertySetBase> base = PropertiesManager::GetInstance().instantiate("UIControlComponentProperties");
         auto *properties = new PropertySet<UITextComponent>(base.get());
 
         properties->add(new Property<UITextComponent, std::string>(

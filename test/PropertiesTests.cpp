@@ -3,7 +3,7 @@
 #include <game-engine/properties/PropertySet.hpp>
 #include <game-engine/properties/Property.hpp>
 #include <game-engine/properties/PropertiesHolder.hpp>
-#include <game-engine/properties/PropertiesRegister.hpp>
+#include <game-engine/properties/PropertiesManager.hpp>
 #include <thread>
 #include <chrono>
 #include <game-engine/geIO.hpp>

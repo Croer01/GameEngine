@@ -8,7 +8,7 @@
 #include <game-engine/Command.hpp>
 #include "UITextComponent.hpp"
 #include "../../../../private/graphics/GraphicHolder.hpp"
-#include <game-engine/properties/PropertiesRegister.hpp>
+#include <game-engine/properties/PropertiesManager.hpp>
 
 namespace GameEngine {
 class PUBLICAPI UIButtonComponent : public UITextComponent
@@ -44,7 +44,7 @@ class UIButtonComponentProperties : public PropertyInstantiator
 public:
     virtual PropertySetBase *instantiatePropertie()
     {
-        std::shared_ptr<PropertySetBase> base = PropertiesRegister::GetInstance().instantiate("UITextComponentProperties");
+        std::shared_ptr<PropertySetBase> base = PropertiesManager::GetInstance().instantiate("UITextComponentProperties");
         auto *properties = new PropertySet<UIButtonComponent>(base.get());
 
         properties->add(new Property<UIButtonComponent, geColor>(

@@ -2,8 +2,8 @@
 // Created by adria on 28/10/2019.
 //
 
-#ifndef GAMEENGINEEDITOR_PROPERTIESREGISTER_HPP
-#define GAMEENGINEEDITOR_PROPERTIESREGISTER_HPP
+#ifndef GAMEENGINEEDITOR_PROPERTIESMANAGER_HPP
+#define GAMEENGINEEDITOR_PROPERTIESMANAGER_HPP
 
 #include <map>
 #include <game-engine/properties/PropertySet.hpp>
@@ -31,12 +31,12 @@ public:
     virtual PropertySetBase *instantiateProperties() = 0;
 };
 
-class PropertiesRegister : public Internal::Singleton<PropertiesRegister>
+class PropertiesManager : public Internal::Singleton<PropertiesManager>
 {
     std::map<std::string, std::shared_ptr<PropertyInstantiator>> properties_;
 
 public:
-    void addProperty(const std::string &targetName, const std::shared_ptr<PropertyInstantiator> &properties)
+    void registerPropertiesSetBuilder(const std::string &targetName, const std::shared_ptr<PropertyInstantiator> &properties)
     {
         properties_[targetName] = properties;
     }
@@ -48,4 +48,4 @@ public:
 };
 
 }
-#endif //GAMEENGINEEDITOR_PROPERTIESREGISTER_HPP
+#endif //GAMEENGINEEDITOR_PROPERTIESMANAGER_HPP

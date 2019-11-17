@@ -11,7 +11,7 @@
 #include <game-engine/events/Observer.hpp>
 #include "../private/graphics/Graphic.hpp"
 #include "../private/graphics/GraphicHolder.hpp"
-#include <game-engine/properties/PropertiesRegister.hpp>
+#include <game-engine/properties/PropertiesManager.hpp>
 
 namespace GameEngine {
 

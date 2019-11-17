@@ -7,7 +7,7 @@
 
 
 #include <game-engine/geComponent.hpp>
-#include <game-engine/properties/PropertiesRegister.hpp>
+#include <game-engine/properties/PropertiesManager.hpp>
 #include "../private/audio/AudioSource.hpp"
 namespace GameEngine {
     class PUBLICAPI AudioComponent : public geComponentInstantiable<AudioComponent> {
