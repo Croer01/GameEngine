@@ -38,7 +38,7 @@ namespace GameEngine {
             int i = 0;
 
             while (index == -1 && i < properties_.size()){
-                if(properties_[index]->name() == name)
+                if(properties_[i]->name() == name)
                     index = i;
                 i++;
             }
