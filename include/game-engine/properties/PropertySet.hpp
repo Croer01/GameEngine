@@ -13,40 +13,27 @@
 namespace GameEngine {
 
     class PUBLICAPI PropertySetBase {
-    public:
-        virtual ~PropertySetBase(){};
-    };
-
-    template <typename Class>
-    class PUBLICAPI PropertySet : public PropertySetBase {
-        std::vector<std::shared_ptr<PropertyTBase<Class>>> properties_;
+    protected:
+        std::vector<std::shared_ptr<PropertyBase>> properties_;
         std::unique_ptr<PropertySetBase> parent_;
     public:
-        PropertySet() :
-        parent_(nullptr)
+        PropertySetBase() :
+            parent_(nullptr)
         {};
 
-        explicit PropertySet(PropertySetBase *parent) :
-            parent_(parent)
-        {};
+        explicit PropertySetBase(PropertySetBase *parent) :
+        parent_(parent)
+            {};
 
-        virtual ~PropertySet(){
+        virtual ~PropertySetBase(){
             properties_.clear();
         }
 
-        int size() const{
-            return properties_.size();
-        }
-
-        void add(GameEngine::PropertyTBase<Class> *property) {
-            properties_.emplace_back(std::move(property));
-        };
-
-        PropertyTBase<Class>& get(int index){
+        PropertyBase& get(int index){
             return *properties_[index];
         }
 
-        PropertyTBase<Class>& get(const std::string &name) {
+        PropertyBase& get(const std::string &name) {
             int index = -1;
             int i = 0;
 
@@ -62,6 +49,28 @@ namespace GameEngine {
             return  *properties_[index];
         }
 
+        int size() const{
+            return properties_.size();
+        }
+    };
+
+    template <typename Class>
+    class PUBLICAPI PropertySet : public PropertySetBase {
+    public:
+        PropertySet() : PropertySetBase()
+        {};
+
+        explicit PropertySet(PropertySetBase *parent) :
+            PropertySetBase(parent)
+        {};
+
+        virtual ~PropertySet(){
+        }
+
+        void add(PropertyTBase<Class> *property) {
+            properties_.emplace_back(dynamic_cast<PropertyBase *>(std::move(property)));
+        };
+
         void copy(const std::shared_ptr<const Class> &original, const std::shared_ptr<Class> &target) const {
             if(parent_)
             {
@@ -70,7 +79,7 @@ namespace GameEngine {
             }
 
             for( int i = 0; i < properties_.size(); i++) {
-                const std::shared_ptr<PropertyTBase<Class>> property = properties_[i];
+                const std::shared_ptr<PropertyTBase<Class>> property = std::dynamic_pointer_cast<PropertyTBase<Class>>(properties_[i]);
                 property->copy(original, target);
             }
         };
