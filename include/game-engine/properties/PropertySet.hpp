@@ -19,7 +19,7 @@ namespace GameEngine {
 
     template <typename Class>
     class PUBLICAPI PropertySet : public PropertySetBase {
-        std::vector<std::shared_ptr<PropertyBase<Class>>> properties_;
+        std::vector<std::shared_ptr<PropertyTBase<Class>>> properties_;
         std::unique_ptr<PropertySetBase> parent_;
     public:
         PropertySet() :
@@ -38,15 +38,15 @@ namespace GameEngine {
             return properties_.size();
         }
 
-        void add(GameEngine::PropertyBase<Class> *property) {
+        void add(GameEngine::PropertyTBase<Class> *property) {
             properties_.emplace_back(std::move(property));
         };
 
-        PropertyBase<Class>& get(int index){
+        PropertyTBase<Class>& get(int index){
             return *properties_[index];
         }
 
-        PropertyBase<Class>& get(const std::string &name) {
+        PropertyTBase<Class>& get(const std::string &name) {
             int index = -1;
             int i = 0;
 
@@ -70,7 +70,7 @@ namespace GameEngine {
             }
 
             for( int i = 0; i < properties_.size(); i++) {
-                const std::shared_ptr<PropertyBase<Class>> property = properties_[i];
+                const std::shared_ptr<PropertyTBase<Class>> property = properties_[i];
                 property->copy(original, target);
             }
         };
