@@ -9,6 +9,7 @@
 #include <game-engine/Builder.hpp>
 #include <string>
 #include <vector>
+#include <game-engine/properties/PropertiesManager.hpp>
 
 namespace GameEngine {
     class PUBLICAPI geEnvironment {
@@ -19,7 +20,9 @@ namespace GameEngine {
         geEnvironment();
         virtual ~geEnvironment() = default;
         void registerComponent(const std::string &idType, ComponentBuilder *builder);
-
+        std::shared_ptr<PropertySetBase> getProperties(const std::string &id) const;
+        void registerProperties(const std::string &id, PropertyInstantiator *instantiator);
+        std::vector<std::string> getRegisteredPropertiesIds() const;
         void configurationPath(const std::string &config);
         std::string configurationPath() const;
         void firstScene(const std::string &sceneName);

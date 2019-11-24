@@ -45,6 +45,16 @@ public:
     {
         return properties_[targetName]->create();
     }
+
+    std::vector<std::string> getIds() const
+    {
+        std::vector<std::string> ids;
+        for(const auto & property : properties_) {
+            ids.push_back(property.first);
+        }
+        return ids;
+    }
+
 };
 
 }
