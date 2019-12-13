@@ -1,0 +1,20 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary")
+
+#cc_binary(
+#    name = "hello-world",
+#    srcs = ["hello-world.cc"],
+#)
+
+cc_library(
+    name = "gameEngine",
+    srcs = glob([
+        "public/**/*.cpp",
+        "private/**/*.cpp"
+    ]),
+    hdrs = glob(["include/**/*.hpp"]),
+    includes = ["include"],
+    deps = [
+        "@SDL2//:SDL2",
+        "@SDL2_image//:SDL_image"
+    ]
+)

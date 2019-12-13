@@ -1,0 +1,31 @@
+config_setting(
+	name = "win",
+	values = {
+		"cpu": "x64_windows",
+	},
+	visibility = ["//:__subpackages__"],
+)
+
+SDL_LINKOPTS = select({
+	"//:win": [
+		"-DEFAULTLIB:user32",
+		"-DEFAULTLIB:gdi32",
+		"-DEFAULTLIB:winmm",
+		"-DEFAULTLIB:imm32",
+		"-DEFAULTLIB:ole32",
+		"-DEFAULTLIB:oleaut32",
+		"-DEFAULTLIB:version",
+		"-DEFAULTLIB:uuid",
+		"-DEFAULTLIB:shell32",
+		"-DEFAULTLIB:advapi32",
+	],
+	"//conditions:default": [],
+})
+
+cc_library(
+	name = "SDL_image",
+	hdrs = glob(["*.h"]),
+	srcs = glob(["*.c"]),
+	linkopts = SDL_LINKOPTS,
+	visibility = ["//visibility:public"],
+)

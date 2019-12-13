@@ -1,0 +1,251 @@
+config_setting(
+	name = "win",
+	values = {
+		"cpu": "x64_windows",
+	},
+	visibility = ["//:__subpackages__"],
+)
+
+SDL_LINKOPTS = select({
+	"//:win": [
+		"-DEFAULTLIB:user32",
+		"-DEFAULTLIB:gdi32",
+		"-DEFAULTLIB:winmm",
+		"-DEFAULTLIB:imm32",
+		"-DEFAULTLIB:ole32",
+		"-DEFAULTLIB:oleaut32",
+		"-DEFAULTLIB:version",
+		"-DEFAULTLIB:uuid",
+		"-DEFAULTLIB:shell32",
+		"-DEFAULTLIB:advapi32",
+	],
+	"//conditions:default": [],
+})
+
+# Internal deps used by all modules
+cc_library(
+	name = "SDL2internal",
+	hdrs = glob(["include/**/*.h", "src/*.h"]),
+	includes = ["include", "src"],
+	visibility = ["//:__subpackages__"],
+)
+
+# Atomic
+cc_library(
+	name = "atomic",
+	hdrs = glob(["src/atomic/*.h"]),
+	srcs = glob(["src/atomic/*.c"]),
+	visibility = ["//visibility:public"],
+	deps = [
+		"//:SDL2internal",
+	],
+)
+
+# --AUDIO--
+cc_library(
+	name = "disk",
+	hdrs = glob(["src/audio/disk/*.h"]),
+	srcs = glob(["src/audio/disk/*.c"]),
+	deps = ["//:SDL2internal"],
+	visibility = ["//:__subpackages__"],
+)
+
+cc_library(
+	name = "dummy",
+	hdrs = glob(["src/audio/dummy/*.h"]),
+	srcs = glob(["src/audio/dummy/*.c"]),
+	deps = ["//:SDL2internal"],
+	visibility = ["//:__subpackages__"],
+)
+
+# Windows
+cc_library(
+	name = "directsound",
+	hdrs = glob(["src/audio/directsound/*.h"]),
+	srcs = glob(["src/audio/directsound/*.c"]),
+	deps = ["//:SDL2internal"],
+	visibility = ["//:__subpackages__"],
+)
+
+cc_library(
+	name = "wasapi",
+	hdrs = glob(["src/audio/wasapi/*.h"]),
+	srcs = glob(["src/audio/wasapi/*.c"]),
+	deps = ["//:SDL2internal"],
+	visibility = ["//:__subpackages__"],
+)
+
+cc_library(
+	name = "winmm",
+	hdrs = glob(["src/audio/winmm/*.h"]),
+	srcs = glob(["src/audio/winmm/*.c"]),
+	deps = ["//:SDL2internal"],
+	visibility = ["//:__subpackages__"],
+)
+
+# Linux
+cc_library(
+	name = "arts",
+	hdrs = glob(["src/audio/arts/*.h"]),
+	srcs = glob(["src/audio/arts/*.c"]),
+	deps = ["//:SDL2internal"],
+	visibility = ["//:__subpackages__"],
+)
+
+cc_library(
+	name = "alsa",
+	hdrs = glob(["src/audio/alsa/*.h"]),
+	srcs = glob(["src/audio/alsa/*.c"]),
+	deps = ["//:SDL2internal"],
+	visibility = ["//:__subpackages__"],
+)
+
+cc_library(
+	name = "jack",
+	hdrs = glob(["src/audio/jack/*.h"]),
+	srcs = glob(["src/audio/jack/*.c"]),
+	deps = ["//:SDL2internal"],
+	visibility = ["//:__subpackages__"],
+)
+
+cc_library(
+	name = "esd",
+	hdrs = glob(["src/audio/esd/*.h"]),
+	srcs = glob(["src/audio/esd/*.c"]),
+	deps = ["//:SDL2internal"],
+	visibility = ["//:__subpackages__"],
+)
+
+cc_library(
+	name = "pulseaudio",
+	hdrs = glob(["src/audio/pulseaudio/*.h"]),
+	srcs = glob(["src/audio/pulseaudio/*.c"]),
+	deps = ["//:SDL2internal"],
+	visibility = ["//:__subpackages__"],
+)
+
+cc_library(
+	name = "nas",
+	hdrs = glob(["src/audio/nas/*.h"]),
+	srcs = glob(["src/audio/nas/*.c"]),
+	deps = ["//:SDL2internal"],
+	visibility = ["//:__subpackages__"],
+)
+
+cc_library(
+	name = "sndio",
+	hdrs = glob(["src/audio/sndio/*.h"]),
+	srcs = glob(["src/audio/sndio/*.c"]),
+	deps = ["//:SDL2internal"],
+	visibility = ["//:__subpackages__"],
+)
+
+cc_library(
+	name = "fusionsound",
+	hdrs = glob(["src/audio/fusionsound/*.h"]),
+	srcs = glob(["src/audio/fusionsound/*.c"]),
+	deps = ["//:SDL2internal"],
+	visibility = ["//:__subpackages__"],
+)
+
+# Audio library
+cc_library(
+	name = "audio",
+	hdrs = glob(["*.h"]),
+	srcs = glob(["*.c"]),
+	deps = ["//:SDL2internal"] + select({
+		"//:win": [
+			":disk",
+			":dummy",
+			":wasapi",
+			":directsound",
+			":winmm",
+		],
+		"//conditions:default": [
+			":disk",
+			":dummy",
+			":alsa",
+			":jack",
+			":esd",
+			":pulseaudio",
+			":arts",
+			":nas",
+			":sndio",
+			":fusionsound",
+		],
+	}),
+	visibility = ["//visibility:public"],
+)
+
+# --CORE--
+cc_library(
+	name = "windows",
+	hdrs = glob(["src/core/windows/*.h"]),
+	srcs = glob(["src/core/windows/*.c"]),
+	deps = ["//:SDL2internal"],
+	visibility = ["//:__subpackages__"],
+)
+
+cc_library(
+	name = "unix",
+	hdrs = glob(["src/core/unix/*.h"]),
+	srcs = glob(["src/core/unix/*.c"]),
+	deps = ["//:SDL2internal"],
+	visibility = ["//:__subpackages__"],
+)
+
+cc_library(
+	name = "linux",
+	hdrs = glob(["src/core/linux/*.h"]),
+	srcs = glob(["src/core/linux/*.c"]),
+	deps = ["//:SDL2internal"],
+	visibility = ["//:__subpackages__"],
+)
+
+cc_library(
+	name = "core",
+	hdrs = glob(["*.h"]),
+	srcs = glob(["*.c"]),
+	deps = ["//:SDL2internal"] + select({
+		"//:win": [
+			":windows"
+		],
+		"//conditions:default": [
+			":unix",
+			":linux",
+		],
+	}),
+	visibility = ["//visibility:public"],
+)
+
+# Main library
+cc_library(
+	name = "SDL2",
+	hdrs = glob(["include/**/*.h"]),
+	includes = ["include", "src"],
+	srcs = glob(["include/*.h", "src/*.c", "src/*.h"]),
+	deps = [
+		":SDL2internal",
+		":atomic",
+		":audio",
+		":core",
+		":cpuinfo",
+		":dynapi",
+		":events",
+		":file",
+		":filesystem",
+		":haptic",
+		":joystick",
+		":libm",
+		":loadso",
+		":main",
+		":power",
+		":render",
+		":stdlib",
+		"thread",
+		":timer",
+		":video",
+	],
+	linkopts = SDL_LINKOPTS,
+	visibility = ["//visibility:public"],
+)
