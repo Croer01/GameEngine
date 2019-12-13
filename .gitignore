@@ -38,5 +38,10 @@
 cmake-build-*/
 .idea/
 
+# Bazel generated files
+/bazel-*
+## this contains the BUILD files for external dependencies
+!/bazel-ports
+
 # remove generated files from engine
 componentsRegistered.hpp

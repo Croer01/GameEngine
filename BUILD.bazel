@@ -15,6 +15,11 @@ cc_library(
     includes = ["include"],
     deps = [
         "@SDL2//:SDL2",
-        "@SDL2_image//:SDL_image"
+        "@SDL2_image//:SDL_image",
+        "@glew//:glew",
+        "@glm//:glm",
+        "@yaml-cpp//:yaml-cpp",
+        "@box2d//:box2d",
+        "@utf8-cpp//:utf8-cpp"
     ]
 )
