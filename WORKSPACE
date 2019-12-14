@@ -20,15 +20,13 @@ http_archive(
     strip_prefix = "SDL2_image-2.0.2"
 )
 
-# version 2.1.0
-new_git_repository(
+#TODO: choose the correct zip by platform
+http_archive(
     name = "glew",
-    remote = "https://github.com/nigels-com/glew.git",
-    commit = "3a8eff77da3658c13fbd3634c943d5251d76322c",
-    # config suggested by bazel
-    shallow_since = "1501499511 +1000",
-    init_submodules = 0,
-    build_file = "@//:bazel-ports/BUILD-glew.bazel"
+    url = "https://github.com/nigels-com/glew/releases/download/glew-2.1.0/glew-2.1.0.zip",
+    sha256 = "2700383d4de2455f06114fbaf872684f15529d4bdc5cdea69b5fb0e9aa7763f1",
+    build_file = "@//:bazel-ports/BUILD.glew",
+    strip_prefix = "glew-2.1.0"
 )
 
 http_archive(
