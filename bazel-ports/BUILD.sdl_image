@@ -26,6 +26,7 @@ cc_library(
 	name = "SDL_image",
 	hdrs = glob(["*.h"]),
 	srcs = glob(["*.c"]),
+    deps = ["@SDL2//:SDL2"],
 	linkopts = SDL_LINKOPTS,
 	visibility = ["//visibility:public"],
 )

@@ -16,7 +16,8 @@ http_archive(
     name = "SDL2_image",
     url = "https://www.libsdl.org/projects/SDL_image/release/SDL2_image-2.0.2.zip",
     sha256 = "7c3158ca1bf84ef041bcf55ea237306684caf6b70f4303ee7e1f0777bfba55a2",
-    build_file = "@//:bazel-ports/BUILD-SDL2_Image.bazel"
+    build_file = "@//:bazel-ports/BUILD.sdl_image",
+    strip_prefix = "SDL2_image-2.0.2"
 )
 
 # version 2.1.0
