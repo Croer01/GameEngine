@@ -66,5 +66,5 @@ new_git_repository(
     commit = "82c674b7a7aff3f2845e8eb17d0d9f790b629799",
     shallow_since = "1556315357 -0400",
     # config suggested by bazel
-    build_file = "@//:bazel-ports/BUILD-utf8-cpp.bazel"
+    build_file = "@//:bazel-ports/BUILD.utf8cpp"
 )
