@@ -8,7 +8,8 @@ http_archive(
     name = "SDL2",
     url = "https://www.libsdl.org/release/SDL2-2.0.9.zip",
     sha256 = "7d21dd8226dec33365775144e21884016154af27dc4adbc117504e6cee63a0d7",
-    build_file = "@//:bazel-ports/BUILD-SDL2.bazel"
+    build_file = "@//:bazel-ports/BUILD.sdl2",
+    strip_prefix = "SDL2-2.0.9"
 )
 
 http_archive(

@@ -1,0 +1,430 @@
+# Build file based on https://github.com/bazelregistry/sdl2
+
+config_setting(
+	name = "windows64",
+	values = {
+		"cpu": "x64_windows",
+	},
+	visibility = ["//:__subpackages__"],
+)
+
+SDL_LINKOPTS = select({
+	"//:windows64": [
+		"-DEFAULTLIB:user32",
+		"-DEFAULTLIB:gdi32",
+		"-DEFAULTLIB:winmm",
+		"-DEFAULTLIB:imm32",
+		"-DEFAULTLIB:ole32",
+		"-DEFAULTLIB:oleaut32",
+		"-DEFAULTLIB:version",
+		"-DEFAULTLIB:uuid",
+		"-DEFAULTLIB:shell32",
+		"-DEFAULTLIB:advapi32",
+		"-DEFAULTLIB:hid",
+		"-DEFAULTLIB:setupapi",
+		"-DEFAULTLIB:opengl32",
+	],
+	"//conditions:default": [],
+})
+
+cc_library(
+	name = "SDL2_hdrs",
+	hdrs = glob(["include/**/*.h"]),
+	strip_include_prefix = "include",
+	visibility = ["//visibility:public"],
+)
+
+cc_library(
+	name = "SDL2base",
+	srcs = [
+		"src/SDL_assert.c",
+		"src/SDL_dataqueue.c",
+		"src/SDL_error.c",
+		"src/SDL_hints.c",
+		"src/SDL_log.c",
+		"src/SDL.c",
+	],
+	deps = ["//src/thread:thread"],
+	hdrs = glob(["include/**/*.h", "src/*.h"]),
+	includes = ["include", "src"],
+	visibility = ["//:__subpackages__"],
+)
+
+cc_library(
+	name = "SDL2internal",
+	hdrs = glob(["include/**/*.h", "src/*.h"]),
+	includes = ["include", "src"],
+	visibility = ["//:__subpackages__"],
+)
+
+cc_library(
+        name = "atomic",
+        hdrs = glob(["src/atomic/*.h"]),
+        srcs = glob(["src/atomic/*.c"]),
+        visibility = ["//visibility:public"],
+        deps = [
+                "//:SDL2internal",
+        ],
+)
+cc_library(
+        name = "audio",
+        hdrs = glob(["src/audio/*.h"]) + select({
+                "//:windows64": glob([
+                        "src/audio/disk/**/*.h",
+                        "src/audio/dummy/**/*.h",
+                        "src/audio/wasapi/**/*.h",
+                        "src/audio/directsound/**/*.h",
+                        "src/audio/winmm/**/*.h",
+                ]),
+                "//conditions:default": glob([
+                        "src/audio/disk/**/*.h",
+                        "src/audio/dummy/**/*.h",
+                        "src/audio/alsa/**/*.h",
+                        "src/audio/jack/**/*.h",
+                        "src/audio/esd/**/*.h",
+                        "src/audio/pulseaudio/**/*.h",
+                        "src/audio/arts/**/*.h",
+                        "src/audio/nas/**/*.h",
+                        "src/audio/sndio/**/*.h",
+                        "src/audio/fusionsound/**/*.h",
+                ]),
+        }),
+        srcs = glob(["src/audio/*.c"]) + select({
+                "//:windows64": glob([
+                        "src/audio/disk/**/*.c",
+                        "src/audio/dummy/**/*.c",
+                        "src/audio/wasapi/**/*.c",
+                        "src/audio/directsound/**/*.c",
+                        "src/audio/winmm/**/*.c",
+                ]),
+                "//conditions:default": glob([
+                        "src/audio/disk/**/*.c",
+                        "src/audio/dummy/**/*.c",
+                        "src/audio/alsa/**/*.c",
+                        "src/audio/jack/**/*.c",
+                        "src/audio/esd/**/*.c",
+                        "src/audio/pulseaudio/**/*.c",
+                        "src/audio/arts/**/*.c",
+                        "src/audio/nas/**/*.c",
+                        "src/audio/sndio/**/*.c",
+                        "src/audio/fusionsound/**/*.c",
+                ]),
+        }),
+        deps = ["//:SDL2internal"],
+        visibility = ["//visibility:public"],
+)
+cc_library(
+        name = "SDL_winmm",
+        hdrs = glob(["src/audio/winmm/*.h"]),
+        srcs = glob(["src/audio/winmm/*.c"]),
+        deps = ["//:SDL2internal"],
+        visibility = ["//:__subpackages__"],
+)
+cc_library(
+        name = "core",
+        hdrs = glob(["src/core/*.h"]) + select({
+                "//:windows64": glob([
+                        "src/core/windows/*.h"
+                ]),
+        }),
+        srcs = glob(["src/core/*.c"]) + select({
+                "//:windows64": glob([
+                        "src/core/windows/*.c"
+                ]),
+        }),
+        deps = ["//:SDL2internal"],
+        visibility = ["//visibility:public"],
+)
+cc_library(
+        name = "cpuinfo",
+        hdrs = glob(["src/cpuinfo/*.h"]),
+        srcs = glob(["src/cpuinfo/*.c"]),
+        deps = ["//:SDL2internal"],
+        visibility = ["//visibility:public"],
+)
+cc_library(
+        name = "dynapi",
+        hdrs = glob(["src/dynapi/*.h"]),
+        srcs = glob(["src/dynapi/*.c"]),
+        deps = ["//:SDL2internal"],
+        visibility = ["//visibility:public"],
+)
+cc_library(
+        name = "events",
+        hdrs = glob(["src/dynapi/*.h"]),
+        srcs = glob(["src/dynapi/*.c"]),
+        deps = ["//:SDL2internal"],
+        visibility = ["//visibility:public"],
+)
+cc_library(
+        name = "file",
+        hdrs = glob(["src/file/*.h"]),
+        srcs = glob(["src/file/*.c"]),
+        deps = ["//:SDL2internal"],
+        visibility = ["//visibility:public"],
+)
+cc_library(
+        name = "filesystem",
+        hdrs = glob(["src/filesystem/*.h"]) + select({
+                "//:windows64": glob([
+                        "src/filesystem/windows/*.h",
+                ]),
+        }),
+        srcs = glob(["src/filesystem/*.c"]) + select({
+                "//:windows64": glob([
+                        "src/filesystem/windows/*.c",
+                ]),
+        }),
+        deps = ["//:SDL2internal"],
+        visibility = ["//visibility:public"],
+)
+cc_library(
+        name = "haptic",
+        hdrs = glob(["src/haptic/*.h"]) + select({
+                "//:windows64": glob([
+                        "src/haptic/windows/*.h"
+                ]),
+        }),
+        srcs = glob(["src/haptic/*.c"]) + select({
+                "//:windows64": glob([
+                        "src/haptic/windows/*.c"
+                ]),
+        }),
+        deps = ["//:SDL2internal"],
+        visibility = ["//visibility:public"],
+)
+cc_library(
+        name = "hidapi",
+        hdrs = glob(["src/hidapi/*.h"]) + select({
+                "//:windows64": glob([
+                        "src/hidapi/windows/*.h"
+                ]),
+                "//conditions:default": [],
+        }),
+        includes = ["hidapi"],
+        srcs = glob(["src/hidapi/*.c"]) + select({
+                "//:windows64": glob([
+                        "src/hidapi/windows/*.c"
+                ]),
+                "//conditions:default": [],
+        }),
+        deps = ["//:SDL2internal"],
+        visibility = ["//visibility:public"],
+)
+cc_library(
+        name = "windows",
+        hdrs = glob(["src/windows/*.h"]),
+        srcs = glob(["src/windows/*.c"]),
+        deps = ["//:SDL2internal"],
+        visibility = ["//:__subpackages__"],
+)
+cc_library(
+        name = "joystick",
+        hdrs = glob(["src/joystick/*.h"]) + select({
+                "//:windows64": glob([
+                        "src/joystick/windows/*.h",
+                        "src/joystick/hidapi/*.h",
+                ]),
+        }),
+        srcs = glob(["src/joystick/*.c"]) + select({
+                "//:windows64": glob([
+                        "src/joystick/windows/*.c",
+                        "src/joystick/hidapi/*.c",
+                ]),
+        }),
+        deps = ["//:SDL2internal"],
+        visibility = ["//visibility:public"],
+)
+cc_library(
+        name = "libm",
+        hdrs = glob(["src/libm/*.h"]),
+        srcs = glob(["src/libm/*.c"]),
+        deps = ["//:SDL2internal"],
+        visibility = ["//visibility:public"],
+)
+cc_library(
+        name = "loadso",
+        hdrs =  select({
+                "//:windows64": glob([
+                        "src/loadso/windows/*.h",
+                ]),
+        }),
+        srcs =  select({
+                "//:windows64": glob([
+                        "src/loadso/windows/*.c",
+                ]),
+        }),
+        deps = ["//:SDL2internal"],
+        visibility = ["//visibility:public"],
+)
+cc_library(
+        name = "main",
+        hdrs =  select({
+                "//:windows64": glob([
+                        "src/main/windows/*.h",
+                ]),
+        }),
+        srcs =  select({
+                "//:windows64": glob([
+                        "src/main/windows/*.c",
+                ]),
+        }),
+        deps = ["//:SDL2internal"],
+        visibility = ["//visibility:public"],
+)
+cc_library(
+        name = "power",
+        hdrs = glob(["src/power/*.h"]) + select({
+                "//:windows64": glob([
+                        "src/power/windows/*.h",
+                ]),
+        }),
+        srcs = glob(["src/power/*.c"]) + select({
+                "//:windows64": glob([
+                        "src/power/windows/*.c",
+                ]),
+        }),
+        deps = ["//:SDL2internal"],
+        visibility = ["//visibility:public"],
+)
+cc_library(
+        name = "render",
+        hdrs = glob(["src/render/*.h"]) + select({
+                "//:windows64": glob([
+                        "src/render/direct3d/*.h",
+                        "src/render/direct3d11/*.h",
+                        "src/render/opengl/*.h",
+                        "src/render/opengles/*.h",
+                        "src/render/opengles2/*.h",
+                        "src/render/software/*.h",
+                ])
+        }),
+        srcs = glob(["src/render/*.c"]) + select({
+                "//:windows64": glob([
+                        "src/render/direct3d/*.c",
+                        "src/render/direct3d11/*.c",
+                        "src/render/opengl/*.c",
+                        "src/render/opengles/*.c",
+                        "src/render/opengles2/*.c",
+                        "src/render/software/*.c",
+                ])
+        }),
+        deps = ["//:SDL2internal"],
+        visibility = ["//visibility:public"],
+)
+cc_library(
+        name = "sensor",
+        srcs = [
+                "src/sensor/SDL_sensor_c.h",
+                "src/sensor/SDL_sensor.c",
+                "src/sensor/SDL_syssensor.h",
+                "src/sensor/dummy/SDL_dummysensor.c",
+                "src/sensor/dummy/SDL_dummysensor.h",
+        ],
+        deps = ["//:SDL2internal"],
+        visibility = ["//visibility:public"],
+)
+cc_library(
+        name = "stdlib",
+        srcs = glob(["src/stdlib/*.c"]),
+        deps = [
+                "//:SDL2internal",
+                "//:libm",
+                "//:atomic",
+        ],
+        visibility = ["//visibility:public"],
+)
+MISSING_IMPL_GENERIC = select({
+        "//:windows64": [
+                # Missing SDL_CreateCond, SDL_DestroyCond, SDL_CondBroadcast,
+                # SDL_CondWaitTimeout on the windows platform
+                "src/thread/generic/SDL_syscond.c",
+        ],
+        "//conditions:default": [],
+})
+
+cc_library(
+        name = "thread",
+        hdrs = glob(["src/thread/*.h"]) + select({
+                "//:windows64": glob([
+                        "src/thread/windows/*.h",
+                ]),
+        }),
+        srcs = glob(["src/thread/*.c"]) + MISSING_IMPL_GENERIC + select({
+                "//:windows64": glob([
+                        "src/thread/windows/*.c",
+                ]),
+        }),
+        deps = ["//:SDL2internal"] ,
+        visibility = ["//visibility:public"],
+)
+cc_library(
+        name = "timer",
+        hdrs = glob(["src/timer/*.h"]) + select({
+                "//:windows64": glob([
+                        "src/timer/windows/*.h",
+                ]),
+        }),
+        srcs = glob(["src/timer/*.c"]) + select({
+                "//:windows64": glob([
+                        "src/timer/windows/*.c",
+                ]),
+        }),
+        deps = ["//:SDL2internal"],
+        visibility = ["//visibility:public"],
+)
+cc_library(
+        name = "video",
+        hdrs = glob(["src/video/*.h"]) + select({
+                "//:windows64": glob([
+                        "src/video/dummy/*.h",
+                        "src/video/windows/*.h",
+                        "src/video/khronos/*.h",
+                        "src/video/yuv2rgb/*.h",
+                ])
+        }),
+        srcs = glob(["src/video/*.c"]) + select({
+                "//:windows64": glob([
+                        "src/video/dummy/*.c",
+                        "src/video/windows/*.c",
+                        "src/video/khronos/*.c",
+                        "src/video/yuv2rgb/*.c",
+                ])
+        }),
+        deps = ["//:SDL2internal"],
+        visibility = ["//visibility:public"],
+)
+
+
+cc_library(
+	name = "SDL2",
+	hdrs = glob(["include/**/*.h"]),
+	includes = ["include", "src"],
+	srcs = glob(["include/*.h", "src/*.c", "src/*.h"]),
+	deps = [
+		":SDL2internal",
+		":atomic",
+		":audio",
+		":core",
+		":cpuinfo",
+		":dynapi",
+		":events",
+		":file",
+		":filesystem",
+		":haptic",
+		":hidapi",
+		":joystick",
+		":libm",
+		":loadso",
+		":main",
+		":power",
+		":render",
+		":sensor",
+		":stdlib",
+		":thread",
+		":timer",
+		":video",
+	],
+	linkopts = SDL_LINKOPTS,
+	visibility = ["//visibility:public"],
+)
