@@ -34,7 +34,7 @@ http_archive(
     url = "https://github.com/g-truc/glm/archive/0.9.9.0.tar.gz",
     sha256 = "514dea9ac0099dc389cf293cf1ab3d97aff080abad55bf79d4ab7ff6895ee69c",
     strip_prefix = "glm-0.9.9.0",
-    build_file = "@//:bazel-ports/BUILD-glm.bazel"
+    build_file = "@//:bazel-ports/BUILD.glm"
 )
 
 
@@ -55,7 +55,8 @@ new_git_repository(
     remote = "https://github.com/erincatto/Box2D.git",
     commit = "374664b2a4ce2e7c24fbad6e1ed34bebcc9ab6bc",
     # config suggested by bazel
-    build_file = "@//:bazel-ports/BUILD-box2d.bazel"
+    build_file = "@//:bazel-ports/BUILD.box2d",
+    strip_prefix = "Box2D"
 )
 
 # version v3.1
