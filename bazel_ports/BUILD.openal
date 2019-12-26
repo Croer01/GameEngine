@@ -1,0 +1,92 @@
+load("@rules_foreign_cc//tools/build_defs:cmake.bzl", "cmake_external")
+
+load("@rules_foreign_cc//tools/build_defs/native_tools:native_tools_toolchain.bzl", "native_tool_toolchain")
+
+toolchain(
+    name = "built_windows_cmake_toolchain",
+    toolchain = ":built_windows_cmake",
+    toolchain_type = "@rules_foreign_cc//tools/build_defs:cmake_toolchain",
+)
+
+toolchain(
+    name = "built_windows_ninja_toolchain",
+    toolchain = ":built_windows_ninja",
+    toolchain_type = "@rules_foreign_cc//tools/build_defs:ninja_toolchain",
+)
+
+native_tool_toolchain(
+    name = "built_windows_cmake",
+    path = "/cygdrive/c/Users/adria/CLionProjects/GameEngineV2/bazel_ports/cmake.sh",
+    visibility = ["//visibility:public"],
+)
+
+native_tool_toolchain(
+    name = "built_windows_ninja",
+    path = "/cygdrive/c/Users/adria/CLionProjects/GameEngineV2/bazel_ports/ninja.sh",
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "srcs",
+    srcs = glob(["**"]),
+    visibility = ["//visibility:public"],
+)
+
+cmake_external(
+    name = "openal-soft",
+    lib_source = ":srcs",
+    generate_crosstool_file = True,
+    cmake_options = ["-G \"Ninja\""],
+    shared_libraries = select({
+        "@bazel_tools//src/conditions:windows": ["OpenAL32.dll"],
+        "@bazel_tools//src/conditions:darwin": ["OpenAL32.dylib"],
+        "//conditions:default": ["OpenAL32.so"],
+    }),
+    make_commands = ["ninja install"],
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#COMMON_OBJS = glob(["common/*.h", "common/*.cpp"])
+#OPENAL_OBJS = glob(["al/*.h", "al/*.cpp"])
+#ALC_OBJS = glob(["alc/*.h", "alc/*.cpp"]) + [
+#    "alc/backends/base.cpp",
+#    "alc/backends/base.h",
+#    # Default backends, always available
+#    "alc/backends/loopback.cpp",
+#    "alc/backends/loopback.h",
+#    "alc/backends/null.cpp",
+#    "alc/backends/null.h"
+#        ]
+#
+#cc_library(
+#	name = "openal_common",
+#	srcs = COMMON_OBJS,
+#	visibility = ["//:__subpackages__"],
+#)
+#
+#
+#cc_library(
+#	name = "openal",
+#	srcs = COMMON_OBJS + OPENAL_OBJS + ALC_OBJS,
+#    visibility = ["//visibility:public"],
+#)

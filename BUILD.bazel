@@ -20,6 +20,8 @@ cc_library(
         "@glm//:glm",
         "@yaml-cpp//:yaml-cpp",
         "@box2d//:box2d",
-        "@utf8-cpp//:utf8-cpp"
+        "@utf8-cpp//:utf8-cpp",
+        "@openal-soft//:openal-soft"
     ]
 )
+

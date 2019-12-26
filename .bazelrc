@@ -1,5 +1,9 @@
 build --action_env=BAZEL_VS="C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community"
-#build --action_env=BAZEL_VC="C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.23.28105\\bin\\Hostx64\\x64"
 build --action_env=BAZEL_VC="C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC"
-build --action_env BAZEL_VC_FULL_VERSION=14.23.28105
-build --action_env BAZEL_WINSDK_FULL_VERSION=10.0.18362.0
+build --action_env=BAZEL_VC_FULL_VERSION=14.23.28105
+build --action_env=BAZEL_WINSDK_FULL_VERSION=10.0.18362.0
+
+#build --action_env=BAZEL_VS="C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community"
+#build --action_env=BAZEL_VC="C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC"
+#build --action_env=BAZEL_VC_FULL_VERSION=14.13.26128
+#build --action_env=BAZEL_WINSDK_FULL_VERSION=10.0.18362.0
