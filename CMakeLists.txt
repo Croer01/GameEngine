@@ -35,50 +35,50 @@ include_directories(${SDL2_ROOT}/include)
 
 # public stuff
 set(ENGINE_SOURCES
-        public/geGame.cpp
-        public/geComponent.cpp
-        public/geEnvironment.cpp
-        public/InputManager.cpp
-        public/components/SpriteComponent.cpp
-        public/components/SpriteAnimatedComponent.cpp
-        public/components/ColliderComponent.cpp
-        public/components/TextComponent.cpp
-        public/components/AudioComponent.cpp
-        public/components/GeometryComponent.cpp
-        public/components/ui/UIControlComponent.cpp
-        public/components/ui/UIButtonComponent.cpp
-        public/components/ui/UITextComponent.cpp
-        public/components/ui/UITextInputComponent.cpp
-        public/Random.cpp
-        public/geAudio.cpp
-        public/geIO.cpp)
+        engine/public/geGame.cpp
+        engine/public/geComponent.cpp
+        engine/public/geEnvironment.cpp
+        engine/public/InputManager.cpp
+        engine/public/components/SpriteComponent.cpp
+        engine/public/components/SpriteAnimatedComponent.cpp
+        engine/public/components/ColliderComponent.cpp
+        engine/public/components/TextComponent.cpp
+        engine/public/components/AudioComponent.cpp
+        engine/public/components/GeometryComponent.cpp
+        engine/public/components/ui/UIControlComponent.cpp
+        engine/public/components/ui/UIButtonComponent.cpp
+        engine/public/components/ui/UITextComponent.cpp
+        engine/public/components/ui/UITextInputComponent.cpp
+        engine/public/Random.cpp
+        engine/public/geAudio.cpp
+        engine/public/geIO.cpp)
 
 # private stuff
 set(ENGINE_PRIVATE_SOURCES
-        private/Game.cpp
-        private/GameObject.cpp
-        private/ObjectManager.cpp
-        private/SceneManager.cpp
-        private/Scene.cpp
-        private/utils.cpp
-        private/graphics/GraphicsEngine.cpp
-        private/graphics/Shader.cpp
-        private/graphics/GraphicHolder.cpp
-        private/Screen.cpp
-        private/physics/PhysicsEngine.cpp
-        private/physics/Collider.cpp
-        private/physics/DebugView.cpp
-        private/graphics/font/Font.cpp
-        private/graphics/font/Text.cpp
-        private/graphics/font/FontManager.cpp
-        private/audio/AudioEngine.cpp
-        private/audio/AudioSource.cpp
-        private/audio/AudioBuffer.cpp
-        private/Data.cpp
-        private/graphics/Camera.cpp
-        private/graphics/MeshData.cpp
-        private/graphics/GraphicSprite.cpp
-        private/graphics/GraphicGeometry.cpp)
+        engine/private/Game.cpp
+        engine/private/GameObject.cpp
+        engine/private/ObjectManager.cpp
+        engine/private/SceneManager.cpp
+        engine/private/Scene.cpp
+        engine/private/utils.cpp
+        engine/private/graphics/GraphicsEngine.cpp
+        engine/private/graphics/Shader.cpp
+        engine/private/graphics/GraphicHolder.cpp
+        engine/private/Screen.cpp
+        engine/private/physics/PhysicsEngine.cpp
+        engine/private/physics/Collider.cpp
+        engine/private/physics/DebugView.cpp
+        engine/private/graphics/font/Font.cpp
+        engine/private/graphics/font/Text.cpp
+        engine/private/graphics/font/FontManager.cpp
+        engine/private/audio/AudioEngine.cpp
+        engine/private/audio/AudioSource.cpp
+        engine/private/audio/AudioBuffer.cpp
+        engine/private/Data.cpp
+        engine/private/graphics/Camera.cpp
+        engine/private/graphics/MeshData.cpp
+        engine/private/graphics/GraphicSprite.cpp
+        engine/private/graphics/GraphicGeometry.cpp)
 
 add_library(GameEngine ${ENGINE_SOURCES} ${ENGINE_PRIVATE_SOURCES})
 
@@ -89,7 +89,7 @@ set_target_properties(GameEngine PROPERTIES
         )
 
 target_include_directories(GameEngine PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/engine/include>
         $<INSTALL_INTERFACE:include>
         )
 

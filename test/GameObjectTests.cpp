@@ -21,6 +21,11 @@ public:
     {
         return initialized_;
     }
+
+  std::string getPropertiesName() const override
+  {
+    return std::string();
+  }
 };
 
 class AddOnInitializeComponent : public GameEngine::geComponentInstantiable<AddOnInitializeComponent>
@@ -30,6 +35,12 @@ class AddOnInitializeComponent : public GameEngine::geComponentInstantiable<AddO
         auto component = std::make_shared<InitializeCheckComponent>();
         gameObject()->addComponent(component);
     }
+
+public:
+  std::string getPropertiesName() const override
+  {
+    return std::string();
+  }
 };
 
 TEST(GameObject, createObject)

@@ -13,7 +13,7 @@
 
 namespace GameEngine {
 template<typename T>
-class PUBLICAPI PropertiesHolder : protected std::enable_shared_from_this<PropertiesHolder<T>>
+class PUBLICAPI PropertiesHolder : public std::enable_shared_from_this<PropertiesHolder<T>>
 {
 std::unique_ptr<PropertiesBinderBase> properties_;
 

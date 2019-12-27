@@ -55,6 +55,7 @@ namespace GameEngine {
 
     public:
         virtual std::string getPropertiesName() const = 0;
+        virtual ~geComponentInstantiable(){};
 
     };
 }
