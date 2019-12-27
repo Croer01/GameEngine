@@ -127,15 +127,10 @@ find_library(TINYFILEDIALOGS_LIBRARY tinyfiledialogs)
 include_directories(${TINYFILEDIALOGS_INCLUDE})
 include_directories(${Boost_INCLUDE_DIRS})
 
-file(GLOB COMPONENTS_FILES "${CMAKE_CURRENT_SOURCE_DIR}/editor/*.hpp")
-generate_components_register(editor/componentsRegistered COMPONENTS_REGISTER_FILE COMPONENTS ${COMPONENTS_FILES})
-
 add_executable(GameEngineEditor
         editor/imgui_backend/imgui_impl_opengl3.cpp
         editor/imgui_backend/imgui_impl_sdl.cpp
         editor/imgui_backend/imgui_stdlib.cpp
-        editor/main.cpp
-        ${COMPONENTS_REGISTER_FILE}
         editor/editorMain.cpp
         editor/Editor.cpp
         editor/ViewModels.cpp
@@ -144,9 +139,6 @@ add_executable(GameEngineEditor
         editor/GameComponentsProvider.hpp)
 
 target_compile_definitions(GameEngineEditor PUBLIC -DIMGUI_IMPL_OPENGL_LOADER_GLEW)
-
-#TODO: set correct directories. Now is set as a workarround
-#configure_game_directories(GameEngineEditor data data assets)
 
 target_link_libraries(GameEngineEditor PRIVATE GameEngine
         imgui::imgui

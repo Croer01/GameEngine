@@ -5,7 +5,8 @@
  - GLEW
  - Yaml cpp
  - ImGui
- - TinyFileDialog
+ - TinyFileDialogComponentRegister
+ - Boost filesystem
  
  ## Environment
  Currently, I use [vcpkg](https://github.com/Microsoft/vcpkg) to manage dependencies, It's a cross platform package manager (developed by Microsoft).  
@@ -16,7 +17,7 @@
  After you will have set up vcpkg, execute the next command 
  
  ~~~ bash
- vcpkg install --triplet x64-windows glew sdl2 yaml-cpp imgui tinyfiledialogs 
+ vcpkg install --triplet x64-windows glew sdl2 yaml-cpp imgui tinyfiledialogs boost-filesystem
  ~~~
  
  _Note: Before you execute this command, you must check your target architecture to ensure install proper version of packages (the --triplet option)_
