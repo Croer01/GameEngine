@@ -62,11 +62,11 @@ void Editor::generateMockData()
 void Editor::render()
 {
     renderMainMenu();
+    if(createProjectEditor_->isOpen())
+        createProjectEditor_->Render();
+
     if(project_)
     {
-        if(createProjectEditor_->isOpen())
-            createProjectEditor_->Render();
-
         renderSceneInspector();
         renderObjectInspector();
     }
