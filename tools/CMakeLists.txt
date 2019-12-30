@@ -1,7 +1,6 @@
 # Collection of tools/utilities to use on games created using this engine
 
 include(FindPythonInterp)
-
 set(TOOLS_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR} CACHE INTERNAL "")
 
 #! configure_game_directories : this function configure game folders
@@ -77,12 +76,12 @@ function(generate_components_register file_name generated_file)
     endif()
 
     set(COMPONENTS_REGISTERED_HPP ${CMAKE_CURRENT_SOURCE_DIR}/${file_name}.hpp)
-    file(GLOB COMPONENTS_REGISTERED_HEADERS "${GEN_COMPONENTS_COMPONENTS}")
+    file(GLOB COMPONENTS_REGISTERED_HEADERS ${GEN_COMPONENTS_COMPONENTS})
     # ensure the COMPONENTS_REGISTERED_HEADERS's dependency list doesn't include file_name
     list(REMOVE_ITEM COMPONENTS_REGISTERED_HEADERS ${COMPONENTS_REGISTERED_HPP})
 
     add_custom_command(
-            COMMAND ${PYTHON_EXECUTABLE} ${TOOLS_SOURCE_DIR}/engine_components_generator.py > ${COMPONENTS_REGISTERED_HPP}
+            COMMAND ${PYTHON_EXECUTABLE} ${TOOLS_SOURCE_DIR}/engine_components_generator.py ${COMPONENTS_REGISTERED_HEADERS} > ${COMPONENTS_REGISTERED_HPP}
             DEPENDS ${COMPONENTS_REGISTERED_HEADERS}
             OUTPUT ${COMPONENTS_REGISTERED_HPP}
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
