@@ -12,6 +12,9 @@
 #include <array>
 #include <yaml-cpp/yaml.h>
 #include <game-engine/api.hpp>
+#include <boost/filesystem/path.hpp>
+
+namespace fs = boost::filesystem;
 
 struct Vector2DData
 {
@@ -174,6 +177,9 @@ public:
     std::string folderPath_;
     std::string folderName_;
     std::string currentScenePath_;
+    // empty string means that the path doesn't exist
+    fs::path dataPath_;
+    std::vector<fs::path> prototypeFilepaths_;
 };
 
 
@@ -230,9 +236,12 @@ struct convert<ObjectData> {
 
     static bool decode(const Node &node, ObjectData &rhs) {
         rhs.name_ = node["name"].as<std::string>();
-        rhs.position_ = node["position"].as<Vector2DData>();
-        rhs.rotation_ = node["rotation"].as<Vector2DData>();
-        rhs.scale_ = node["scale"].as<Vector2DData>();
+        rhs.position_ = node["position"].as<Vector2DData>(Vector2DData());
+        rhs.rotation_ = node["rotation"].as<Vector2DData>(Vector2DData());
+        Vector2DData scale;
+        scale.xy[0] = 1;
+        scale.xy[1] = 1;
+        rhs.scale_ = node["scale"].as<Vector2DData>(scale);
         return true;
     }
 };

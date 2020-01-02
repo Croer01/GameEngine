@@ -68,6 +68,7 @@ void Editor::render()
     if(project_)
     {
         renderSceneInspector();
+        renderPrototypeList();
         renderObjectInspector();
     }
     else
@@ -108,6 +109,35 @@ void Editor::renderSceneObjectNode(const ObjectDataRef &object, const std::strin
         if((nodeFlags & ImGuiTreeNodeFlags_Leaf) != ImGuiTreeNodeFlags_Leaf)
             ImGui::Separator();
     }
+}
+
+void Editor::renderPrototypeList()
+{
+    ImVec2 size = ImGui::GetIO().DisplaySize;
+    size.x *= 0.25f;
+    size.y -= 40;
+    size.y /= 2.f;
+    ImGui::SetNextWindowPos(ImVec2(0,size.y));
+    ImGui::SetNextWindowSize(size);
+    ImGui::Begin("Prototypes",0,ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+
+    ImGui::Separator();
+    if(ImGui::Button("Create Prototype"))
+    {
+        // TODO: implement this
+    }
+
+    ImGuiTreeNodeFlags PrototypesNodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+
+    for (const auto &filepath : project_->prototypeFilepaths_)
+    {
+        const boost::filesystem::path &relativeFilePath = fs::relative(fs::path(filepath), project_->dataPath_);
+        ImGui::TreeNodeEx(relativeFilePath.string().c_str(), PrototypesNodeFlags);
+        if(ImGui::IsItemClicked())
+            objectSelected_ = projectPrototypeProvider_.getPrototype(filepath.string());
+    }
+
+    ImGui::End();
 }
 
 void Editor::renderSceneInspector()
@@ -420,6 +450,8 @@ void Editor::loadProject()
         YAML::Node project = YAML::LoadFile(projectFile);
         auto sharedProject = std::make_shared<ProjectData>(project.as<ProjectData>());
         sharedProject->folderPath_ = fileFolder.string();
+        // register data folder (if exists)
+        sharedProject->dataPath_ = fs::path(fileFolder).append("data");
         setProject(sharedProject);
     }
 }
@@ -438,6 +470,22 @@ void Editor::setProject(const std::shared_ptr<ProjectData> &project)
     {
         SceneData sceneLoaded = loadScene(project_->currentScenePath_);
         sceneData_.reset(new SceneData(sceneLoaded));
+    }
+
+    // List the data files
+    // TODO: observe directory to update list if some file is created/deleted
+    projectPrototypeProvider_.clearCache();
+    if(fs::exists(project_->dataPath_) && fs::is_directory(project_->dataPath_))
+    {
+        fs::directory_iterator end;
+        for (fs::directory_iterator itr(project_->dataPath_); itr != end; ++itr)
+        {
+            //TODO: recursive directories?
+            if (is_regular_file(itr->path()) && itr->path().extension() == ".prototype")
+            {
+                project_->prototypeFilepaths_.push_back(itr->path());
+            }
+        }
     }
 
     updateWindowTitle();

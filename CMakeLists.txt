@@ -136,7 +136,7 @@ add_executable(GameEngineEditor
         editor/ViewModels.cpp
         editor/CreateProjectEditor.cpp
         editor/GameComponentsProvider.cpp
-        editor/GameComponentsProvider.hpp)
+        editor/GameComponentsProvider.hpp editor/ProjectPrototypeProvider.cpp editor/ProjectPrototypeProvider.h)
 
 target_compile_definitions(GameEngineEditor PUBLIC -DIMGUI_IMPL_OPENGL_LOADER_GLEW)
 

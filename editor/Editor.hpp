@@ -11,6 +11,7 @@
 #include "ViewModels.hpp"
 #include "CreateProjectEditor.hpp"
 #include "GameComponentsProvider.hpp"
+#include "ProjectPrototypeProvider.h"
 
 class Editor
 {
@@ -20,11 +21,13 @@ class Editor
     std::shared_ptr<ProjectData> project_;
     std::shared_ptr<CreateProjectEditor> createProjectEditor_;
     GameComponentsProvider gameComponentsProvider_;
+    ProjectPrototypeProvider projectPrototypeProvider_;
 
     void generateMockData();
     void renderMainMenu();
     void renderSceneObjectNode(const ObjectDataRef &object, const std::string &id);
     void renderSceneInspector();
+    void renderPrototypeList();
     void renderObjectInspector();
     void renderComponent(const ComponentDataRef &component);
 
