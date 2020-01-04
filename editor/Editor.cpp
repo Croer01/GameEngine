@@ -67,9 +67,20 @@ void Editor::render()
 
     if(project_)
     {
+        bool prevDirty = project_->dirty_;
+
+        ImGui::SetNextWindowPosCenter();
+        ImGui::Begin("no dirty");
+        if(ImGui::Button("no dirty"))
+            project_->dirty_ = false;
+        ImGui::End();
+
         renderSceneInspector();
         renderPrototypeList();
         renderObjectInspector();
+
+        if(prevDirty != project_->dirty_)
+            updateWindowTitle();
     }
     else
     {
@@ -115,9 +126,9 @@ void Editor::renderPrototypeList()
 {
     ImVec2 size = ImGui::GetIO().DisplaySize;
     size.x *= 0.25f;
-    size.y -= 40;
+    size.y -= 20;
     size.y /= 2.f;
-    ImGui::SetNextWindowPos(ImVec2(0,size.y));
+    ImGui::SetNextWindowPos(ImVec2(0,size.y + 20));
     ImGui::SetNextWindowSize(size);
     ImGui::Begin("Prototypes",0,ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
 
@@ -145,7 +156,8 @@ void Editor::renderSceneInspector()
     ImVec2 size = ImGui::GetIO().DisplaySize;
     size.x *= 0.25f;
     size.y -= 20;
-    ImGui::SetNextWindowPos(ImVec2(0,20));
+    size.y /= 2.f;
+    ImGui::SetNextWindowPos(ImVec2(0, 20));
     ImGui::SetNextWindowSize(size);
     ImGui::Begin("Scene Inspector",0,ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
 
@@ -187,6 +199,9 @@ void Editor::renderObjectInspector(){
     if(objectSelected_)
     {
         ImGui::InputText("Name",&objectSelected_->name_);
+        if(ImGui::IsItemEdited())
+            project_->dirty_ = true;
+
         if(ImGui::Button("New Child"))
         {
             ObjectDataRef newChild = std::make_shared<ObjectData>();
@@ -194,6 +209,7 @@ void Editor::renderObjectInspector(){
             ss << "Child" << objectSelected_->children_.size();
             newChild->name_ = ss.str();
             objectSelected_->children_.push_back(newChild);
+            project_->dirty_ = true;
         }
 
         ImGui::Separator();
@@ -221,14 +237,18 @@ void Editor::renderObjectInspector(){
             newComponent->properties_ = gameComponentsProvider_.getPropertiesMetadata(item_current);
 
             objectSelected_->components_.push_back(newComponent);
+            project_->dirty_ = true;
         }
 
         ImGui::Separator();
         if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            ImGui::DragFloat2("position", objectSelected_->position_.xy.data(),.1f);
-            ImGui::DragFloat2("size", objectSelected_->scale_.xy.data(), .1f, 1.f, std::numeric_limits<float>::max());
-            ImGui::DragFloat2("rotation", objectSelected_->rotation_.xy.data(),.1f);
+            if(ImGui::DragFloat2("position", objectSelected_->position_.xy.data(),.1f))
+                project_->dirty_ = true;
+            if(ImGui::DragFloat2("size", objectSelected_->scale_.xy.data(), .1f, 1.f, std::numeric_limits<float>::max()))
+                project_->dirty_ = true;
+            if(ImGui::DragFloat2("rotation", objectSelected_->rotation_.xy.data(),.1f))
+                project_->dirty_ = true;
         }
 
         for (const auto &component : objectSelected_->components_)
@@ -255,36 +275,46 @@ void Editor::renderComponent(const ComponentDataRef &component)
                 {
                     auto propertyInt = std::dynamic_pointer_cast<PropertyIntData>(property);
                     ImGui::DragInt(property->name_.c_str(), &propertyInt->value_, .1f);
+                    if(ImGui::IsItemEdited())
+                        project_->dirty_ = true;
                 }
                     break;
                 case PropertyDataType::FLOAT:
                 {
                     auto propertyFloat = std::dynamic_pointer_cast<PropertyFloatData>(property);
                     ImGui::DragFloat(property->name_.c_str(), &propertyFloat->value_, .1f);
+                    if(ImGui::IsItemEdited())
+                        project_->dirty_ = true;
                 }
                     break;
                 case PropertyDataType::STRING:
                 {
                     auto propertyString = std::dynamic_pointer_cast<PropertyStringData>(property);
                     ImGui::InputText(propertyString->name_.c_str(), &propertyString->value_);
+                    if(ImGui::IsItemEdited())
+                        project_->dirty_ = true;
                 }
                     break;
                 case PropertyDataType::BOOL:
                 {
                     auto propertyBool = std::dynamic_pointer_cast<PropertyBoolData>(property);
                     ImGui::Checkbox(property->name_.c_str(), &propertyBool->value_);
+                    if(ImGui::IsItemEdited())
+                        project_->dirty_ = true;
                 }
                     break;
                 case PropertyDataType::VEC2D:
                 {
                     auto propertyVec2D = std::dynamic_pointer_cast<PropertyVec2DData>(property);
-                    ImGui::DragFloat2(property->name_.c_str(), propertyVec2D->value_.xy.data());
+                    if(ImGui::DragFloat2(property->name_.c_str(), propertyVec2D->value_.xy.data()))
+                        project_->dirty_ = true;
                 }
                     break;
                 case PropertyDataType::COLOR:
                 {
                     auto propertyColor = std::dynamic_pointer_cast<PropertyColorData>(property);
-                    ImGui::ColorEdit3(property->name_.c_str(), propertyColor->value_.rgb.data());
+                    if(ImGui::ColorEdit3(property->name_.c_str(), propertyColor->value_.rgb.data()))
+                        project_->dirty_ = true;
                 }
                     break;
                 case PropertyDataType::ARRAY_STRING:
@@ -296,6 +326,7 @@ void Editor::renderComponent(const ComponentDataRef &component)
                     if(ImGui::Button("+"))
                     {
                         propertyStringArray->value_.emplace_back("");
+                        project_->dirty_ = true;
                     }
 
                     auto values = propertyStringArray->value_;
@@ -303,6 +334,8 @@ void Editor::renderComponent(const ComponentDataRef &component)
                     {
                         ImGui::PushID(i);
                         ImGui::InputText("", &values[i]);
+                        if(ImGui::IsItemEdited())
+                            project_->dirty_ = true;
                         ImGui::PopID();
                     }
                 }
@@ -316,6 +349,7 @@ void Editor::renderComponent(const ComponentDataRef &component)
                     if(ImGui::Button("+"))
                     {
                         propertyVec2DArray->value_.emplace_back();
+                        project_->dirty_ = true;
                     }
 
                     auto &values = propertyVec2DArray->value_;
@@ -323,7 +357,8 @@ void Editor::renderComponent(const ComponentDataRef &component)
                     {
                         ImGui::PushID(i);
                         Vector2DData &value = values[i];
-                        ImGui::DragFloat2("", value.xy.data());
+                        if(ImGui::DragFloat2("", value.xy.data()))
+                            project_->dirty_ = true;
                         ImGui::PopID();
                     }
                 }
@@ -352,6 +387,10 @@ void Editor::renderMainMenu()
                 loadProject();
             }
             ImGui::Separator();
+            if (ImGui::MenuItem("Save all", NULL, false, project_ && project_->dirty_))
+            {
+                saveProject();
+            }
 
             std::string sceneName = "Scene - ";
             if(sceneData_)
@@ -417,6 +456,7 @@ void Editor::renderMainMenu()
                 sceneFile << sceneNode << std::endl;
                 sceneFile.close();
 
+                //TODO: review this block code "if(save){ ... }"
                 project_->currentScenePath_ = sceneData_->filePath_;
                 YAML::Node projectNode;
                 projectNode = *project_;
@@ -454,6 +494,25 @@ void Editor::loadProject()
         sharedProject->dataPath_ = fs::path(fileFolder).append("data");
         setProject(sharedProject);
     }
+}
+
+void Editor::saveProject()
+{
+    for (const auto &filepath : project_->prototypeFilepaths_)
+    {
+        const ObjectDataRef &prototype = projectPrototypeProvider_.getPrototype(filepath.string());
+
+        YAML::Node prototypeNode;
+        prototypeNode = *prototype;
+        std::ofstream prototypeFile;
+        prototypeFile.open(filepath.string());
+        prototypeFile << prototypeNode << std::endl;
+        prototypeFile.close();
+    }
+
+    project_->dirty_ = false;
+    
+    updateWindowTitle();
 }
 
 void Editor::setProject(const std::shared_ptr<ProjectData> &project)
@@ -500,5 +559,8 @@ SceneData Editor::loadScene(const std::string &sceneFilePath)
 
 void Editor::updateWindowTitle()
 {
-    SDL_SetWindowTitle(window_,("Game Engine Editor - " + project_->folderName_ + " - " + sceneData_->name_).c_str());
+    std::string dirtyMark;
+    if(project_->dirty_)
+        dirtyMark = "*";
+    SDL_SetWindowTitle(window_,("Game Engine Editor - " + project_->folderName_ + " - " + sceneData_->name_ + dirtyMark).c_str());
 }

@@ -38,6 +38,7 @@ public:
     explicit Editor(SDL_Window* window);
     void render();
     void loadProject();
+    void saveProject();
 };
 
 

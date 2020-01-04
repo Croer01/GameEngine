@@ -181,6 +181,7 @@ public:
     // empty string means that the path doesn't exist
     fs::path dataPath_;
     std::vector<fs::path> prototypeFilepaths_;
+    bool dirty_ = false;
 };
 
 
