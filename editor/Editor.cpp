@@ -132,12 +132,32 @@ void Editor::renderPrototypeList()
     ImGui::SetNextWindowSize(size);
     ImGui::Begin("Prototypes",0,ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
 
-    ImGui::Separator();
-    if(ImGui::Button("Create Prototype"))
+    if(ImGui::Button("Create..."))
     {
-        // TODO: implement this
+        fs::path prototypePath(project_->dataPath_);
+
+        std::stringstream ss;
+        ss << "Prototype" << project_->prototypeFilepaths_.size() << ".prototype";
+        prototypePath.append(ss.str());
+        char const * filter[1] = {"*.prototype"};
+        char const *selectedPrototypeFile = tinyfd_saveFileDialog("Create prototype", prototypePath.string().c_str(), 1, filter, "Prototype file (*.prototype)");
+        if (selectedPrototypeFile)
+        {
+            fs::path newPrototypePath(selectedPrototypeFile);
+            ObjectData newPrototype;
+            newPrototype.name_ = newPrototypePath.stem().string();
+
+            YAML::Node prototypeNode;
+            prototypeNode = newPrototype;
+            std::ofstream prototypeFile;
+            prototypeFile.open(selectedPrototypeFile);
+            prototypeFile << prototypeNode << std::endl;
+            prototypeFile.close();
+            project_->prototypeFilepaths_.push_back(newPrototypePath);
+        }
     }
 
+    ImGui::Separator();
     ImGuiTreeNodeFlags PrototypesNodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 
     for (const auto &filepath : project_->prototypeFilepaths_)
@@ -386,11 +406,12 @@ void Editor::renderMainMenu()
             {
                 loadProject();
             }
-            ImGui::Separator();
+
             if (ImGui::MenuItem("Save all", NULL, false, project_ && project_->dirty_))
             {
                 saveProject();
             }
+            ImGui::Separator();
 
             std::string sceneName = "Scene - ";
             if(sceneData_)
@@ -511,7 +532,7 @@ void Editor::saveProject()
     }
 
     project_->dirty_ = false;
-    
+
     updateWindowTitle();
 }
 
