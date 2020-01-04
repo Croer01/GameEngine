@@ -24,6 +24,7 @@
 #include <vector>
 #include <memory>
 #include <sstream>
+#include <game-engine/geEnvironment.hpp>
 
 #elif defined(IMGUI_IMPL_OPENGL_LOADER_GLAD)
 #include <glad/glad.h>  // Initialize with gladLoadGL()
@@ -31,6 +32,8 @@
 #include IMGUI_IMPL_OPENGL_LOADER_CUSTOM
 #endif
 
+// Provisional include
+#include "../../componentsRegistered.hpp"
 
 // Main code
 int main(int, char**)
@@ -122,6 +125,11 @@ int main(int, char**)
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     std::unique_ptr<Editor> editor(new Editor(window));
+
+    //Register components created from the game
+    //TODO: improve the way to do this (maybe a macro or "if define"?)
+    GameEngine::geEnvironment env;
+    RegisterComponents(&env);
 
     // Main loop
     bool done = false;

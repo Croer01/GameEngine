@@ -13,6 +13,7 @@
 #include <yaml-cpp/yaml.h>
 #include <game-engine/api.hpp>
 #include <boost/filesystem/path.hpp>
+#include "GameComponentsProvider.hpp"
 
 namespace fs = boost::filesystem;
 
@@ -224,6 +225,141 @@ struct convert<ColorData> {
 };
 
 template<>
+struct convert<ComponentData> {
+    static Node encode(const ComponentData &rhs) {
+        Node node;
+        node["type"] = rhs.name_;
+
+        for(auto it = rhs.properties_.begin(); it != rhs.properties_.end(); ++it)
+        {
+            Node propertyNode;
+            auto property = *it;
+
+            switch (property->type_)
+            {
+                case PropertyDataType::INT: {
+                    auto propertyInt = std::dynamic_pointer_cast<PropertyIntData>(property);
+                    propertyNode = propertyInt->value_;
+                }
+                    break;
+                case PropertyDataType::FLOAT: {
+                    auto propertyFloat = std::dynamic_pointer_cast<PropertyFloatData>(property);
+                    propertyNode = propertyFloat->value_;
+                }
+                    break;
+                case PropertyDataType::STRING: {
+                    auto propertyStringData = std::dynamic_pointer_cast<PropertyStringData>(property);
+                    propertyNode = propertyStringData->value_;
+                }
+                    break;
+                case PropertyDataType::BOOL: {
+                    auto propertyBoolData = std::dynamic_pointer_cast<PropertyBoolData>(property);
+                    propertyNode = propertyBoolData->value_;
+                }
+                    break;
+                case PropertyDataType::VEC2D: {
+                    auto propertyVec2DData = std::dynamic_pointer_cast<PropertyVec2DData>(property);
+                    propertyNode = propertyVec2DData->value_;
+                }
+                    break;
+                case PropertyDataType::ARRAY_STRING: {
+                    auto propertyStringArrayData = std::dynamic_pointer_cast<PropertyStringArrayData>(property);
+                    propertyNode = propertyStringArrayData->value_;
+                }
+                    break;
+                case PropertyDataType::ARRAY_VEC2D: {
+                    auto propertyVec2DArrayData = std::dynamic_pointer_cast<PropertyVec2DArrayData>(property);
+                    propertyNode = propertyVec2DArrayData->value_;
+                }
+                    break;
+                case PropertyDataType::COLOR: {
+                    auto propertyColorData = std::dynamic_pointer_cast<PropertyColorData>(property);
+                    propertyNode = propertyColorData->value_;
+                }
+                    break;
+                default:
+                    assert(false && "unknown property type");
+                    break;
+            }
+
+            node[property->name_] = propertyNode;
+        }
+
+        return node;
+    }
+
+    static bool decode(const Node &node, ComponentData &rhs) {
+        GameComponentsProvider provider;
+        rhs.name_ = node["type"].as<std::string>();
+        rhs.properties_ = provider.getPropertiesMetadataByComponent(rhs.name_);
+
+        for(auto it = rhs.properties_.begin(); it != rhs.properties_.end(); ++it)
+        {
+            auto property = *it;
+
+            if(!node[property->name_].IsDefined())
+            {
+                if(property->requrired_)
+                {
+                    return false;
+                }
+                // if is not required, the property will be ignored
+                assert(!property->requrired_);
+                continue;
+            }
+
+            switch (property->type_)
+            {
+                case PropertyDataType::INT: {
+                    auto propertyInt = std::dynamic_pointer_cast<PropertyIntData>(property);
+                    propertyInt->value_ = node[property->name_].as<int>();
+                }
+                    break;
+                case PropertyDataType::FLOAT: {
+                    auto propertyFloat = std::dynamic_pointer_cast<PropertyFloatData>(property);
+                    propertyFloat->value_ = node[property->name_].as<float>();
+                }
+                    break;
+                case PropertyDataType::STRING: {
+                    auto propertyStringData = std::dynamic_pointer_cast<PropertyStringData>(property);
+                    propertyStringData->value_ = node[property->name_].as<std::string>();
+                }
+                    break;
+                case PropertyDataType::BOOL: {
+                    auto propertyBoolData = std::dynamic_pointer_cast<PropertyBoolData>(property);
+                    propertyBoolData->value_ = node[property->name_].as<bool>();
+                }
+                    break;
+                case PropertyDataType::VEC2D: {
+                    auto propertyVec2DData = std::dynamic_pointer_cast<PropertyVec2DData>(property);
+                    propertyVec2DData->value_ = node[property->name_].as<Vector2DData>();
+                }
+                    break;
+                case PropertyDataType::ARRAY_STRING: {
+                    auto propertyStringArrayData = std::dynamic_pointer_cast<PropertyStringArrayData>(property);
+                    propertyStringArrayData->value_ = node[property->name_].as<std::vector<std::string>>();
+                }
+                    break;
+                case PropertyDataType::ARRAY_VEC2D: {
+                    auto propertyVec2DArrayData = std::dynamic_pointer_cast<PropertyVec2DArrayData>(property);
+                    propertyVec2DArrayData->value_ = node[property->name_].as<std::vector<Vector2DData>>();
+                }
+                    break;
+                case PropertyDataType::COLOR: {
+                    auto propertyColorData = std::dynamic_pointer_cast<PropertyColorData>(property);
+                    propertyColorData->value_ = node[property->name_].as<ColorData>();
+                }
+                    break;
+                default:
+                    return false;
+            }
+        }
+
+        return true;
+    }
+};
+
+template<>
 struct convert<ObjectData> {
     static Node encode(const ObjectData &rhs) {
         Node node;
@@ -231,6 +367,17 @@ struct convert<ObjectData> {
         node["position"] = rhs.position_;
         node["rotation"] = rhs.rotation_;
         node["scale"] = rhs.scale_;
+
+        if(!rhs.components_.empty()) {
+            Node components;
+            for (const auto &component : rhs.components_)
+            {
+                const Node &componentNode = YAML::convert<ComponentData>::encode(*component);
+                components.push_back(componentNode);
+            }
+            node["components"] = components;
+        }
+
         return node;
     }
 
@@ -242,6 +389,20 @@ struct convert<ObjectData> {
         scale.xy[0] = 1;
         scale.xy[1] = 1;
         rhs.scale_ = node["scale"].as<Vector2DData>(scale);
+
+        const Node &componentsNode = node["components"];
+        if(componentsNode.IsDefined() && componentsNode.IsSequence())
+        {
+            for(auto it = componentsNode.begin(); it != componentsNode.end(); ++it)
+            {
+                ComponentDataRef componentData = std::make_shared<ComponentData>();
+                bool converted = YAML::convert<ComponentData>::decode(*it, *componentData);
+                if(!converted)
+                    return false;
+                rhs.components_.push_back(componentData);
+            }
+        }
+        
         return true;
     }
 };

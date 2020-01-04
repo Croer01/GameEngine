@@ -4,6 +4,7 @@
 
 #include <game-engine/geEnvironment.hpp>
 #include "GameComponentsProvider.hpp"
+#include "ViewModels.hpp"
 
 void GameComponentsProvider::updateNames()
 {
@@ -34,39 +35,93 @@ std::vector<PropertyDataRef> GameComponentsProvider::getPropertiesMetadata(const
     return properties;
 }
 
+std::vector<std::shared_ptr<PropertyData>>
+GameComponentsProvider::getPropertiesMetadataByComponent(const std::string &componentName) const
+{
+    GameEngine::geEnvironment env;
+    std::shared_ptr<GameEngine::PropertySetBase> gameProperties = env.getProperties(componentName);
+
+    std::vector<PropertyDataRef> properties;
+    properties.reserve(gameProperties->size());
+    for(int i = 0; i < gameProperties->size(); i++)
+    {
+        properties.emplace_back(buildPropertyByType(gameProperties->get(i)));
+    }
+
+    return properties;
+}
+
 PropertyDataRef GameComponentsProvider::buildPropertyByType(const GameEngine::PropertyBase &property) const
 {
     PropertyDataType result = PropertyDataType::STRING;
     PropertyDataRef propertyData;
     switch (property.type())
     {
-        case GameEngine::PropertyTypes::INT:
-            propertyData = PropertyDataRef(new PropertyIntData(property.name()));
+        case GameEngine::PropertyTypes::INT: {
+            PropertyIntData *propertyInt = new PropertyIntData(property.name());
+            propertyData = PropertyDataRef(propertyInt);
+            property.getDefault(&propertyInt->value_);
+        }
            break;
-        case GameEngine::PropertyTypes::FLOAT:
-            propertyData = PropertyDataRef(new PropertyFloatData(property.name()));
+        case GameEngine::PropertyTypes::FLOAT: {
+            PropertyFloatData *propertyFloat = new PropertyFloatData(property.name());
+            propertyData = PropertyDataRef(propertyFloat);
+            property.getDefault(&propertyFloat->value_);
+        }
            break;
-        case GameEngine::PropertyTypes::STRING:
-            propertyData = PropertyDataRef(new PropertyStringData(property.name()));
+        case GameEngine::PropertyTypes::STRING: {
+            PropertyStringData *propertyString = new PropertyStringData(property.name());
+            propertyData = PropertyDataRef(propertyString);
+            property.getDefault(&propertyString->value_);
+        }
            break;
-        case GameEngine::PropertyTypes::BOOL:
-            propertyData = PropertyDataRef(new PropertyBoolData(property.name()));
+        case GameEngine::PropertyTypes::BOOL: {
+            PropertyBoolData *propertyBool = new PropertyBoolData(property.name());
+            propertyData = PropertyDataRef(propertyBool);
+            property.getDefault(&propertyBool->value_);
+        }
            break;
-        case GameEngine::PropertyTypes::VEC2D:
-            propertyData = PropertyDataRef(new PropertyVec2DData(property.name()));
+        case GameEngine::PropertyTypes::VEC2D: {
+            PropertyVec2DData *propertyVec2D = new PropertyVec2DData(property.name());
+            propertyData = PropertyDataRef(propertyVec2D);
+            GameEngine::Vec2D defaultValue;
+            property.getDefault(&defaultValue);
+            propertyVec2D->value_.xy = {defaultValue.x, defaultValue.y};
+        }
            break;
-        case GameEngine::PropertyTypes::ARRAY_STRING:
-            propertyData = PropertyDataRef(new PropertyStringArrayData(property.name()));
+        case GameEngine::PropertyTypes::ARRAY_STRING: {
+            PropertyStringArrayData *propertyStringArray = new PropertyStringArrayData(property.name());
+            propertyData = PropertyDataRef(propertyStringArray);
+            property.getDefault(&propertyStringArray->value_);
+        }
            break;
-        case GameEngine::PropertyTypes::ARRAY_VEC2D:
-            propertyData = PropertyDataRef(new PropertyVec2DArrayData(property.name()));
+        case GameEngine::PropertyTypes::ARRAY_VEC2D: {
+            PropertyVec2DArrayData *propertyVec2DArray = new PropertyVec2DArrayData(property.name());
+            propertyData = PropertyDataRef(propertyVec2DArray);
+            std::vector<GameEngine::Vec2D> defaultValue;
+            property.getDefault(&defaultValue);
+            for(const auto &value : defaultValue)
+            {
+                Vector2DData data;
+                data.xy = {value.x, value.y};
+                propertyVec2DArray->value_.push_back(data);
+            }
+        }
            break;
-        case GameEngine::PropertyTypes::COLOR:
-            propertyData = PropertyDataRef(new PropertyColorData(property.name()));
+        case GameEngine::PropertyTypes::COLOR: {
+            PropertyColorData *propertyColor = new PropertyColorData(property.name());
+            propertyData = PropertyDataRef(propertyColor);
+            GameEngine::geColor defaultValue;
+            property.getDefault(&defaultValue);
+            propertyColor->value_.rgb = {defaultValue.r, defaultValue.g, defaultValue.b};
+        }
            break;
         case GameEngine::PropertyTypes::UNKNOWN:
             throw std::invalid_argument("property " + property.name() + " has unknown type");
             break;
     }
+
+    propertyData->requrired_ = property.required();
+
     return propertyData;
 }

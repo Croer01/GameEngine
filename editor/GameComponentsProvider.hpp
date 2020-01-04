@@ -8,19 +8,20 @@
 
 #include <vector>
 #include <game-engine/properties/Property.hpp>
-#include "ViewModels.hpp"
 
+class PropertyData;
 class GameComponentsProvider
 {
     std::vector<std::string> namesCached_;
 
     void updateNames();
-    PropertyDataRef buildPropertyByType(const GameEngine::PropertyBase &property) const;
+    std::shared_ptr<PropertyData> buildPropertyByType(const GameEngine::PropertyBase &property) const;
 public:
 
     std::vector<std::string> getRegisteredPropertiesIds();
 
-    std::vector<PropertyDataRef> getPropertiesMetadata(const std::string &name) const;
+    std::vector<std::shared_ptr<PropertyData>> getPropertiesMetadata(const std::string &name) const;
+    std::vector<std::shared_ptr<PropertyData>> getPropertiesMetadataByComponent(const std::string &componentName) const;
 };
 
 
