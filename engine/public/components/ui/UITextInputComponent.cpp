@@ -218,8 +218,18 @@ geColor UITextInputComponent::background() const
     return background_;
 }
 
-std::string UITextInputComponent::getPropertiesName() const
+PropertySetBase *UITextInputComponent::getProperties() const
 {
-    return "UITextInputComponentProperties";
+    PropertySetBase *base = UITextComponent::getProperties();
+    auto *properties = new PropertySet<UITextInputComponent>(base);
+
+    properties->add(new Property<UITextInputComponent, geColor>(
+            "background",
+            &UITextInputComponent::background,
+            &UITextInputComponent::background,
+            geColor(1.f)
+    ));
+
+    return properties;
 }
 }

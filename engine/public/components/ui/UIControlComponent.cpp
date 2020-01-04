@@ -67,8 +67,26 @@ bool UIControlComponent::isFocused() const
     return focused_;
 }
 
-std::string UIControlComponent::getPropertiesName() const
+PropertySetBase *UIControlComponent::getProperties() const
 {
-    return "UIControlComponentProperties";
+    auto *properties = new PropertySet<UIControlComponent>();
+
+    properties->add(new Property<UIControlComponent, Vec2D>(
+            "screenPos",
+            &UIControlComponent::screenPos,
+            &UIControlComponent::screenPos,
+            Vec2D(),
+            true
+    ));
+
+    properties->add(new Property<UIControlComponent, Vec2D>(
+            "screenSize",
+            &UIControlComponent::screenSize,
+            &UIControlComponent::screenSize,
+            Vec2D(),
+            true
+    ));
+    return properties;
+
 }
 }

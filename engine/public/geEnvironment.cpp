@@ -47,21 +47,18 @@ void geEnvironment::registerComponent(const std::string &idType, ComponentBuilde
     Internal::ObjectManager::GetInstance().registerComponentBuilder(idType, builder);
 }
 
-void geEnvironment::registerProperties(const std::string &id, PropertyInstantiator *instantiator)
-{
-    PropertiesManager::GetInstance().registerPropertiesSetBuilder(id, std::shared_ptr<PropertyInstantiator>(instantiator));
-}
-
 std::vector<std::string> geEnvironment::getRegisteredPropertiesIds() const
 {
     //TODO: Do this in a better way. Now is a workarround to force initialize properties
     GameEngine::Internal::Game::GetInstance();
-    return PropertiesManager::GetInstance().getIds();
+    return Internal::ObjectManager::GetInstance().getComponentIds();
 }
 
 std::shared_ptr<PropertySetBase> geEnvironment::getProperties(const std::string &id) const
 {
-    return PropertiesManager::GetInstance().instantiate(id);
+    //TODO: Do this in a better way. Now is a workarround to force initialize properties
+    GameEngine::Internal::Game::GetInstance();
+    return Internal::ObjectManager::GetInstance().createProperties(id);
 }
 }
 

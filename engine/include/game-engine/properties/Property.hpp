@@ -102,6 +102,8 @@ public:
     {
         return required_;
     };
+
+    virtual void getDefault(void *defaultValue) const = 0;
 };
 
 template<typename Class>
@@ -118,6 +120,8 @@ public:
     {};
 
     virtual void copy(const std::shared_ptr<const Class> &original, const std::shared_ptr<Class> &target) const = 0;
+
+    virtual void getDefault(void *defaultValue) const = 0;
 };
 
 template<typename Class, typename MemberType>
@@ -174,6 +178,12 @@ public:
     virtual void copy(const std::shared_ptr<const Class> &original, const std::shared_ptr<Class> &target) const
     {
         set(target.get(), get(original.get()));
+    }
+
+    virtual void getDefault(void *defaultValue) const
+    {
+        MemberType *defaultValueConverted = static_cast<MemberType*>(defaultValue);
+        *defaultValueConverted = default_;
     }
 };
 

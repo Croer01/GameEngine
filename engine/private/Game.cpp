@@ -28,23 +28,6 @@ namespace GameEngine {
 namespace Internal {
 
     void Game::onCreateInstance() {
-        //Register the engine's default properties
-        PropertiesManager::GetInstance().registerPropertiesSetBuilder("SpriteComponentProperties",
-                                                              std::make_shared<SpriteComponentProperties>());
-        PropertiesManager::GetInstance().registerPropertiesSetBuilder("GeometryComponentProperties",
-                                                              std::make_shared<GeometryComponentProperties>());
-        PropertiesManager::GetInstance().registerPropertiesSetBuilder("SpriteAnimatedComponentProperties",
-                                                              std::make_shared<SpriteAnimatedComponentProperties>());
-        PropertiesManager::GetInstance().registerPropertiesSetBuilder("ColliderComponentProperties",
-                                                              std::make_shared<ColliderComponentProperties>());
-        PropertiesManager::GetInstance().registerPropertiesSetBuilder("TextComponentProperties", std::make_shared<TextComponentProperties>());
-        PropertiesManager::GetInstance().registerPropertiesSetBuilder("AudioComponentProperties",
-                                                              std::make_shared<AudioComponentProperties>());
-        //GUI Properties
-        PropertiesManager::GetInstance().registerPropertiesSetBuilder("UIControlComponentProperties", std::make_shared<UIControlComponentProperties>());
-        PropertiesManager::GetInstance().registerPropertiesSetBuilder("UIButtonComponentProperties", std::make_shared<UIButtonComponentProperties>());
-        PropertiesManager::GetInstance().registerPropertiesSetBuilder("UITextComponentProperties", std::make_shared<UITextComponentProperties>());
-        PropertiesManager::GetInstance().registerPropertiesSetBuilder("UITextInputComponentProperties", std::make_shared<UITextInputComponentProperties>());
 
         //Register the engine's default components
         ObjectManager::GetInstance().registerComponentBuilder("SpriteComponent",

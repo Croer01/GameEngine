@@ -8,7 +8,6 @@
 #include <vector>
 #include <game-engine/api.hpp>
 #include <game-engine/geComponent.hpp>
-#include <game-engine/properties/PropertiesManager.hpp>
 #include "../../../private/graphics/GraphicGeometry.hpp"
 #include "../../../private/graphics/GraphicHolder.hpp"
 
@@ -28,7 +27,7 @@ namespace GameEngine {
     public:
         virtual ~GeometryComponent();
 
-        std::string getPropertiesName() const override;
+        PropertySetBase *getProperties() const override;
 
         void init() override;
 
@@ -49,36 +48,6 @@ namespace GameEngine {
 
         void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
     };
-
-PROPERTIES(GeometryComponentProperties)
-class GeometryComponentProperties : public PropertyInstantiator
-{
-public:
-    virtual PropertySetBase* instantiateProperties()
-    {
-        auto *properties = new PropertySet<GeometryComponent>();
-
-        properties->add(new Property<GeometryComponent, std::vector<Vec2D>>(
-            "path",
-            &GeometryComponent::path,
-            &GeometryComponent::path,
-            {},
-            true));
-        properties->add(new Property<GeometryComponent, bool>(
-            "visible",
-            &GeometryComponent::visible,
-            &GeometryComponent::visible,
-            true));
-
-        properties->add(new Property<GeometryComponent, std::string>(
-            "anchor",
-            &GeometryComponent::anchor,
-            &GeometryComponent::anchor,
-            "",
-            false));
-        return properties;
-    }
-};
 }
 
 

@@ -8,7 +8,6 @@
 
 #include <game-engine/components/ui/UITextComponent.hpp>
 #include "../../../../private/graphics/GraphicHolder.hpp"
-#include <game-engine/properties/PropertiesManager.hpp>
 
 namespace GameEngine {
 class PUBLICAPI UITextInputComponent : public UITextComponent, public Observer<InputTextSubjectEvent>
@@ -33,7 +32,7 @@ protected:
 public:
     virtual ~UITextInputComponent();
 
-    std::string getPropertiesName() const override;
+    PropertySetBase *getProperties() const override;
 
     void Update(float elapsedTime) override;
     void init() override;
@@ -41,26 +40,6 @@ public:
 
     void background(const geColor &color);
     geColor background() const;
-};
-
-PROPERTIES(UITextInputComponentProperties)
-class UITextInputComponentProperties : public PropertyInstantiator
-{
-public:
-    virtual PropertySetBase *instantiateProperties()
-    {
-        std::shared_ptr<PropertySetBase> base = PropertiesManager::GetInstance().instantiate("UITextComponentProperties");
-        auto *properties = new PropertySet<UITextInputComponent>(base.get());
-
-        properties->add(new Property<UITextInputComponent, geColor>(
-            "background",
-            &UITextInputComponent::background,
-            &UITextInputComponent::background,
-            geColor(1.f)
-        ));
-
-        return properties;
-    }
 };
 }
 

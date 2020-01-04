@@ -111,8 +111,26 @@ void UIButtonComponent::onHoverOut()
     changeColor(false);
 }
 
-std::string UIButtonComponent::getPropertiesName() const
+PropertySetBase *UIButtonComponent::getProperties() const
 {
-    return "UIButtonComponentProperties";
+    PropertySetBase *base = UITextComponent::getProperties();
+    auto *properties = new PropertySet<UIButtonComponent>(base);
+
+    properties->add(new Property<UIButtonComponent, geColor>(
+            "background",
+            &UIButtonComponent::background,
+            &UIButtonComponent::background,
+            geColor(1.f)
+    ));
+
+    properties->add(new Property<UIButtonComponent, geColor>(
+            "hoverBackground",
+            &UIButtonComponent::hoverBackground,
+            &UIButtonComponent::hoverBackground,
+            geColor(.8f)
+    ));
+
+    return properties;
+
 }
 }

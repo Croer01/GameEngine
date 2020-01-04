@@ -7,7 +7,6 @@
 
 
 #include <game-engine/geComponent.hpp>
-#include <game-engine/properties/PropertiesManager.hpp>
 
 namespace GameEngine {
     class PUBLICAPI UIControlComponent : public geComponentInstantiable<UIControlComponent>
@@ -24,7 +23,8 @@ namespace GameEngine {
         virtual void onFocusChanged() {};
     public:
         virtual ~UIControlComponent() = default;
-        std::string getPropertiesName() const override;
+        PropertySetBase *getProperties() const override;
+
         void Update(float elapsedTime) override;
         void screenPos(const Vec2D &pos);
         Vec2D screenPos() const;
@@ -34,33 +34,6 @@ namespace GameEngine {
 
         bool isFocused() const;
     };
-
-PROPERTIES(UIControlComponentProperties)
-class UIControlComponentProperties : public PropertyInstantiator
-{
-public:
-    virtual PropertySetBase* instantiateProperties()
-    {
-        auto *properties = new PropertySet<UIControlComponent>();
-
-        properties->add(new Property<UIControlComponent, Vec2D>(
-            "screenPos",
-            &UIControlComponent::screenPos,
-            &UIControlComponent::screenPos,
-            Vec2D(),
-            true
-        ));
-
-        properties->add(new Property<UIControlComponent, Vec2D>(
-            "screenSize",
-            &UIControlComponent::screenSize,
-            &UIControlComponent::screenSize,
-            Vec2D(),
-            true
-        ));
-        return properties;
-    }
-};
 }
 
 #endif //GAMEENGINEEDITOR_UICONTROLCOMPONENT_HPP

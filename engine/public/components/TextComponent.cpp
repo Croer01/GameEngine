@@ -99,8 +99,30 @@ namespace GameEngine {
         }
     }
 
-std::string TextComponent::getPropertiesName() const
+PropertySetBase *TextComponent::getProperties() const
 {
-    return "TextComponentProperties";
+    auto *properties = new PropertySet<TextComponent>();
+
+    properties->add(new Property<TextComponent, std::string>(
+            "font",
+            &TextComponent::font,
+            &TextComponent::font,
+            "",
+            true));
+
+    properties->add(new Property<TextComponent, int>(
+            "fontSize",
+            &TextComponent::fontSize,
+            &TextComponent::fontSize,
+            0));
+
+    properties->add(new Property<TextComponent, std::string>(
+            "text",
+            &TextComponent::text,
+            &TextComponent::text,
+            ""));
+
+    return properties;
+
 }
 }

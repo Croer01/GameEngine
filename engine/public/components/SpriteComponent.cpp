@@ -95,8 +95,29 @@ namespace GameEngine {
         anchor_ = anchor;
     }
 
-std::string SpriteComponent::getPropertiesName() const
+PropertySetBase *SpriteComponent::getProperties() const
 {
-    return "SpriteComponentProperties";
+    auto *properties = new PropertySet<SpriteComponent>();
+
+    properties->add(new Property<SpriteComponent, std::string>(
+            "filePath",
+            &SpriteComponent::filepath,
+            &SpriteComponent::filepath,
+            "",
+            true));
+    properties->add(new Property<SpriteComponent, bool>(
+            "visible",
+            &SpriteComponent::isVisible,
+            &SpriteComponent::setVisible,
+            true));
+
+    properties->add(new Property<SpriteComponent, std::string>(
+            "anchor",
+            &SpriteComponent::anchor,
+            &SpriteComponent::anchor,
+            "",
+            false));
+    return properties;
+
 }
 }

@@ -10,7 +10,6 @@
 #include <game-engine/geGameObject.hpp>
 #include <game-engine/events/Observer.hpp>
 #include "../private/graphics/font/Text.hpp"
-#include <game-engine/properties/PropertiesManager.hpp>
 
 namespace GameEngine {
 class PUBLICAPI TextComponent : public geComponentInstantiable<TextComponent>, public Observer<GameObjectEvent> {
@@ -25,9 +24,9 @@ class PUBLICAPI TextComponent : public geComponentInstantiable<TextComponent>, p
     public:
         virtual ~TextComponent();
 
-        std::string getPropertiesName() const override;
+    PropertySetBase *getProperties() const override;
 
-        void init() override;
+    void init() override;
 
         void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
 
@@ -47,37 +46,6 @@ class PUBLICAPI TextComponent : public geComponentInstantiable<TextComponent>, p
 protected:
         void onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) override;
     };
-
-PROPERTIES(TextComponentProperties)
-class TextComponentProperties : public PropertyInstantiator
-{
-public:
-    virtual PropertySetBase* instantiateProperties()
-    {
-        auto *properties = new PropertySet<TextComponent>();
-
-        properties->add(new Property<TextComponent, std::string>(
-            "font",
-            &TextComponent::font,
-            &TextComponent::font,
-            "",
-            true));
-
-        properties->add(new Property<TextComponent, int>(
-            "fontSize",
-            &TextComponent::fontSize,
-            &TextComponent::fontSize,
-            0));
-
-        properties->add(new Property<TextComponent, std::string>(
-            "text",
-            &TextComponent::text,
-            &TextComponent::text,
-            ""));
-
-        return properties;
-    }
-};
 }
 
 #endif //SPACEINVADERS_TEXTCOMPONENT_HPP

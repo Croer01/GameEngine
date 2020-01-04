@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <memory>
 #include "Data.hpp"
+#include <game-engine/properties/PropertySet.hpp>
 
 namespace GameEngine {
 namespace Internal {
@@ -15,7 +16,7 @@ namespace Internal {
     class Factory {
         std::unordered_map<IdType, BuilderType *> builders_;
     public:
-        void AddBuilder(IdType type, BuilderType *builder) {
+        void AddBuilder(const IdType &type, BuilderType *builder) {
             auto it = builders_.find(type);
 
             if (it != builders_.end())
@@ -25,7 +26,7 @@ namespace Internal {
 
         };
 
-        void RemoveBuilder(IdType type) {
+        void RemoveBuilder(const IdType &type) {
             auto it = builders_.find(type);
 
             if (it == builders_.end())
@@ -35,7 +36,7 @@ namespace Internal {
             builders_.erase(type);
         };
 
-        std::shared_ptr<ReturnType> Create(IdType type, const Data &data) {
+        std::shared_ptr<ReturnType> Create(const IdType &type, const Data &data) {
             auto it = builders_.find(type);
 
             if (it == builders_.end())
@@ -43,6 +44,25 @@ namespace Internal {
 
             return it->second->Create(data);
         };
+
+        std::vector<IdType> getIds() const
+        {
+            std::vector<IdType> ids;
+            for(const auto & property : builders_) {
+                ids.push_back(property.first);
+            }
+            return ids;
+        }
+
+        std::shared_ptr<PropertySetBase> createProperties(const IdType &type)
+        {
+            auto it = builders_.find(type);
+
+            if (it == builders_.end())
+                throw std::runtime_error("builder doesn't exist");
+
+            return it->second->createProperties();
+        }
     };
 }
 }

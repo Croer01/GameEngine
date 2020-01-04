@@ -8,7 +8,6 @@
 
 #include "UIControlComponent.hpp"
 #include "../../../../private/graphics/font/Text.hpp"
-#include <game-engine/properties/PropertiesManager.hpp>
 
 namespace GameEngine {
 class PUBLICAPI UITextComponent : public UIControlComponent
@@ -26,7 +25,7 @@ protected:
 public:
     virtual ~UITextComponent();
 
-    std::string getPropertiesName() const override;
+    PropertySetBase *getProperties() const override;
 
     void init() override;
 
@@ -40,40 +39,6 @@ public:
     std::string text() const;
 
     Vec2D getTextSize() const;
-};
-
-PROPERTIES(UITextComponentProperties)
-class UITextComponentProperties : public PropertyInstantiator
-{
-public:
-    virtual PropertySetBase *instantiateProperties()
-    {
-        std::shared_ptr<PropertySetBase> base = PropertiesManager::GetInstance().instantiate("UIControlComponentProperties");
-        auto *properties = new PropertySet<UITextComponent>(base.get());
-
-        properties->add(new Property<UITextComponent, std::string>(
-            "text",
-            &UITextComponent::text,
-            &UITextComponent::text,
-            "",
-            true
-        ));
-
-        properties->add(new Property<UITextComponent, std::string>(
-            "font",
-            &UITextComponent::font,
-            &UITextComponent::font,
-            "",
-            true));
-
-        properties->add(new Property<UITextComponent, int>(
-            "fontSize",
-            &UITextComponent::fontSize,
-            &UITextComponent::fontSize,
-            0));
-
-        return properties;
-    }
 };
 }
 

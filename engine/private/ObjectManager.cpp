@@ -47,5 +47,15 @@ namespace Internal {
         prototypes_.clear();
         componentFactory_ = Factory<geComponent, ComponentBuilder, std::string>();
     }
+
+std::vector<std::string> ObjectManager::getComponentIds() const
+{
+    return componentFactory_.getIds();
+}
+
+std::shared_ptr<PropertySetBase> ObjectManager::createProperties(const std::string &idType)
+{
+    return componentFactory_.createProperties(idType);
+}
 }
 }

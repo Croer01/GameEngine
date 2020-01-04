@@ -31,31 +31,5 @@ public:
     virtual PropertySetBase *instantiateProperties() = 0;
 };
 
-class PropertiesManager : public Internal::Singleton<PropertiesManager>
-{
-    std::map<std::string, std::shared_ptr<PropertyInstantiator>> properties_;
-
-public:
-    void registerPropertiesSetBuilder(const std::string &targetName, const std::shared_ptr<PropertyInstantiator> &properties)
-    {
-        properties_[targetName] = properties;
-    }
-
-    std::shared_ptr<PropertySetBase> instantiate(const std::string &targetName)
-    {
-        return properties_[targetName]->create();
-    }
-
-    std::vector<std::string> getIds() const
-    {
-        std::vector<std::string> ids;
-        for(const auto & property : properties_) {
-            ids.push_back(property.first);
-        }
-        return ids;
-    }
-
-};
-
 }
 #endif //GAMEENGINEEDITOR_PROPERTIESMANAGER_HPP

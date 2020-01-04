@@ -31,6 +31,7 @@ namespace GameEngine {
         void gameObject(geGameObject *gameObject);
         geGameObject *gameObject() const;
         virtual geComponentRef clone() const = 0;
+        virtual PropertySetBase *getProperties() const = 0;
     };
 
     template<typename T>
@@ -54,9 +55,9 @@ namespace GameEngine {
         }
 
     public:
-        virtual std::string getPropertiesName() const = 0;
         virtual ~geComponentInstantiable(){};
 
+        virtual PropertySetBase *getProperties() const = 0;
     };
 }
 #endif //SPACEINVADERS_GECOMPONENT_HPP

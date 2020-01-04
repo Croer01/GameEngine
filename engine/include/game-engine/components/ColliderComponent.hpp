@@ -7,7 +7,6 @@
 
 #include <game-engine/geComponent.hpp>
 #include <game-engine/components/SpriteComponent.hpp>
-#include <game-engine/properties/PropertiesManager.hpp>
 #include "../private/physics/Collider.hpp"
 #include "SpriteAnimatedComponent.hpp"
 
@@ -47,9 +46,9 @@ class PUBLICAPI ColliderComponent : public geComponentInstantiable<ColliderCompo
 
         void applyForce(const Vec2D &force);
 
-        std::string getPropertiesName() const override;
+    PropertySetBase *getProperties() const override;
 
-        Vec2D extends() const;
+    Vec2D extends() const;
         void extends(const Vec2D &extends);
         Vec2D offset() const;
         void offset(const Vec2D &offsetValue);
@@ -67,46 +66,6 @@ class PUBLICAPI ColliderComponent : public geComponentInstantiable<ColliderCompo
 
         void onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) override;
     };
-
-PROPERTIES(ColliderComponentProperties)
-class ColliderComponentProperties : public PropertyInstantiator
-{
-public:
-    virtual PropertySetBase* instantiateProperties()
-    {
-        auto *properties = new PropertySet<ColliderComponent>();
-
-        properties->add(new Property<ColliderComponent, Vec2D>(
-            "extends",
-            &ColliderComponent::extends,
-            &ColliderComponent::extends,
-            Vec2D()));
-        properties->add(new Property<ColliderComponent, Vec2D>(
-            "offset",
-            &ColliderComponent::offset,
-            &ColliderComponent::offset,
-            Vec2D()));
-
-        // Collider configuration
-        properties->add(new Property<ColliderComponent, std::string>(
-            "colliderShape",
-            &ColliderComponent::shape,
-            &ColliderComponent::shape,
-            "Box"));
-        properties->add(new Property<ColliderComponent, std::string>(
-            "colliderType",
-            &ColliderComponent::type,
-            &ColliderComponent::type,
-            "Static"));
-        properties->add(new Property<ColliderComponent, std::string>(
-            "category",
-            &ColliderComponent::category,
-            &ColliderComponent::category,
-            ""));
-
-        return properties;
-    }
-};
 }
 
 #endif //SPACEINVADERS_COLLIDERCOMPONENT_HPP

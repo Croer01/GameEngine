@@ -88,8 +88,33 @@ std::shared_ptr<Internal::Text> UITextComponent::getGraphicText() const
     return graphicText_;
 }
 
-std::string UITextComponent::getPropertiesName() const
+PropertySetBase *UITextComponent::getProperties() const
 {
-    return "UITextComponentProperties";
+    PropertySetBase *base = UIControlComponent::getProperties();
+    auto *properties = new PropertySet<UITextComponent>(base);
+
+    properties->add(new Property<UITextComponent, std::string>(
+            "text",
+            &UITextComponent::text,
+            &UITextComponent::text,
+            "",
+            true
+    ));
+
+    properties->add(new Property<UITextComponent, std::string>(
+            "font",
+            &UITextComponent::font,
+            &UITextComponent::font,
+            "",
+            true));
+
+    properties->add(new Property<UITextComponent, int>(
+            "fontSize",
+            &UITextComponent::fontSize,
+            &UITextComponent::fontSize,
+            0));
+
+    return properties;
+
 }
 }

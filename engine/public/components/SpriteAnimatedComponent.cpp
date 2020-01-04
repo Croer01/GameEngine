@@ -179,8 +179,49 @@ namespace GameEngine {
         }
     }
 
-std::string SpriteAnimatedComponent::getPropertiesName() const
+PropertySetBase *SpriteAnimatedComponent::getProperties() const
 {
-    return "SpriteAnimatedComponentProperties";
+    auto *properties = new PropertySet<SpriteAnimatedComponent>();
+
+    properties->add(new Property<SpriteAnimatedComponent, std::string>(
+            "filePath",
+            &SpriteAnimatedComponent::filepath,
+            &SpriteAnimatedComponent::filepath,
+            "",
+            true));
+
+    properties->add(new Property<SpriteAnimatedComponent, int>(
+            "rows",
+            &SpriteAnimatedComponent::rows,
+            &SpriteAnimatedComponent::rows,
+            1));
+
+    properties->add(new Property<SpriteAnimatedComponent, int>(
+            "columns",
+            &SpriteAnimatedComponent::columns,
+            &SpriteAnimatedComponent::columns,
+            1));
+
+    //get the time between frames. default is 1 sec.
+    properties->add(new Property<SpriteAnimatedComponent, float>(
+            "framesPerSecond",
+            &SpriteAnimatedComponent::framesPerSecond,
+            &SpriteAnimatedComponent::framesPerSecond,
+            1.f));
+
+    properties->add(new Property<SpriteAnimatedComponent, bool>(
+            "visible",
+            &SpriteAnimatedComponent::isVisible,
+            &SpriteAnimatedComponent::setVisible,
+            true));
+
+    properties->add(new Property<SpriteAnimatedComponent, bool>(
+            "playOnInit",
+            &SpriteAnimatedComponent::playOnInit,
+            &SpriteAnimatedComponent::playOnInit,
+            true));
+
+    return properties;
+
 }
 }

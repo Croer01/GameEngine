@@ -8,7 +8,6 @@
 #include <game-engine/Command.hpp>
 #include "UITextComponent.hpp"
 #include "../../../../private/graphics/GraphicHolder.hpp"
-#include <game-engine/properties/PropertiesManager.hpp>
 
 namespace GameEngine {
 class PUBLICAPI UIButtonComponent : public UITextComponent
@@ -28,7 +27,8 @@ protected:
 public:
     UIButtonComponent();
     virtual ~UIButtonComponent();
-    std::string getPropertiesName() const override;
+    PropertySetBase *getProperties() const override;
+
     void init() override;
     void setCommand(const CommandRef &command);
 
@@ -37,33 +37,6 @@ public:
 
     void hoverBackground(const geColor &color);
     geColor hoverBackground() const;
-};
-
-PROPERTIES(UIButtonComponentProperties)
-class UIButtonComponentProperties : public PropertyInstantiator
-{
-public:
-    virtual PropertySetBase *instantiateProperties()
-    {
-        std::shared_ptr<PropertySetBase> base = PropertiesManager::GetInstance().instantiate("UITextComponentProperties");
-        auto *properties = new PropertySet<UIButtonComponent>(base.get());
-
-        properties->add(new Property<UIButtonComponent, geColor>(
-            "background",
-            &UIButtonComponent::background,
-            &UIButtonComponent::background,
-            geColor(1.f)
-        ));
-
-        properties->add(new Property<UIButtonComponent, geColor>(
-            "hoverBackground",
-            &UIButtonComponent::hoverBackground,
-            &UIButtonComponent::hoverBackground,
-            geColor(.8f)
-        ));
-
-        return properties;
-    }
 };
 }
 

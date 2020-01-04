@@ -114,9 +114,30 @@ namespace GameEngine {
         anchor_ = anchor;
     }
 
-std::string GeometryComponent::getPropertiesName() const
+PropertySetBase *GeometryComponent::getProperties() const
 {
-    return "GeometryComponentProperties";
+    auto *properties = new PropertySet<GeometryComponent>();
+
+    properties->add(new Property<GeometryComponent, std::vector<Vec2D>>(
+            "path",
+            &GeometryComponent::path,
+            &GeometryComponent::path,
+            {},
+            true));
+    properties->add(new Property<GeometryComponent, bool>(
+            "visible",
+            &GeometryComponent::visible,
+            &GeometryComponent::visible,
+            true));
+
+    properties->add(new Property<GeometryComponent, std::string>(
+            "anchor",
+            &GeometryComponent::anchor,
+            &GeometryComponent::anchor,
+            "",
+            false));
+    return properties;
+
 }
 }
 

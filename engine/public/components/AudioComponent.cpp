@@ -58,8 +58,28 @@ namespace GameEngine {
         return loopOnInit_;
     }
 
-std::string AudioComponent::getPropertiesName() const
+PropertySetBase *AudioComponent::getProperties() const
 {
-    return "AudioComponentProperties";
+    auto *properties = new PropertySet<AudioComponent>();
+
+    properties->add(new Property<AudioComponent, std::string>(
+            "filePath",
+            &AudioComponent::filepath,
+            &AudioComponent::filepath,
+            "",
+            true));
+    properties->add(new Property<AudioComponent, bool>(
+            "playOnInit",
+            &AudioComponent::playOnInit,
+            &AudioComponent::playOnInit,
+            false));
+    properties->add(new Property<AudioComponent, bool>(
+            "loopOnInit",
+            &AudioComponent::loopOnInit,
+            &AudioComponent::loopOnInit,
+            false));
+
+    return properties;
 }
+
 }

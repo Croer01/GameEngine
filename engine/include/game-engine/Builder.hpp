@@ -8,6 +8,7 @@
 
 #include <game-engine/geData.hpp>
 #include <memory>
+#include <game-engine/properties/PropertySet.hpp>
 
 namespace GameEngine {
 
@@ -19,16 +20,23 @@ namespace GameEngine {
         virtual ~ComponentBuilder() = default;
 
         virtual geComponentRef Create(const geData &data) = 0;
+        virtual std::shared_ptr<PropertySetBase> createProperties() = 0;
     };
 
     template<typename ComponentType>
     class ComponentTBuilder : public ComponentBuilder {
     public:
         virtual geComponentRef Create(const geData &data) {
-
             const std::shared_ptr<ComponentType> &instance = std::make_shared<ComponentType>();
             instance->copyProperties(data);
             return instance;
+        };
+
+        virtual std::shared_ptr<PropertySetBase> createProperties()
+        {
+            const std::shared_ptr<ComponentType> &instance = std::make_shared<ComponentType>();
+            PropertySetBase* properties = instance->getProperties();
+            return std::shared_ptr<PropertySetBase>(properties);
         };
     };
 }
