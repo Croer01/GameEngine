@@ -271,11 +271,20 @@ void Editor::renderObjectInspector(){
                 project_->dirty_ = true;
         }
 
+        ImGui::PushID(objectSelected_->name_.c_str());
         for (const auto &component : objectSelected_->components_)
         {
-            ImGui::PushID(objectSelected_->name_.c_str());
             renderComponent(component);
-            ImGui::PopID();
+        }
+        ImGui::PopID();
+
+        //remove components safety
+        auto it = std::remove_if( objectSelected_->components_.begin(),
+                objectSelected_->components_.end(),
+                [](const ComponentDataRef &component){ return component->markToRemove_; } );
+        if(it != objectSelected_->components_.end()){
+            objectSelected_->components_.erase( it, objectSelected_->components_.end() );
+            project_->dirty_= true;
         }
     }
     ImGui::End();
@@ -283,9 +292,15 @@ void Editor::renderObjectInspector(){
 
 void Editor::renderComponent(const ComponentDataRef &component)
 {
-    if (ImGui::CollapsingHeader(component->name_.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+    ImGui::PushID(component->name_.c_str());
+    bool opened = ImGui::CollapsingHeader(component->name_.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap);
+    ImGui::SameLine(ImGui::GetWindowWidth() - 20);
+    if(ImGui::Button("x"))
     {
-        ImGui::PushID(component->name_.c_str());
+        component->markToRemove_ = true;
+    }
+    if (opened)
+    {
         for (const auto &property : component->properties_)
         {
             ImGui::PushID(property->name_.c_str());
@@ -386,8 +401,8 @@ void Editor::renderComponent(const ComponentDataRef &component)
             }
             ImGui::PopID();
         }
-        ImGui::PopID();
     }
+    ImGui::PopID();
 }
 
 void Editor::renderMainMenu()
