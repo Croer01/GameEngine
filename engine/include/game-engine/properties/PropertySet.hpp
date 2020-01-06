@@ -30,6 +30,8 @@ namespace GameEngine {
         }
 
         PropertyBase& get(int index){
+            if(index >= properties_.size() && parent_)
+                return parent_->get(index - properties_.size());
             return *properties_[index];
         }
 
@@ -44,13 +46,21 @@ namespace GameEngine {
             }
 
             if(index == -1)
+            {
+                if(parent_)
+                    return parent_->get(name);
+
                 throw std::runtime_error("property " + name + " not found");
+            }
 
             return  *properties_[index];
         }
 
         int size() const{
-            return properties_.size();
+            int totalSize = properties_.size();
+            if(parent_)
+                totalSize += parent_->size();
+            return totalSize;
         }
     };
 
