@@ -173,6 +173,8 @@ public:
     std::string filePath_;
 };
 
+class ProjectData;
+typedef std::shared_ptr<ProjectData> ProjectDataRef;
 class ProjectData
 {
 public:

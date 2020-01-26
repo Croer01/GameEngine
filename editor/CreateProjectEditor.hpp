@@ -8,26 +8,24 @@
 
 #include <functional>
 #include "ViewModels.hpp"
+#include "BaseDialog.h"
 
-class CreateProjectEditor
+class CreateProjectEditor : public BaseDialog<ProjectDataRef>
 {
-public:
-    typedef std::function<void(const std::shared_ptr<ProjectData>&)> ConfirmCallback;
 
 private:
-    bool opened_;
     bool canCreateProject_;
-    std::shared_ptr<ProjectData> newProject_;
-    ConfirmCallback confirmCallback_;
 
-    void close();
-    void confirm();
     void computeCanCreateProject();
+
+protected:
+    virtual void onConfirm();
+    virtual void onOpen();
+    virtual void renderContent();
+    bool canConfirm() override;
+
 public:
     explicit CreateProjectEditor(const ConfirmCallback &callback);
-    void Render();
-    void open();
-    bool isOpen() const;
 };
 
 

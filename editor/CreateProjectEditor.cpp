@@ -11,79 +11,41 @@
 namespace fs = boost::filesystem;
 
 CreateProjectEditor::CreateProjectEditor(const CreateProjectEditor::ConfirmCallback &callback) :
-    opened_(false),
-    canCreateProject_(false),
-    confirmCallback_(callback)
+        BaseDialog<ProjectDataRef>(callback),
+        canCreateProject_(false)
 {
+    dialogName_ = "Create Project";
+    confirmButtonName_ = "Create";
 }
 
-void CreateProjectEditor::Render()
+void CreateProjectEditor::renderContent()
 {
-    if(!opened_)
-        return;
+    if(ImGui::InputText("Project Root Folder##projectFolder", &data_->folderPath_))
+        computeCanCreateProject();
 
-    const char *popupName = "New Project";
-    if(!ImGui::IsPopupOpen(popupName))
-        ImGui::OpenPopup(popupName);
-
-    if (ImGui::BeginPopupModal(popupName))
+    if (ImGui::Button("Select Root..."))
     {
-        if(ImGui::InputText("Project Root Folder##projectFolder", &newProject_->folderPath_))
+        char const *folderProjectName = tinyfd_selectFolderDialog("Root Folder", data_->folderPath_.c_str());
+        if (folderProjectName)
+        {
+            data_->folderPath_ = folderProjectName;
             computeCanCreateProject();
-
-        if (ImGui::Button("Select Root..."))
-        {
-            char const *folderProjectName = tinyfd_selectFolderDialog("Root Folder", newProject_->folderPath_.c_str());
-            if (folderProjectName)
-            {
-                newProject_->folderPath_ = folderProjectName;
-                computeCanCreateProject();
-            }
         }
-
-        if(ImGui::InputText("Project Name", &newProject_->folderName_))
-            computeCanCreateProject();
-
-        if(!canCreateProject_)
-        {
-            ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.6f);
-            ImGui::Button("Create");
-            ImGui::PopStyleVar();
-        }
-        else
-        {
-            if (ImGui::Button("Create"))
-                confirm();
-        }
-        ImGui::SameLine();
-        if (ImGui::Button("Cancel"))
-            close();
-
-        ImGui::EndPopup();
     }
+
+    if(ImGui::InputText("Project Name", &data_->folderName_))
+        computeCanCreateProject();
 }
 
-void CreateProjectEditor::open()
+void CreateProjectEditor::onOpen()
 {
-    opened_ = true;
-    newProject_ = std::make_shared<ProjectData>();
+    data_ = std::make_shared<ProjectData>();
 }
 
-bool CreateProjectEditor::isOpen() const
+void CreateProjectEditor::onConfirm()
 {
-    return opened_;
-}
-
-void CreateProjectEditor::close()
-{
-    opened_ = false;
-    ImGui::CloseCurrentPopup();
-}
-
-void CreateProjectEditor::confirm()
-{
-    fs::path folder(newProject_->folderPath_);
-    folder.append(newProject_->folderName_);
+    fs::path folder(data_->folderPath_);
+    folder.append(data_->folderName_);
 
     fs::path assetFolder(folder);
     assetFolder.append("assets");
@@ -99,31 +61,31 @@ void CreateProjectEditor::confirm()
     fs::create_directories(dataFolder);
 
     YAML::Node projectNode;
-    projectNode = *newProject_.get();
+    projectNode = *data_;
     std::ofstream projectFile;
-    projectFile.open(folder.append(newProject_->folderName_ + ".project").string());
+    projectFile.open(folder.append(data_->folderName_ + ".project").string());
     projectFile << projectNode << std::endl;
     projectFile.close();
-
-    if(confirmCallback_)
-        confirmCallback_(newProject_);
-
-    close();
 }
 
 void CreateProjectEditor::computeCanCreateProject()
 {
-    canCreateProject_ = !newProject_->folderPath_.empty();
+    canCreateProject_ = !data_->folderPath_.empty();
 
     if(canCreateProject_)
     {
-        fs::path folder(newProject_->folderPath_);
+        fs::path folder(data_->folderPath_);
         canCreateProject_ = fs::exists(folder);
 
         if (canCreateProject_)
         {
-            folder.append(newProject_->folderName_);
+            folder.append(data_->folderName_);
             canCreateProject_ = !fs::exists(folder);
         }
     }
+}
+
+bool CreateProjectEditor::canConfirm()
+{
+    return canCreateProject_;
 }
