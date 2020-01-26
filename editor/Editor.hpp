@@ -12,6 +12,7 @@
 #include "CreateProjectEditor.hpp"
 #include "GameComponentsProvider.hpp"
 #include "ProjectPrototypeProvider.h"
+#include "CreatePrototypeDialog.h"
 
 class Editor
 {
@@ -20,6 +21,7 @@ class Editor
     ObjectDataRef objectSelected_;
     std::shared_ptr<ProjectData> project_;
     std::shared_ptr<CreateProjectEditor> createProjectEditor_;
+    std::shared_ptr<CreatePrototypeDialog> createPrototypeDialog_;
     GameComponentsProvider gameComponentsProvider_;
     ProjectPrototypeProvider projectPrototypeProvider_;
 
@@ -32,6 +34,7 @@ class Editor
     void renderComponent(const ComponentDataRef &component);
 
     void setProject(const std::shared_ptr<ProjectData> &project);
+    void createPrototype(const std::string &prototypeName);
     SceneData loadScene(const std::string &sceneFilePath);
     void updateWindowTitle();
 public:

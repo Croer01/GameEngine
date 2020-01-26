@@ -22,8 +22,11 @@ Editor::Editor(SDL_Window *window):
     ImGui::GetStyle().WindowRounding = 0.f;
     ImGui::GetStyle().FrameRounding = 3.f;
 
-    auto callback = std::bind(&Editor::setProject, this, std::placeholders::_1);
-    createProjectEditor_= std::make_shared<CreateProjectEditor>(callback);
+    auto createProjectCallback = std::bind(&Editor::setProject, this, std::placeholders::_1);
+    createProjectEditor_= std::make_shared<CreateProjectEditor>(createProjectCallback);
+    
+    auto createPrototypeCallback = std::bind(&Editor::createPrototype, this, std::placeholders::_1);
+    createPrototypeDialog_ = std::make_shared<CreatePrototypeDialog>(createPrototypeCallback);
 
 //    generateMockData();
 }
@@ -64,6 +67,9 @@ void Editor::render()
     renderMainMenu();
     if(createProjectEditor_->isOpen())
         createProjectEditor_->Render();
+
+    if(createPrototypeDialog_->isOpen())
+        createPrototypeDialog_->Render();
 
     if(project_)
     {
@@ -134,27 +140,9 @@ void Editor::renderPrototypeList()
 
     if(ImGui::Button("Create..."))
     {
-        fs::path prototypePath(project_->dataPath_);
-
-        std::stringstream ss;
-        ss << "Prototype" << project_->prototypeFilepaths_.size() << ".prototype";
-        prototypePath.append(ss.str());
-        char const * filter[1] = {"*.prototype"};
-        char const *selectedPrototypeFile = tinyfd_saveFileDialog("Create prototype", prototypePath.string().c_str(), 1, filter, "Prototype file (*.prototype)");
-        if (selectedPrototypeFile)
-        {
-            fs::path newPrototypePath(selectedPrototypeFile);
-            ObjectData newPrototype;
-            newPrototype.name_ = newPrototypePath.stem().string();
-
-            YAML::Node prototypeNode;
-            prototypeNode = newPrototype;
-            std::ofstream prototypeFile;
-            prototypeFile.open(selectedPrototypeFile);
-            prototypeFile << prototypeNode << std::endl;
-            prototypeFile.close();
-            project_->prototypeFilepaths_.push_back(newPrototypePath);
-        }
+        const std::string &defaultValue =
+                "Prototype" + std::to_string(project_->prototypeFilepaths_.size());
+        createPrototypeDialog_->open(defaultValue);
     }
 
     ImGui::Separator();
@@ -169,6 +157,26 @@ void Editor::renderPrototypeList()
     }
 
     ImGui::End();
+}
+
+void Editor::createPrototype(const std::string &prototypeName)
+{
+    fs::path prototypePath(this->project_->dataPath_);
+
+    std::stringstream ss;
+    ss << prototypeName << ".prototype";
+    prototypePath.append(ss.str());
+
+    ObjectData newPrototype;
+    newPrototype.name_ = prototypePath.stem().string();
+
+    YAML::Node prototypeNode;
+    prototypeNode = newPrototype;
+    std::ofstream prototypeFile;
+    prototypeFile.open(prototypePath.string());
+    prototypeFile << prototypeNode << std::endl;
+    prototypeFile.close();
+    this->project_->prototypeFilepaths_.push_back(prototypePath);
 }
 
 void Editor::renderSceneInspector()

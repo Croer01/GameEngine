@@ -13,6 +13,9 @@
 class CreateProjectEditor : public BaseDialog<ProjectDataRef>
 {
 
+public:
+    explicit CreateProjectEditor(const ConfirmCallback &callback);
+    virtual ~CreateProjectEditor(){};
 private:
     bool canCreateProject_;
 
@@ -23,9 +26,6 @@ protected:
     virtual void onOpen();
     virtual void renderContent();
     bool canConfirm() override;
-
-public:
-    explicit CreateProjectEditor(const ConfirmCallback &callback);
 };
 
 
