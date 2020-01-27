@@ -23,9 +23,3 @@ bool CreatePrototypeDialog::canConfirm()
 {
     return fs::portable_file_name(data_);
 }
-
-void CreatePrototypeDialog::open(const std::string &defaultValue)
-{
-    data_ = defaultValue.empty();
-    BaseDialog::open();
-}

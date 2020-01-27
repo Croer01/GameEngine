@@ -65,11 +65,9 @@ void Editor::generateMockData()
 void Editor::render()
 {
     renderMainMenu();
-    if(createProjectEditor_->isOpen())
-        createProjectEditor_->Render();
 
-    if(createPrototypeDialog_->isOpen())
-        createPrototypeDialog_->Render();
+    createProjectEditor_->Render();
+    createPrototypeDialog_->Render();
 
     if(project_)
     {

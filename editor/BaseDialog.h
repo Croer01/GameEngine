@@ -35,6 +35,7 @@ public:
     virtual ~BaseDialog(){}
     void Render();
     void open();
+    void open(const ReturnType &defaultValue);
     bool isOpen() const;
 
 };
@@ -115,6 +116,13 @@ template<typename ReturnType>
 bool BaseDialog<ReturnType>::canConfirm()
 {
     return true;
+}
+
+template<typename ReturnType>
+void BaseDialog<ReturnType>::open(const ReturnType &defaultValue)
+{
+    data_ = defaultValue;
+    open();
 }
 
 #endif //GAMEDEVWARS_BASEDIALOG_H

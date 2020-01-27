@@ -13,7 +13,6 @@ class CreatePrototypeDialog : public BaseDialog<std::string>
 public:
     explicit CreatePrototypeDialog(const ConfirmCallback &callback);
     virtual ~CreatePrototypeDialog(){};
-    void open(const std::string &defaultValue);
 protected:
     void renderContent() override;
     bool canConfirm() override;
