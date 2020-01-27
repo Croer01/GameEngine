@@ -28,6 +28,9 @@ Editor::Editor(SDL_Window *window):
     auto createPrototypeCallback = std::bind(&Editor::createPrototype, this, std::placeholders::_1);
     createPrototypeDialog_ = std::make_shared<CreatePrototypeDialog>(createPrototypeCallback);
 
+    auto deleteFileCallback = std::bind(&Editor::deleteFile, this, std::placeholders::_1);
+    deleteFileDialog_ = std::make_shared<DeleteFileDialog>(deleteFileCallback);
+
 //    generateMockData();
 }
 
@@ -68,6 +71,7 @@ void Editor::render()
 
     createProjectEditor_->Render();
     createPrototypeDialog_->Render();
+    deleteFileDialog_->Render();
 
     if(project_)
     {
@@ -144,14 +148,19 @@ void Editor::renderPrototypeList()
     }
 
     ImGui::Separator();
-    ImGuiTreeNodeFlags PrototypesNodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+    ImGuiTreeNodeFlags PrototypesNodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_AllowItemOverlap;
 
     for (const auto &filepath : project_->prototypeFilepaths_)
     {
+        ImGui::PushID(filepath.c_str());
         const boost::filesystem::path &relativeFilePath = fs::relative(fs::path(filepath), project_->dataPath_);
         ImGui::TreeNodeEx(relativeFilePath.string().c_str(), PrototypesNodeFlags);
         if(ImGui::IsItemClicked())
             objectSelected_ = projectPrototypeProvider_.getPrototype(filepath.string());
+        ImGui::SameLine(ImGui::GetWindowWidth() - 20);
+        if(ImGui::Button("X"))
+            deleteFileDialog_->open(relativeFilePath);
+        ImGui::PopID();
     }
 
     ImGui::End();
@@ -305,6 +314,7 @@ void Editor::renderComponent(const ComponentDataRef &component)
     {
         component->markToRemove_ = true;
     }
+
     if (opened)
     {
         for (const auto &property : component->properties_)
@@ -605,4 +615,17 @@ void Editor::updateWindowTitle()
     if(project_->dirty_)
         dirtyMark = "*";
     SDL_SetWindowTitle(window_,("Game Engine Editor - " + project_->folderName_ + " - " + sceneData_->name_ + dirtyMark).c_str());
+}
+
+void Editor::deleteFile(const boost::filesystem::path &filePath)
+{
+    fs::path absolutePath = fs::absolute(filePath, project_->dataPath_);
+    if(fs::remove(absolutePath)){
+        project_->prototypeFilepaths_.erase(
+                std::remove(project_->prototypeFilepaths_.begin(), project_->prototypeFilepaths_.end(), absolutePath),
+                project_->prototypeFilepaths_.end());
+
+        if(objectSelected_ == projectPrototypeProvider_.deletePrototype(absolutePath.string()))
+            objectSelected_.reset();
+    }
 }

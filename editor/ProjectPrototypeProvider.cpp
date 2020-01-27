@@ -22,6 +22,19 @@ ObjectDataRef ProjectPrototypeProvider::getPrototype(const std::string &filepath
     return prototype;
 }
 
+ObjectDataRef ProjectPrototypeProvider::deletePrototype(const std::string &filepath)
+{
+    ObjectDataRef objectDeleted;
+
+    auto it = _objectsLoadedCache.find(filepath);
+    if(it != _objectsLoadedCache.end()) {
+        objectDeleted = it->second;
+        _objectsLoadedCache.erase(it);
+    }
+
+    return objectDeleted;
+}
+
 void ProjectPrototypeProvider::clearCache()
 {
     _objectsLoadedCache.clear();

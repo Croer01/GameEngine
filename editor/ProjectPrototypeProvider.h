@@ -14,6 +14,7 @@ class ProjectPrototypeProvider
     std::map<std::string, ObjectDataRef> _objectsLoadedCache;
 public:
     ObjectDataRef getPrototype(const std::string &filepath);
+    ObjectDataRef deletePrototype(const std::string &filepath);
     void clearCache();
 };
 

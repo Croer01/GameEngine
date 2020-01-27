@@ -13,6 +13,7 @@
 #include "GameComponentsProvider.hpp"
 #include "ProjectPrototypeProvider.h"
 #include "CreatePrototypeDialog.h"
+#include "DeleteFileDialog.h"
 
 class Editor
 {
@@ -22,6 +23,7 @@ class Editor
     std::shared_ptr<ProjectData> project_;
     std::shared_ptr<CreateProjectEditor> createProjectEditor_;
     std::shared_ptr<CreatePrototypeDialog> createPrototypeDialog_;
+    std::shared_ptr<DeleteFileDialog> deleteFileDialog_;
     GameComponentsProvider gameComponentsProvider_;
     ProjectPrototypeProvider projectPrototypeProvider_;
 
@@ -35,6 +37,7 @@ class Editor
 
     void setProject(const std::shared_ptr<ProjectData> &project);
     void createPrototype(const std::string &prototypeName);
+    void deleteFile(const boost::filesystem::path &filePath);
     SceneData loadScene(const std::string &sceneFilePath);
     void updateWindowTitle();
 public:
