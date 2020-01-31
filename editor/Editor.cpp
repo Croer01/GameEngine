@@ -143,20 +143,35 @@ void Editor::renderPrototypeList()
     if(ImGui::Button("Create..."))
     {
         const std::string &defaultValue =
-                "Prototype" + std::to_string(project_->prototypeFilepaths_.size());
+                "Prototype" + std::to_string(project_->dataFilepaths_.size());
         createPrototypeDialog_->open(defaultValue);
     }
 
     ImGui::Separator();
     ImGuiTreeNodeFlags PrototypesNodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_AllowItemOverlap;
 
-    for (const auto &filepath : project_->prototypeFilepaths_)
+    int i = 0;
+    for (const auto &dataFile : project_->dataFilepaths_)
     {
-        ImGui::PushID(filepath.c_str());
-        const boost::filesystem::path &relativeFilePath = fs::relative(fs::path(filepath), project_->dataPath_);
+        fs::path filepath = dataFile->getFilePath();
+        ImGui::PushID(i++);
+        const boost::filesystem::path &relativeFilePath = fs::relative(filepath, project_->dataPath_);
         ImGui::TreeNodeEx(relativeFilePath.string().c_str(), PrototypesNodeFlags);
         if(ImGui::IsItemClicked())
-            objectSelected_ = projectPrototypeProvider_.getPrototype(filepath.string());
+        {
+            switch (dataFile->getType())
+            {
+                case DataFileType::Prototype :
+                    objectSelected_ = projectPrototypeProvider_.getPrototype(filepath.string());
+                    break;
+                case DataFileType::Scene:
+                    objectSelected_.reset();
+                    project_->currentScenePath_ = filepath.string();
+                    SceneData sceneLoaded = loadScene(project_->currentScenePath_);
+                    sceneData_.reset(new SceneData(sceneLoaded));
+                    break;
+            }
+        }
         ImGui::SameLine(ImGui::GetWindowWidth() - 20);
         if(ImGui::Button("X"))
             deleteFileDialog_->open(relativeFilePath);
@@ -183,7 +198,7 @@ void Editor::createPrototype(const std::string &prototypeName)
     prototypeFile.open(prototypePath.string());
     prototypeFile << prototypeNode << std::endl;
     prototypeFile.close();
-    this->project_->prototypeFilepaths_.push_back(prototypePath);
+    this->project_->dataFilepaths_.emplace_back(new DataFile(prototypePath));
 }
 
 void Editor::renderSceneInspector()
@@ -550,14 +565,14 @@ void Editor::loadProject()
 
 void Editor::saveProject()
 {
-    for (const auto &filepath : project_->prototypeFilepaths_)
+    for (const auto &filepath : project_->dataFilepaths_)
     {
-        const ObjectDataRef &prototype = projectPrototypeProvider_.getPrototype(filepath.string());
+        const ObjectDataRef &prototype = projectPrototypeProvider_.getPrototype(filepath->getFilePath().string());
 
         YAML::Node prototypeNode;
         prototypeNode = *prototype;
         std::ofstream prototypeFile;
-        prototypeFile.open(filepath.string());
+        prototypeFile.open(filepath->getFilePath().string());
         prototypeFile << prototypeNode << std::endl;
         prototypeFile.close();
     }
@@ -585,16 +600,18 @@ void Editor::setProject(const std::shared_ptr<ProjectData> &project)
 
     // List the data files
     // TODO: observe directory to update list if some file is created/deleted
+    // probably  Implement in a separate thread
     projectPrototypeProvider_.clearCache();
     if(fs::exists(project_->dataPath_) && fs::is_directory(project_->dataPath_))
     {
         fs::directory_iterator end;
         for (fs::directory_iterator itr(project_->dataPath_); itr != end; ++itr)
         {
-            //TODO: recursive directories?
-            if (is_regular_file(itr->path()) && itr->path().extension() == ".prototype")
+            //TODO: recursive directories
+            //TODO: list all files types (create Metadata object)
+            if (is_regular_file(itr->path()))
             {
-                project_->prototypeFilepaths_.push_back(itr->path());
+                project_->dataFilepaths_.emplace_back(new DataFile(itr->path()));
             }
         }
     }
@@ -620,10 +637,14 @@ void Editor::updateWindowTitle()
 void Editor::deleteFile(const boost::filesystem::path &filePath)
 {
     fs::path absolutePath = fs::absolute(filePath, project_->dataPath_);
-    if(fs::remove(absolutePath)){
-        project_->prototypeFilepaths_.erase(
-                std::remove(project_->prototypeFilepaths_.begin(), project_->prototypeFilepaths_.end(), absolutePath),
-                project_->prototypeFilepaths_.end());
+    if(fs::remove(absolutePath))
+    {
+        auto it = std::remove_if( project_->dataFilepaths_.begin(),
+                                  project_->dataFilepaths_.end(),
+                                  [absolutePath](const DataFileRef &file){ return file->getFilePath() == absolutePath; } );
+
+        assert(it != project_->dataFilepaths_.end());
+        project_->dataFilepaths_.erase(it, project_->dataFilepaths_.end());
 
         if(objectSelected_ == projectPrototypeProvider_.deletePrototype(absolutePath.string()))
             objectSelected_.reset();

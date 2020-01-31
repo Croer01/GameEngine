@@ -14,6 +14,7 @@
 #include <game-engine/api.hpp>
 #include <boost/filesystem/path.hpp>
 #include "GameComponentsProvider.hpp"
+#include "ProjectDirectory.h"
 
 namespace fs = boost::filesystem;
 
@@ -183,7 +184,7 @@ public:
     std::string currentScenePath_;
     // empty string means that the path doesn't exist
     fs::path dataPath_;
-    std::vector<fs::path> prototypeFilepaths_;
+    std::vector<DataFileRef> dataFilepaths_;
     bool dirty_ = false;
 };
 
