@@ -6,7 +6,7 @@ The idea is create a custom engine to be able to use in my own games.
 Along the time I will develop tools and write a documentation to work easy with it.
 Also I will do test to check all parts of the engine works properly and it will be robust.
 
-## Dependencies
+## GameEngine Dependencies
  - SDL2 (core and image)
  - GLEW
  - GLM
@@ -18,6 +18,14 @@ Also I will do test to check all parts of the engine works properly and it will 
  - Libsndfile
  - Gtest (test framework)
  
+## Editor Dependencies
+ - SDL2 (core and image)
+ - GLEW
+ - Yaml cpp
+ - ImGui
+ - TinyFileDialogComponentRegister
+ - Boost filesystem
+ 
  ## Environment
  Currently, I use [vcpkg](https://github.com/Microsoft/vcpkg) to manage dependencies, It's a cross platform package manager (developed by Microsoft).  
  To use and install follow the vcpkg instructions on its repository.
@@ -27,7 +35,7 @@ Also I will do test to check all parts of the engine works properly and it will 
  After you will have set up vcpkg, execute the next command 
  
  ~~~ bash
- vcpkg install --triplet x64-windows glew glm sdl2-image sdl2 yaml-cpp box2d freetype openal-soft libsndfile gtest utfcpp 
+ vcpkg install --triplet x64-windows glew glm sdl2-image sdl2 yaml-cpp box2d freetype openal-soft libsndfile gtest utfcpp imgui tinyfiledialogs boost-filesystem
  ~~~
  
  _Note: Before you execute this command, you must check your target architecture to ensure install proper version of packages (the --triplet option)_
