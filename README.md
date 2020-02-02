@@ -44,7 +44,7 @@ Also I will do test to check all parts of the engine works properly and it will 
  
  ~~~ bash
  # inside project root
- mkdir outd && cd outd
+ mkdir outr && cd outr
  cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=[root_vcpkg_directory]/scripts/buildsystems/vcpkg.cmake
  cmake --build .
  ~~~

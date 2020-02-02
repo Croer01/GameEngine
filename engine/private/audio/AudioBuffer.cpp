@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <chrono>
+#include <stdexcept>
 #include "AudioBuffer.hpp"
 #include "../utils.hpp"
 

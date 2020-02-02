@@ -5,8 +5,8 @@
 #ifndef GAMEDEVWARS_DELETEFILEDIALOG_H
 #define GAMEDEVWARS_DELETEFILEDIALOG_H
 
-#include "BaseDialog.h"
 #include <boost/filesystem/path.hpp>
+#include "BaseDialog.h"
 
 class DeleteFileDialog : public BaseDialog<boost::filesystem::path>
 {
