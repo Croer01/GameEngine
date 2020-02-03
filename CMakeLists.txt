@@ -137,8 +137,8 @@ add_executable(GameEngineEditor
         editor/CreateProjectEditor.cpp
         editor/GameComponentsProvider.cpp
         editor/ProjectPrototypeProvider.cpp
-        editor/CreatePrototypeDialog.cpp
-        editor/DeleteFileDialog.cpp
+        editor/dialogs/CreatePrototypeDialog.cpp
+        editor/dialogs/DeleteFileDialog.cpp
         editor/ProjectDirectory.cpp)
 
 target_compile_definitions(GameEngineEditor PUBLIC -DIMGUI_IMPL_OPENGL_LOADER_GLEW)

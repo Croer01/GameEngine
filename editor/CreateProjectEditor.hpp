@@ -8,7 +8,7 @@
 
 #include <functional>
 #include "ViewModels.hpp"
-#include "BaseDialog.h"
+#include "dialogs/BaseDialog.h"
 
 class CreateProjectEditor : public BaseDialog<ProjectDataRef>
 {

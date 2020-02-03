@@ -12,8 +12,8 @@
 #include "CreateProjectEditor.hpp"
 #include "GameComponentsProvider.hpp"
 #include "ProjectPrototypeProvider.h"
-#include "CreatePrototypeDialog.h"
-#include "DeleteFileDialog.h"
+#include "dialogs/CreatePrototypeDialog.h"
+#include "dialogs/DeleteFileDialog.h"
 
 class Editor
 {
