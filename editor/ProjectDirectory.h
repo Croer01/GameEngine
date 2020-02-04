@@ -6,34 +6,27 @@
 #define GAMEDEVWARS_PROJECTDIRECTORY_H
 
 #include <boost/filesystem/path.hpp>
-
-enum class DataFileType
-{
-    Other,
-    Prototype,
-    Scene,
-};
-
-class DataFile;
-typedef std::shared_ptr<DataFile> DataFileRef;
-class DataFile
-{
-    DataFileType type_;
-    boost::filesystem::path filePath_;
-
-public:
-    explicit DataFile(const boost::filesystem::path &filePath);
-
-    DataFileType getType() const;
-
-    const boost::filesystem::path &getFilePath() const;
-};
+#include "ViewModels.hpp"
+#include "DataFile.h"
 
 class ProjectDirectory
 {
-
     // TODO: refactor this as a tree strucuture
     std::vector<DataFile> files_;
+
+    std::vector<DataFile> editedFiles_;
+
+public:
+    explicit ProjectDirectory(const ProjectDataRef &project);
+    void markEdited(const DataFile &fileEdited);
+    void addFile(const boost::filesystem::path &filePath);
+    void removeFile(const boost::filesystem::path &filePath);
+    bool hasEditedFiles() const;
+    void markAllSaved();
+
+    const std::vector<DataFile> &getFiles() const;
+
+    const std::vector<DataFile> &getEditedFiles() const;
 };
 
 

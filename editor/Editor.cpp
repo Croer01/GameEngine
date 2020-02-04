@@ -31,6 +31,7 @@ Editor::Editor(SDL_Window *window):
     auto deleteFileCallback = std::bind(&Editor::deleteFile, this, std::placeholders::_1);
     deleteFileDialog_ = std::make_shared<DeleteFileDialog>(deleteFileCallback);
 
+    saveAllDialog_ = std::make_shared<SaveAllDialog>([](const int &result){});
 //    generateMockData();
 }
 
@@ -72,10 +73,11 @@ void Editor::render()
     createProjectEditor_->Render();
     createPrototypeDialog_->Render();
     deleteFileDialog_->Render();
+    saveAllDialog_->Render();
 
     if(project_)
     {
-        bool prevDirty = project_->dirty_;
+        bool prevDirty = project_->dirty_ || projectDirectory_->hasEditedFiles();
 
         ImGui::SetNextWindowPosCenter();
         ImGui::Begin("no dirty");
@@ -111,12 +113,16 @@ void Editor::renderSceneObjectNode(const ObjectDataRef &object, const std::strin
     if(object->children_.empty())
         nodeFlags |= ImGuiTreeNodeFlags_Leaf;
 
-    if(objectSelected_ == object)
+    if(objectSelected_ && objectSelected_->data == object)
         nodeFlags |= ImGuiTreeNodeFlags_Selected;
 
     bool isOpened = ImGui::TreeNodeEx(label.c_str(), nodeFlags);
     if(ImGui::IsItemClicked())
-        objectSelected_ = object;
+    {
+        objectSelected_.reset(new TargetObject());
+        objectSelected_->data = object;
+        objectSelected_->sourceFile = DataFile(sceneData_->filePath_);
+    }
 
     if (isOpened)
     {
@@ -143,7 +149,7 @@ void Editor::renderPrototypeList()
     if(ImGui::Button("Create..."))
     {
         const std::string &defaultValue =
-                "Prototype" + std::to_string(project_->dataFilepaths_.size());
+                "Prototype" + std::to_string(projectDirectory_->getFiles().size());
         createPrototypeDialog_->open(defaultValue);
     }
 
@@ -151,24 +157,34 @@ void Editor::renderPrototypeList()
     ImGuiTreeNodeFlags PrototypesNodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_AllowItemOverlap;
 
     int i = 0;
-    for (const auto &dataFile : project_->dataFilepaths_)
+    for (const auto &dataFile : projectDirectory_->getFiles())
     {
-        fs::path filepath = dataFile->getFilePath();
+        fs::path filepath = dataFile.getFilePath();
         ImGui::PushID(i++);
         const boost::filesystem::path &relativeFilePath = fs::relative(filepath, project_->dataPath_);
         ImGui::TreeNodeEx(relativeFilePath.string().c_str(), PrototypesNodeFlags);
         if(ImGui::IsItemClicked())
         {
-            switch (dataFile->getType())
+            switch (dataFile.getType())
             {
                 case DataFileType::Prototype :
-                    objectSelected_ = projectPrototypeProvider_.getPrototype(filepath.string());
+                    objectSelected_.reset(new TargetObject());
+                    objectSelected_->data = projectPrototypeProvider_.getPrototype(dataFile);
+                    objectSelected_->sourceFile = DataFile(filepath);
                     break;
                 case DataFileType::Scene:
-                    objectSelected_.reset();
-                    project_->currentScenePath_ = filepath.string();
-                    SceneData sceneLoaded = loadScene(project_->currentScenePath_);
-                    sceneData_.reset(new SceneData(sceneLoaded));
+                    if(projectDirectory_->hasEditedFiles())
+                    {
+                        saveAllDialog_->setFilesToSave(projectDirectory_->getEditedFiles());
+                        saveAllDialog_->open();
+                    }
+                    else
+                    {
+                        objectSelected_.reset();
+                        project_->currentScenePath_ = filepath.string();
+                        SceneData sceneLoaded = loadScene(project_->currentScenePath_);
+                        sceneData_.reset(new SceneData(sceneLoaded));
+                    }
                     break;
             }
         }
@@ -198,7 +214,7 @@ void Editor::createPrototype(const std::string &prototypeName)
     prototypeFile.open(prototypePath.string());
     prototypeFile << prototypeNode << std::endl;
     prototypeFile.close();
-    this->project_->dataFilepaths_.emplace_back(new DataFile(prototypePath));
+    projectDirectory_->addFile(prototypePath);
 }
 
 void Editor::renderSceneInspector()
@@ -242,24 +258,26 @@ void Editor::renderObjectInspector(){
     ImGui::SetNextWindowPos(pos);
     ImGui::SetNextWindowSize(size);
 
-    std::string objectLabel = objectSelected_? objectSelected_->name_ : "Empty";
+    std::string objectLabel = objectSelected_? objectSelected_->data->name_ : "Empty";
 
     ImGui::Begin((objectLabel + " - Properties Inspector###PropertyInspector").c_str(), 0,ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
 
     if(objectSelected_)
     {
-        ImGui::InputText("Name",&objectSelected_->name_);
+        ObjectDataRef objectDataSelected = objectSelected_->data;
+        bool edited = false;
+        ImGui::InputText("Name",&objectDataSelected->name_);
         if(ImGui::IsItemEdited())
-            project_->dirty_ = true;
+            edited = true;
 
         if(ImGui::Button("New Child"))
         {
             ObjectDataRef newChild = std::make_shared<ObjectData>();
             std::stringstream ss;
-            ss << "Child" << objectSelected_->children_.size();
+            ss << "Child" << objectDataSelected->children_.size();
             newChild->name_ = ss.str();
-            objectSelected_->children_.push_back(newChild);
-            project_->dirty_ = true;
+            objectDataSelected->children_.push_back(newChild);
+            edited = true;
         }
 
         ImGui::Separator();
@@ -281,47 +299,55 @@ void Editor::renderObjectInspector(){
 
         if(ImGui::Button("Add Component..."))
         {
-            assert(objectSelected_);
+            assert(objectDataSelected);
             ComponentDataRef newComponent = std::make_shared<ComponentData>();
             newComponent->name_ = item_current;
             newComponent->properties_ = gameComponentsProvider_.getPropertiesMetadata(item_current);
 
-            objectSelected_->components_.push_back(newComponent);
-            project_->dirty_ = true;
+            objectDataSelected->components_.push_back(newComponent);
+            edited = true;
         }
 
         ImGui::Separator();
         if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            if(ImGui::DragFloat2("position", objectSelected_->position_.xy.data(),.1f))
-                project_->dirty_ = true;
-            if(ImGui::DragFloat2("size", objectSelected_->scale_.xy.data(), .1f, 1.f, std::numeric_limits<float>::max()))
-                project_->dirty_ = true;
-            if(ImGui::DragFloat2("rotation", objectSelected_->rotation_.xy.data(),.1f))
-                project_->dirty_ = true;
+            if(ImGui::DragFloat2("position", objectDataSelected->position_.xy.data(),.1f))
+                edited = true;
+            if(ImGui::DragFloat2("size", objectDataSelected->scale_.xy.data(), .1f, 1.f, std::numeric_limits<float>::max()))
+                edited = true;
+            if(ImGui::DragFloat2("rotation", objectDataSelected->rotation_.xy.data(),.1f))
+                edited = true;
         }
 
-        ImGui::PushID(objectSelected_->name_.c_str());
-        for (const auto &component : objectSelected_->components_)
+        ImGui::PushID(objectDataSelected->name_.c_str());
+        for (const auto &component : objectDataSelected->components_)
         {
-            renderComponent(component);
+            if(renderComponent(component))
+                edited = true;
         }
         ImGui::PopID();
 
         //remove components safety
-        auto it = std::remove_if( objectSelected_->components_.begin(),
-                objectSelected_->components_.end(),
+        auto it = std::remove_if( objectDataSelected->components_.begin(),
+                objectDataSelected->components_.end(),
                 [](const ComponentDataRef &component){ return component->markToRemove_; } );
-        if(it != objectSelected_->components_.end()){
-            objectSelected_->components_.erase( it, objectSelected_->components_.end() );
-            project_->dirty_= true;
+        if(it != objectDataSelected->components_.end()){
+            objectDataSelected->components_.erase( it, objectDataSelected->components_.end() );
+            edited= true;
+        }
+
+        if(edited) {
+            project_->dirty_ = true;
+            projectDirectory_->markEdited(objectSelected_->sourceFile);
         }
     }
     ImGui::End();
 }
 
-void Editor::renderComponent(const ComponentDataRef &component)
+bool Editor::renderComponent(const ComponentDataRef &component)
 {
+    bool edited = false;
+
     ImGui::PushID(component->name_.c_str());
     bool opened = ImGui::CollapsingHeader(component->name_.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap);
     ImGui::SameLine(ImGui::GetWindowWidth() - 20);
@@ -342,7 +368,7 @@ void Editor::renderComponent(const ComponentDataRef &component)
                     auto propertyInt = std::dynamic_pointer_cast<PropertyIntData>(property);
                     ImGui::DragInt(property->name_.c_str(), &propertyInt->value_, .1f);
                     if(ImGui::IsItemEdited())
-                        project_->dirty_ = true;
+                        edited = true;
                 }
                     break;
                 case PropertyDataType::FLOAT:
@@ -350,7 +376,7 @@ void Editor::renderComponent(const ComponentDataRef &component)
                     auto propertyFloat = std::dynamic_pointer_cast<PropertyFloatData>(property);
                     ImGui::DragFloat(property->name_.c_str(), &propertyFloat->value_, .1f);
                     if(ImGui::IsItemEdited())
-                        project_->dirty_ = true;
+                        edited = true;
                 }
                     break;
                 case PropertyDataType::STRING:
@@ -358,7 +384,7 @@ void Editor::renderComponent(const ComponentDataRef &component)
                     auto propertyString = std::dynamic_pointer_cast<PropertyStringData>(property);
                     ImGui::InputText(propertyString->name_.c_str(), &propertyString->value_);
                     if(ImGui::IsItemEdited())
-                        project_->dirty_ = true;
+                        edited = true;
                 }
                     break;
                 case PropertyDataType::BOOL:
@@ -366,21 +392,21 @@ void Editor::renderComponent(const ComponentDataRef &component)
                     auto propertyBool = std::dynamic_pointer_cast<PropertyBoolData>(property);
                     ImGui::Checkbox(property->name_.c_str(), &propertyBool->value_);
                     if(ImGui::IsItemEdited())
-                        project_->dirty_ = true;
+                        edited = true;
                 }
                     break;
                 case PropertyDataType::VEC2D:
                 {
                     auto propertyVec2D = std::dynamic_pointer_cast<PropertyVec2DData>(property);
                     if(ImGui::DragFloat2(property->name_.c_str(), propertyVec2D->value_.xy.data()))
-                        project_->dirty_ = true;
+                        edited = true;
                 }
                     break;
                 case PropertyDataType::COLOR:
                 {
                     auto propertyColor = std::dynamic_pointer_cast<PropertyColorData>(property);
                     if(ImGui::ColorEdit3(property->name_.c_str(), propertyColor->value_.rgb.data()))
-                        project_->dirty_ = true;
+                        edited = true;
                 }
                     break;
                 case PropertyDataType::ARRAY_STRING:
@@ -392,7 +418,7 @@ void Editor::renderComponent(const ComponentDataRef &component)
                     if(ImGui::Button("+"))
                     {
                         propertyStringArray->value_.emplace_back("");
-                        project_->dirty_ = true;
+                        edited = true;
                     }
 
                     auto values = propertyStringArray->value_;
@@ -401,7 +427,7 @@ void Editor::renderComponent(const ComponentDataRef &component)
                         ImGui::PushID(i);
                         ImGui::InputText("", &values[i]);
                         if(ImGui::IsItemEdited())
-                            project_->dirty_ = true;
+                            edited = true;
                         ImGui::PopID();
                     }
                 }
@@ -415,7 +441,7 @@ void Editor::renderComponent(const ComponentDataRef &component)
                     if(ImGui::Button("+"))
                     {
                         propertyVec2DArray->value_.emplace_back();
-                        project_->dirty_ = true;
+                        edited = true;
                     }
 
                     auto &values = propertyVec2DArray->value_;
@@ -424,7 +450,7 @@ void Editor::renderComponent(const ComponentDataRef &component)
                         ImGui::PushID(i);
                         Vector2DData &value = values[i];
                         if(ImGui::DragFloat2("", value.xy.data()))
-                            project_->dirty_ = true;
+                            edited = true;
                         ImGui::PopID();
                     }
                 }
@@ -434,6 +460,8 @@ void Editor::renderComponent(const ComponentDataRef &component)
         }
     }
     ImGui::PopID();
+
+    return edited;
 }
 
 void Editor::renderMainMenu()
@@ -479,10 +507,8 @@ void Editor::renderMainMenu()
                 char const *sceneFile = tinyfd_openFileDialog("Load Scene", "", 1, filter, "Scene file (*.scene)", 0);
                 if (sceneFile)
                 {
-                    YAML::Node scene = YAML::LoadFile(sceneFile);
-                    const SceneData &data = scene.as<SceneData>();
+                    const SceneData &data = loadScene(sceneFile);
                     sceneData_.reset(new SceneData(data));
-                    sceneData_->filePath_ = sceneFile;
                     objectSelected_.reset();
                     updateWindowTitle();
                 }
@@ -565,20 +591,21 @@ void Editor::loadProject()
 
 void Editor::saveProject()
 {
-    for (const auto &filepath : project_->dataFilepaths_)
+    for (const auto &file : projectDirectory_->getEditedFiles())
     {
-        const ObjectDataRef &prototype = projectPrototypeProvider_.getPrototype(filepath->getFilePath().string());
+        const fs::path& filepath = file.getFilePath();
+        const ObjectDataRef &prototype = projectPrototypeProvider_.getPrototype(file);
 
         YAML::Node prototypeNode;
         prototypeNode = *prototype;
         std::ofstream prototypeFile;
-        prototypeFile.open(filepath->getFilePath().string());
+        prototypeFile.open(filepath.string());
         prototypeFile << prototypeNode << std::endl;
         prototypeFile.close();
     }
 
     project_->dirty_ = false;
-
+    projectDirectory_->markAllSaved();
     updateWindowTitle();
 }
 
@@ -598,23 +625,8 @@ void Editor::setProject(const std::shared_ptr<ProjectData> &project)
         sceneData_.reset(new SceneData(sceneLoaded));
     }
 
-    // List the data files
-    // TODO: observe directory to update list if some file is created/deleted
-    // probably  Implement in a separate thread
     projectPrototypeProvider_.clearCache();
-    if(fs::exists(project_->dataPath_) && fs::is_directory(project_->dataPath_))
-    {
-        fs::directory_iterator end;
-        for (fs::directory_iterator itr(project_->dataPath_); itr != end; ++itr)
-        {
-            //TODO: recursive directories
-            //TODO: list all files types (create Metadata object)
-            if (is_regular_file(itr->path()))
-            {
-                project_->dataFilepaths_.emplace_back(new DataFile(itr->path()));
-            }
-        }
-    }
+    projectDirectory_.reset(new ProjectDirectory(project_));
 
     updateWindowTitle();
 }
@@ -623,6 +635,7 @@ SceneData Editor::loadScene(const std::string &sceneFilePath)
 {
     YAML::Node sceneNode = YAML::LoadFile(sceneFilePath);
     SceneData scene = sceneNode.as<SceneData>();
+    scene.filePath_ = sceneFilePath;
     return std::move(scene);
 }
 
@@ -639,14 +652,8 @@ void Editor::deleteFile(const boost::filesystem::path &filePath)
     fs::path absolutePath = fs::absolute(filePath, project_->dataPath_);
     if(fs::remove(absolutePath))
     {
-        auto it = std::remove_if( project_->dataFilepaths_.begin(),
-                                  project_->dataFilepaths_.end(),
-                                  [absolutePath](const DataFileRef &file){ return file->getFilePath() == absolutePath; } );
-
-        assert(it != project_->dataFilepaths_.end());
-        project_->dataFilepaths_.erase(it, project_->dataFilepaths_.end());
-
-        if(objectSelected_ == projectPrototypeProvider_.deletePrototype(absolutePath.string()))
+        projectDirectory_->removeFile(absolutePath);
+        if(objectSelected_->data == projectPrototypeProvider_.deletePrototype(absolutePath.string()))
             objectSelected_.reset();
     }
 }

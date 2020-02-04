@@ -2,25 +2,72 @@
 // Created by adria on 29/01/2020.
 //
 
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/path.hpp>
 #include "ProjectDirectory.h"
 
-DataFile::DataFile(const boost::filesystem::path &filePath) :
-        filePath_(filePath)
+namespace fs = boost::filesystem;
+
+void ProjectDirectory::markEdited(const DataFile &fileEdited)
 {
-    if (filePath_.extension() == ".prototype")
-        type_ = DataFileType::Prototype;
-    if (filePath_.extension() == ".scene")
-        type_ = DataFileType::Scene;
-    else
-        type_ = DataFileType::Other;
+    if(std::find(editedFiles_.begin(),editedFiles_.end(), fileEdited) == editedFiles_.end())
+    {
+        editedFiles_.push_back(fileEdited);
+    }
 }
 
-DataFileType DataFile::getType() const
+bool ProjectDirectory::hasEditedFiles() const
 {
-    return type_;
+    return !editedFiles_.empty();
 }
 
-const boost::filesystem::path &DataFile::getFilePath() const
+void ProjectDirectory::markAllSaved()
 {
-    return filePath_;
+    editedFiles_.clear();
+}
+
+ProjectDirectory::ProjectDirectory(const ProjectDataRef &project)
+{
+    // List the data files
+    // TODO: observe directory to update list if some file is created/deleted
+    // probably  Implement in a separate thread
+    if(fs::exists(project->dataPath_) && fs::is_directory(project->dataPath_))
+    {
+        fs::directory_iterator end;
+        for (fs::directory_iterator itr(project->dataPath_); itr != end; ++itr)
+        {
+            //TODO: recursive directories
+            //TODO: list all files types (create Metadata object)
+            if (is_regular_file(itr->path()))
+            {
+                files_.emplace_back(itr->path());
+            }
+        }
+    }
+}
+
+const std::vector<DataFile> &ProjectDirectory::getFiles() const
+{
+    return files_;
+}
+
+const std::vector<DataFile> &ProjectDirectory::getEditedFiles() const
+{
+    return editedFiles_;
+}
+
+void ProjectDirectory::addFile(const boost::filesystem::path &filePath)
+{
+    files_.emplace_back(filePath);
+}
+
+void ProjectDirectory::removeFile(const boost::filesystem::path &filePath)
+{
+    //TODO: check if the file to delete is edited?
+    auto it = std::remove_if( files_.begin(),
+                              files_.end(),
+                              [filePath](const DataFile &file){ return file.getFilePath() == filePath; } );
+
+    assert(it != files_.end());
+    files_.erase(it, files_.end());
 }

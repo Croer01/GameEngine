@@ -14,16 +14,27 @@
 #include "ProjectPrototypeProvider.h"
 #include "dialogs/CreatePrototypeDialog.h"
 #include "dialogs/DeleteFileDialog.h"
+#include "dialogs/SaveAllDialog.h"
 
 class Editor
 {
+    struct TargetObject{
+        ObjectDataRef data;
+        DataFile sourceFile;
+
+        TargetObject() : sourceFile("")
+        {}
+    };
+
     SDL_Window* window_;
     std::unique_ptr<SceneData> sceneData_;
-    ObjectDataRef objectSelected_;
+    std::unique_ptr<ProjectDirectory> projectDirectory_;
+    std::unique_ptr<TargetObject> objectSelected_;
     std::shared_ptr<ProjectData> project_;
     std::shared_ptr<CreateProjectEditor> createProjectEditor_;
     std::shared_ptr<CreatePrototypeDialog> createPrototypeDialog_;
     std::shared_ptr<DeleteFileDialog> deleteFileDialog_;
+    std::shared_ptr<SaveAllDialog> saveAllDialog_;
     GameComponentsProvider gameComponentsProvider_;
     ProjectPrototypeProvider projectPrototypeProvider_;
 
@@ -33,7 +44,7 @@ class Editor
     void renderSceneInspector();
     void renderPrototypeList();
     void renderObjectInspector();
-    void renderComponent(const ComponentDataRef &component);
+    bool renderComponent(const ComponentDataRef &component);
 
     void setProject(const std::shared_ptr<ProjectData> &project);
     void createPrototype(const std::string &prototypeName);

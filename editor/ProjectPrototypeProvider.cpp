@@ -4,9 +4,10 @@
 
 #include "ProjectPrototypeProvider.h"
 
-ObjectDataRef ProjectPrototypeProvider::getPrototype(const std::string &filepath)
+ObjectDataRef ProjectPrototypeProvider::getPrototype(const DataFile &file)
 {
     ObjectDataRef prototype;
+    const std::string &filepath = file.getFilePath().string();
     auto it = _objectsLoadedCache.find(filepath);
     if(it != _objectsLoadedCache.end())
     {

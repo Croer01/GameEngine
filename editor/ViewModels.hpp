@@ -14,9 +14,7 @@
 #include <game-engine/api.hpp>
 #include <boost/filesystem/path.hpp>
 #include "GameComponentsProvider.hpp"
-#include "ProjectDirectory.h"
-
-namespace fs = boost::filesystem;
+#include "DataFile.h"
 
 struct Vector2DData
 {
@@ -183,8 +181,7 @@ public:
     std::string folderName_;
     std::string currentScenePath_;
     // empty string means that the path doesn't exist
-    fs::path dataPath_;
-    std::vector<DataFileRef> dataFilepaths_;
+    boost::filesystem::path dataPath_;
     bool dirty_ = false;
 };
 
