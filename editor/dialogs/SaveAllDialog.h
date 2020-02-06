@@ -9,7 +9,7 @@
 #include "../ProjectDirectory.h"
 #include "BaseDialog.h"
 
-class SaveAllDialog : public BaseDialog<int>
+class SaveAllDialog : public BaseDialog<boost::filesystem::path>
 {
     std::vector<DataFile> filesToSave_;
 

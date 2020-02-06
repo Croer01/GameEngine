@@ -49,7 +49,7 @@ class Editor
     void setProject(const std::shared_ptr<ProjectData> &project);
     void createPrototype(const std::string &prototypeName);
     void deleteFile(const boost::filesystem::path &filePath);
-    SceneData loadScene(const std::string &sceneFilePath);
+    void loadScene(const std::string &sceneFilePath);
     void updateWindowTitle();
 public:
     explicit Editor(SDL_Window* window);

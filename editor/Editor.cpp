@@ -31,7 +31,11 @@ Editor::Editor(SDL_Window *window):
     auto deleteFileCallback = std::bind(&Editor::deleteFile, this, std::placeholders::_1);
     deleteFileDialog_ = std::make_shared<DeleteFileDialog>(deleteFileCallback);
 
-    saveAllDialog_ = std::make_shared<SaveAllDialog>([](const int &result){});
+    saveAllDialog_ = std::make_shared<SaveAllDialog>([=](const fs::path &result){
+        saveProject();
+        if(!result.empty())
+            loadScene(project_->currentScenePath_);
+    });
 //    generateMockData();
 }
 
@@ -176,14 +180,11 @@ void Editor::renderPrototypeList()
                     if(projectDirectory_->hasEditedFiles())
                     {
                         saveAllDialog_->setFilesToSave(projectDirectory_->getEditedFiles());
-                        saveAllDialog_->open();
+                        saveAllDialog_->open(filepath);
                     }
                     else
                     {
-                        objectSelected_.reset();
-                        project_->currentScenePath_ = filepath.string();
-                        SceneData sceneLoaded = loadScene(project_->currentScenePath_);
-                        sceneData_.reset(new SceneData(sceneLoaded));
+                        loadScene(project_->currentScenePath_);
                     }
                     break;
             }
@@ -507,10 +508,7 @@ void Editor::renderMainMenu()
                 char const *sceneFile = tinyfd_openFileDialog("Load Scene", "", 1, filter, "Scene file (*.scene)", 0);
                 if (sceneFile)
                 {
-                    const SceneData &data = loadScene(sceneFile);
-                    sceneData_.reset(new SceneData(data));
-                    objectSelected_.reset();
-                    updateWindowTitle();
+                    loadScene(sceneFile);
                 }
             }
 
@@ -621,8 +619,7 @@ void Editor::setProject(const std::shared_ptr<ProjectData> &project)
     }
     else
     {
-        SceneData sceneLoaded = loadScene(project_->currentScenePath_);
-        sceneData_.reset(new SceneData(sceneLoaded));
+        loadScene(project_->currentScenePath_);
     }
 
     projectPrototypeProvider_.clearCache();
@@ -631,12 +628,21 @@ void Editor::setProject(const std::shared_ptr<ProjectData> &project)
     updateWindowTitle();
 }
 
-SceneData Editor::loadScene(const std::string &sceneFilePath)
+void Editor::loadScene(const std::string &sceneFilePath)
 {
     YAML::Node sceneNode = YAML::LoadFile(sceneFilePath);
     SceneData scene = sceneNode.as<SceneData>();
     scene.filePath_ = sceneFilePath;
-    return std::move(scene);
+
+    //TODO: move all related to "clean" into a method
+    objectSelected_.reset();
+    projectPrototypeProvider_.clearCache();
+    project_->dirty_ = false;
+    project_->currentScenePath_ = sceneFilePath;
+
+    sceneData_.reset(new SceneData(scene));
+
+    updateWindowTitle();
 }
 
 void Editor::updateWindowTitle()

@@ -5,7 +5,7 @@
 #include <imgui.h>
 #include "SaveAllDialog.h"
 
-SaveAllDialog::SaveAllDialog(const BaseDialog<int>::ConfirmCallback &callback) : BaseDialog<int>(callback)
+SaveAllDialog::SaveAllDialog(const BaseDialog<boost::filesystem::path>::ConfirmCallback &callback) : BaseDialog<boost::filesystem::path>(callback)
 {
     dialogName_ = "Save All files";
     confirmButtonName_ = "Save All";
