@@ -142,7 +142,8 @@ add_executable(GameEngineEditor
         editor/dialogs/DeleteFileDialog.cpp
         editor/dialogs/SaveAllDialog.cpp
         editor/ProjectDirectory.cpp
-        editor/DataFile.cpp)
+        editor/DataFile.cpp
+        editor/dialogs/ErrorDialog.cpp)
 
 target_compile_definitions(GameEngineEditor PUBLIC -DIMGUI_IMPL_OPENGL_LOADER_GLEW)
 

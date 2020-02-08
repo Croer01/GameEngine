@@ -15,6 +15,7 @@
 #include "dialogs/CreatePrototypeDialog.h"
 #include "dialogs/DeleteFileDialog.h"
 #include "dialogs/SaveAllDialog.h"
+#include "dialogs/ErrorDialog.h"
 
 class Editor
 {
@@ -35,6 +36,7 @@ class Editor
     std::shared_ptr<CreatePrototypeDialog> createPrototypeDialog_;
     std::shared_ptr<DeleteFileDialog> deleteFileDialog_;
     std::shared_ptr<SaveAllDialog> saveAllDialog_;
+    std::shared_ptr<ErrorDialog> errorDialog_;
     GameComponentsProvider gameComponentsProvider_;
     ProjectPrototypeProvider projectPrototypeProvider_;
 

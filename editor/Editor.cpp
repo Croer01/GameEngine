@@ -36,6 +36,7 @@ Editor::Editor(SDL_Window *window):
         if(!result.empty())
             loadScene(project_->currentScenePath_);
     });
+    errorDialog_ = std::make_shared<ErrorDialog>();
 //    generateMockData();
 }
 
@@ -78,6 +79,7 @@ void Editor::render()
     createPrototypeDialog_->Render();
     deleteFileDialog_->Render();
     saveAllDialog_->Render();
+    errorDialog_->Render();
 
     if(project_)
     {
@@ -172,9 +174,17 @@ void Editor::renderPrototypeList()
             switch (dataFile.getType())
             {
                 case DataFileType::Prototype :
-                    objectSelected_.reset(new TargetObject());
-                    objectSelected_->data = projectPrototypeProvider_.getPrototype(dataFile);
-                    objectSelected_->sourceFile = DataFile(filepath);
+                    try {
+                        auto object = new TargetObject();
+                        object->data = projectPrototypeProvider_.getPrototype(dataFile);
+                        object->sourceFile = DataFile(filepath);
+
+                        objectSelected_.reset(object);
+                    }
+                    catch (const std::exception &e)
+                    {
+                        errorDialog_->open(e.what());
+                    }
                     break;
                 case DataFileType::Scene:
                     if(projectDirectory_->hasEditedFiles())
