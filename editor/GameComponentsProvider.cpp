@@ -116,8 +116,11 @@ PropertyDataRef GameComponentsProvider::buildPropertyByType(const GameEngine::Pr
             propertyColor->value_.rgb = {defaultValue.r, defaultValue.g, defaultValue.b};
         }
            break;
-        case GameEngine::PropertyTypes::UNKNOWN:
-            throw std::invalid_argument("property " + property.name() + " has unknown type");
+        default:
+            if(property.type() == GameEngine::PropertyTypes::UNKNOWN)
+                throw std::invalid_argument("property " + property.name() + " is an unknown type");
+            else
+                throw std::invalid_argument("property " + property.name() + " doesn't have valid deserializer");
             break;
     }
 

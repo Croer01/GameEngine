@@ -38,7 +38,8 @@ enum class PropertyDataType
     VEC2D,
     ARRAY_STRING,
     ARRAY_VEC2D,
-    COLOR
+    COLOR,
+    FILEPATH
 };
 
 class PropertyData;
@@ -139,6 +140,16 @@ public:
     };
 };
 
+class PropertyFilePathData : public PropertyData
+{
+public:
+    GameEngine::FilePath value_;
+    explicit PropertyFilePathData(const std::string &name) : PropertyData(name)
+    {
+        type_ = PropertyDataType::FILEPATH;
+    };
+};
+
 class ComponentData;
 typedef std::shared_ptr<ComponentData> ComponentDataRef;
 class ComponentData
@@ -226,6 +237,36 @@ struct convert<ColorData> {
     }
 };
 
+
+template<>
+struct convert<GameEngine::FilePath> {
+    static Node encode(const GameEngine::FilePath &rhs) {
+        Node node;
+        node["path"] = rhs.path;
+        if(rhs.fileType == GameEngine::FileType::IMAGE)
+            node["type"] = "IMAGE";
+        else
+            node["type"] = "OTHER";
+        return node;
+    }
+
+    static bool decode(const Node &node, GameEngine::FilePath &rhs) {
+        if (!node.IsMap() || node.size() != 2) {
+            return false;
+        }
+
+        rhs.path = node["path"].as<std::string>("");
+
+        std::string fileType = node["type"].as<std::string>("");
+        if(fileType == "IMAGE")
+            rhs.fileType = GameEngine::FileType::IMAGE;
+        else
+            rhs.fileType = GameEngine::FileType::OTHER;
+
+        return true;
+    }
+};
+
 template<>
 struct convert<ComponentData> {
     static Node encode(const ComponentData &rhs) {
@@ -277,6 +318,11 @@ struct convert<ComponentData> {
                 case PropertyDataType::COLOR: {
                     auto propertyColorData = std::dynamic_pointer_cast<PropertyColorData>(property);
                     propertyNode = propertyColorData->value_;
+                }
+                    break;
+                case PropertyDataType::FILEPATH: {
+                    auto propertyFilePathData = std::dynamic_pointer_cast<PropertyFilePathData>(property);
+                    propertyNode = propertyFilePathData->value_;
                 }
                     break;
                 default:
@@ -350,6 +396,11 @@ struct convert<ComponentData> {
                 case PropertyDataType::COLOR: {
                     auto propertyColorData = std::dynamic_pointer_cast<PropertyColorData>(property);
                     propertyColorData->value_ = node[property->name_].as<ColorData>();
+                }
+                    break;
+                case PropertyDataType::FILEPATH: {
+                    auto propertyFilePathData = std::dynamic_pointer_cast<PropertyFilePathData>(property);
+                    propertyFilePathData->value_ = node[property->name_].as<GameEngine::FilePath>();
                 }
                     break;
                 default:

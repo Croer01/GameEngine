@@ -165,7 +165,7 @@ void Editor::renderPrototypeList()
     int i = 0;
     for (const auto &dataFile : projectDirectory_->getFiles())
     {
-        fs::path filepath = dataFile.getFilePath();
+        const fs::path& filepath = dataFile.getFilePath();
         ImGui::PushID(i++);
         const boost::filesystem::path &relativeFilePath = fs::relative(filepath, project_->dataPath_);
         ImGui::TreeNodeEx(relativeFilePath.string().c_str(), PrototypesNodeFlags);
@@ -464,6 +464,14 @@ bool Editor::renderComponent(const ComponentDataRef &component)
                             edited = true;
                         ImGui::PopID();
                     }
+                }
+                    break;
+                case PropertyDataType::FILEPATH:
+                {
+                    auto propertyFilePath = std::dynamic_pointer_cast<PropertyFilePathData>(property);
+                    ImGui::InputText(propertyFilePath->name_.c_str(), &propertyFilePath->value_.path);
+                    if(ImGui::IsItemEdited())
+                        edited = true;
                 }
                     break;
             }
