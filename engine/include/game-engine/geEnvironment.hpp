@@ -9,7 +9,6 @@
 #include <game-engine/Builder.hpp>
 #include <string>
 #include <vector>
-#include <game-engine/properties/PropertiesManager.hpp>
 
 namespace GameEngine {
     class PUBLICAPI geEnvironment {

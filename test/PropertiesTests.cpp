@@ -3,7 +3,6 @@
 #include <game-engine/properties/PropertySet.hpp>
 #include <game-engine/properties/Property.hpp>
 #include <game-engine/properties/PropertiesHolder.hpp>
-#include <game-engine/properties/PropertiesManager.hpp>
 #include <thread>
 #include <chrono>
 #include <game-engine/geIO.hpp>
@@ -11,9 +10,17 @@
 class TestData : public GameEngine::PropertiesHolder<TestData>{
     int privateIntValue_;
 public:
-    std::string getPropertiesName() const override
+    GameEngine::PropertySetBase *getProperties() const override
     {
-        return "TestDataProperties";
+        auto properties = new GameEngine::PropertySet<TestData>();
+        properties->add(new GameEngine::Property<TestData, int>(
+                "value",
+                &TestData::getPrivate,
+                &TestData::setPrivate,
+                0)
+        );
+
+        return properties;
     }
 
     int getPrivate() const { return privateIntValue_; };
@@ -22,38 +29,6 @@ public:
 
 class TestDataChild : public TestData{
 };
-
-namespace GameEngine {
-PROPERTIES(TestDataProperties)
-class TestDataProperties : public PropertyInstantiator
-{
-public:
-    virtual PropertySetBase *instantiateProperties()
-    {
-        auto properties = new GameEngine::PropertySet<TestData>();
-        properties->add(new GameEngine::Property<TestData, int>(
-            "value",
-            &TestData::getPrivate,
-            &TestData::setPrivate,
-            0)
-        );
-
-        return properties;
-    }
-};
-}
-
-class Environment : public ::testing::Environment {
-public:
-    virtual ~Environment() {}
-
-    void SetUp() override {
-        GameEngine::PropertiesManager::GetInstance().registerPropertiesSetBuilder("TestDataProperties", std::make_shared<GameEngine::TestDataProperties>());
-    }
-};
-
-// initialize global environment
-testing::Environment* const foo_env = testing::AddGlobalTestEnvironment(new Environment());
 
 TEST(Properties, setValueFromPropertySetter)
 {
@@ -86,8 +61,7 @@ TEST(Properties, copyPropertyTree)
     std::shared_ptr<TestDataChild> instance(new TestDataChild());
 
     // create the original data structure
-    auto properties = GameEngine::PropertiesManager::GetInstance().instantiate("TestDataProperties");
-    auto instancePropSet = std::dynamic_pointer_cast<GameEngine::PropertySet<TestData>>(properties);
+    auto instancePropSet = dynamic_cast<GameEngine::PropertySet<TestData>*>(instance->getProperties());
 
     auto &instanceProp = dynamic_cast<GameEngine::Property<TestData, int>&>(instancePropSet->get(0));
 

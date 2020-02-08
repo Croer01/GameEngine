@@ -185,21 +185,22 @@ public:
 template<typename Class>
 class PUBLICAPI PropertiesBinder : public PropertiesBinderBase
 {
+    // target_ must be weak to avoid memory leaks
     std::weak_ptr<Class> target_;
-    std::weak_ptr<PropertySet<Class>> properties_;
+    std::shared_ptr<PropertySet<Class>> properties_;
 public:
-    PropertiesBinder(const std::weak_ptr<Class> target, const std::weak_ptr<PropertySet<Class>> &properties) :
+    PropertiesBinder(const std::weak_ptr<Class> target, const std::shared_ptr<PropertySet<Class>> &properties) :
     target_(target), properties_(properties)
     {};
 
     virtual void fillFrom(const geData &data) const
     {
-        properties_.lock()->copy(data, target_.lock());
+        properties_->copy(data, target_.lock());
     }
 
     void fillFrom(const std::shared_ptr<const Class> &other) const
     {
-        properties_.lock()->copy(other, target_.lock());
+        properties_->copy(other, target_.lock());
     };
 
 };

@@ -22,10 +22,10 @@ public:
         return initialized_;
     }
 
-  std::string getPropertiesName() const override
-  {
-    return std::string();
-  }
+    GameEngine::PropertySetBase *getProperties() const override
+    {
+        return nullptr;
+    }
 };
 
 class AddOnInitializeComponent : public GameEngine::geComponentInstantiable<AddOnInitializeComponent>
@@ -37,10 +37,10 @@ class AddOnInitializeComponent : public GameEngine::geComponentInstantiable<AddO
     }
 
 public:
-  std::string getPropertiesName() const override
-  {
-    return std::string();
-  }
+    GameEngine::PropertySetBase *getProperties() const override
+    {
+        return nullptr;
+    }
 };
 
 TEST(GameObject, createObject)
@@ -180,5 +180,6 @@ TEST(SpriteComponent, load)
     const std::weak_ptr<GameEngine::SpriteComponent> &component = gameObject->getComponent<GameEngine::SpriteComponent>();
     ASSERT_EQ(gameObject->name(), "loadedFromFile");
     ASSERT_TRUE(component.lock());
-    ASSERT_EQ(component.lock()->filepath(),"data/1x1white.png");
+    ASSERT_EQ(component.lock()->filepath().path,"data/1x1white.png");
+    ASSERT_EQ(component.lock()->filepath().fileType,GameEngine::FileType::IMAGE);
 }

@@ -19,7 +19,9 @@ std::unique_ptr<PropertiesBinderBase> properties_;
 
 void initializePropertiesBinding()
 {
-    std::shared_ptr<PropertySetBase> properties = std::make_shared<PropertySetBase>(getProperties());
+    std::shared_ptr<PropertySetBase> properties = std::shared_ptr<PropertySetBase>(getProperties());
+    if(!properties)
+        throw std::runtime_error(std::string("there aren't properties defined. It can not possible initialize properties for ") + typeid(T).name());
     auto propertiesInstance = std::dynamic_pointer_cast<PropertySet<T>>(properties);
     const std::shared_ptr<T> &propertiesTarget = std::dynamic_pointer_cast<T>(shared_from_this());
     properties_.reset(new PropertiesBinder<T>(propertiesTarget, propertiesInstance));
