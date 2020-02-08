@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 #include <stdexcept>
+#include <game-engine/FilePath.h>
 
 namespace GameEngine {
 
@@ -22,7 +23,8 @@ enum class PropertyTypes
     VEC2D,
     ARRAY_STRING,
     ARRAY_VEC2D,
-    COLOR
+    COLOR,
+    FILEPATH
 };
 
 template<typename ValueType>
@@ -69,6 +71,11 @@ template<>
 struct PropertyTypeDeductive<geColor>
 {
     static constexpr PropertyTypes type = PropertyTypes::COLOR;
+};
+template<>
+struct PropertyTypeDeductive<FilePath>
+{
+    static constexpr PropertyTypes type = PropertyTypes::FILEPATH;
 };
 
 class PUBLICAPI PropertyBase

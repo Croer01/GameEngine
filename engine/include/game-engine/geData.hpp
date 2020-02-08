@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include "FilePath.h"
 
 namespace GameEngine {
     class geData;
@@ -28,6 +29,7 @@ namespace GameEngine {
         virtual std::vector<std::string> getArrayString(const std::string &key) const = 0;
         virtual std::vector<Vec2D> getArrayVec2D(const std::string &key) const = 0;
         virtual geColor getColor(const std::string &key) const = 0;
+        virtual FilePath getFilePath(const std::string &key) const = 0;
     };
 }
 #endif //SPACEINVADERS_GEDATA_HPP

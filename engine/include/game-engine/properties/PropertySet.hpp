@@ -161,6 +161,12 @@ namespace GameEngine {
                         propertyColor->set(target.get(), data.getColor(property->name()));
                     }
                         break;
+                    case PropertyTypes::FILEPATH:
+                    {
+                        auto propertyFilepath = std::dynamic_pointer_cast<Property<Class, FilePath>>(property);
+                        propertyFilepath->set(target.get(), data.getFilePath(property->name()));
+                    }
+                        break;
                     case PropertyTypes::UNKNOWN:
                         throw std::runtime_error("the property " + property->name() + " has unknown type");
                         break;

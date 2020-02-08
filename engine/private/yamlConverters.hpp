@@ -26,7 +26,6 @@ namespace YAML {
         }
     };
 
-
 template<>
 struct convert<GameEngine::geColor> {
     static Node encode(const GameEngine::geColor &rhs) {
@@ -45,6 +44,35 @@ struct convert<GameEngine::geColor> {
         rhs.r = node[0].as<float>(0.f);
         rhs.g = node[1].as<float>(0.f);
         rhs.b = node[1].as<float>(0.f);
+        return true;
+    }
+};
+
+template<>
+struct convert<GameEngine::FilePath> {
+    static Node encode(const GameEngine::FilePath &rhs) {
+        Node node;
+        node["path"] = rhs.path;
+        if(rhs.fileType == GameEngine::FileType::IMAGE)
+            node["type"] = "IMAGE";
+        else
+            node["type"] = "OTHER";
+        return node;
+    }
+
+    static bool decode(const Node &node, GameEngine::FilePath &rhs) {
+        if (!node.IsMap() || node.size() != 2) {
+            return false;
+        }
+
+        rhs.path = node["path"].as<std::string>("");
+
+        std::string fileType = node["type"].as<std::string>("");
+        if(fileType == "IMAGE")
+            rhs.fileType = GameEngine::FileType::IMAGE;
+        else
+            rhs.fileType = GameEngine::FileType::OTHER;
+
         return true;
     }
 };
