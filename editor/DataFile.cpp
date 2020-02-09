@@ -6,6 +6,11 @@
 
 #include <utility>
 
+DataFile::DataFile():
+        filePath_(), type_(DataFileType::Other)
+{
+}
+
 DataFile::DataFile(boost::filesystem::path filePath) :
         filePath_(std::move(filePath))
 {
@@ -13,6 +18,8 @@ DataFile::DataFile(boost::filesystem::path filePath) :
         type_ = DataFileType::Prototype;
     else if (filePath_.extension() == ".scene")
         type_ = DataFileType::Scene;
+    else if (filePath_.extension() == ".png")
+        type_ = DataFileType::Image;
     else
         type_ = DataFileType::Other;
 }

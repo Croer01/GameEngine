@@ -12,6 +12,7 @@ enum class DataFileType
     Other,
     Prototype,
     Scene,
+    Image
 };
 
 class DataFile;
@@ -22,6 +23,7 @@ class DataFile
     boost::filesystem::path filePath_;
 
 public:
+    explicit DataFile();
     explicit DataFile(boost::filesystem::path filePath);
 
     DataFileType getType() const;

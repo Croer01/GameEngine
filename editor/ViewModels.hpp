@@ -143,7 +143,7 @@ public:
 class PropertyFilePathData : public PropertyData
 {
 public:
-    GameEngine::FilePath value_;
+    DataFile value_;
     explicit PropertyFilePathData(const std::string &name) : PropertyData(name)
     {
         type_ = PropertyDataType::FILEPATH;
@@ -239,31 +239,32 @@ struct convert<ColorData> {
 
 
 template<>
-struct convert<GameEngine::FilePath> {
-    static Node encode(const GameEngine::FilePath &rhs) {
-        Node node;
-        node["path"] = rhs.path;
-        if(rhs.fileType == GameEngine::FileType::IMAGE)
-            node["type"] = "IMAGE";
+struct convert<DataFile> {
+    static std::string typeToString(DataFileType fileType)
+    {
+        if(fileType == DataFileType::Image)
+            return "IMAGE";
         else
-            node["type"] = "OTHER";
+            return "OTHER";
+    }
+    static Node encode(const DataFile &rhs) {
+        Node node;
+        node["path"] = rhs.getFilePath().string();
+        node["type"] = typeToString(rhs.getType());
         return node;
     }
 
-    static bool decode(const Node &node, GameEngine::FilePath &rhs) {
+    static bool decode(const Node &node, DataFile &rhs) {
         if (!node.IsMap() || node.size() != 2) {
             return false;
         }
 
-        rhs.path = node["path"].as<std::string>("");
+        std::string path = node["path"].as<std::string>("");
+
+        rhs = DataFile(boost::filesystem::path(path));
 
         std::string fileType = node["type"].as<std::string>("");
-        if(fileType == "IMAGE")
-            rhs.fileType = GameEngine::FileType::IMAGE;
-        else
-            rhs.fileType = GameEngine::FileType::OTHER;
-
-        return true;
+        return fileType == typeToString(rhs.getType());
     }
 };
 
@@ -400,7 +401,7 @@ struct convert<ComponentData> {
                     break;
                 case PropertyDataType::FILEPATH: {
                     auto propertyFilePathData = std::dynamic_pointer_cast<PropertyFilePathData>(property);
-                    propertyFilePathData->value_ = node[property->name_].as<GameEngine::FilePath>();
+                    propertyFilePathData->value_ = node[property->name_].as<DataFile>();
                 }
                     break;
                 default:
