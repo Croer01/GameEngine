@@ -7,7 +7,7 @@
 
 void ErrorDialog::renderContent()
 {
-    ImGui::Text("Unexpected error: %s", data_.c_str());
+    ImGui::Text("Unexpected error:\n%s", data_.c_str());
 }
 
 ErrorDialog::ErrorDialog() : BaseDialog(nullptr)

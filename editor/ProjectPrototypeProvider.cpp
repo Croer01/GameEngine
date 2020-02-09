@@ -15,9 +15,18 @@ ObjectDataRef ProjectPrototypeProvider::getPrototype(const DataFile &file)
     }
     else
     {
-        YAML::Node prototypeNode = YAML::LoadFile(filepath);
-        prototype = std::make_shared<ObjectData>(prototypeNode.as<ObjectData>());
-        _objectsLoadedCache[filepath] = prototype;
+        try
+        {
+            YAML::Node prototypeNode = YAML::LoadFile(filepath);
+            prototype = std::make_shared<ObjectData>(prototypeNode.as<ObjectData>());
+            _objectsLoadedCache[filepath] = prototype;
+
+        }
+        catch (const std::exception &e)
+        {
+            throw std::runtime_error("Error loading " + filepath + ":\n" + e.what());
+        }
+
     }
 
     return prototype;
