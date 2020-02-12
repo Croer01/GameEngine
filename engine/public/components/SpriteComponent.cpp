@@ -105,7 +105,7 @@ PropertySetBase *SpriteComponent::getProperties() const
             "filePath",
             &SpriteComponent::filepath,
             &SpriteComponent::filepath,
-            FilePath(),
+            FilePath("",FileType::IMAGE),
             true));
     properties->add(new Property<SpriteComponent, bool>(
             "visible",
@@ -113,12 +113,23 @@ PropertySetBase *SpriteComponent::getProperties() const
             &SpriteComponent::setVisible,
             true));
 
-    properties->add(new Property<SpriteComponent, std::string>(
+    properties->add(new PropertyEnum<SpriteComponent>(
             "anchor",
             &SpriteComponent::anchor,
             &SpriteComponent::anchor,
-            "",
-            false));
+            "TOP_LEFT",
+            {
+                    "TOP_LEFT",
+                    "TOP_CENTER",
+                    "TOP_RIGHT",
+                    "MIDDLE_LEFT",
+                    "MIDDLE_CENTER",
+                    "MIDDLE_RIGHT",
+                    "BOTTOM_LEFT",
+                    "BOTTOM_CENTER",
+                    "BOTTOM_RIGHT"
+            }));
+
     return properties;
 
 }
