@@ -166,6 +166,11 @@ namespace GameEngine {
                         auto propertyFilepath = std::dynamic_pointer_cast<Property<Class, FilePath>>(property);
                         propertyFilepath->set(target.get(), data.getFilePath(property->name()));
                     }
+                    case PropertyTypes::ENUM:
+                    {
+                        auto propertyEnum = std::dynamic_pointer_cast<PropertyEnum<Class>>(property);
+                        propertyEnum->set(target.get(), data.getString(property->name()));
+                    }
                         break;
                     case PropertyTypes::UNKNOWN:
                         throw std::runtime_error("the property " + property->name() + " has unknown type");

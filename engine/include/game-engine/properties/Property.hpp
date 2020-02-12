@@ -24,7 +24,8 @@ enum class PropertyTypes
     ARRAY_STRING,
     ARRAY_VEC2D,
     COLOR,
-    FILEPATH
+    FILEPATH,
+    ENUM
 };
 
 template<typename ValueType>
@@ -153,7 +154,7 @@ public:
         setter_(setter)
     {
         default_ = defaultValue;
-        this->type_ = PropertyTypeDeductive<MemberType>::type;
+        type_ = PropertyTypeDeductive<MemberType>::type;
     };
 
     virtual ~Property()
@@ -162,7 +163,7 @@ public:
         setter_ = nullptr;
     };
 
-    MemberType get(const Class *target) const
+    virtual MemberType get(const Class *target) const
     {
         if (getter_ == nullptr)
             throw std::runtime_error("There is not a getter registered to use in property " + this->name_);
@@ -175,7 +176,7 @@ public:
         return default_;
     };
 
-    void set(Class *target, MemberType value) const
+    virtual void set(Class *target, MemberType value) const
     {
         if (setter_ == nullptr)
             throw std::runtime_error("There is not a setter registered to use in property " + this->name_);
@@ -194,6 +195,49 @@ public:
     }
 };
 
+
+class PUBLICAPI PropertyEnumBase
+{
+public:
+    virtual ~PropertyEnumBase() {};
+    virtual std::vector<std::string> getAllowedValues() const = 0;
+};
+
+
+template<typename Class>
+class PUBLICAPI PropertyEnum : public Property<Class, std::string>, public PropertyEnumBase
+{
+    std::vector<std::string> allowedValues_;
+public:
+    PropertyEnum(const std::string &name, typename Property<Class, std::string>::Getter getter, typename Property<Class, std::string>::Setter setter, std::string defaultValue, const std::vector<std::string> &allowedValues) :
+            Property(name, getter, setter, defaultValue),
+            allowedValues_(allowedValues)
+    {
+        type_ = PropertyTypes::ENUM;
+    };
+
+    PropertyEnum(const std::string &name, typename Property<Class, std::string>::Getter getter, typename Property<Class, std::string>::Setter setter, std::string defaultValue, const std::vector<std::string> &allowedValues, bool required) :
+            Property(name, getter, setter, defaultValue, required),
+            allowedValues_(allowedValues)
+    {
+        type_ = PropertyTypes::ENUM;
+    };
+
+    virtual ~PropertyEnum() {};
+
+    virtual std::vector<std::string> getAllowedValues() const {
+        return allowedValues_;
+    }
+
+    void set(Class *target, std::string value) const override
+    {
+        auto it = std::find(allowedValues_.begin(), allowedValues_.end(), value);
+        if(it == allowedValues_.end())
+            throw std::invalid_argument("value " + value + " is not allowed in property " + name_);
+
+        Property::set(target, value);
+    }
+};
 }
 
 #endif //SPACEINVADERS_PROPERTY_HPP
