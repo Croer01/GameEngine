@@ -130,6 +130,14 @@ PropertyDataRef GameComponentsProvider::buildPropertyByType(const GameEngine::Pr
                 propertyFilepath->value_ = DataFile(defaultValue.path);
         }
             break;
+        case GameEngine::PropertyTypes::ENUM: {
+            PropertyEnumData *propertyEnum = new PropertyEnumData(property.name());
+            propertyData = PropertyDataRef(propertyEnum);
+            const auto &gamePropertyEnum = dynamic_cast<const GameEngine::PropertyEnumBase &>(property);
+            property.getDefault(&propertyEnum->value_);
+            propertyEnum->allowedValues_ = gamePropertyEnum.getAllowedValues();
+        }
+            break;
         default:
             if(property.type() == GameEngine::PropertyTypes::UNKNOWN)
                 throw std::invalid_argument("property " + property.name() + " is an unknown type");

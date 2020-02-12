@@ -39,7 +39,8 @@ enum class PropertyDataType
     ARRAY_STRING,
     ARRAY_VEC2D,
     COLOR,
-    FILEPATH
+    FILEPATH,
+    ENUM
 };
 
 class PropertyData;
@@ -147,6 +148,18 @@ public:
     explicit PropertyFilePathData(const std::string &name) : PropertyData(name)
     {
         type_ = PropertyDataType::FILEPATH;
+    };
+};
+
+class PropertyEnumData : public PropertyData
+{
+public:
+    std::string value_;
+    std::vector<std::string> allowedValues_;
+
+    explicit PropertyEnumData(const std::string &name) : PropertyData(name)
+    {
+        type_ = PropertyDataType::ENUM;
     };
 };
 
@@ -338,6 +351,11 @@ struct convert<ComponentData> {
                     propertyNode = propertyFilePathData->value_;
                 }
                     break;
+                case PropertyDataType::ENUM: {
+                    auto propertyEnumData = std::dynamic_pointer_cast<PropertyEnumData>(property);
+                    propertyNode = propertyEnumData->value_;
+                }
+                    break;
                 default:
                     assert(false && "unknown property type");
                     break;
@@ -414,6 +432,11 @@ struct convert<ComponentData> {
                 case PropertyDataType::FILEPATH: {
                     auto propertyFilePathData = std::dynamic_pointer_cast<PropertyFilePathData>(property);
                     propertyFilePathData->value_ = node[property->name_].as<DataFile>();
+                }
+                    break;
+                case PropertyDataType::ENUM: {
+                    auto propertyEnumData = std::dynamic_pointer_cast<PropertyEnumData>(property);
+                    propertyEnumData->value_ = node[property->name_].as<std::string>();
                 }
                     break;
                 default:

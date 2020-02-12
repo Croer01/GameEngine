@@ -477,6 +477,33 @@ bool Editor::renderComponent(const ComponentDataRef &component)
                     }
                 }
                     break;
+                case PropertyDataType::ENUM:
+                {
+                    auto propertyEnum = std::dynamic_pointer_cast<PropertyEnumData>(property);
+
+                    std::string newValue;
+                    if (ImGui::BeginCombo(propertyEnum->name_.c_str(), propertyEnum->value_.c_str()))
+                    {
+                        for(const auto &item : propertyEnum->allowedValues_)
+                        {
+                            bool is_selected = (propertyEnum->value_ == item);
+                            if (ImGui::Selectable(item.c_str(), is_selected))
+                            {
+                                newValue = item;
+                            }
+                            if (is_selected)
+                                ImGui::SetItemDefaultFocus();
+                        }
+                        ImGui::EndCombo();
+                    }
+
+                    if(!newValue.empty() && propertyEnum->value_ != newValue)
+                    {
+                        propertyEnum->value_ = newValue;
+                        edited = true;
+                    }
+                }
+                    break;
             }
             ImGui::PopID();
         }
