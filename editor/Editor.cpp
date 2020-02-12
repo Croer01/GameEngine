@@ -34,7 +34,7 @@ Editor::Editor(SDL_Window *window):
     saveAllDialog_ = std::make_shared<SaveAllDialog>([=](const fs::path &result){
         saveProject();
         if(!result.empty())
-            loadScene(project_->currentScenePath_);
+            loadScene(result.string());
     });
     errorDialog_ = std::make_shared<ErrorDialog>();
 //    generateMockData();
@@ -194,7 +194,7 @@ void Editor::renderPrototypeList()
                     }
                     else
                     {
-                        loadScene(project_->currentScenePath_);
+                        loadScene(filepath.string());
                     }
                     break;
             }
