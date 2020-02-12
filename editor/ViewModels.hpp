@@ -247,6 +247,15 @@ struct convert<DataFile> {
         else
             return "OTHER";
     }
+
+    static DataFileType stringToType(const std::string &value)
+    {
+        if(value == "IMAGE")
+            return DataFileType::Image;
+        else
+            return DataFileType::Other;
+    }
+
     static Node encode(const DataFile &rhs) {
         Node node;
         node["path"] = rhs.getFilePath().string();
@@ -260,10 +269,13 @@ struct convert<DataFile> {
         }
 
         std::string path = node["path"].as<std::string>("");
-
-        rhs = DataFile(boost::filesystem::path(path));
-
         std::string fileType = node["type"].as<std::string>("");
+
+        if(path.empty())
+            rhs = DataFile(stringToType(fileType));
+        else
+            rhs = DataFile(boost::filesystem::path(path));
+
         return fileType == typeToString(rhs.getType());
     }
 };

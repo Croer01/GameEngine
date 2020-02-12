@@ -24,9 +24,10 @@ public:
     bool hasEditedFiles() const;
     void markAllSaved();
 
-    const std::vector<DataFile> &getFiles() const;
+    std::vector<DataFile> getFiles() const;
+    std::vector<DataFile> getFiles(DataFileType fileType) const;
 
-    const std::vector<DataFile> &getEditedFiles() const;
+    std::vector<DataFile> getEditedFiles() const;
 };
 
 

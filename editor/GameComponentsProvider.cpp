@@ -116,6 +116,20 @@ PropertyDataRef GameComponentsProvider::buildPropertyByType(const GameEngine::Pr
             propertyColor->value_.rgb = {defaultValue.r, defaultValue.g, defaultValue.b};
         }
            break;
+        case GameEngine::PropertyTypes::FILEPATH: {
+            PropertyFilePathData *propertyFilepath = new PropertyFilePathData(property.name());
+            propertyData = PropertyDataRef(propertyFilepath);
+            GameEngine::FilePath defaultValue;
+            property.getDefault(&defaultValue);
+            if(defaultValue.path.empty())
+            {
+                if(defaultValue.fileType == GameEngine::FileType::IMAGE)
+                    propertyFilepath->value_ = DataFile(DataFileType::Image);
+            }
+            else
+                propertyFilepath->value_ = DataFile(defaultValue.path);
+        }
+            break;
         default:
             if(property.type() == GameEngine::PropertyTypes::UNKNOWN)
                 throw std::invalid_argument("property " + property.name() + " is an unknown type");

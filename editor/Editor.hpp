@@ -47,6 +47,7 @@ class Editor
     void renderPrototypeList();
     void renderObjectInspector();
     bool renderComponent(const ComponentDataRef &component);
+    bool renderFileSelector(const std::string &label, const DataFile &file, DataFile *result);
 
     void setProject(const std::shared_ptr<ProjectData> &project);
     void createPrototype(const std::string &prototypeName);

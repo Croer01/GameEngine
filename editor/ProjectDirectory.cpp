@@ -46,12 +46,20 @@ ProjectDirectory::ProjectDirectory(const ProjectDataRef &project)
     }
 }
 
-const std::vector<DataFile> &ProjectDirectory::getFiles() const
+std::vector<DataFile> ProjectDirectory::getFiles() const
 {
     return files_;
 }
 
-const std::vector<DataFile> &ProjectDirectory::getEditedFiles() const
+std::vector<DataFile> ProjectDirectory::getFiles(DataFileType fileType) const
+{
+    std::vector<DataFile> itemsFiltered;
+    std::copy_if (files_.begin(), files_.end(), std::back_inserter(itemsFiltered),
+            [fileType](const DataFile& file){return file.getType() == fileType;} );
+    return itemsFiltered;
+}
+
+std::vector<DataFile> ProjectDirectory::getEditedFiles() const
 {
     return editedFiles_;
 }

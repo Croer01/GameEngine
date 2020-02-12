@@ -469,9 +469,12 @@ bool Editor::renderComponent(const ComponentDataRef &component)
                 case PropertyDataType::FILEPATH:
                 {
                     auto propertyFilePath = std::dynamic_pointer_cast<PropertyFilePathData>(property);
-                    ImGui::InputText(propertyFilePath->name_.c_str(), &propertyFilePath->value_.path);
-                    if(ImGui::IsItemEdited())
+                    DataFile fileSelected;
+                    if(renderFileSelector(propertyFilePath->name_.c_str(), propertyFilePath->value_, &fileSelected))
+                    {
+                        propertyFilePath->value_ = fileSelected;
                         edited = true;
+                    }
                 }
                     break;
             }
@@ -680,4 +683,28 @@ void Editor::deleteFile(const boost::filesystem::path &filePath)
         if(objectSelected_->data == projectPrototypeProvider_.deletePrototype(absolutePath.string()))
             objectSelected_.reset();
     }
+}
+
+bool Editor::renderFileSelector(const std::string &label, const DataFile &file, DataFile *result)
+{
+    bool selected = false;
+    const std::string &currentFile = file.getFilePath().string();
+    if (ImGui::BeginCombo(label.c_str(), currentFile.c_str()))
+    {
+        std::vector<DataFile> files = projectDirectory_->getFiles(file.getType());
+        for(auto item : files)
+        {
+            const std::string &itemFilepath = item.getFilePath().string();
+            bool is_selected = (currentFile == itemFilepath);
+            if (ImGui::Selectable(itemFilepath.c_str(), is_selected))
+            {
+                *result = item;
+                selected = true;
+            }
+            if (is_selected)
+                ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndCombo();
+    }
+    return selected;
 }
