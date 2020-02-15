@@ -119,15 +119,16 @@ PropertyDataRef GameComponentsProvider::buildPropertyByType(const GameEngine::Pr
         case GameEngine::PropertyTypes::FILEPATH: {
             PropertyFilePathData *propertyFilepath = new PropertyFilePathData(property.name());
             propertyData = PropertyDataRef(propertyFilepath);
-            GameEngine::FilePath defaultValue;
+            std::string defaultValue;
             property.getDefault(&defaultValue);
-            if(defaultValue.path.empty())
-            {
-                if(defaultValue.fileType == GameEngine::FileType::IMAGE)
-                    propertyFilepath->value_ = DataFile(DataFileType::Image);
-            }
-            else
-                propertyFilepath->value_ = DataFile(defaultValue.path);
+
+            DataFileType filetype = DataFileType::Other;
+            const auto &gamePropertyFilePath = dynamic_cast<const GameEngine::PropertyFilePathBase &>(property);
+            if(gamePropertyFilePath.getFileType() == GameEngine::FileType::IMAGE)
+                filetype = DataFileType::Image;
+
+            propertyFilepath->value_ = DataFile(defaultValue);
+            propertyFilepath->fileTypeSupported_ = filetype;
         }
             break;
         case GameEngine::PropertyTypes::ENUM: {

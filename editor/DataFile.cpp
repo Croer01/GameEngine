@@ -11,11 +11,6 @@ DataFile::DataFile():
 {
 }
 
-DataFile::DataFile(DataFileType fileType) :
-        filePath_(), type_(fileType)
-{
-}
-
 DataFile::DataFile(boost::filesystem::path filePath) :
         filePath_(std::move(filePath))
 {

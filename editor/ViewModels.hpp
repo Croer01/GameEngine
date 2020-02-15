@@ -144,10 +144,12 @@ public:
 class PropertyFilePathData : public PropertyData
 {
 public:
+    DataFileType fileTypeSupported_;
     DataFile value_;
     explicit PropertyFilePathData(const std::string &name) : PropertyData(name)
     {
         type_ = PropertyDataType::FILEPATH;
+        fileTypeSupported_ = DataFileType ::Other;
     };
 };
 
@@ -250,49 +252,6 @@ struct convert<ColorData> {
     }
 };
 
-
-template<>
-struct convert<DataFile> {
-    static std::string typeToString(DataFileType fileType)
-    {
-        if(fileType == DataFileType::Image)
-            return "IMAGE";
-        else
-            return "OTHER";
-    }
-
-    static DataFileType stringToType(const std::string &value)
-    {
-        if(value == "IMAGE")
-            return DataFileType::Image;
-        else
-            return DataFileType::Other;
-    }
-
-    static Node encode(const DataFile &rhs) {
-        Node node;
-        node["path"] = rhs.getFilePath().string();
-        node["type"] = typeToString(rhs.getType());
-        return node;
-    }
-
-    static bool decode(const Node &node, DataFile &rhs) {
-        if (!node.IsMap() || node.size() != 2) {
-            return false;
-        }
-
-        std::string path = node["path"].as<std::string>("");
-        std::string fileType = node["type"].as<std::string>("");
-
-        if(path.empty())
-            rhs = DataFile(stringToType(fileType));
-        else
-            rhs = DataFile(boost::filesystem::path(path));
-
-        return fileType == typeToString(rhs.getType());
-    }
-};
-
 template<>
 struct convert<ComponentData> {
     static Node encode(const ComponentData &rhs) {
@@ -348,7 +307,7 @@ struct convert<ComponentData> {
                     break;
                 case PropertyDataType::FILEPATH: {
                     auto propertyFilePathData = std::dynamic_pointer_cast<PropertyFilePathData>(property);
-                    propertyNode = propertyFilePathData->value_;
+                    propertyNode = propertyFilePathData->value_.getFilePath().string();
                 }
                     break;
                 case PropertyDataType::ENUM: {
@@ -431,7 +390,7 @@ struct convert<ComponentData> {
                     break;
                 case PropertyDataType::FILEPATH: {
                     auto propertyFilePathData = std::dynamic_pointer_cast<PropertyFilePathData>(property);
-                    propertyFilePathData->value_ = node[property->name_].as<DataFile>();
+                    propertyFilePathData->value_ = DataFile(node[property->name_].as<std::string>());
                 }
                     break;
                 case PropertyDataType::ENUM: {
