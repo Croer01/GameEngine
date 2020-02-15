@@ -47,35 +47,6 @@ struct convert<GameEngine::geColor> {
         return true;
     }
 };
-
-template<>
-struct convert<GameEngine::FilePath> {
-    static Node encode(const GameEngine::FilePath &rhs) {
-        Node node;
-        node["path"] = rhs.path;
-        if(rhs.fileType == GameEngine::FileType::IMAGE)
-            node["type"] = "IMAGE";
-        else
-            node["type"] = "OTHER";
-        return node;
-    }
-
-    static bool decode(const Node &node, GameEngine::FilePath &rhs) {
-        if (!node.IsMap() || node.size() != 2) {
-            return false;
-        }
-
-        rhs.path = node["path"].as<std::string>("");
-
-        std::string fileType = node["type"].as<std::string>("");
-        if(fileType == "IMAGE")
-            rhs.fileType = GameEngine::FileType::IMAGE;
-        else
-            rhs.fileType = GameEngine::FileType::OTHER;
-
-        return true;
-    }
-};
 }
 
 #endif //SPACEINVADERS_YAMLCONVERTERS_HPP

@@ -65,10 +65,5 @@ namespace Internal{
     YAML::Node Data::yamlNode() const {
         return data_;
     }
-
-FilePath Data::getFilePath(const std::string &key) const
-{
-    return data_[key].as<FilePath>(FilePath());
-}
 }
 }

@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 #include <stdexcept>
-#include <game-engine/FilePath.h>
+#include <game-engine/FileType.h>
 
 namespace GameEngine {
 
@@ -72,11 +72,6 @@ template<>
 struct PropertyTypeDeductive<geColor>
 {
     static constexpr PropertyTypes type = PropertyTypes::COLOR;
-};
-template<>
-struct PropertyTypeDeductive<FilePath>
-{
-    static constexpr PropertyTypes type = PropertyTypes::FILEPATH;
 };
 
 class PUBLICAPI PropertyBase
@@ -196,13 +191,46 @@ public:
 };
 
 
+class PUBLICAPI PropertyFilePathBase
+{
+public:
+    virtual ~PropertyFilePathBase() {};
+    virtual FileType getFileType() const = 0;
+};
+
+
+template<typename Class>
+class PUBLICAPI PropertyFilePath : public Property<Class, std::string>, public PropertyFilePathBase
+{
+    FileType fileType_;
+public:
+    PropertyFilePath(const std::string &name, typename Property<Class, std::string>::Getter getter, typename Property<Class, std::string>::Setter setter, std::string defaultValue, const FileType &fileType) :
+            Property(name, getter, setter, defaultValue),
+            fileType_(fileType)
+    {
+        type_ = PropertyTypes::FILEPATH;
+    };
+
+    PropertyFilePath(const std::string &name, typename Property<Class, std::string>::Getter getter, typename Property<Class, std::string>::Setter setter, std::string defaultValue, const FileType &fileType, bool required) :
+            Property(name, getter, setter, defaultValue, required),
+            fileType_(fileType)
+    {
+        type_ = PropertyTypes::FILEPATH;
+    };
+
+    virtual ~PropertyFilePath() {};
+
+    virtual FileType getFileType() const {
+        return fileType_;
+    }
+};
+
 class PUBLICAPI PropertyEnumBase
 {
 public:
     virtual ~PropertyEnumBase() {};
     virtual std::vector<std::string> getAllowedValues() const = 0;
 };
-
 
 template<typename Class>
 class PUBLICAPI PropertyEnum : public Property<Class, std::string>, public PropertyEnumBase

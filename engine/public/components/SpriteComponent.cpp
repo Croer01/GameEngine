@@ -59,16 +59,14 @@ namespace GameEngine {
         }
     }
 
-    void SpriteComponent::filepath(const FilePath &path) {
-        if(!filePath_.path.empty() && filePath_.fileType != FileType::IMAGE)
-            throw std::runtime_error("SpriteComponent only supports image files");
+    void SpriteComponent::filepath(const std::string &path) {
         filePath_ = path;
 
         if(graphic_)
             updateGraphicRef();
     }
 
-    FilePath SpriteComponent::filepath() const {
+    std::string SpriteComponent::filepath() const {
         return filePath_;
     }
 
@@ -76,11 +74,11 @@ namespace GameEngine {
         if(graphic_)
             Internal::GraphicsEngine::GetInstance().unregisterGraphic(graphic_);
 
-        if(filePath_.path.empty()){
+        if(filePath_.empty()){
             graphicLoaded_.reset();
             graphic_.reset();
         } else {
-            graphicLoaded_ = std::make_shared<Internal::GraphicSprite>(filePath_.path);
+            graphicLoaded_ = std::make_shared<Internal::GraphicSprite>(filePath_);
             graphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
             Internal::GraphicsEngine::GetInstance().registerGraphic(graphic_);
         }
@@ -101,11 +99,12 @@ PropertySetBase *SpriteComponent::getProperties() const
 {
     auto *properties = new PropertySet<SpriteComponent>();
 
-    properties->add(new Property<SpriteComponent, FilePath>(
+    properties->add(new PropertyFilePath<SpriteComponent>(
             "filePath",
             &SpriteComponent::filepath,
             &SpriteComponent::filepath,
-            FilePath("",FileType::IMAGE),
+            "",
+            FileType::IMAGE,
             true));
     properties->add(new Property<SpriteComponent, bool>(
             "visible",

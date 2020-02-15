@@ -19,7 +19,7 @@ namespace GameEngine {
         std::shared_ptr<Internal::Graphic> graphicLoaded_;
         std::shared_ptr<Internal::GraphicHolder> graphic_;
         bool visible_;
-        FilePath filePath_;
+        std::string filePath_;
         std::string anchor_;
 
         void updateGraphicRef();
@@ -44,9 +44,9 @@ namespace GameEngine {
 
         void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
 
-        void filepath(const FilePath &path);
+        void filepath(const std::string &path);
 
-        FilePath filepath() const;
+        std::string filepath() const;
 
         void anchor(const std::string &anchor);
 

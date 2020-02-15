@@ -52,7 +52,7 @@ set(ENGINE_SOURCES
         engine/public/Random.cpp
         engine/public/geAudio.cpp
         engine/public/geIO.cpp
-        engine/public/FilePath.cpp)
+        )
 
 # private stuff
 set(ENGINE_PRIVATE_SOURCES
