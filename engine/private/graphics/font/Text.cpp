@@ -13,7 +13,9 @@ namespace Internal {
             font_(font),
             textDef_(textDef),
             modelTransform_(glm::mat4(1)),
-            active_(true) {
+            active_(true),
+            tintColor_(glm::vec4(0.f, 0.f, 0.f, 1.f))
+    {
 
         glGenVertexArrays(1, &VAO);
 
@@ -50,6 +52,7 @@ namespace Internal {
         if (!active_)
             return;
         shader->setUniform("transform", modelTransform_);
+        shader->setUniform("Color", tintColor_);
 
         shader->setAttribute(Shader::Attributes::Vertex, vbo);
         shader->setAttribute(Shader::Attributes::UV, vbo);
@@ -132,6 +135,11 @@ Vec2D Text::getPixelSizeFromTextIndex(int index) const
 size_t Text::size() const
 {
     return textDef_.characters.size();
+}
+
+void Text::setTintColor(geColor tint)
+{
+    tintColor_ = glm::vec4(tint.r,tint.g,tint.b,1.f);
 }
 }
 }

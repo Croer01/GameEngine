@@ -80,6 +80,7 @@ void UITextComponent::UpdateTextGraphic()
     {
         graphicText_ = Internal::FontManager::GetInstance().getFont(font_, fontSize_)->createText(text_);
         setTextModelTransform(screenPos(), Vec2D(), Vec2D(1, 1));
+        graphicText_->setTintColor(foregroundColor_);
         Internal::GraphicsEngine::GetInstance().registerText(graphicText_);
     }
 }
@@ -97,6 +98,17 @@ Vec2D UITextComponent::getTextSize() const
 std::shared_ptr<Internal::Text> UITextComponent::getGraphicText() const
 {
     return graphicText_;
+}
+
+void UITextComponent::foregroundColor(const geColor &value)
+{
+    foregroundColor_ = value;
+    if(graphicText_)
+        UpdateTextGraphic();
+}
+geColor UITextComponent::foregroundColor() const
+{
+    return foregroundColor_;
 }
 
 PropertySetBase *UITextComponent::getProperties() const
@@ -124,6 +136,12 @@ PropertySetBase *UITextComponent::getProperties() const
             &UITextComponent::fontSize,
             &UITextComponent::fontSize,
             0));
+
+    properties->add(new Property<UITextComponent, geColor>(
+            "foreground",
+            &UITextComponent::foregroundColor,
+            &UITextComponent::foregroundColor,
+            geColor(0)));
 
     return properties;
 

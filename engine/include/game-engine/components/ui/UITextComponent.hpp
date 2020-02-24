@@ -15,6 +15,7 @@ class PUBLICAPI UITextComponent : public UIControlComponent
     std::shared_ptr<Internal::Text> graphicText_;
     std::string text_;
     std::string font_;
+    geColor foregroundColor_;
     int fontSize_;
 
     void UpdateTextGraphic();
@@ -39,6 +40,9 @@ public:
 
     void text(const std::string &value);
     std::string text() const;
+
+    void foregroundColor(const geColor &value);
+    geColor foregroundColor() const;
 
     Vec2D getTextSize() const;
 };

@@ -46,6 +46,7 @@ namespace Internal {
         TextDef textDef_;
         glm::mat4 modelTransform_;
         bool active_;
+        glm::vec4 tintColor_;
         std::shared_ptr<Font> font_;
         unsigned int VAO;
         unsigned int vbo;
@@ -69,6 +70,7 @@ namespace Internal {
         int width() const;
         int height() const;
         size_t size() const;
+        void setTintColor(geColor tint);
     };
 }
 }
