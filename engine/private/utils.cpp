@@ -14,8 +14,9 @@ namespace GameEngine {
 namespace Internal {
 
     void _CheckGlError(const char *file, int line) {
-        GLenum err(glGetError());
-
+#ifdef DEBUG
+        GLenum err = glGetError();
+        bool haveErrors = false;
         while (err != GL_NO_ERROR) {
 
             std::stringstream buffer;
@@ -23,14 +24,13 @@ namespace Internal {
             buffer << "GL_" << glewGetErrorString(err) << " - " << file << ":" << line << std::endl;
             std::cerr << buffer.rdbuf()->str();
             err = glGetError();
-#ifdef DEBUG
             throw std::runtime_error(buffer.rdbuf()->str());
-#endif
         }
-
+#endif
     }
 
     void _CheckSDLError(int line) {
+#ifdef DEBUG
         std::string error = SDL_GetError();
 
         if (!error.empty()) {
@@ -42,9 +42,11 @@ namespace Internal {
             SDL_ClearError();
             throw std::runtime_error(error);
         }
+#endif
     }
 
     void _CheckAlError(const char *file, int line) {
+#ifdef DEBUG
         ALenum err(alGetError());
 
         while (err != AL_NO_ERROR) {
@@ -71,6 +73,27 @@ namespace Internal {
             std::cerr << "AL_" << error.c_str() << " - " << file << ":" << line << std::endl;
             err = alGetError();
         }
+#endif
     }
+
+void CheckFreeTypeError(int errorCode)
+{
+    if (errorCode)
+    {
+        std::string errorMsg = "ERROR::FREETYPE: ";
+        std::string errorText;
+        switch (errorCode)
+        {
+            case 1:
+                errorText = "cannot open resource";
+                break;
+            default:
+                errorText = "Unmapped FreeType error. Code " + std::to_string(errorCode);
+        }
+        errorMsg += errorText;
+        throw std::runtime_error(errorMsg);
+
+    }
+}
 }
 }

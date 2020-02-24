@@ -24,8 +24,9 @@ std::u32string toUtf32( const std::string &utf8Str )
 Font::Font(const FT_Library &ftLibrary, const std::string &fontPath, unsigned int pixelsSize)
     {
         //TODO: get system fonts from system https://github.com/cinder/Cinder/blob/35e555f1c631cc58a7f2bf3ea916ddbdf74ba477/src/cinder/Font.cpp#L341
-        if (FT_New_Face(ftLibrary, fontPath.c_str(), 0, &face_))
-            throw std::runtime_error("ERROR::FREETYPE: Failed to load font");
+        FT_Error ftError = FT_New_Face(ftLibrary, fontPath.c_str(), 0, &face_);
+        CheckFreeTypeError(ftError);
+
 
         //based on "Learn OpenGl": https://learnopengl.com/In-Practice/Text-Rendering
         // Set size to load glyphs as

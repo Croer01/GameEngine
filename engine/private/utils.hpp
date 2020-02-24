@@ -12,6 +12,9 @@ namespace Internal {
 
     void _CheckAlError(const char *file, int line);
 
+    // this doesn't require macro
+    void CheckFreeTypeError(/*FT_Error*/ int errorCode);
+
 #define CheckGlError() _CheckGlError(__FILE__, __LINE__)
 #define CheckAlError() _CheckAlError(__FILE__, __LINE__)
 #define CheckSDLError() _CheckSDLError(__LINE__)
