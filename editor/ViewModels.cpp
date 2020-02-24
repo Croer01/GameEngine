@@ -14,6 +14,11 @@ ObjectData::ObjectData()
     scale_.xy = {1.f, 1.f};
 }
 
+PrototypeReference::PrototypeReference()
+{
+    scale_.xy = {1.f, 1.f};
+}
+
 ColorData::ColorData() :
     rgb({1.f, 1.f, 1.f})
 {}

@@ -37,38 +37,6 @@ Editor::Editor(SDL_Window *window):
             loadScene(result.string());
     });
     errorDialog_ = std::make_shared<ErrorDialog>();
-//    generateMockData();
-}
-
-void Editor::generateMockData()
-{
-    sceneData_.reset(new SceneData());
-
-    for(int i = 0; i < 5; i++)
-    {
-        ObjectData object;
-        std::ostringstream stringStream;
-        stringStream << "Object" << i;
-        object.name_ = stringStream.str();
-
-        for(int j = 0; j < i; j++)
-        {
-            ObjectData children;
-            std::ostringstream stringStream2;
-            stringStream2 << "Child" << j;
-            children.name_ = stringStream2.str();
-
-            auto component = std::make_shared<ComponentData>();
-            component->name_ = "component 1";
-
-            auto propertyData = std::make_shared<PropertyFloatData>("property float 1");
-            component->properties_.push_back(propertyData);
-            children.components_.push_back(component);
-            object.children_.push_back(std::make_shared<ObjectData>(children));
-        }
-
-        sceneData_->objects_.push_back(std::make_shared<ObjectData>(object));
-    }
 }
 
 void Editor::render()
@@ -111,35 +79,37 @@ void Editor::render()
     }
 }
 
-void Editor::renderSceneObjectNode(const ObjectDataRef &object, const std::string &id)
+bool Editor::renderSceneObjectNode(const PrototypeReferenceRef &object, const std::string &id)
 {
-    const std::string label = object->name_ + "##ObjectNode" + id;
+    bool edited = false;
 
-    ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow;
-    if(object->children_.empty())
-        nodeFlags |= ImGuiTreeNodeFlags_Leaf;
-
-    if(objectSelected_ && objectSelected_->data == object)
-        nodeFlags |= ImGuiTreeNodeFlags_Selected;
-
-    bool isOpened = ImGui::TreeNodeEx(label.c_str(), nodeFlags);
-    if(ImGui::IsItemClicked())
+    ImGui::PushID(("ObjectNode" + id).c_str());
+    if (ImGui::TreeNodeEx(id.c_str(), ImGuiTreeNodeFlags_OpenOnArrow, "%s", object->name_.c_str()))
     {
-        objectSelected_.reset(new TargetObject());
-        objectSelected_->data = object;
-        objectSelected_->sourceFile = DataFile(sceneData_->filePath_);
-    }
+        ImGui::InputText("Name",&object->name_);
+        if(ImGui::IsItemEdited())
+            edited = true;
 
-    if (isOpened)
-    {
-        for (auto i = 0; i < object->children_.size(); i++)
+        ImGui::InputText("prototype",&object->prototype_);
+        if(ImGui::IsItemEdited())
+            edited = true;
+
+        if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            renderSceneObjectNode(object->children_[i], id + "_" + std::to_string(i));
+            if(ImGui::DragFloat2("position", object->position_.xy.data(),.1f))
+                edited = true;
+            if(ImGui::DragFloat2("size", object->scale_.xy.data(), .1f, 1.f, std::numeric_limits<float>::max()))
+                edited = true;
+            if(ImGui::DragFloat2("rotation", object->rotation_.xy.data(),.1f))
+                edited = true;
         }
+
         ImGui::TreePop();
-        if((nodeFlags & ImGuiTreeNodeFlags_Leaf) != ImGuiTreeNodeFlags_Leaf)
             ImGui::Separator();
     }
+    ImGui::PopID();
+
+    return edited;
 }
 
 void Editor::renderPrototypeList()
@@ -245,7 +215,7 @@ void Editor::renderSceneInspector()
     ImGui::Separator();
     if(ImGui::Button("New Object"))
     {
-        ObjectDataRef newObject = std::make_shared<ObjectData>();
+        PrototypeReferenceRef newObject = std::make_shared<PrototypeReference>();
         std::stringstream ss;
         ss << "Object" << sceneData_->objects_.size();
         newObject->name_ = ss.str();
@@ -254,7 +224,11 @@ void Editor::renderSceneInspector()
 
     for (auto i = 0; i < sceneData_->objects_.size(); i++)
     {
-        renderSceneObjectNode(sceneData_->objects_[i], std::to_string(i));
+        if(renderSceneObjectNode(sceneData_->objects_[i], std::to_string(i)))
+        {
+            project_->dirty_ = true;
+            projectDirectory_->markEdited(DataFile(sceneData_->filePath_));
+        }
     }
 
     ImGui::End();
@@ -432,7 +406,7 @@ bool Editor::renderComponent(const ComponentDataRef &component)
                         edited = true;
                     }
 
-                    auto values = propertyStringArray->value_;
+                    auto &values = propertyStringArray->value_;
                     for (int i = 0; i < values.size(); ++i)
                     {
                         ImGui::PushID(i);

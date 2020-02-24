@@ -40,9 +40,8 @@ class Editor
     GameComponentsProvider gameComponentsProvider_;
     ProjectPrototypeProvider projectPrototypeProvider_;
 
-    void generateMockData();
     void renderMainMenu();
-    void renderSceneObjectNode(const ObjectDataRef &object, const std::string &id);
+    bool renderSceneObjectNode(const PrototypeReferenceRef &object, const std::string &id);
     void renderSceneInspector();
     void renderPrototypeList();
     void renderObjectInspector();

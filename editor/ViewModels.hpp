@@ -190,11 +190,24 @@ public:
     std::vector<ComponentDataRef> components_;
 };
 
+class PrototypeReference;
+typedef std::shared_ptr<PrototypeReference> PrototypeReferenceRef;
+class PrototypeReference
+{
+public:
+    PrototypeReference();
+    std::string name_;
+    std::string prototype_;
+    Vector2DData position_;
+    Vector2DData scale_;
+    Vector2DData rotation_;
+};
+
 class SceneData
 {
 public:
     std::string name_;
-    std::vector<ObjectDataRef> objects_;
+    std::vector<PrototypeReferenceRef> objects_;
     std::string filePath_;
 };
 
@@ -430,7 +443,7 @@ struct convert<ObjectData> {
     }
 
     static bool decode(const Node &node, ObjectData &rhs) {
-        rhs.name_ = node["name"].as<std::string>();
+        rhs.name_ = node["name"].as<std::string>("");
         rhs.position_ = node["position"].as<Vector2DData>(Vector2DData());
         rhs.rotation_ = node["rotation"].as<Vector2DData>(Vector2DData());
         Vector2DData scale;
@@ -451,6 +464,33 @@ struct convert<ObjectData> {
             }
         }
         
+        return true;
+    }
+};
+
+template<>
+struct convert<PrototypeReference> {
+    static Node encode(const PrototypeReference &rhs) {
+        Node node;
+        node["prototype"] = rhs.prototype_;
+        node["name"] = rhs.name_;
+        node["position"] = rhs.position_;
+        node["rotation"] = rhs.rotation_;
+        node["scale"] = rhs.scale_;
+
+        return node;
+    }
+
+    static bool decode(const Node &node, PrototypeReference &rhs) {
+        rhs.prototype_ = node["prototype"].as<std::string>();
+        rhs.name_ = node["name"].as<std::string>("");
+        rhs.position_ = node["position"].as<Vector2DData>(Vector2DData());
+        rhs.rotation_ = node["rotation"].as<Vector2DData>(Vector2DData());
+        Vector2DData scale;
+        scale.xy[0] = 1;
+        scale.xy[1] = 1;
+        rhs.scale_ = node["scale"].as<Vector2DData>(scale);
+
         return true;
     }
 };
@@ -480,7 +520,7 @@ struct convert<SceneData> {
         node["name"] = rhs.name_;
         Node objectsNode;
 
-        for(const ObjectDataRef &object : rhs.objects_){
+        for(const PrototypeReferenceRef &object : rhs.objects_){
             objectsNode.push_back(*object.get());
         }
 
@@ -496,8 +536,8 @@ struct convert<SceneData> {
         if(objectsNode)
         for(auto i = 0; i < objectsNode.size();i++)
         {
-            auto object = objectsNode[i].as<ObjectData>();
-            rhs.objects_.push_back(std::make_shared<ObjectData>(object));
+            auto object = objectsNode[i].as<PrototypeReference>();
+            rhs.objects_.push_back(std::make_shared<PrototypeReference>(object));
         }
         // TODO: load objects
         return true;
