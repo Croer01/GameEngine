@@ -120,6 +120,11 @@ namespace GameEngine {
                 if(!data.hasValue(property->name())) {
                     if(property->required())
                         throw std::logic_error("property " + property->name() + " is required but it isn't defined");
+                    else
+                    {
+                        if(auto propertyClass = std::dynamic_pointer_cast<PropertyTBase<Class>>(property))
+                            propertyClass->resetValueToDefault(target);
+                    }
                     continue;
                 }
 
