@@ -180,6 +180,5 @@ TEST(SpriteComponent, load)
     const std::weak_ptr<GameEngine::SpriteComponent> &component = gameObject->getComponent<GameEngine::SpriteComponent>();
     ASSERT_EQ(gameObject->name(), "loadedFromFile");
     ASSERT_TRUE(component.lock());
-    ASSERT_EQ(component.lock()->filepath().path,"data/1x1white.png");
-    ASSERT_EQ(component.lock()->filepath().fileType,GameEngine::FileType::IMAGE);
+    ASSERT_EQ(component.lock()->filepath(),"data/1x1white.png");
 }

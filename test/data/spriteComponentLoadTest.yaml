@@ -1,6 +1,4 @@
 name: loadedFromFile
 components:
   - type: SpriteComponent
-    filePath:
-      path: data/1x1white.png
-      type: IMAGE
+    filePath: data/1x1white.png
