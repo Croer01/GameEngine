@@ -17,6 +17,7 @@ namespace GameEngine {
         std::shared_ptr<Internal::GraphicHolder> graphic_;
         std::vector<Vec2D> path_;
         std::string anchor_;
+        geColor color_;
         bool visible_;
         void updateGraphicRef();
 
@@ -45,6 +46,9 @@ namespace GameEngine {
         void anchor(const std::string &anchor);
 
         std::string anchor() const;
+
+        void color(const geColor &value);
+        geColor color() const;
 
         void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
     };

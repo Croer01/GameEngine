@@ -10,6 +10,7 @@ namespace GameEngine {
         updateGraphicRef();
         visible(visible_);
         anchor(anchor_);
+        color(color_);
         graphic_->setModelTransform(gameObject()->position(), gameObject()->rotation(), gameObject()->scale());
         gameObject()->registerObserver(this);
     }
@@ -130,14 +131,42 @@ PropertySetBase *GeometryComponent::getProperties() const
             &GeometryComponent::visible,
             true));
 
-    properties->add(new Property<GeometryComponent, std::string>(
+    properties->add(new PropertyEnum<GeometryComponent>(
             "anchor",
             &GeometryComponent::anchor,
             &GeometryComponent::anchor,
-            "",
-            false));
+            "TOP_LEFT",
+            {
+                    "TOP_LEFT",
+                    "TOP_CENTER",
+                    "TOP_RIGHT",
+                    "MIDDLE_LEFT",
+                    "MIDDLE_CENTER",
+                    "MIDDLE_RIGHT",
+                    "BOTTOM_LEFT",
+                    "BOTTOM_CENTER",
+                    "BOTTOM_RIGHT"
+            }));
+
+    properties->add(new Property<GeometryComponent, geColor>(
+            "tint",
+            &GeometryComponent::color,
+            &GeometryComponent::color,
+            geColor(1.f)));
     return properties;
 
+}
+
+void GeometryComponent::color(const geColor &value)
+{
+    color_ = value;
+    if(graphic_)
+        graphic_->setTintColor(color_);
+}
+
+geColor GeometryComponent::color() const
+{
+    return color_;
 }
 }
 
