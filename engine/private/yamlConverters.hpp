@@ -43,7 +43,7 @@ struct convert<GameEngine::geColor> {
 
         rhs.r = node[0].as<float>(0.f);
         rhs.g = node[1].as<float>(0.f);
-        rhs.b = node[1].as<float>(0.f);
+        rhs.b = node[2].as<float>(0.f);
         return true;
     }
 };
