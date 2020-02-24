@@ -177,6 +177,7 @@ namespace GameEngine {
                         auto propertyFilepath = std::dynamic_pointer_cast<PropertyFilePath<Class>>(property);
                         propertyFilepath->set(target.get(), data.getString(property->name()));
                     }
+                        break;
                     case PropertyTypes::ENUM:
                     {
                         auto propertyEnum = std::dynamic_pointer_cast<PropertyEnum<Class>>(property);
