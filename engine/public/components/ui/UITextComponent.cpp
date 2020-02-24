@@ -19,6 +19,17 @@ geComponentRef UITextComponent::instantiate() const
     return std::make_shared<UITextComponent>();
 }
 
+geComponentRef UITextComponent::clone() const
+{
+    geComponentRef cloned = instantiate();
+    auto compCloned = std::dynamic_pointer_cast<UITextComponent>(cloned);
+    auto other = shared_from_this();
+    auto thisRef = std::dynamic_pointer_cast<const UITextComponent>(other);
+    compCloned->copyProperties<UITextComponent>(thisRef);
+
+    return cloned;
+}
+
 void UITextComponent::init()
 {
     UpdateTextGraphic();

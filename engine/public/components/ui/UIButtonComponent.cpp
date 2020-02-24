@@ -41,6 +41,17 @@ geComponentRef UIButtonComponent::instantiate() const
     return std::make_shared<UIButtonComponent>();
 }
 
+geComponentRef UIButtonComponent::clone() const
+{
+    geComponentRef cloned = instantiate();
+    auto compCloned = std::dynamic_pointer_cast<UIButtonComponent>(cloned);
+    auto other = shared_from_this();
+    auto thisRef = std::dynamic_pointer_cast<const UIButtonComponent>(other);
+    compCloned->copyProperties<UIButtonComponent>(thisRef);
+
+    return cloned;
+}
+
 void UIButtonComponent::createBackgroundGraphic()
 {
     if(backgroundGraphic_)

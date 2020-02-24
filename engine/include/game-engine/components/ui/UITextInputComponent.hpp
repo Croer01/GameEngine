@@ -28,6 +28,7 @@ class PUBLICAPI UITextInputComponent : public UITextComponent, public Observer<I
     void createBackgroundGraphic();
 protected:
     geComponentRef instantiate() const override;
+    virtual geComponentRef clone() const;
     void onFocusChanged() override;
 public:
     virtual ~UITextInputComponent();

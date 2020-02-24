@@ -15,6 +15,17 @@ geComponentRef UITextInputComponent::instantiate() const
     return std::make_shared<UITextInputComponent>();
 }
 
+geComponentRef UITextInputComponent::clone() const
+{
+    geComponentRef cloned = instantiate();
+    auto compCloned = std::dynamic_pointer_cast<UITextInputComponent>(cloned);
+    auto other = shared_from_this();
+    auto thisRef = std::dynamic_pointer_cast<const UITextInputComponent>(other);
+    compCloned->copyProperties<UITextInputComponent>(thisRef);
+
+    return cloned;
+}
+
 void UITextInputComponent::init()
 {
     UITextComponent::init();
