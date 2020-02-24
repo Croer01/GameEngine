@@ -49,7 +49,7 @@ namespace GameEngine {
             auto compCloned = std::dynamic_pointer_cast<T>(cloned);
             auto other = shared_from_this();
             auto thisRef = std::dynamic_pointer_cast<const T>(other);
-            compCloned->copyProperties(thisRef);
+            compCloned->copyProperties<T>(thisRef);
 
             return cloned;
         }

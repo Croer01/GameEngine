@@ -62,6 +62,9 @@ namespace GameEngine {
                 totalSize += parent_->size();
             return totalSize;
         }
+
+        virtual void copy(const std::shared_ptr<const void> &original, const std::shared_ptr<void> &target) const = 0;
+        virtual void copy(const geData &data, const std::shared_ptr<void> &target) const = 0;
     };
 
     template <typename Class>
@@ -81,12 +84,23 @@ namespace GameEngine {
             properties_.emplace_back(dynamic_cast<PropertyBase *>(std::move(property)));
         };
 
+
+
+        virtual void copy(const std::shared_ptr<const void> &original, const std::shared_ptr<void> &target) const
+        {
+            const std::shared_ptr<const Class> &ptr = std::static_pointer_cast<const Class>(original);
+            const std::shared_ptr<Class> &sharedPtr = std::static_pointer_cast<Class>(target);
+            copy(ptr, sharedPtr);
+        };
+        virtual void copy(const geData &data, const std::shared_ptr<void> &target) const {
+
+            const std::shared_ptr<Class> &sharedPtr = std::static_pointer_cast<Class>(target);
+            copy(data, sharedPtr);
+        };
+
         void copy(const std::shared_ptr<const Class> &original, const std::shared_ptr<Class> &target) const {
             if(parent_)
-            {
-                auto parent = dynamic_cast<PropertySet<Class> *>(parent_.get());
-                parent->copy(original, target);
-            }
+                parent_->copy(original, target);
 
             for( int i = 0; i < properties_.size(); i++) {
                 const std::shared_ptr<PropertyTBase<Class>> property = std::dynamic_pointer_cast<PropertyTBase<Class>>(properties_[i]);
@@ -97,10 +111,7 @@ namespace GameEngine {
         void copy(const geData &data, const std::shared_ptr<Class> &target) const
         {
             if(parent_)
-            {
-                auto parent = dynamic_cast<PropertySet<Class> *>(parent_.get());
-                parent->copy(data, target);
-            }
+                parent_->copy(data, target);
 
             for(int i = 0; i < properties_.size(); i++)
             {
