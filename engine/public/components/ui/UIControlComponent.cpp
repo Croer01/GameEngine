@@ -71,6 +71,14 @@ PropertySetBase *UIControlComponent::getProperties() const
 {
     auto *properties = new PropertySet<UIControlComponent>();
 
+    properties->add(new Property<UIControlComponent, std::string>(
+            "id",
+            &UIControlComponent::id,
+            &UIControlComponent::id,
+            "",
+            true
+    ));
+
     properties->add(new Property<UIControlComponent, Vec2D>(
             "screenPos",
             &UIControlComponent::screenPos,
@@ -87,6 +95,16 @@ PropertySetBase *UIControlComponent::getProperties() const
             true
     ));
     return properties;
-
 }
+
+void UIControlComponent::id(const std::string &value)
+{
+    id_ = value;
+}
+
+std::string UIControlComponent::id() const
+{
+    return id_;
+}
+
 }

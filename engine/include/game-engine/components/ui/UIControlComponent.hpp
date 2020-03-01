@@ -11,6 +11,7 @@
 namespace GameEngine {
     class PUBLICAPI UIControlComponent : public geComponentInstantiable<UIControlComponent>
     {
+        std::string id_;
         Vec2D screenPos_;
         Vec2D screenSize_;
         bool hover_;
@@ -31,6 +32,9 @@ namespace GameEngine {
 
         void screenSize(const Vec2D &size);
         Vec2D screenSize() const;
+
+        void id(const std::string &value);
+        std::string id() const;
 
         bool isFocused() const;
     };

@@ -15,8 +15,9 @@
 namespace GameEngine {
 
     class geComponent;
+    class UIControlComponent;
 
-    enum class GameObjectEvent{
+enum class GameObjectEvent{
         TransformChanged,
         PositionChanged,
         RotationChanged,
@@ -58,9 +59,31 @@ namespace GameEngine {
         virtual void destroy() = 0;
 
         template <typename T>
+        std::weak_ptr<T> getUIComponent(const std::string &controlId) const {
+            if(!std::is_base_of<UIControlComponent,T>::value)
+                throw std::invalid_argument("the type of the component doesn't inherit from UIControlComponent");
+
+            for(auto component : components_){
+                if(auto desiredUIComponent = std::dynamic_pointer_cast<UIControlComponent>(component))
+                {
+                    if(controlId == desiredUIComponent->id())
+                    {
+                        if (auto desiredComponent = std::dynamic_pointer_cast<T>(component))
+                            return desiredComponent;
+                    }
+                }
+            }
+
+            return std::shared_ptr<T>();
+        }
+
+        template <typename T>
         std::weak_ptr<T> getComponent() const {
             if(!std::is_base_of<geComponent,T>::value)
                 throw std::invalid_argument("the type of the component doesn't inherit from geComponent");
+
+            if(std::is_base_of<UIControlComponent,T>::value)
+                throw std::invalid_argument("Use \"getUIComponent\" to get a UI component");
 
             for(auto component : components_){
                 if(auto desiredComponent = std::dynamic_pointer_cast<T>(component))
