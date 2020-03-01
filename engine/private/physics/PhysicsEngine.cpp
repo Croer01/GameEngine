@@ -87,8 +87,8 @@ namespace Internal {
             }
             else
             {
-                colliderA->doBeginCollistion(colliderB);
-                colliderB->doBeginCollistion(colliderA);
+                colliderA->doBeginCollision(colliderB);
+                colliderB->doBeginCollision(colliderA);
             }
         }
     }

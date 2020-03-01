@@ -89,7 +89,7 @@ namespace Internal {
 
         void setSize(float extendX, float extendY);
 
-        void doBeginCollistion(Collider *other);
+        void doBeginCollision(Collider *other);
         void doBeginSensor(Collider *other);
 
         std::shared_ptr<Collider> clone();

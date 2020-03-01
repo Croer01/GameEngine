@@ -90,7 +90,7 @@ namespace Internal {
                        extendY / PhysicsEngine::getScalePixelsToMeter());
     }
 
-    void Collider::doBeginCollistion(Collider *other) {
+    void Collider::doBeginCollision(Collider *other) {
         notify(ColliderEvent::BeginCollider, (void *) other);
     }
 
