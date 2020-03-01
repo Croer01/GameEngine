@@ -35,7 +35,7 @@ namespace GameEngine {
     };
 
     template<typename T>
-    class PUBLICAPI geComponentInstantiable : public geComponent, public PropertiesHolder<T>
+    class PUBLICAPI geComponentInstantiable : public geComponent, public PropertiesHolder
     {
     protected:
         geComponentRef instantiate() const override
