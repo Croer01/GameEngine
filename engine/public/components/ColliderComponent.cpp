@@ -233,16 +233,24 @@ PropertySetBase *ColliderComponent::getProperties() const
             Vec2D()));
 
     // Collider configuration
-    properties->add(new Property<ColliderComponent, std::string>(
+    properties->add(new PropertyEnum<ColliderComponent>(
             "colliderShape",
             &ColliderComponent::shape,
             &ColliderComponent::shape,
-            "Box"));
-    properties->add(new Property<ColliderComponent, std::string>(
+            "Box",
+            {
+                    "Box"
+            }));
+    properties->add(new PropertyEnum<ColliderComponent>(
             "colliderType",
             &ColliderComponent::type,
             &ColliderComponent::type,
-            "Static"));
+            "Static",
+            {
+                    "Static",
+                    "Dynamic",
+                    "Kinematic"
+            }));
     properties->add(new Property<ColliderComponent, std::string>(
             "category",
             &ColliderComponent::category,
