@@ -18,6 +18,7 @@ namespace Internal {
         b2BodyDef *bodyDef = new b2BodyDef();
         bodyDef->userData = (void *) this;
         bodyDef->fixedRotation = true;
+        bodyDef->gravityScale = gravityScale_;
         // this is to avoid sensor colliders won't detect collisions if they are statics or they don't move
         if(isSensor_)
             bodyDef->allowSleep = false;
@@ -167,6 +168,16 @@ void Collider::setSensor(bool isSensor)
 bool Collider::IsSensor() const
 {
     return isSensor_;
+}
+
+void Collider::setGravityScale(float scale)
+{
+    gravityScale_ = scale;
+}
+
+float Collider::getGravityScale() const
+{
+    return gravityScale_;
 }
 }
 }

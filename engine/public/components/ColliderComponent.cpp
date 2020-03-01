@@ -205,6 +205,7 @@ namespace {
         collider_->setType(stringToColliderType(colliderType_));
         collider_->setCategory(colliderCategory_);
         collider_->setSensor(isSensor_);
+        collider_->setGravityScale(gravityScale_);
         collider_->setComponent(std::dynamic_pointer_cast<ColliderComponent>(shared_from_this()));
 
         Internal::PhysicsEngine::GetInstance().registerCollider(collider_);
@@ -253,6 +254,12 @@ PropertySetBase *ColliderComponent::getProperties() const
             &ColliderComponent::isSensor,
             false,
             false));
+    properties->add(new Property<ColliderComponent, float>(
+            "gravityScale",
+            &ColliderComponent::gravityScale,
+            &ColliderComponent::gravityScale,
+            1.f,
+            false));
 
     return properties;
 }
@@ -268,5 +275,16 @@ void ColliderComponent::isSensor(const bool &value)
         collider_->setSensor(isSensor_);
 }
 
+float ColliderComponent::gravityScale() const
+{
+    return gravityScale_;
+}
+
+void ColliderComponent::gravityScale(const float &value)
+{
+    gravityScale_ = value;
+    if(collider_)
+        collider_->setGravityScale(gravityScale_);
+}
 }
 

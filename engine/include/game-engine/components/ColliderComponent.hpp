@@ -27,6 +27,7 @@ class PUBLICAPI ColliderComponent : public geComponentInstantiable<ColliderCompo
         std::string colliderType_;
         std::string colliderCategory_;
         bool isSensor_;
+        float gravityScale_;
 
         Vec2D convertWorldToPhysicsPos(const Vec2D &worldPos) const;
 
@@ -63,6 +64,8 @@ class PUBLICAPI ColliderComponent : public geComponentInstantiable<ColliderCompo
         void category(const std::string &colliderCategory);
         bool isSensor() const;
         void isSensor(const bool &value);
+        float gravityScale() const;
+        void gravityScale(const float &value);
     protected:
         void onEvent(const Subject<Internal::ColliderEvent> &target, const Internal::ColliderEvent &event, void *args) override;
 

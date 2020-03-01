@@ -50,6 +50,7 @@ namespace Internal {
         PropertiesToSetInSafeMode propertiesToSetInSafeMode_;
         std::string category_;
         bool isSensor_;
+        float gravityScale_;
 
         void addShapeToBody(float extendX, float extendY);
 
@@ -81,6 +82,10 @@ namespace Internal {
         void setSensor(bool isSensor);
 
         bool IsSensor() const;
+
+        void setGravityScale(float scale);
+
+        float getGravityScale() const;
 
         void setSize(float extendX, float extendY);
 
