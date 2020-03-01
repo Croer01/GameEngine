@@ -77,8 +77,19 @@ namespace Internal {
             colliderB = static_cast<Collider *>(userData);
 
         if (colliderA && colliderB) {
-            colliderA->doBeginCollistion(colliderB);
-            colliderB->doBeginCollistion(colliderA);
+            if(contact->GetFixtureA()->IsSensor())
+            {
+                colliderA->doBeginSensor(colliderB);
+            }
+            else if(contact->GetFixtureB()->IsSensor())
+            {
+                colliderB->doBeginSensor(colliderA);
+            }
+            else
+            {
+                colliderA->doBeginCollistion(colliderB);
+                colliderB->doBeginCollistion(colliderA);
+            }
         }
     }
 

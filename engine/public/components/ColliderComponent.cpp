@@ -65,11 +65,18 @@ namespace {
         onColliderEnterCallback_ = callback;
     }
 
+    void ColliderComponent::setOnSensorEnter(const OnColliderEventCallback &callback) {
+        onSensorEnterCallback_ = callback;
+    }
+
     void ColliderComponent::onEvent(const Subject<Internal::ColliderEvent> &target, const Internal::ColliderEvent &event, void *args) {
-        if(event == Internal::ColliderEvent::BeginCollider && onColliderEnterCallback_) {
-            auto *collider = static_cast<Internal::Collider *>(args);
-            if(auto component = collider->getComponent().lock())
+        auto *collider = static_cast<Internal::Collider *>(args);
+        if(auto component = collider->getComponent().lock())
+        {
+            if(event == Internal::ColliderEvent::BeginCollider && onColliderEnterCallback_)
                 onColliderEnterCallback_(component.get());
+            if(event == Internal::ColliderEvent::BeginSensor && onSensorEnterCallback_)
+                onSensorEnterCallback_(component.get());
         }
     }
 
@@ -197,6 +204,7 @@ namespace {
         collider_->setShape(stringToColliderShape(colliderShape_));
         collider_->setType(stringToColliderType(colliderType_));
         collider_->setCategory(colliderCategory_);
+        collider_->setSensor(isSensor_);
         collider_->setComponent(std::dynamic_pointer_cast<ColliderComponent>(shared_from_this()));
 
         Internal::PhysicsEngine::GetInstance().registerCollider(collider_);
@@ -239,8 +247,26 @@ PropertySetBase *ColliderComponent::getProperties() const
             &ColliderComponent::category,
             &ColliderComponent::category,
             ""));
+    properties->add(new Property<ColliderComponent, bool>(
+            "isSensor",
+            &ColliderComponent::isSensor,
+            &ColliderComponent::isSensor,
+            false,
+            false));
 
     return properties;
 }
+
+bool ColliderComponent::isSensor() const
+{
+    return isSensor_;
+}
+void ColliderComponent::isSensor(const bool &value)
+{
+    isSensor_ = value;
+    if(collider_)
+        collider_->setSensor(isSensor_);
+}
+
 }
 

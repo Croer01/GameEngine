@@ -18,6 +18,9 @@ namespace Internal {
         b2BodyDef *bodyDef = new b2BodyDef();
         bodyDef->userData = (void *) this;
         bodyDef->fixedRotation = true;
+        // this is to avoid sensor colliders won't detect collisions if they are statics or they don't move
+        if(isSensor_)
+            bodyDef->allowSleep = false;
 
         switch (colliderType_) {
             case ColliderTypes::Static:
@@ -90,6 +93,9 @@ namespace Internal {
         notify(ColliderEvent::BeginCollider, (void *) other);
     }
 
+    void Collider::doBeginSensor(Collider *other) {
+        notify(ColliderEvent::BeginSensor, (void *) other);
+    }
     void Collider::setComponent(const std::shared_ptr<ColliderComponent> &component) {
         component_ = component;
     }
@@ -127,7 +133,7 @@ namespace Internal {
                 fixtureDef.density = 1.f;
                 fixtureDef.friction = 0.0f;
                 fixtureDef.filter = filter_;
-
+                fixtureDef.isSensor = isSensor_;
                 body_->CreateFixture(&fixtureDef);
                 break;
         }
@@ -152,5 +158,15 @@ namespace Internal {
     void Collider::setCategory(const std::string &category) {
         category_ = category;
     }
+
+void Collider::setSensor(bool isSensor)
+{
+    isSensor_ = isSensor;
+}
+
+bool Collider::IsSensor() const
+{
+    return isSensor_;
+}
 }
 }

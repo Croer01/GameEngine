@@ -19,7 +19,8 @@ namespace GameEngine {
 namespace Internal {
 
     enum class ColliderEvent {
-        BeginCollider
+        BeginCollider,
+        BeginSensor
     };
 
     class Collider : public Subject<ColliderEvent> {
@@ -48,6 +49,7 @@ namespace Internal {
         ColliderTypes colliderType_;
         PropertiesToSetInSafeMode propertiesToSetInSafeMode_;
         std::string category_;
+        bool isSensor_;
 
         void addShapeToBody(float extendX, float extendY);
 
@@ -76,9 +78,14 @@ namespace Internal {
 
         std::string getCategory() const;
 
+        void setSensor(bool isSensor);
+
+        bool IsSensor() const;
+
         void setSize(float extendX, float extendY);
 
         void doBeginCollistion(Collider *other);
+        void doBeginSensor(Collider *other);
 
         std::shared_ptr<Collider> clone();
 
