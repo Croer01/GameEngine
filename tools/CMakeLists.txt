@@ -87,6 +87,10 @@ function(generate_components_register file_name generated_file)
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
             COMMENT "Generating code to register components into the object manager"
     )
+    add_custom_target(
+            generate_components_register_manual ALL
+            DEPENDS ${COMPONENTS_REGISTERED_HPP}
+    )
     set(${generated_file} ${COMPONENTS_REGISTERED_HPP} PARENT_SCOPE)
 endfunction()
 
