@@ -305,10 +305,14 @@ void Editor::renderObjectInspector(){
         }
 
         ImGui::PushID(objectDataSelected->name_.c_str());
+        int i = 0;
         for (const auto &component : objectDataSelected->components_)
         {
+            ImGui::PushID(i);
             if(renderComponent(component))
                 edited = true;
+            ImGui::PopID();
+            i++;
         }
         ImGui::PopID();
 
@@ -332,7 +336,6 @@ void Editor::renderObjectInspector(){
 bool Editor::renderComponent(const ComponentDataRef &component)
 {
     bool edited = false;
-
     ImGui::PushID(component->name_.c_str());
     bool opened = ImGui::CollapsingHeader(component->name_.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap);
     ImGui::SameLine(ImGui::GetWindowWidth() - 20);
