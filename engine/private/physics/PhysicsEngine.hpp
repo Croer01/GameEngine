@@ -37,8 +37,9 @@ namespace Internal {
 #endif
 
         void BeginContact(b2Contact *contact) override;
+        void EndContact(b2Contact *contact) override;
 
-    public:
+public:
         static float getScalePixelsToMeter() { return 32.f; }
 
         void init(float timeStep);

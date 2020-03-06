@@ -20,7 +20,9 @@ namespace Internal {
 
     enum class ColliderEvent {
         BeginCollider,
-        BeginSensor
+        BeginSensor,
+        EndCollider,
+        EndSensor
     };
 
     class Collider : public Subject<ColliderEvent> {
@@ -91,6 +93,8 @@ namespace Internal {
 
         void doBeginCollision(Collider *other);
         void doBeginSensor(Collider *other);
+        void doEndCollision(Collider *other);
+        void doEndSensor(Collider *other);
 
         std::shared_ptr<Collider> clone();
 

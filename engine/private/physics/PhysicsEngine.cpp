@@ -93,9 +93,39 @@ namespace Internal {
         }
     }
 
+void PhysicsEngine::EndContact(b2Contact *contact)
+{
+    Collider *colliderA = nullptr;
+    Collider *colliderB = nullptr;
+
+    void *userData = contact->GetFixtureA()->GetBody()->GetUserData();
+    if (userData)
+        colliderA = static_cast<Collider *>(userData);
+
+    userData = contact->GetFixtureB()->GetBody()->GetUserData();
+    if (userData)
+        colliderB = static_cast<Collider *>(userData);
+
+    if (colliderA && colliderB) {
+        if(contact->GetFixtureA()->IsSensor())
+        {
+            colliderA->doEndSensor(colliderB);
+        }
+        else if(contact->GetFixtureB()->IsSensor())
+        {
+            colliderB->doEndSensor(colliderA);
+        }
+        else
+        {
+            colliderA->doEndCollision(colliderB);
+            colliderB->doEndCollision(colliderA);
+        }
+    }
+}
+
 #ifdef DEBUG
-    void PhysicsEngine::drawDebug(const std::shared_ptr<Camera> &cam) {
-        debugView_->setCamera(cam);
+void PhysicsEngine::drawDebug(const std::shared_ptr<Camera> &cam) {
+    debugView_->setCamera(cam);
         world_->DrawDebugData();
     }
 #endif

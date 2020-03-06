@@ -69,7 +69,15 @@ namespace {
         onSensorEnterCallback_ = callback;
     }
 
-    void ColliderComponent::onEvent(const Subject<Internal::ColliderEvent> &target, const Internal::ColliderEvent &event, void *args) {
+    void ColliderComponent::setOnColliderExit(const OnColliderEventCallback &callback) {
+        onColliderExitCallback_ = callback;
+    }
+
+    void ColliderComponent::setOnSensorExit(const OnColliderEventCallback &callback) {
+        onSensorExitCallback_ = callback;
+    }
+
+void ColliderComponent::onEvent(const Subject<Internal::ColliderEvent> &target, const Internal::ColliderEvent &event, void *args) {
         auto *collider = static_cast<Internal::Collider *>(args);
         if(auto component = collider->getComponent().lock())
         {
@@ -77,6 +85,10 @@ namespace {
                 onColliderEnterCallback_(component.get());
             if(event == Internal::ColliderEvent::BeginSensor && onSensorEnterCallback_)
                 onSensorEnterCallback_(component.get());
+            if(event == Internal::ColliderEvent::EndCollider && onColliderExitCallback_)
+                onColliderExitCallback_(component.get());
+            if(event == Internal::ColliderEvent::EndSensor && onSensorExitCallback_)
+                onSensorExitCallback_(component.get());
         }
     }
 

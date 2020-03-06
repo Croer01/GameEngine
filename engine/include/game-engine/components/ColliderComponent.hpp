@@ -19,6 +19,8 @@ class PUBLICAPI ColliderComponent : public geComponentInstantiable<ColliderCompo
         std::shared_ptr<Internal::Collider> collider_;
         OnColliderEventCallback onColliderEnterCallback_;
         OnColliderEventCallback onSensorEnterCallback_;
+        OnColliderEventCallback onColliderExitCallback_;
+        OnColliderEventCallback onSensorExitCallback_;
         Vec2D size_;
         Vec2D offsetFromRender_;
         Vec2D extends_;
@@ -45,6 +47,8 @@ class PUBLICAPI ColliderComponent : public geComponentInstantiable<ColliderCompo
         //Component collider public API
         void setOnColliderEnter(const OnColliderEventCallback &callback);
         void setOnSensorEnter(const OnColliderEventCallback &callback);
+        void setOnColliderExit(const OnColliderEventCallback &callback);
+        void setOnSensorExit(const OnColliderEventCallback &callback);
 
         void setVelocity(const Vec2D &velocity);
 

@@ -97,6 +97,15 @@ namespace Internal {
     void Collider::doBeginSensor(Collider *other) {
         notify(ColliderEvent::BeginSensor, (void *) other);
     }
+
+    void Collider::doEndCollision(Collider *other) {
+        notify(ColliderEvent::EndCollider, (void *) other);
+    }
+
+    void Collider::doEndSensor(Collider *other) {
+        notify(ColliderEvent::EndSensor, (void *) other);
+    }
+
     void Collider::setComponent(const std::shared_ptr<ColliderComponent> &component) {
         component_ = component;
     }
