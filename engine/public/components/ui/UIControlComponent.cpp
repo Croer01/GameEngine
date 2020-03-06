@@ -33,8 +33,8 @@ void UIControlComponent::Update(float elapsedTime)
         return;
 
     const Vec2D &mousePos = InputManager::GetInstance().getMousePosition();
-    Vec2D min = screenPos();
-    Vec2D max = min + screenSize();
+    Vec2D min = calculateVirtualScreenPos();
+    Vec2D max = min + calculateVirtualScreenSize();
     bool prevHover = hover_;
     hover_ = min.x <= mousePos.x && mousePos.x <= max.x && min.y <= mousePos.y && mousePos.y <= max.y;
 
@@ -126,6 +126,24 @@ void UIControlComponent::visible(const bool &value)
 {
     visible_ = value;
     onVisibleChanged();
+}
+
+Vec2D UIControlComponent::calculateVirtualScreenPos() const
+{
+    geScreen &screen = gameObject()->game().screen();
+    Vec2D position = screenPos();
+    position.x *= static_cast<float>(screen.virtualWidth());
+    position.y *= static_cast<float>(screen.virtualHeight());
+    return position;
+}
+
+Vec2D UIControlComponent::calculateVirtualScreenSize() const
+{
+    geScreen &screen = gameObject()->game().screen();
+    Vec2D size = screenSize();
+    size.x *= static_cast<float>(screen.virtualWidth());
+    size.y *= static_cast<float>(screen.virtualHeight());
+    return size;
 }
 
 }

@@ -79,7 +79,7 @@ void UITextComponent::UpdateTextGraphic()
     if(!font_.empty())
     {
         graphicText_ = Internal::FontManager::GetInstance().getFont(font_, fontSize_)->createText(text_);
-        setTextModelTransform(screenPos(), Vec2D(), Vec2D(1, 1));
+        setTextModelTransform(calculateVirtualScreenPos(), Vec2D(), Vec2D(1, 1));
         graphicText_->setTintColor(foregroundColor_);
         Internal::GraphicsEngine::GetInstance().registerText(graphicText_);
         graphicText_->setActive(visible());

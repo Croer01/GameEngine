@@ -24,6 +24,9 @@ namespace GameEngine {
         virtual void onHoverOut() {};
         virtual void onFocusChanged() {};
         virtual void onVisibleChanged() {};
+
+        Vec2D calculateVirtualScreenPos() const;
+        Vec2D calculateVirtualScreenSize() const;
     public:
         virtual ~UIControlComponent() = default;
         PropertySetBase *getProperties() const override;

@@ -131,7 +131,7 @@ void UITextInputComponent::moveCursor(int movement)
     cursorPixelPos = getGraphicText()->getPixelPosFromTextIndex(cursorPos_ - 1);
     cursorPixelPos.x += getGraphicText()->getPixelSizeFromTextIndex(cursorPos_ - 1).x;
 
-    graphicCursor_->setModelTransform(screenPos() + cursorPixelPos, Vec2D(0.f, 0.f), Vec2D(1,fontSize()));
+    graphicCursor_->setModelTransform(calculateVirtualScreenPos() + cursorPixelPos, Vec2D(0.f, 0.f), Vec2D(1,fontSize()));
 }
 
 void UITextInputComponent::createBottomLineGeometry()
@@ -156,7 +156,7 @@ void UITextInputComponent::createBottomLineGeometry()
 void UITextInputComponent::updateBottomLineGeometry()
 {
     const std::shared_ptr<Internal::Text> &textGraphic = getGraphicText();
-    graphicBottomLine_->setModelTransform(screenPos() + Vec2D(0, textGraphic->height()), Vec2D(0.f, 0.f), Vec2D(textGraphic->width(), 1));
+    graphicBottomLine_->setModelTransform(calculateVirtualScreenPos() + Vec2D(0, textGraphic->height()), Vec2D(0.f, 0.f), Vec2D(textGraphic->width(), 1));
 }
 
 void UITextInputComponent::createCursorGeometry()
@@ -222,7 +222,7 @@ void UITextInputComponent::createBackgroundGraphic()
 
     auto graphicLoaded_ = std::make_shared<Internal::GraphicGeometry>(path);
     backgroundGraphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
-    backgroundGraphic_->setModelTransform(screenPos(), Vec2D(0.f, 0.f), screenSize());
+    backgroundGraphic_->setModelTransform(calculateVirtualScreenPos(), Vec2D(0.f, 0.f), calculateVirtualScreenSize());
     Internal::GraphicsEngine::GetInstance().registerGraphic(backgroundGraphic_);
     backgroundGraphic_->setActive(visible());
 }

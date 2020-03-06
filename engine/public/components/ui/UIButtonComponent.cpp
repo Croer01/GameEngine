@@ -68,12 +68,12 @@ void UIButtonComponent::createBackgroundGraphic()
 
     auto graphicLoaded_ = std::make_shared<Internal::GraphicGeometry>(path);
     backgroundGraphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
-    backgroundGraphic_->setModelTransform(screenPos(), Vec2D(0.f, 0.f), screenSize());
+    backgroundGraphic_->setModelTransform(calculateVirtualScreenPos(), Vec2D(0.f, 0.f), calculateVirtualScreenSize());
     Internal::GraphicsEngine::GetInstance().registerGraphic(backgroundGraphic_);
     backgroundGraphic_->setActive(visible());
 
     // move the text position to center inside the button
-    Vec2D textMargins = screenSize() - getTextSize();
+    Vec2D textMargins = calculateVirtualScreenSize() - getTextSize();
     if(textMargins.x > 0 )
         textMargins.x /=2;
     else
@@ -84,7 +84,7 @@ void UIButtonComponent::createBackgroundGraphic()
     else
         textMargins.y = 0;
 
-    setTextModelTransform(screenPos() + textMargins, Vec2D(), Vec2D(1, 1));
+    setTextModelTransform(calculateVirtualScreenPos() + textMargins, Vec2D(), Vec2D(1, 1));
 }
 
 void UIButtonComponent::background(const geColor &color)
