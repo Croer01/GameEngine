@@ -25,6 +25,8 @@ protected:
     void setTextModelTransform(const Vec2D &position, const Vec2D &rotation, const Vec2D &scale);
     std::shared_ptr<Internal::Text> getGraphicText() const;
 
+    virtual void onVisibleChanged();
+
 public:
     virtual ~UITextComponent();
 
@@ -32,6 +34,7 @@ public:
 
     void init() override;
 
+    // UI Text properties
     int fontSize() const;
     void fontSize(const int &size);
 

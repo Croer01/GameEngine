@@ -150,6 +150,7 @@ void UITextInputComponent::createBottomLineGeometry()
     graphicBottomLine_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
     graphicBottomLine_->setModelTransform(Vec2D(0,0), Vec2D(0.f, 0.f), Vec2D(1,1));
     Internal::GraphicsEngine::GetInstance().registerGraphic(graphicBottomLine_);
+    graphicBottomLine_->setActive(visible());
 }
 
 void UITextInputComponent::updateBottomLineGeometry()
@@ -174,16 +175,22 @@ void UITextInputComponent::createCursorGeometry()
     graphicCursor_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
     graphicCursor_->setModelTransform(Vec2D(0,0), Vec2D(0.f, 0.f), Vec2D(1,fontSize()));
     Internal::GraphicsEngine::GetInstance().registerGraphic(graphicCursor_);
+    graphicCursor_->setActive(visible());
 }
 
 UITextInputComponent::~UITextInputComponent()
 {
     if(graphicCursor_)
         Internal::GraphicsEngine::GetInstance().unregisterGraphic(graphicCursor_);
+    if(graphicBottomLine_)
+        Internal::GraphicsEngine::GetInstance().unregisterGraphic(graphicBottomLine_);
 }
 
 void UITextInputComponent::onFocusChanged()
 {
+    if(!visible())
+        return;
+
     if(isFocused())
     {
         InputTextSubjectRef subject = std::make_shared<InputTextSubject>();
@@ -217,6 +224,7 @@ void UITextInputComponent::createBackgroundGraphic()
     backgroundGraphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
     backgroundGraphic_->setModelTransform(screenPos(), Vec2D(0.f, 0.f), screenSize());
     Internal::GraphicsEngine::GetInstance().registerGraphic(backgroundGraphic_);
+    backgroundGraphic_->setActive(visible());
 }
 
 void UITextInputComponent::background(const geColor &color)
@@ -242,5 +250,16 @@ PropertySetBase *UITextInputComponent::getProperties() const
     ));
 
     return properties;
+}
+
+void UITextInputComponent::onVisibleChanged()
+{
+    UITextComponent::onVisibleChanged();
+    if(graphicBottomLine_)
+        graphicBottomLine_->setActive(visible());
+    if(graphicCursor_)
+        graphicCursor_->setActive(visible());
+    if(backgroundGraphic_)
+        backgroundGraphic_->setActive(visible());
 }
 }

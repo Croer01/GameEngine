@@ -29,6 +29,9 @@ Vec2D UIControlComponent::screenSize() const
 
 void UIControlComponent::Update(float elapsedTime)
 {
+    if(!visible_)
+        return;
+
     const Vec2D &mousePos = InputManager::GetInstance().getMousePosition();
     Vec2D min = screenPos();
     Vec2D max = min + screenSize();
@@ -94,6 +97,13 @@ PropertySetBase *UIControlComponent::getProperties() const
             Vec2D(),
             true
     ));
+    properties->add(new Property<UIControlComponent, bool>(
+            "visible",
+            &UIControlComponent::visible,
+            &UIControlComponent::visible,
+            true,
+            false
+    ));
     return properties;
 }
 
@@ -105,6 +115,17 @@ void UIControlComponent::id(const std::string &value)
 std::string UIControlComponent::id() const
 {
     return id_;
+}
+
+bool UIControlComponent::visible() const
+{
+    return visible_;
+}
+
+void UIControlComponent::visible(const bool &value)
+{
+    visible_ = value;
+    onVisibleChanged();
 }
 
 }

@@ -23,7 +23,8 @@ void UIButtonComponent::init()
 void UIButtonComponent::changeColor(bool isHover)
 {
     createBackgroundGraphic();
-    backgroundGraphic_->setTintColor(isHover ? hoverBackground_ : background_);
+    if(backgroundGraphic_)
+        backgroundGraphic_->setTintColor(isHover ? hoverBackground_ : background_);
 }
 
 void UIButtonComponent::setCommand(const CommandRef &command)
@@ -33,7 +34,8 @@ void UIButtonComponent::setCommand(const CommandRef &command)
 
 UIButtonComponent::~UIButtonComponent()
 {
-    Internal::GraphicsEngine::GetInstance().unregisterGraphic(backgroundGraphic_);
+    if(backgroundGraphic_)
+        Internal::GraphicsEngine::GetInstance().unregisterGraphic(backgroundGraphic_);
 }
 
 geComponentRef UIButtonComponent::instantiate() const
@@ -68,6 +70,7 @@ void UIButtonComponent::createBackgroundGraphic()
     backgroundGraphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
     backgroundGraphic_->setModelTransform(screenPos(), Vec2D(0.f, 0.f), screenSize());
     Internal::GraphicsEngine::GetInstance().registerGraphic(backgroundGraphic_);
+    backgroundGraphic_->setActive(visible());
 
     // move the text position to center inside the button
     Vec2D textMargins = screenSize() - getTextSize();
@@ -143,5 +146,12 @@ PropertySetBase *UIButtonComponent::getProperties() const
 
     return properties;
 
+}
+
+void UIButtonComponent::onVisibleChanged()
+{
+    UITextComponent::onVisibleChanged();
+    if(backgroundGraphic_)
+        backgroundGraphic_->setActive(visible());
 }
 }

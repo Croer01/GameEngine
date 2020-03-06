@@ -25,6 +25,9 @@ protected:
     void onClick() override;
     void onHoverIn() override;
     void onHoverOut() override;
+
+    void onVisibleChanged() override;
+
 public:
     UIButtonComponent();
     virtual ~UIButtonComponent();

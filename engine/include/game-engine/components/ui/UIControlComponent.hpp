@@ -16,12 +16,14 @@ namespace GameEngine {
         Vec2D screenSize_;
         bool hover_;
         bool focused_;
+        bool visible_;
 
     protected:
         virtual void onClick() {};
         virtual void onHoverIn() {};
         virtual void onHoverOut() {};
         virtual void onFocusChanged() {};
+        virtual void onVisibleChanged() {};
     public:
         virtual ~UIControlComponent() = default;
         PropertySetBase *getProperties() const override;
@@ -35,6 +37,9 @@ namespace GameEngine {
 
         void id(const std::string &value);
         std::string id() const;
+
+        bool visible() const;
+        void visible(const bool &value);
 
         bool isFocused() const;
     };

@@ -82,6 +82,7 @@ void UITextComponent::UpdateTextGraphic()
         setTextModelTransform(screenPos(), Vec2D(), Vec2D(1, 1));
         graphicText_->setTintColor(foregroundColor_);
         Internal::GraphicsEngine::GetInstance().registerText(graphicText_);
+        graphicText_->setActive(visible());
     }
 }
 
@@ -145,5 +146,11 @@ PropertySetBase *UITextComponent::getProperties() const
 
     return properties;
 
+}
+
+void UITextComponent::onVisibleChanged()
+{
+    if(graphicText_)
+        graphicText_->setActive(visible());
 }
 }

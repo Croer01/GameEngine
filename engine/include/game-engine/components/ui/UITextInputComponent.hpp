@@ -30,6 +30,9 @@ protected:
     geComponentRef instantiate() const override;
     virtual geComponentRef clone() const;
     void onFocusChanged() override;
+
+    virtual void onVisibleChanged();
+
 public:
     virtual ~UITextInputComponent();
 
