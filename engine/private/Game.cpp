@@ -23,6 +23,7 @@
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
 #include <game-engine/components/GeometryComponent.hpp>
+#include <game-engine/components/ui/UIPanelComponent.hpp>
 
 namespace GameEngine {
 namespace Internal {
@@ -45,6 +46,7 @@ namespace Internal {
         ObjectManager::GetInstance().registerComponentBuilder("UIButtonComponent", new ComponentTBuilder<UIButtonComponent>());
         ObjectManager::GetInstance().registerComponentBuilder("UITextComponent", new ComponentTBuilder<UITextComponent>());
         ObjectManager::GetInstance().registerComponentBuilder("UITextInputComponent", new ComponentTBuilder<UITextInputComponent>());
+        ObjectManager::GetInstance().registerComponentBuilder("UIPanelComponent", new ComponentTBuilder<UIPanelComponent>());
     }
 
     void Game::init(const std::string &configRoot) {

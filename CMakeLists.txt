@@ -49,6 +49,7 @@ set(ENGINE_SOURCES
         engine/public/components/ui/UIButtonComponent.cpp
         engine/public/components/ui/UITextComponent.cpp
         engine/public/components/ui/UITextInputComponent.cpp
+        engine/public/components/ui/UIPanelComponent.cpp
         engine/public/Random.cpp
         engine/public/geAudio.cpp
         engine/public/geIO.cpp
