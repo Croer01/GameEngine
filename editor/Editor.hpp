@@ -45,6 +45,7 @@ class Editor
     void renderSceneInspector();
     void renderPrototypeList();
     void renderObjectInspector();
+    void renderGuiInspector();
     bool renderComponent(const ComponentDataRef &component);
     bool renderFileSelector(const std::string &label, const DataFile &file, DataFile *result);
 

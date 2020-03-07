@@ -62,6 +62,7 @@ void Editor::render()
         renderSceneInspector();
         renderPrototypeList();
         renderObjectInspector();
+        renderGuiInspector();
 
         if(prevDirty != project_->dirty_)
             updateWindowTitle();
@@ -330,6 +331,61 @@ void Editor::renderObjectInspector(){
             projectDirectory_->markEdited(objectSelected_->sourceFile);
         }
     }
+    ImGui::End();
+}
+
+void Editor::renderGuiInspector()
+{
+    if(!objectSelected_)
+        return;
+
+    ImVec2 size = ImGui::GetIO().DisplaySize;
+    float posX = size.x *0.25f;
+    size.x *= 0.5f;
+    size.y -= 20;
+    ImGui::SetNextWindowPos(ImVec2(posX, 20));
+    ImGui::SetNextWindowSize(size);
+    ImGui::Begin("GUI Inspector",0,ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+
+    ImDrawList* draw_list = ImGui::GetWindowDrawList();
+    const ImVec2 &windowSize = ImGui::GetWindowSize();
+    ImColor color(0,0,255,128);
+
+    int i = 0;
+    for (const auto &component : objectSelected_->data->components_)
+    {
+        if(component->name_.find("UI") != -1)
+        {
+            Vector2DData screenPos;
+            Vector2DData screenSize;
+
+            for (const auto &property : component->properties_)
+            {
+                if(property->name_.find("screenPos") != -1)
+                {
+                    auto propertyVec2D = std::dynamic_pointer_cast<PropertyVec2DData>(property);
+                    screenPos = propertyVec2D->value_;
+                }
+                else if(property->name_.find("screenSize") != -1)
+                {
+                    auto propertyVec2D = std::dynamic_pointer_cast<PropertyVec2DData>(property);
+                    screenSize = propertyVec2D->value_;
+                }
+            }
+
+
+            // Cursor means the position which ImGui will draw the next element
+            ImVec2 controlPos = ImGui::GetCursorScreenPos();
+            controlPos.x += screenPos.xy[0] * windowSize.x;
+            controlPos.y += screenPos.xy[1] * windowSize.y;
+            ImVec2 controlSize = controlPos;
+            controlSize.x += (screenSize.xy[0] * windowSize.x);
+            controlSize.y += (screenSize.xy[1] * windowSize.y);
+
+            draw_list->AddRectFilled(controlPos, controlSize, color);
+        }
+    }
+
     ImGui::End();
 }
 
