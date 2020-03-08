@@ -349,11 +349,18 @@ void Editor::renderGuiInspector()
 
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
     const ImVec2 &windowSize = ImGui::GetWindowSize();
-    ImColor color(0,0,255,128);
+    ImColor foreground;
+    ImColor background;
+    std::string text;
+    float fontSize = 0;
 
-    int i = 0;
     for (const auto &component : objectSelected_->data->components_)
     {
+        foreground = ImColor(0, 0, 0);
+        background = ImColor(48, 218, 48);
+        text.clear();
+        fontSize = ImGui::GetFontSize();
+
         if(component->name_.find("UI") != -1)
         {
             Vector2DData screenPos;
@@ -361,15 +368,38 @@ void Editor::renderGuiInspector()
 
             for (const auto &property : component->properties_)
             {
-                if(property->name_.find("screenPos") != -1)
+                if(property->name_ == "screenPos")
                 {
                     auto propertyVec2D = std::dynamic_pointer_cast<PropertyVec2DData>(property);
                     screenPos = propertyVec2D->value_;
                 }
-                else if(property->name_.find("screenSize") != -1)
+                else if(property->name_ == "screenSize")
                 {
                     auto propertyVec2D = std::dynamic_pointer_cast<PropertyVec2DData>(property);
                     screenSize = propertyVec2D->value_;
+                }
+                else if (property->name_ == "background")
+                {
+                    auto propertyColor = std::dynamic_pointer_cast<PropertyColorData>(property);
+                    std::array<float, 3> &colorComponents = propertyColor->value_.rgb;
+                    background = ImColor(colorComponents[0], colorComponents[1], colorComponents[2]);
+                }
+                else if (property->name_ == "foreground")
+                {
+                    auto propertyColor = std::dynamic_pointer_cast<PropertyColorData>(property);
+                    std::array<float, 3> &colorComponents = propertyColor->value_.rgb;
+                    foreground = ImColor(colorComponents[0], colorComponents[1], colorComponents[2]);
+                }
+                else if (property->name_ == "text")
+                {
+                    auto propertyString = std::dynamic_pointer_cast<PropertyStringData>(property);
+                    text = propertyString->value_;
+                }
+                else if (property->name_ == "fontSize")
+                {
+                    auto propertyInt = std::dynamic_pointer_cast<PropertyIntData>(property);
+                    if(propertyInt->value_ != 0)
+                        fontSize = propertyInt->value_;
                 }
             }
 
@@ -382,7 +412,14 @@ void Editor::renderGuiInspector()
             controlSize.x += (screenSize.xy[0] * windowSize.x);
             controlSize.y += (screenSize.xy[1] * windowSize.y);
 
-            draw_list->AddRectFilled(controlPos, controlSize, color);
+
+            if(component->name_.find("Button") != -1 || component->name_.find("Panel") != -1)
+                draw_list->AddRectFilled(controlPos, controlSize, background);
+            else
+                draw_list->AddRect(controlPos, controlSize, background);
+
+            if(!text.empty())
+                draw_list->AddText(ImGui::GetFont(), fontSize, controlPos, foreground, text.c_str());
         }
     }
 
