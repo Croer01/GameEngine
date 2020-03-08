@@ -394,7 +394,7 @@ bool Editor::renderComponent(const ComponentDataRef &component)
     bool edited = false;
     ImGui::PushID(component->name_.c_str());
     bool opened = ImGui::CollapsingHeader(component->name_.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap);
-    ImGui::SameLine(ImGui::GetWindowWidth() - 20);
+    ImGui::SameLine(ImGui::GetWindowContentRegionWidth() - 3);
     if(ImGui::Button("x"))
     {
         component->markToRemove_ = true;
