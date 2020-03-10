@@ -12,8 +12,8 @@ namespace GameEngine {
         updateGraphicRef();
         setVisible(visible_);
         timeAcumulator_ = 0;
-        index_[0] = 0;
-        index_[1] = 0;
+        animationOffsetFrame_ = 0;
+        animationFramesLength_ = getFramesNum();
         graphic_->setModelTransform(gameObject()->position(), gameObject()->rotation(), gameObject()->scale());
         gameObject()->registerObserver(this);
     }
@@ -56,30 +56,50 @@ namespace GameEngine {
 
         timeAcumulator_ += elapsedTime;
         if(timeAcumulator_ >= timePerFrame_){
-            index_[0] ++;
-            if(index_[0] >= columns_){
-                index_[0] = 0;
-                index_[1] ++;
+            animationCurrentFrame_ ++;
+            if(animationCurrentFrame_ >= animationOffsetFrame_ + animationFramesLength_){
+                animationCurrentFrame_ = animationOffsetFrame_;
             }
-            if(index_[1] >= rows_){
-                index_[0] = 0;
-                index_[1] = 0;
-            }
-            graphic_->setCellIndex(index_[0], index_[1]);
+
+            graphic_->setCellIndex(animationCurrentFrame_ % columns_, animationCurrentFrame_ / columns_);
 
             timeAcumulator_ = 0;
         }
     }
 
-    void SpriteAnimatedComponent::resetAnimation() {
-        index_[0] = 0;
-        index_[1] = 0;
+    void SpriteAnimatedComponent::resetAnimation()
+    {
+        animationCurrentFrame_ = animationOffsetFrame_;
         timeAcumulator_ = 0;
-        graphic_->setCellIndex(index_[0], index_[1]);
+        graphic_->setCellIndex(animationCurrentFrame_ % columns_, animationCurrentFrame_ / columns_);
+    }
+    
+    void SpriteAnimatedComponent::play()
+    {
+        if(!playing_)
+        {
+            animationOffsetFrame_ = 0;
+            animationFramesLength_ = getFramesNum();
+            playing_ = true;
+            resetAnimation();
+        }
     }
 
-    void SpriteAnimatedComponent::play() {
-        if(!playing_) {
+    void SpriteAnimatedComponent::playRange(int firstFrame, int length)
+    {
+        if(!playing_)
+        {
+            int framesNum = getFramesNum();
+            if(firstFrame < 0 || firstFrame + length > framesNum)
+            {
+                std::ostringstream stringStream;
+                stringStream << "Range is out of bounds. The frames range [" << firstFrame <<
+                             "-" << (firstFrame + length) << "] is out of bounds [0-" << framesNum << "]";
+                throw std::invalid_argument(stringStream.str());
+            }
+
+            animationOffsetFrame_ = firstFrame;
+            animationFramesLength_ = length;
             playing_ = true;
             resetAnimation();
         }
@@ -89,18 +109,23 @@ namespace GameEngine {
         return playing_;
     }
 
-    void SpriteAnimatedComponent::stop() {
+    void SpriteAnimatedComponent::pause() {
         playing_ = false;
     }
 
-    void SpriteAnimatedComponent::setFrame(int frame) {
+    void SpriteAnimatedComponent::stop() {
+        playing_ = false;
+        animationCurrentFrame_ = animationOffsetFrame_;
+        graphic_->setCellIndex(animationCurrentFrame_ % columns_, animationCurrentFrame_ / columns_);
+    }
+
+void SpriteAnimatedComponent::setFrame(int frame) {
         if(frame >= getFramesNum())
             throw std::invalid_argument("frame is out of bounds. The frame " +
             std::to_string(frame) + " is equal or greater than " + std::to_string(getFramesNum()));
 
-        index_[0] = frame % columns_;
-        index_[1] = frame /columns_;
-        graphic_->setCellIndex(index_[0], index_[1]);
+        animationCurrentFrame_ = frame;
+        graphic_->setCellIndex(frame % columns_, frame /columns_);
     }
 
     int SpriteAnimatedComponent::getFramesNum() const {
@@ -163,6 +188,9 @@ namespace GameEngine {
     }
 
     void SpriteAnimatedComponent::updateGraphicRef() {
+        assert(columns_ > 0);
+        assert(rows_ > 0);
+
         if(graphic_)
             Internal::GraphicsEngine::GetInstance().unregisterGraphic(graphic_);
 

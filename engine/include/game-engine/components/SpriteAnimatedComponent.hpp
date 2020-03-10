@@ -16,14 +16,17 @@ namespace GameEngine {
     class PUBLICAPI SpriteAnimatedComponent : public geComponentInstantiable<SpriteAnimatedComponent>, public Observer<GameObjectEvent> {
         std::shared_ptr<Internal::Graphic> graphicLoaded_;
         std::shared_ptr<Internal::GraphicHolder> graphic_;
-        float timePerFrame_;
-        float timeAcumulator_;
-        int columns_;
-        int rows_;
-        int index_[2];
+        int columns_ = 1;
+        int rows_ = 1;
         bool visible_;
         bool playing_;
         std::string filePath_;
+        // animation variables
+        float timePerFrame_;
+        float timeAcumulator_;
+        int animationOffsetFrame_;
+        int animationFramesLength_;
+        int animationCurrentFrame_;
 
         void resetAnimation();
         void updateGraphicRef();
@@ -51,7 +54,11 @@ namespace GameEngine {
 
         void play();
 
+        void playRange(int firstFrame, int length);
+
         bool isPlaying() const;
+
+        void pause();
 
         void stop();
 
