@@ -14,6 +14,7 @@ namespace Internal {
             active_(true),
             texOffset_(0),
             texScale_(1),
+            cellSize_(-1),
             anchor_(glm::vec2(0.f)),
             tintColor_(glm::vec4(1.f))
             {
@@ -32,6 +33,11 @@ namespace Internal {
     void
     GraphicHolder::setModelTransform(const Vec2D &position, const Vec2D &rotation, const Vec2D &scale) {
         glm::vec3 desiredPosition = glm::vec3(position.x,position.y,0.f);
+        glm::mat4 scaleTransform;
+        if(cellSize_.x == -1 && cellSize_.y == -1)
+            scaleTransform = glm::scale(glm::mat4(1), glm::vec3(graphic_->getWidth(), graphic_->getHeight(), 1.f));
+        else
+            scaleTransform = glm::scale(glm::mat4(1), glm::vec3(cellSize_.x, cellSize_.y, 1.f));
 
         if (GraphicsEngine::GetInstance().isPixelPerfect())
             desiredPosition = glm::round(desiredPosition);
@@ -42,7 +48,7 @@ namespace Internal {
         modelTransform_ = glm::translate(glm::mat4(1), desiredPosition) *
                 anchorTransform *
                 glm::mat4_cast(glm::quat(glm::vec3(rotation.x, rotation.y,0.f))) *
-                glm::scale(glm::mat4(1), glm::vec3(graphic_->getWidth(), graphic_->getHeight(), 1.f)) *
+                scaleTransform *
                 glm::inverse(anchorTransform);
 
         modelTransform_ = glm::scale(modelTransform_, glm::vec3(scale.x, scale.y, 1.f));
@@ -65,8 +71,15 @@ namespace Internal {
         return active_;
     }
 
-    void GraphicHolder::setGrid(int columns, int rows) {
-        cellSize_ = glm::vec2(graphic_->getWidth() / columns, graphic_->getHeight() / rows);
+    void GraphicHolder::setGrid(int columns, int rows)
+    {
+        assert(columns >= 0);
+        assert(rows >= 0);
+        // Always must be at least 1 column and 1 row, aka the full image
+        int effectiveColumns = columns == 0? 1 : columns;
+        int effectiveRows = rows == 0? 1 : rows;
+
+        cellSize_ = glm::vec2(graphic_->getWidth() / effectiveColumns, graphic_->getHeight() / effectiveRows);
         texScale_ = glm::vec2(cellSize_.x / graphic_->getWidth(), cellSize_.y / graphic_->getHeight());
     }
 

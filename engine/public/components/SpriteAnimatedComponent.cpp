@@ -10,7 +10,6 @@
 namespace GameEngine {
     void SpriteAnimatedComponent::init() {
         updateGraphicRef();
-        graphic_->setGrid(columns_, rows_);
         setVisible(visible_);
         timeAcumulator_ = 0;
         index_[0] = 0;
@@ -121,8 +120,7 @@ namespace GameEngine {
 
     void SpriteAnimatedComponent::filepath(const std::string &path) {
         filePath_ = path;
-        if(graphic_)
-            updateGraphicRef();
+        updateGraphicRef();
     }
 
     std::string SpriteAnimatedComponent::filepath() const {
@@ -165,9 +163,10 @@ namespace GameEngine {
     }
 
     void SpriteAnimatedComponent::updateGraphicRef() {
+        if(graphic_)
+            Internal::GraphicsEngine::GetInstance().unregisterGraphic(graphic_);
+
         if(filePath_.empty()){
-            if(graphic_)
-                Internal::GraphicsEngine::GetInstance().unregisterGraphic(graphic_);
             graphicLoaded_.reset();
             graphic_.reset();
         } else {

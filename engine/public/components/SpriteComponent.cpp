@@ -61,9 +61,7 @@ namespace GameEngine {
 
     void SpriteComponent::filepath(const std::string &path) {
         filePath_ = path;
-
-        if(graphic_)
-            updateGraphicRef();
+        updateGraphicRef();
     }
 
     std::string SpriteComponent::filepath() const {
