@@ -31,16 +31,24 @@ ProjectDirectory::ProjectDirectory(const ProjectDataRef &project)
     // List the data files
     // TODO: observe directory to update list if some file is created/deleted
     // probably  Implement in a separate thread
-    if(fs::exists(project->dataPath_) && fs::is_directory(project->dataPath_))
+    recursiveDataFilesRegister(project->dataPath_);
+}
+
+void ProjectDirectory::recursiveDataFilesRegister(const boost::filesystem::path &directoryPath)
+{
+    if(fs::exists(directoryPath) && fs::is_directory(directoryPath))
     {
         fs::directory_iterator end;
-        for (fs::directory_iterator itr(project->dataPath_); itr != end; ++itr)
+        for (fs::directory_iterator itr(directoryPath); itr != end; ++itr)
         {
-            //TODO: recursive directories
             //TODO: list all files types (create Metadata object)
             if (is_regular_file(itr->path()))
             {
                 files_.emplace_back(itr->path());
+            }
+            else
+            {
+                recursiveDataFilesRegister(itr->path());
             }
         }
     }

@@ -16,6 +16,7 @@ class ProjectDirectory
 
     std::vector<DataFile> editedFiles_;
 
+    void recursiveDataFilesRegister(const boost::filesystem::path &directoryPath);
 public:
     explicit ProjectDirectory(const ProjectDataRef &project);
     void markEdited(const DataFile &fileEdited);
