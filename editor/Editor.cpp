@@ -540,7 +540,10 @@ bool Editor::renderComponent(const ComponentDataRef &component)
                 {
                     auto propertyFilePath = std::dynamic_pointer_cast<PropertyFilePathData>(property);
                     DataFile fileSelected;
-                    if(renderFileSelector(propertyFilePath->name_.c_str(), propertyFilePath->value_, &fileSelected))
+                    if(renderFileSelector(propertyFilePath->name_.c_str(),
+                            propertyFilePath->value_.getFilePath().string(),
+                            propertyFilePath->fileTypeSupported_,
+                            &fileSelected))
                     {
                         propertyFilePath->value_ = fileSelected;
                         edited = true;
@@ -782,13 +785,12 @@ void Editor::deleteFile(const boost::filesystem::path &filePath)
     }
 }
 
-bool Editor::renderFileSelector(const std::string &label, const DataFile &file, DataFile *result)
+bool Editor::renderFileSelector(const std::string &label, const std::string &currentFile, DataFileType typeSupported, DataFile *result)
 {
     bool selected = false;
-    const std::string &currentFile = file.getFilePath().string();
     if (ImGui::BeginCombo(label.c_str(), currentFile.c_str()))
     {
-        std::vector<DataFile> files = projectDirectory_->getFiles(file.getType());
+        std::vector<DataFile> files = projectDirectory_->getFiles(typeSupported);
         for(auto item : files)
         {
             const std::string &itemFilepath = item.getFilePath().string();
