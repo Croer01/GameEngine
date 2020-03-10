@@ -210,11 +210,12 @@ PropertySetBase *SpriteAnimatedComponent::getProperties() const
 {
     auto *properties = new PropertySet<SpriteAnimatedComponent>();
 
-    properties->add(new Property<SpriteAnimatedComponent, std::string>(
+    properties->add(new PropertyFilePath<SpriteAnimatedComponent>(
             "filePath",
             &SpriteAnimatedComponent::filepath,
             &SpriteAnimatedComponent::filepath,
             "",
+            FileType::IMAGE,
             true));
 
     properties->add(new Property<SpriteAnimatedComponent, int>(
