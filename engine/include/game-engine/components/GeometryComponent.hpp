@@ -44,7 +44,6 @@ namespace GameEngine {
         std::vector<Vec2D> path () const;
 
         void anchor(const std::string &anchor);
-
         std::string anchor() const;
 
         void color(const geColor &value);

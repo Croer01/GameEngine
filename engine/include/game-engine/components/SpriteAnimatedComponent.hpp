@@ -21,6 +21,7 @@ namespace GameEngine {
         bool visible_;
         bool playing_;
         std::string filePath_;
+        geColor color_;
         // animation variables
         float timePerFrame_;
         float timeAcumulator_;
@@ -69,16 +70,16 @@ namespace GameEngine {
         void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
 
         void filepath(const std::string &path);
-
         std::string filepath() const;
 
         void rows(const int &numRows);
-
         int rows() const;
 
         void columns(const int &numColumns);
-
         int columns() const;
+
+        void color(const geColor &value);
+        geColor color() const;
 
         float framesPerSecond() const;
         void framesPerSecond(const float &frames);

@@ -11,6 +11,7 @@ namespace GameEngine {
     void SpriteAnimatedComponent::init() {
         updateGraphicRef();
         setVisible(visible_);
+        color(color_);
         timeAcumulator_ = 0;
         animationOffsetFrame_ = 0;
         animationFramesLength_ = getFramesNum();
@@ -206,6 +207,18 @@ void SpriteAnimatedComponent::setFrame(int frame) {
         }
     }
 
+void SpriteAnimatedComponent::color(const geColor &value)
+{
+    color_ = value;
+    if(graphic_)
+        graphic_->setTintColor(color_);
+}
+
+geColor SpriteAnimatedComponent::color() const
+{
+    return color_;
+}
+
 PropertySetBase *SpriteAnimatedComponent::getProperties() const
 {
     auto *properties = new PropertySet<SpriteAnimatedComponent>();
@@ -217,6 +230,12 @@ PropertySetBase *SpriteAnimatedComponent::getProperties() const
             "",
             FileType::IMAGE,
             true));
+
+    properties->add(new Property<SpriteAnimatedComponent, geColor>(
+            "tint",
+            &SpriteAnimatedComponent::color,
+            &SpriteAnimatedComponent::color,
+            geColor(1.f)));
 
     properties->add(new Property<SpriteAnimatedComponent, int>(
             "rows",
