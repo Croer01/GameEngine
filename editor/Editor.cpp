@@ -348,7 +348,7 @@ void Editor::renderGuiInspector()
     ImGui::Begin("GUI Inspector",0,ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
 
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
-    const ImVec2 &windowSize = ImGui::GetWindowSize();
+    const ImVec2 &windowSize = ImGui::GetContentRegionAvail();
     ImColor foreground;
     ImColor background;
     std::string text;
@@ -479,7 +479,13 @@ bool Editor::renderComponent(const ComponentDataRef &component)
                 case PropertyDataType::VEC2D:
                 {
                     auto propertyVec2D = std::dynamic_pointer_cast<PropertyVec2DData>(property);
-                    if(ImGui::DragFloat2(property->name_.c_str(), propertyVec2D->value_.xy.data()))
+
+                    if(property->name_ == "screenPos" || property->name_ == "screenSize")
+                        ImGui::DragFloat2(property->name_.c_str(), propertyVec2D->value_.xy.data(),0.001f, .0f, 1.f);
+                    else
+                        ImGui::DragFloat2(property->name_.c_str(), propertyVec2D->value_.xy.data());
+
+                    if(ImGui::IsItemEdited())
                         edited = true;
                 }
                     break;
