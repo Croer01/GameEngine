@@ -119,7 +119,10 @@ enable_testing()
 add_subdirectory(test)
 
 ### Editor
-add_subdirectory(tools)
+# check if tools is already added
+if (NOT COMMAND configure_game_directories)
+    add_subdirectory(tools)
+endif ()
 
 # Dependencies for the Editor's UI
 find_package(imgui CONFIG REQUIRED)
@@ -130,7 +133,13 @@ find_library(TINYFILEDIALOGS_LIBRARY tinyfiledialogs)
 include_directories(${TINYFILEDIALOGS_INCLUDE})
 include_directories(${Boost_INCLUDE_DIRS})
 
+# This is a workaround to avoid issues related with the generated file
+set_source_files_properties(
+        ${GAME_EDITOR_GAME_SOURCES}
+        PROPERTIES GENERATED TRUE
+)
 add_executable(GameEngineEditor
+        ${GAME_EDITOR_GAME_SOURCES}
         editor/imgui_backend/imgui_impl_opengl3.cpp
         editor/imgui_backend/imgui_impl_sdl.cpp
         editor/imgui_backend/imgui_stdlib.cpp
