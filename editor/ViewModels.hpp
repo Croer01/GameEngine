@@ -508,7 +508,7 @@ struct convert<ProjectData> {
         rhs.folderName_ = node["name"].as<std::string>();
         const Node &lastSceneNode = node["lastSceneEdited"];
         if(lastSceneNode)
-            rhs.currentScenePath_ = lastSceneNode.as<std::string>();
+            rhs.currentScenePath_ = lastSceneNode.as<std::string>("");
         return true;
     }
 };
