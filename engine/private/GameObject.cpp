@@ -25,7 +25,7 @@ namespace Internal {
             activeValueToSetInSafeMode_(true),
             hasActiveValueToSetInSafeMode_(false),
             position_(0.f, 0.f),
-            rotation_(0.f, 0.f),
+            rotation_(0.f),
             scale_(1.f,1.f),
             destroyed_(false),
             initializating_(false){
@@ -163,14 +163,14 @@ namespace Internal {
         }
     }
 
-    Vec2D GameObject::rotation() const {
-        Vec2D rotation = rotation_;
+    float GameObject::rotation() const {
+        float rotation = rotation_;
         if(auto parent = parent_.lock())
             rotation += parent->rotation_;
         return rotation;
     }
 
-    void GameObject::rotation(const Vec2D &rotation) {
+    void GameObject::rotation(float rotation) {
         if(rotation_ != rotation) {
             rotation_ = rotation;
             notify(GameObjectEvent::RotationChanged);
@@ -228,7 +228,7 @@ namespace Internal {
             this->position(node["position"].as<Vec2D>());
 
         if(node["rotation"])
-            this->rotation(node["rotation"].as<Vec2D>());
+            this->rotation(node["rotation"].as<float>());
 
         if(node["scale"])
             this->scale(node["scale"].as<Vec2D>());
@@ -273,7 +273,9 @@ namespace Internal {
 
     void GameObject::computeTransform() {
         //remember the order of matrix multiplication is from right to left
-        transform_ = glm::translate(glm::mat4(1),glm::vec3(position_.x,position_.y,0.f)) * glm::mat4_cast(glm::quat(glm::vec3(rotation_.x, rotation_.y,0.f))) * glm::scale(glm::mat4(1),glm::vec3(scale_.x, scale_.y, 1.f));
+        transform_ = glm::translate(glm::mat4(1),glm::vec3(position_.x,position_.y,0.f)) *
+            glm::mat4_cast(glm::quat(glm::vec3(0,0,rotation_))) *
+            glm::scale(glm::mat4(1),glm::vec3(scale_.x, scale_.y, 1.f));
     }
 
     geGame &GameObject::game() const {

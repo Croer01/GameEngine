@@ -29,7 +29,7 @@ namespace Internal {
         std::string name_;
         std::vector<std::shared_ptr<GameObject>> children_;
         Vec2D position_;
-        Vec2D rotation_;
+        float rotation_;
         Vec2D scale_;
         std::weak_ptr<GameObject> parent_;
         glm::mat4 transform_;
@@ -65,9 +65,9 @@ namespace Internal {
 
         void position(const Vec2D &position) override;
 
-        Vec2D rotation() const override;
+        float rotation() const override;
 
-        void rotation(const Vec2D &rotation) override;
+        void rotation(float rotation) override;
 
         Vec2D scale() const override;
 

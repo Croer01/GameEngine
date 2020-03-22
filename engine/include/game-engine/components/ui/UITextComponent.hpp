@@ -22,7 +22,7 @@ class PUBLICAPI UITextComponent : public UIControlComponent
 protected:
     geComponentRef instantiate() const override;
     virtual geComponentRef clone() const;
-    void setTextModelTransform(const Vec2D &position, const Vec2D &rotation, const Vec2D &scale);
+    void setTextModelTransform(const Vec2D &position, float rotation, const Vec2D &scale);
     std::shared_ptr<Internal::Text> getGraphicText() const;
 
     virtual void onVisibleChanged();

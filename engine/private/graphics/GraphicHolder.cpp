@@ -31,7 +31,7 @@ namespace Internal {
     }
 
     void
-    GraphicHolder::setModelTransform(const Vec2D &position, const Vec2D &rotation, const Vec2D &scale) {
+    GraphicHolder::setModelTransform(const Vec2D &position, float rotation, const Vec2D &scale) {
         glm::vec3 desiredPosition = glm::vec3(position.x,position.y,0.f);
         glm::mat4 scaleTransform;
         if(cellSize_.x == -1 && cellSize_.y == -1)
@@ -47,7 +47,7 @@ namespace Internal {
         //remember the order of matrix multiplication is from right to left
         modelTransform_ = glm::translate(glm::mat4(1), desiredPosition) *
                 anchorTransform *
-                glm::mat4_cast(glm::quat(glm::vec3(rotation.x, rotation.y,0.f))) *
+                glm::mat4_cast(glm::quat(glm::vec3(0,0,rotation))) *
                 scaleTransform *
                 glm::inverse(anchorTransform);
 

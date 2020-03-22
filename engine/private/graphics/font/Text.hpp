@@ -61,7 +61,7 @@ namespace Internal {
 
         void setText(const std::string &text);
 
-        void setModelTransform(const Vec2D &position, const Vec2D &rotation, const Vec2D &scale);
+        void setModelTransform(const Vec2D &position, float rotation, const Vec2D &scale);
 
         void setActive(bool active);
 

@@ -29,7 +29,7 @@ void UIPanelComponent::createBackgroundGraphic()
 
     auto graphicLoaded_ = std::make_shared<Internal::GraphicGeometry>(path);
     backgroundGraphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
-    backgroundGraphic_->setModelTransform(calculateVirtualScreenPos(), Vec2D(0.f, 0.f), calculateVirtualScreenSize());
+    backgroundGraphic_->setModelTransform(calculateVirtualScreenPos(), 0.f, calculateVirtualScreenSize());
     Internal::GraphicsEngine::GetInstance().registerGraphic(backgroundGraphic_);
     backgroundGraphic_->setActive(visible());
 }

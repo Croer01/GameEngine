@@ -38,7 +38,7 @@ void UIImageComponent::updateGraphicRef() {
         anchor(anchor_);
         Vec2D calculatedUIScale = calculateVirtualScreenSize();
         Vec2D scale(calculatedUIScale.x / graphicLoaded_->getWidth(), calculatedUIScale.y / graphicLoaded_->getHeight());
-        graphic_->setModelTransform(calculateVirtualScreenPos(), Vec2D(), scale);
+        graphic_->setModelTransform(calculateVirtualScreenPos(), 0.f, scale);
         graphic_->setActive(visible());
     }
 }

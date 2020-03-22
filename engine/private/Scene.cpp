@@ -62,7 +62,7 @@ namespace Internal {
                 if (prototype["position"])
                     gameObject->position(prototype["position"].as<Vec2D>());
                 if (prototype["rotation"])
-                    gameObject->rotation(prototype["rotation"].as<Vec2D>());
+                    gameObject->rotation(prototype["rotation"].as<float>());
                 if (prototype["scale"])
                     gameObject->scale(prototype["scale"].as<Vec2D>());
 

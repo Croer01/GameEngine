@@ -79,14 +79,14 @@ void UITextComponent::UpdateTextGraphic()
     if(!font_.empty())
     {
         graphicText_ = Internal::FontManager::GetInstance().getFont(font_, fontSize_)->createText(text_);
-        setTextModelTransform(calculateVirtualScreenPos(), Vec2D(), Vec2D(1, 1));
+        setTextModelTransform(calculateVirtualScreenPos(), 0.f, Vec2D(1, 1));
         graphicText_->setTintColor(foregroundColor_);
         Internal::GraphicsEngine::GetInstance().registerText(graphicText_);
         graphicText_->setActive(visible());
     }
 }
 
-void UITextComponent::setTextModelTransform(const Vec2D &position, const Vec2D &rotation, const Vec2D &scale)
+void UITextComponent::setTextModelTransform(const Vec2D &position, float rotation, const Vec2D &scale)
 {
     graphicText_->setModelTransform(position, rotation, scale);
 }

@@ -75,15 +75,16 @@ namespace Internal {
         }
     }
 
-void Text::setModelTransform(const Vec2D &position, const Vec2D &rotation, const Vec2D &scale) {
+void Text::setModelTransform(const Vec2D &position, float rotation, const Vec2D &scale) {
         glm::vec3 desiredPosition = glm::vec3(position.x,position.y,0.f);
 
         if (GraphicsEngine::GetInstance().isPixelPerfect())
             desiredPosition = glm::round(desiredPosition);
 
         //remember the order of matrix multiplication is from right to left
-        modelTransform_ = glm::translate(glm::mat4(1), desiredPosition) * glm::mat4_cast(glm::quat(glm::vec3(rotation.x, rotation.y,0.f))) *
-                          glm::scale(glm::mat4(1), glm::vec3(scale.x, scale.y, 1.f));
+        modelTransform_ = glm::translate(glm::mat4(1), desiredPosition) *
+            glm::mat4_cast(glm::quat(glm::vec3(0.f, 0.f, rotation))) *
+            glm::scale(glm::mat4(1), glm::vec3(scale.x, scale.y, 1.f));
     }
 
     void Text::setActive(bool active) {

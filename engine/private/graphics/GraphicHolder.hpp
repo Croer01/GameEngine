@@ -42,7 +42,7 @@ namespace Internal {
 
         void draw(const std::shared_ptr<Shader> &shader);
 
-        void setModelTransform(const Vec2D &position, const Vec2D &rotation, const Vec2D &scale);
+        void setModelTransform(const Vec2D &position, float rotation, const Vec2D &scale);
 
         void setGraphic(const std::shared_ptr<Graphic> &graphic);
 
