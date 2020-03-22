@@ -101,7 +101,7 @@ bool Editor::renderSceneObjectNode(const PrototypeReferenceRef &object, const st
                 edited = true;
             if(ImGui::DragFloat2("size", object->scale_.xy.data(), .1f, 1.f, std::numeric_limits<float>::max()))
                 edited = true;
-            if(ImGui::DragFloat2("rotation", object->rotation_.xy.data(),.1f))
+            if(ImGui::DragFloat("rotation", &object->rotation_,.1f))
                 edited = true;
         }
 
@@ -301,7 +301,7 @@ void Editor::renderObjectInspector(){
                 edited = true;
             if(ImGui::DragFloat2("size", objectDataSelected->scale_.xy.data(), .1f, 1.f, std::numeric_limits<float>::max()))
                 edited = true;
-            if(ImGui::DragFloat2("rotation", objectDataSelected->rotation_.xy.data(),.1f))
+            if(ImGui::DragFloat("rotation", &objectDataSelected->rotation_,.1f))
                 edited = true;
         }
 

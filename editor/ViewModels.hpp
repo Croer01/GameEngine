@@ -184,7 +184,7 @@ public:
     ObjectData();
     Vector2DData position_;
     Vector2DData scale_;
-    Vector2DData rotation_;
+    float rotation_;
     std::string name_;
     std::vector<ObjectDataRef> children_;
     std::vector<ComponentDataRef> components_;
@@ -200,7 +200,7 @@ public:
     std::string prototype_;
     Vector2DData position_;
     Vector2DData scale_;
-    Vector2DData rotation_;
+    float rotation_;
 };
 
 class SceneData
@@ -445,7 +445,7 @@ struct convert<ObjectData> {
     static bool decode(const Node &node, ObjectData &rhs) {
         rhs.name_ = node["name"].as<std::string>("");
         rhs.position_ = node["position"].as<Vector2DData>(Vector2DData());
-        rhs.rotation_ = node["rotation"].as<Vector2DData>(Vector2DData());
+        rhs.rotation_ = node["rotation"].as<float>(0);
         Vector2DData scale;
         scale.xy[0] = 1;
         scale.xy[1] = 1;
@@ -485,7 +485,7 @@ struct convert<PrototypeReference> {
         rhs.prototype_ = node["prototype"].as<std::string>();
         rhs.name_ = node["name"].as<std::string>("");
         rhs.position_ = node["position"].as<Vector2DData>(Vector2DData());
-        rhs.rotation_ = node["rotation"].as<Vector2DData>(Vector2DData());
+        rhs.rotation_ = node["rotation"].as<float>(0.f);
         Vector2DData scale;
         scale.xy[0] = 1;
         scale.xy[1] = 1;
