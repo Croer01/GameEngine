@@ -37,6 +37,8 @@ namespace {
 
         if(auto spriteAnimated = gameObject()->getComponent<SpriteAnimatedComponent>().lock()){
             size_ = GameEngine::Vec2D(spriteAnimated->getWidth(), spriteAnimated->getHeight());
+            glm::vec2 offset = Internal::parseGraphicPositionToVec2D(Internal::parseStringToGraphicAnchor(spriteAnimated->anchor()));
+            offsetFromRender_ = Vec2D(offset.x, offset.y) * size_;
         }
 
         if(auto geometry = gameObject()->getComponent<GeometryComponent>().lock()){

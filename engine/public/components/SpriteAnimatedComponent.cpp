@@ -11,6 +11,7 @@ namespace GameEngine {
     void SpriteAnimatedComponent::init() {
         updateGraphicRef();
         setVisible(visible_);
+        anchor(anchor_);
         color(color_);
         timeAcumulator_ = 0;
         animationOffsetFrame_ = 0;
@@ -188,7 +189,18 @@ void SpriteAnimatedComponent::setFrame(int frame) {
         playing_ = play;
     }
 
-    void SpriteAnimatedComponent::updateGraphicRef() {
+    std::string SpriteAnimatedComponent::anchor() const {
+        return anchor_;
+    }
+
+    void SpriteAnimatedComponent::anchor(const std::string &anchor) {
+        if(graphic_)
+            graphic_->setAnchor(Internal::parseStringToGraphicAnchor(anchor));
+
+        anchor_ = anchor;
+    }
+
+void SpriteAnimatedComponent::updateGraphicRef() {
         assert(columns_ > 0);
         assert(rows_ > 0);
 
@@ -267,6 +279,23 @@ PropertySetBase *SpriteAnimatedComponent::getProperties() const
             &SpriteAnimatedComponent::playOnInit,
             &SpriteAnimatedComponent::playOnInit,
             true));
+
+    properties->add(new PropertyEnum<SpriteAnimatedComponent>(
+        "anchor",
+        &SpriteAnimatedComponent::anchor,
+        &SpriteAnimatedComponent::anchor,
+        "TOP_LEFT",
+        {
+            "TOP_LEFT",
+            "TOP_CENTER",
+            "TOP_RIGHT",
+            "MIDDLE_LEFT",
+            "MIDDLE_CENTER",
+            "MIDDLE_RIGHT",
+            "BOTTOM_LEFT",
+            "BOTTOM_CENTER",
+            "BOTTOM_RIGHT"
+        }));
 
     return properties;
 

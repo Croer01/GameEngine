@@ -22,6 +22,7 @@ namespace GameEngine {
         bool playing_;
         std::string filePath_;
         geColor color_;
+        std::string anchor_;
         // animation variables
         float timePerFrame_;
         float timeAcumulator_;
@@ -86,6 +87,9 @@ namespace GameEngine {
 
         bool playOnInit() const;
         void playOnInit(const bool &play);
+
+        void anchor(const std::string &anchor);
+        std::string anchor() const;
     };
 }
 
