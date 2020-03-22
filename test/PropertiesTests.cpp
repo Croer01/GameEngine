@@ -7,7 +7,7 @@
 #include <chrono>
 #include <game-engine/geIO.hpp>
 
-class TestData : public GameEngine::PropertiesHolder<TestData>{
+class TestData : public GameEngine::PropertiesHolder{
     int privateIntValue_;
 public:
     GameEngine::PropertySetBase *getProperties() const override
@@ -58,7 +58,7 @@ TEST(Properties, getValueFromPropertyGetterAndEdited)
 
 TEST(Properties, copyPropertyTree)
 {
-    std::shared_ptr<TestDataChild> instance(new TestDataChild());
+    const std::shared_ptr<const TestDataChild> &instance = std::make_shared<TestDataChild>();
 
     // create the original data structure
     auto instancePropSet = dynamic_cast<GameEngine::PropertySet<TestData>*>(instance->getProperties());
@@ -71,7 +71,7 @@ TEST(Properties, copyPropertyTree)
     std::shared_ptr<TestDataChild> instanceCopy(new TestDataChild());
 
     // Do the copy and check all works fine
-    instancePropSet->copy(instance, instanceCopy);
+    instancePropSet->copyByType(instance, instanceCopy);
 
     EXPECT_EQ(instanceCopy->getPrivate(), instanceProp.get(instanceCopy.get()));
 }

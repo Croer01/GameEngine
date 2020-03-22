@@ -4,7 +4,9 @@
 #include <game-engine/geGameObject.hpp>
 #include <game-engine/components/SpriteComponent.hpp>
 
-class InitializeCheckComponent : public GameEngine::geComponentInstantiable<InitializeCheckComponent>
+using namespace GameEngine;
+
+class InitializeCheckComponent : public geComponentInstantiable<InitializeCheckComponent>
 {
     bool initialized_;
 
@@ -22,13 +24,13 @@ public:
         return initialized_;
     }
 
-    GameEngine::PropertySetBase *getProperties() const override
+    PropertySetBase *getProperties() const override
     {
         return nullptr;
     }
 };
 
-class AddOnInitializeComponent : public GameEngine::geComponentInstantiable<AddOnInitializeComponent>
+class AddOnInitializeComponent : public geComponentInstantiable<AddOnInitializeComponent>
 {
     void init() override
     {
@@ -37,7 +39,7 @@ class AddOnInitializeComponent : public GameEngine::geComponentInstantiable<AddO
     }
 
 public:
-    GameEngine::PropertySetBase *getProperties() const override
+    PropertySetBase *getProperties() const override
     {
         return nullptr;
     }
@@ -45,9 +47,9 @@ public:
 
 TEST(GameObject, createObject)
 {
-    GameEngine::geGame game;
+    geGame game;
 
-    GameEngine::geGameObjectRef go = game.createObject("test1");
+    geGameObjectRef go = game.createObject("test1");
 
     ASSERT_EQ(go->name(), "test1");
 }
@@ -56,8 +58,8 @@ TEST(GameObject, changeName)
 {
     const std::string &oldName = "old name";
     const std::string &newName = "new name";
-    GameEngine::geGame game;
-    GameEngine::geGameObjectRef go = game.createObject(oldName);
+    geGame game;
+    geGameObjectRef go = game.createObject(oldName);
 
     ASSERT_EQ(go->name(), oldName);
     go->name(newName);
@@ -67,11 +69,11 @@ TEST(GameObject, changeName)
 
 TEST(GameObject, positionChangedByParent)
 {
-    GameEngine::geGame game;
-    GameEngine::geGameObjectRef parent = game.createObject("parent");
-    GameEngine::geGameObjectRef child = game.createObject("child");
-    const GameEngine::Vec2D &parentPos = GameEngine::Vec2D(5,5);
-    const GameEngine::Vec2D &childPos = GameEngine::Vec2D(2,2);
+    geGame game;
+    geGameObjectRef parent = game.createObject("parent");
+    geGameObjectRef child = game.createObject("child");
+    const Vec2D &parentPos = Vec2D(5,5);
+    const Vec2D &childPos = Vec2D(2,2);
     parent->position(parentPos);
     child->position(childPos);
 
@@ -90,11 +92,11 @@ TEST(GameObject, positionChangedByParent)
 
 TEST(GameObject, rotationChangedByParent)
 {
-    GameEngine::geGame game;
-    GameEngine::geGameObjectRef parent = game.createObject("parent");
-    GameEngine::geGameObjectRef child = game.createObject("child");
-    const GameEngine::Vec2D &parentRot = GameEngine::Vec2D(5,5);
-    const GameEngine::Vec2D &childRot = GameEngine::Vec2D(2,2);
+    geGame game;
+    geGameObjectRef parent = game.createObject("parent");
+    geGameObjectRef child = game.createObject("child");
+    float parentRot = 5;
+    float childRot = 2;
     parent->rotation(parentRot);
     child->rotation(childRot);
 
@@ -113,11 +115,11 @@ TEST(GameObject, rotationChangedByParent)
 
 TEST(GameObject, scaleChangedByParent)
 {
-    GameEngine::geGame game;
-    GameEngine::geGameObjectRef parent = game.createObject("parent");
-    GameEngine::geGameObjectRef child = game.createObject("child");
-    const GameEngine::Vec2D &parentScale = GameEngine::Vec2D(5,5);
-    const GameEngine::Vec2D &childScale = GameEngine::Vec2D(2,2);
+    geGame game;
+    geGameObjectRef parent = game.createObject("parent");
+    geGameObjectRef child = game.createObject("child");
+    const Vec2D &parentScale = Vec2D(5,5);
+    const Vec2D &childScale = Vec2D(2,2);
     parent->scale(parentScale);
     child->scale(childScale);
 
@@ -137,27 +139,27 @@ TEST(GameObject, loadGameObject)
 {
     const std::string &prototype = "ObjectLoaded";
 
-    GameEngine::geGame game;
+    geGame game;
 
-    GameEngine::geEnvironment environment;
+    geEnvironment environment;
     environment.addPrototype(prototype, "data/goLoadTest.yaml");
 
     game.configEnvironment(environment);
 
-    GameEngine::geGameObjectRef gameObject = game.createFromPrototype(prototype);
+    geGameObjectRef gameObject = game.createFromPrototype(prototype);
     ASSERT_EQ(gameObject->name(), "loadedFromFile");
 }
 
 
 TEST(GameObject, addChildDuringInitialization)
 {
-    GameEngine::geGame game;
-    GameEngine::geGameObjectRef go = game.createObject("test");
+    geGame game;
+    geGameObjectRef go = game.createObject("test");
     auto component = std::make_shared<AddOnInitializeComponent>();
     go->addComponent(component);
 
     // force initialize object
-    std::dynamic_pointer_cast<GameEngine::Internal::GameObject>(go)->Init();
+    std::dynamic_pointer_cast<Internal::GameObject>(go)->Init();
 
     // We ensure a component added by other during the init process of a GameObject is correctly initialized too.
     auto initializedComponent = go->getComponent<InitializeCheckComponent>();
@@ -169,15 +171,16 @@ TEST(SpriteComponent, load)
 {
     const std::string &prototype = "ObjectWithSpriteLoaded";
 
-    GameEngine::geGame game;
+    geGame game;
+    game.init();
 
-    GameEngine::geEnvironment environment;
+    geEnvironment environment;
 
     game.configEnvironment(environment);
     environment.addPrototype(prototype, "data/spriteComponentLoadTest.yaml");
 
-    GameEngine::geGameObjectRef gameObject = game.createFromPrototype(prototype);
-    const std::weak_ptr<GameEngine::SpriteComponent> &component = gameObject->getComponent<GameEngine::SpriteComponent>();
+    geGameObjectRef gameObject = game.createFromPrototype(prototype);
+    const std::weak_ptr<SpriteComponent> &component = gameObject->getComponent<SpriteComponent>();
     ASSERT_EQ(gameObject->name(), "loadedFromFile");
     ASSERT_TRUE(component.lock());
     ASSERT_EQ(component.lock()->filepath(),"data/1x1white.png");

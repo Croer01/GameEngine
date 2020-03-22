@@ -22,6 +22,8 @@ namespace GameEngine {
             glGenTextures(1, &textureID_);
             glBindTexture(GL_TEXTURE_2D, textureID_);
 
+            CheckGlError();
+
             GLenum Mode = GL_RGB;
             if (surface->format->BytesPerPixel == 4) {
                 Mode = GL_RGBA;

@@ -1,7 +1,6 @@
 #include "gtest/gtest.h"
 #include "../private/Screen.hpp"
 #include <game-engine/geGame.hpp>
-#include <game-engine/geGameObject.hpp>
 #include <thread>
 #include <chrono>
 #include <game-engine/components/AudioComponent.hpp>
@@ -26,6 +25,7 @@ TEST(Game, renderSprite)
     const std::string &prototype = "ObjectTest";
 
     GameEngine::geGame game;
+    game.init();
 
     GameEngine::geEnvironment environment;
 
@@ -50,6 +50,7 @@ TEST(Game, playSound)
     const std::string &prototype = "ObjectTest";
 
     GameEngine::geGame game;
+    game.init();
 
     GameEngine::geEnvironment environment;
 

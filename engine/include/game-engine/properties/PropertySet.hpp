@@ -90,15 +90,15 @@ namespace GameEngine {
         {
             const std::shared_ptr<const Class> &ptr = std::static_pointer_cast<const Class>(original);
             const std::shared_ptr<Class> &sharedPtr = std::static_pointer_cast<Class>(target);
-            copy(ptr, sharedPtr);
+            copyByType(ptr, sharedPtr);
         };
         virtual void copy(const geData &data, const std::shared_ptr<void> &target) const {
 
             const std::shared_ptr<Class> &sharedPtr = std::static_pointer_cast<Class>(target);
-            copy(data, sharedPtr);
+            copyByType(data, sharedPtr);
         };
 
-        void copy(const std::shared_ptr<const Class> &original, const std::shared_ptr<Class> &target) const {
+        void copyByType(const std::shared_ptr<const Class> &original, const std::shared_ptr<Class> &target) const {
             if(parent_)
                 parent_->copy(original, target);
 
@@ -108,7 +108,7 @@ namespace GameEngine {
             }
         };
 
-        void copy(const geData &data, const std::shared_ptr<Class> &target) const
+        void copyByType(const geData &data, const std::shared_ptr<Class> &target) const
         {
             if(parent_)
                 parent_->copy(data, target);
