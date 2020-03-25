@@ -779,6 +779,16 @@ void Editor::renderMainMenu()
 
             ImGui::EndMenu();
         }
+
+        static bool openDemoWindow = false;
+        if(ImGui::MenuItem("Imgui Demo"))
+        {
+            openDemoWindow = true;
+        }
+
+        if(openDemoWindow)
+            ImGui::ShowDemoWindow(&openDemoWindow);
+
         ImGui::EndMainMenuBar();
     }
 }
