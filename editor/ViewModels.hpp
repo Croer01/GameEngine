@@ -211,6 +211,15 @@ public:
     std::string filePath_;
 };
 
+class PhysicsCategory;
+typedef std::shared_ptr<PhysicsCategory> PhysicsCategoryRef;
+class PhysicsCategory
+{
+public:
+    std::string name_;
+    std::vector<std::string> mask_;
+};
+
 class ProjectData;
 typedef std::shared_ptr<ProjectData> ProjectDataRef;
 class ProjectData
@@ -221,9 +230,9 @@ public:
     std::string currentScenePath_;
     // empty string means that the path doesn't exist
     boost::filesystem::path dataPath_;
+    std::vector<PhysicsCategory> physicsCategories_;
     bool dirty_ = false;
 };
-
 
 namespace YAML {
 template<>

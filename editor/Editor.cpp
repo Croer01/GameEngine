@@ -62,7 +62,7 @@ void Editor::render()
         renderSceneInspector();
         renderPrototypeList();
         renderObjectInspector();
-        renderGuiInspector();
+        renderCentralRegion();
 
         if(prevDirty != project_->dirty_)
             updateWindowTitle();
@@ -334,18 +334,37 @@ void Editor::renderObjectInspector(){
     ImGui::End();
 }
 
-void Editor::renderGuiInspector()
+void Editor::renderCentralRegion()
 {
-    if(!objectSelected_)
-        return;
-
     ImVec2 size = ImGui::GetIO().DisplaySize;
     float posX = size.x *0.25f;
     size.x *= 0.5f;
     size.y -= 20;
     ImGui::SetNextWindowPos(ImVec2(posX, 20));
     ImGui::SetNextWindowSize(size);
-    ImGui::Begin("GUI Inspector",0,ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+    ImGui::Begin("Central",0,ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
+
+    if (ImGui::BeginTabBar("##tabs", ImGuiTabBarFlags_None)){
+        if (ImGui::BeginTabItem("Physics"))
+        {
+            renderPhysicsInspector();
+            ImGui::EndTabItem();
+        }
+        if (objectSelected_ && ImGui::BeginTabItem("GUI editor"))
+        {
+            renderGuiInspector();
+            ImGui::EndTabItem();
+        }
+        ImGui::EndTabBar();
+    }
+
+    ImGui::End();
+}
+
+void Editor::renderGuiInspector()
+{
+    if(!objectSelected_)
+        return;
 
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
     const ImVec2 &windowSize = ImGui::GetContentRegionAvail();
@@ -422,8 +441,75 @@ void Editor::renderGuiInspector()
                 draw_list->AddText(ImGui::GetFont(), fontSize, controlPos, foreground, text.c_str());
         }
     }
+}
 
-    ImGui::End();
+void Editor::renderPhysicsInspector()
+{
+    if(!project_)
+        return;
+
+    ImGui::PushID("Physics");
+
+    std::vector<PhysicsCategory> &categories = project_->physicsCategories_;
+
+    // number of categories +2 for the current category name and "all" option
+    ImGui::Columns(categories.size()+2);
+
+    // shift one column
+    ImGui::NextColumn();
+    setPosToColumnCenter(ImGui::CalcTextSize("all").x);
+    ImGui::Text("all");
+    ImGui::NextColumn();
+    for(const auto &category : categories)
+    {
+        setPosToColumnCenter(ImGui::CalcTextSize(category.name_.c_str()).x);
+        ImGui::Text("%s", category.name_.c_str());
+        ImGui::NextColumn();
+    }
+
+    for(auto &category : categories)
+    {
+        ImGui::PushID(category.name_.c_str());
+        ImGui::Text("%s", category.name_.c_str());
+        ImGui::NextColumn();
+
+        // "all" option column
+
+        //empty mask means check collisions with all
+        bool allChecked = category.mask_.empty();
+        setPosToColumnCenter(20);
+        if(ImGui::Checkbox("", &allChecked))
+        {
+            if(allChecked){
+                category.mask_.clear();
+            }
+        }
+        ImGui::NextColumn();
+
+
+        // category options columns
+        for(const auto &other : categories)
+        {
+            ImGui::PushID(other.name_.c_str());
+            auto it = std::find(category.mask_.begin(), category.mask_.end(), other.name_);
+            bool checked = it != category.mask_.end();
+            setPosToColumnCenter(20);
+            if(ImGui::Checkbox("", &checked))
+            {
+                if(checked)
+                    category.mask_.push_back(other.name_);
+                else
+                    category.mask_.erase(it);
+            }
+            ImGui::NextColumn();
+            ImGui::PopID();
+        }
+        ImGui::PopID();
+    }
+
+    // reset columns
+    ImGui::Columns();
+    ImGui::PopID();
 }
 
 bool Editor::renderComponent(const ComponentDataRef &component)
@@ -710,6 +796,25 @@ void Editor::loadProject()
         sharedProject->folderPath_ = fileFolder.string();
         // register data folder (if exists)
         sharedProject->dataPath_ = fs::path(fileFolder).append("data");
+
+        //TODO: load physics conf
+        std::vector<std::string> categoryNames = {
+            "player",
+            "enemy",
+            "playerBullet",
+            "enemyBullet",
+            "shelter"
+        };
+
+        std::vector<PhysicsCategory> categories;
+        for(const auto &category : categoryNames)
+        {
+            PhysicsCategory tmpCategory;
+            tmpCategory.name_ = category;
+            tmpCategory.mask_ = categoryNames;
+            categories.push_back(tmpCategory);
+        }
+        sharedProject->physicsCategories_.swap(categories);
         setProject(sharedProject);
     }
 }
@@ -812,4 +917,13 @@ bool Editor::renderFileSelector(const std::string &label, const std::string &cur
         ImGui::EndCombo();
     }
     return selected;
+}
+
+void Editor::setPosToColumnCenter(float width)
+{
+    // based on https://stackoverflow.com/a/58052701/6952678
+    float column = ImGui::GetColumnWidth() / 2.f;
+    float scrollX = ImGui::GetScrollX();
+    float spacing = ImGui::GetStyle().ItemSpacing.x;
+    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + column - scrollX - spacing - (width/2.f));
 }

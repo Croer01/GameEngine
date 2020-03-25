@@ -45,7 +45,9 @@ class Editor
     void renderSceneInspector();
     void renderPrototypeList();
     void renderObjectInspector();
+    void renderCentralRegion();
     void renderGuiInspector();
+    void renderPhysicsInspector();
     bool renderComponent(const ComponentDataRef &component);
     bool renderFileSelector(const std::string &label, const std::string &currentFile, DataFileType typeSupported, DataFile *result);
 
@@ -54,6 +56,8 @@ class Editor
     void deleteFile(const boost::filesystem::path &filePath);
     void loadScene(const std::string &sceneFilePath);
     void updateWindowTitle();
+
+    static void setPosToColumnCenter(float width = 0);
 public:
     explicit Editor(SDL_Window* window);
     void render();
