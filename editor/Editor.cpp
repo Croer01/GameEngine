@@ -528,8 +528,23 @@ void Editor::renderPhysicsInspector()
             bool allChecked = category.mask_.empty(); //empty mask means check collisions with all
             if(ImGui::Checkbox("", &allChecked))
             {
-                if(allChecked){
+                if(allChecked)
+                {
                     category.mask_.clear();
+
+                    for(auto &other : categories)
+                    {
+                        auto itOther = std::remove_if(other.mask_.begin(), other.mask_.end(),
+                                                      [&](const auto &c)
+                                                      {
+                                                          return c == category.name_;
+                                                      });
+
+                        if (itOther != other.mask_.end())
+                        {
+                            other.mask_.erase(itOther, other.mask_.end());
+                        }
+                    }
                     project_->dirty_ = true;
                 }
             }
