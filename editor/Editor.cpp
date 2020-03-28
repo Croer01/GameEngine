@@ -465,109 +465,115 @@ void Editor::renderPhysicsInspector()
     ImGui::NewLine();
     // -- END ADD CATEGORY --
 
-    // Calculate the width of the first column
-    float firstColumnWidth = 0.f;
-    float firstRowHeight = 0.f;
-    float otherColumnWidth = ImGui::GetFrameHeight(); // the size of a checkbox (get from imgui source code)
-    for(const auto &category : categories)
-    {
-        const ImVec2 &textSize = ImGui::CalcTextSize(category.name_.c_str());
-        if(firstColumnWidth < textSize.x)
-            firstColumnWidth = textSize.x;
-    }
-    // at this point the first row will have the same height as the width of the first column
-    firstRowHeight = ImGui::GetCursorPosY() + firstColumnWidth;
-
-    // Add the space between column + label + button
-    const float buttonWidth = 16.f;
-    // TODO: Maybe add one extra pixel to draw a border line between columns?
-    firstColumnWidth += ImGui::GetStyle().FramePadding.x * 4.f + buttonWidth;
-    otherColumnWidth += ImGui::GetStyle().FramePadding.x * 2.f;
-    ImGui::SameLine(firstColumnWidth);
-    {
-        const ImVec2 &textSize = ImGui::CalcTextSize("all");
-        ImGui::SetCursorPosY(firstRowHeight - textSize.x);
-        ImGui::VerticalText("all");
-    }
-
-    float currentLabelPos = firstColumnWidth + otherColumnWidth;
-    for(const auto &category : categories)
-    {
-        const ImVec2 &textSize = ImGui::CalcTextSize(category.name_.c_str());
-        ImGui::SameLine(currentLabelPos);
-        ImGui::SetCursorPosY(firstRowHeight - textSize.x);
-        ImGui::VerticalText(category.name_.c_str());
-        currentLabelPos += otherColumnWidth;
-    }
-    // Reset the Y Cursor to draw correctly the new line
-    ImGui::SetCursorPosY(firstRowHeight);
-    ImGui::NewLine();
-
     std::string categoryToDelete;
-    for(auto &category : categories)
+
+    bool window_visible = ImGui::BeginChild(ImGui::GetID("Physics"),ImVec2(0,0), false, ImGuiWindowFlags_AlwaysHorizontalScrollbar);
+    if(window_visible)
     {
-        ImGui::PushID(category.name_.c_str());
-
-        // Draw label and delete button
-        ImGui::Text("%s", category.name_.c_str());
-        ImGui::SameLine(firstColumnWidth - buttonWidth - ImGui::GetStyle().FramePadding.x);
-        if(ImGui::Button("x"))
+        // Calculate the width of the first column
+        float firstColumnWidth = 0.f;
+        float firstRowHeight = 0.f;
+        float otherColumnWidth = ImGui::GetFrameHeight(); // the size of a checkbox (get from imgui source code)
+        for(const auto &category : categories)
         {
-            categoryToDelete = category.name_;
+            const ImVec2 &textSize = ImGui::CalcTextSize(category.name_.c_str());
+            if(firstColumnWidth < textSize.x)
+                firstColumnWidth = textSize.x;
+        }
+        // at this point the first row will have the same height as the width of the first column
+        firstRowHeight = ImGui::GetCursorPosY() + firstColumnWidth;
+
+        // Add the space between column + label + button
+        const float buttonWidth = 16.f;
+        // TODO: Maybe add one extra pixel to draw a border line between columns?
+        firstColumnWidth += ImGui::GetStyle().FramePadding.x * 4.f + buttonWidth;
+        otherColumnWidth += ImGui::GetStyle().FramePadding.x * 2.f;
+        ImGui::SameLine(firstColumnWidth);
+        {
+            const ImVec2 &textSize = ImGui::CalcTextSize("all");
+            ImGui::SetCursorPosY(firstRowHeight - textSize.x);
+            ImGui::VerticalText("all");
         }
 
-        ImGui::SameLine();
-
-        // -- BEGIN CATEGORY OPTIONS COLUMNS --
-        // "all" option column
-        bool allChecked = category.mask_.empty(); //empty mask means check collisions with all
-        if(ImGui::Checkbox("", &allChecked))
+        float currentLabelPos = firstColumnWidth + otherColumnWidth;
+        for(const auto &category : categories)
         {
-            if(allChecked){
-                category.mask_.clear();
-            }
+            const ImVec2 &textSize = ImGui::CalcTextSize(category.name_.c_str());
+            ImGui::SameLine(currentLabelPos);
+            ImGui::SetCursorPosY(firstRowHeight - textSize.x);
+            ImGui::VerticalText(category.name_.c_str());
+            currentLabelPos += otherColumnWidth;
         }
-        ImGui::SameLine();
+        // Reset the Y Cursor to draw correctly the new line
+        ImGui::SetCursorPosY(firstRowHeight);
+        ImGui::NewLine();
 
-        // category columns
-        for(auto &other : categories)
+        for(auto &category : categories)
         {
-            ImGui::PushID(other.name_.c_str());
+            ImGui::PushID(category.name_.c_str());
 
-            if(category.name_ != other.name_)
+            // Draw label and delete button
+            ImGui::Text("%s", category.name_.c_str());
+            ImGui::SameLine(firstColumnWidth - buttonWidth - ImGui::GetStyle().FramePadding.x);
+            if(ImGui::Button("x"))
             {
-                auto it = std::find(category.mask_.begin(), category.mask_.end(), other.name_);
-                bool checked = it != category.mask_.end();
+                categoryToDelete = category.name_;
+            }
 
-                if (ImGui::Checkbox("", &checked))
-                {
-                    if (checked)
-                    {
-                        category.mask_.push_back(other.name_);
-                        other.mask_.push_back(category.name_);
-                    } else
-                    {
-                        category.mask_.erase(it);
-                        auto itOther = std::find(other.mask_.begin(), other.mask_.end(), category.name_);
-                        assert(itOther != other.mask_.end());
-                        other.mask_.erase(itOther);
-                    }
+            ImGui::SameLine();
+
+            // -- BEGIN CATEGORY OPTIONS COLUMNS --
+            // "all" option column
+            bool allChecked = category.mask_.empty(); //empty mask means check collisions with all
+            if(ImGui::Checkbox("", &allChecked))
+            {
+                if(allChecked){
+                    category.mask_.clear();
                 }
+            }
+            ImGui::SameLine();
 
-                ImGui::SameLine();
-            }
-            else
+            // category columns
+            for(auto &other : categories)
             {
-                ImGui::SameLine(ImGui::GetCursorPosX() + otherColumnWidth);
+                ImGui::PushID(other.name_.c_str());
+
+                if(category.name_ != other.name_)
+                {
+                    auto it = std::find(category.mask_.begin(), category.mask_.end(), other.name_);
+                    bool checked = it != category.mask_.end();
+
+                    if (ImGui::Checkbox("", &checked))
+                    {
+                        if (checked)
+                        {
+                            category.mask_.push_back(other.name_);
+                            other.mask_.push_back(category.name_);
+                        } else
+                        {
+                            category.mask_.erase(it);
+                            auto itOther = std::find(other.mask_.begin(), other.mask_.end(), category.name_);
+                            assert(itOther != other.mask_.end());
+                            other.mask_.erase(itOther);
+                        }
+                    }
+
+                    ImGui::SameLine();
+                }
+                else
+                {
+                    ImGui::SameLine(ImGui::GetCursorPosX() + otherColumnWidth);
+                }
+                ImGui::PopID();
             }
+            // -- END CATEGORY OPTIONS COLUMNS --
+
+            // This dummy is to suppress the last SameLine
+            ImGui::Dummy(ImVec2());
             ImGui::PopID();
         }
-        // -- END CATEGORY OPTIONS COLUMNS --
-
-        // This dummy is to suppress the last SameLine
-        ImGui::Dummy(ImVec2());
-        ImGui::PopID();
     }
+    ImGui::EndChild();
 
     // -- BEGIN DELETE CATEGORY LOGIC --
     if(!categoryToDelete.empty())
