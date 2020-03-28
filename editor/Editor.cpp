@@ -462,40 +462,39 @@ void Editor::renderPhysicsInspector()
         categories.push_back(physicsCategory);
     }
 
-
-
-
-
-
     // number of categories +2 for the current category name and "all" option
     // add last one column to avoid see weird effects caused by ImGui::Column width calculation limitations
     ImGui::Columns(categories.size()+3);
-
-
-    for(int id = 1; id < categories.size()+2;id++)
-    {
-        ImGui::SetColumnWidth(id,30);
-    }
 
     // shift one column
     ImGui::NextColumn();
     setPosToColumnCenter(ImGui::CalcTextSize("all").y);
     ImGui::VerticalText("all");
     ImGui::NextColumn();
+
+    // Draw the first row and calculate the width of the first column
+    float firstColumnWidth = 0.f;
     for(const auto &category : categories)
     {
-        setPosToColumnCenter(ImGui::CalcTextSize(category.name_.c_str()).y);
+        const ImVec2 &textSize = ImGui::CalcTextSize(category.name_.c_str());
+        setPosToColumnCenter(textSize.y);
         ImGui::VerticalText(category.name_.c_str());
         ImGui::NextColumn();
+
+        if(firstColumnWidth < textSize.x)
+            firstColumnWidth = textSize.x;
     }
     ImGui::NextColumn();
+
+    // Add the space between column + label + button
+    firstColumnWidth += ImGui::GetStyle().FramePadding.x * 3.f;
 
     std::string categoryToDelete;
     for(auto &category : categories)
     {
         ImGui::PushID(category.name_.c_str());
         ImGui::Text("%s", category.name_.c_str());
-        ImGui::SameLine();
+        ImGui::SameLine(firstColumnWidth);
         if(ImGui::Button("x"))
         {
             categoryToDelete = category.name_;
@@ -550,6 +549,14 @@ void Editor::renderPhysicsInspector()
         ImGui::PopID();
     }
 
+    constexpr float buttonWidth = 15.f;
+    ImGui::SetColumnWidth(0, firstColumnWidth + buttonWidth + ImGui::GetStyle().FramePadding.x);
+    for(int id = 1; id < categories.size()+2;id++)
+    {
+        ImGui::SetColumnWidth(id,30);
+    }
+
+    // delete category logic
     if(!categoryToDelete.empty())
     {
         auto it = std::remove_if(categories.begin(), categories.end(),
