@@ -451,8 +451,9 @@ void Editor::renderPhysicsInspector()
     ImGui::PushID("Physics");
     std::vector<PhysicsCategory> &categories = project_->physicsCategories_;
 
+    // -- BEGIN ADD CATEGORY --
     static std::string newCategoryName;
-    ImGui::InputText("Category",&newCategoryName);
+    ImGui::InputText("Category", &newCategoryName);
     ImGui::SameLine();
     if(ImGui::Button("Add"))
     {
@@ -461,62 +462,74 @@ void Editor::renderPhysicsInspector()
         // TODO: avoid add duplicates
         categories.push_back(physicsCategory);
     }
+    ImGui::NewLine();
+    // -- END ADD CATEGORY --
 
-    // number of categories +2 for the current category name and "all" option
-    // add last one column to avoid see weird effects caused by ImGui::Column width calculation limitations
-    ImGui::Columns(categories.size()+3);
-
-    // shift one column
-    ImGui::NextColumn();
-    setPosToColumnCenter(ImGui::CalcTextSize("all").y);
-    ImGui::VerticalText("all");
-    ImGui::NextColumn();
-
-    // Draw the first row and calculate the width of the first column
+    // Calculate the width of the first column
     float firstColumnWidth = 0.f;
+    float firstRowHeight = 0.f;
+    float otherColumnWidth = ImGui::GetFrameHeight(); // the size of a checkbox (get from imgui source code)
     for(const auto &category : categories)
     {
         const ImVec2 &textSize = ImGui::CalcTextSize(category.name_.c_str());
-        setPosToColumnCenter(textSize.y);
-        ImGui::VerticalText(category.name_.c_str());
-        ImGui::NextColumn();
-
         if(firstColumnWidth < textSize.x)
             firstColumnWidth = textSize.x;
     }
-    ImGui::NextColumn();
+    // at this point the first row will have the same height as the width of the first column
+    firstRowHeight = ImGui::GetCursorPosY() + firstColumnWidth;
 
     // Add the space between column + label + button
-    firstColumnWidth += ImGui::GetStyle().FramePadding.x * 3.f;
+    const float buttonWidth = 16.f;
+    // TODO: Maybe add one extra pixel to draw a border line between columns?
+    firstColumnWidth += ImGui::GetStyle().FramePadding.x * 4.f + buttonWidth;
+    otherColumnWidth += ImGui::GetStyle().FramePadding.x * 2.f;
+    ImGui::SameLine(firstColumnWidth);
+    {
+        const ImVec2 &textSize = ImGui::CalcTextSize("all");
+        ImGui::SetCursorPosY(firstRowHeight - textSize.x);
+        ImGui::VerticalText("all");
+    }
+
+    float currentLabelPos = firstColumnWidth + otherColumnWidth;
+    for(const auto &category : categories)
+    {
+        const ImVec2 &textSize = ImGui::CalcTextSize(category.name_.c_str());
+        ImGui::SameLine(currentLabelPos);
+        ImGui::SetCursorPosY(firstRowHeight - textSize.x);
+        ImGui::VerticalText(category.name_.c_str());
+        currentLabelPos += otherColumnWidth;
+    }
+    // Reset the Y Cursor to draw correctly the new line
+    ImGui::SetCursorPosY(firstRowHeight);
+    ImGui::NewLine();
 
     std::string categoryToDelete;
     for(auto &category : categories)
     {
         ImGui::PushID(category.name_.c_str());
+
+        // Draw label and delete button
         ImGui::Text("%s", category.name_.c_str());
-        ImGui::SameLine(firstColumnWidth);
+        ImGui::SameLine(firstColumnWidth - buttonWidth - ImGui::GetStyle().FramePadding.x);
         if(ImGui::Button("x"))
         {
             categoryToDelete = category.name_;
         }
 
-        ImGui::NextColumn();
+        ImGui::SameLine();
 
+        // -- BEGIN CATEGORY OPTIONS COLUMNS --
         // "all" option column
-
-        //empty mask means check collisions with all
-        bool allChecked = category.mask_.empty();
-        setPosToColumnCenter(20);
+        bool allChecked = category.mask_.empty(); //empty mask means check collisions with all
         if(ImGui::Checkbox("", &allChecked))
         {
             if(allChecked){
                 category.mask_.clear();
             }
         }
-        ImGui::NextColumn();
+        ImGui::SameLine();
 
-
-        // category options columns
+        // category columns
         for(auto &other : categories)
         {
             ImGui::PushID(other.name_.c_str());
@@ -526,7 +539,6 @@ void Editor::renderPhysicsInspector()
                 auto it = std::find(category.mask_.begin(), category.mask_.end(), other.name_);
                 bool checked = it != category.mask_.end();
 
-                setPosToColumnCenter(20);
                 if (ImGui::Checkbox("", &checked))
                 {
                     if (checked)
@@ -541,22 +553,23 @@ void Editor::renderPhysicsInspector()
                         other.mask_.erase(itOther);
                     }
                 }
+
+                ImGui::SameLine();
             }
-            ImGui::NextColumn();
+            else
+            {
+                ImGui::SameLine(ImGui::GetCursorPosX() + otherColumnWidth);
+            }
             ImGui::PopID();
         }
-        ImGui::NextColumn();
+        // -- END CATEGORY OPTIONS COLUMNS --
+
+        // This dummy is to suppress the last SameLine
+        ImGui::Dummy(ImVec2());
         ImGui::PopID();
     }
 
-    constexpr float buttonWidth = 15.f;
-    ImGui::SetColumnWidth(0, firstColumnWidth + buttonWidth + ImGui::GetStyle().FramePadding.x);
-    for(int id = 1; id < categories.size()+2;id++)
-    {
-        ImGui::SetColumnWidth(id,30);
-    }
-
-    // delete category logic
+    // -- BEGIN DELETE CATEGORY LOGIC --
     if(!categoryToDelete.empty())
     {
         auto it = std::remove_if(categories.begin(), categories.end(),
@@ -580,6 +593,7 @@ void Editor::renderPhysicsInspector()
             }
         }
     }
+    // -- END DELETE CATEGORY LOGIC --
 
     // reset columns
     ImGui::Columns();
