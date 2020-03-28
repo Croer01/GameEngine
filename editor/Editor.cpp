@@ -461,6 +461,7 @@ void Editor::renderPhysicsInspector()
         physicsCategory.name_ = newCategoryName;
         // TODO: avoid add duplicates
         categories.push_back(physicsCategory);
+        project_->dirty_ = true;
     }
     ImGui::NewLine();
     // -- END ADD CATEGORY --
@@ -529,6 +530,7 @@ void Editor::renderPhysicsInspector()
             {
                 if(allChecked){
                     category.mask_.clear();
+                    project_->dirty_ = true;
                 }
             }
             ImGui::SameLine();
@@ -549,13 +551,15 @@ void Editor::renderPhysicsInspector()
                         {
                             category.mask_.push_back(other.name_);
                             other.mask_.push_back(category.name_);
-                        } else
+                        }
+                        else
                         {
                             category.mask_.erase(it);
                             auto itOther = std::find(other.mask_.begin(), other.mask_.end(), category.name_);
                             assert(itOther != other.mask_.end());
                             other.mask_.erase(itOther);
                         }
+                        project_->dirty_ = true;
                     }
 
                     ImGui::SameLine();
@@ -598,6 +602,8 @@ void Editor::renderPhysicsInspector()
                 category.mask_.erase(itOther, category.mask_.end());
             }
         }
+
+        project_->dirty_ = true;
     }
     // -- END DELETE CATEGORY LOGIC --
 
@@ -940,6 +946,7 @@ void Editor::loadProject()
 
 void Editor::saveProject()
 {
+    // save files
     for (const auto &file : projectDirectory_->getEditedFiles())
     {
         const fs::path& filepath = file.getFilePath();
@@ -953,8 +960,31 @@ void Editor::saveProject()
         prototypeFile.close();
     }
 
-    project_->dirty_ = false;
     projectDirectory_->markAllSaved();
+
+    // save configuration
+
+    YAML::Node physicConfigNode;
+    YAML::Node categoriesNode = physicConfigNode["categories"];
+    YAML::Node masksNode = physicConfigNode["masks"];
+    for(const auto &config : project_->physicsCategories_)
+    {
+        if(masksNode[config.name_])
+            throw std::runtime_error("Category " + config.name_ + " duplicated, it is already saved.");
+
+        categoriesNode.push_back(config.name_);
+        masksNode[config.name_] = YAML::Node(config.mask_);
+    }
+
+    {
+        std::ofstream physicsConfFile;
+        fs::path physicsConfPath = fs::path(project_->folderPath_).append("conf").append("physics.yaml");
+        physicsConfFile.open(physicsConfPath.string());
+        physicsConfFile << physicConfigNode << std::endl;
+        physicsConfFile.close();
+    }
+
+    project_->dirty_ = false;
     updateWindowTitle();
 }
 
