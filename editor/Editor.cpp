@@ -449,28 +449,58 @@ void Editor::renderPhysicsInspector()
         return;
 
     ImGui::PushID("Physics");
-
     std::vector<PhysicsCategory> &categories = project_->physicsCategories_;
 
+    static std::string newCategoryName;
+    ImGui::InputText("Category",&newCategoryName);
+    ImGui::SameLine();
+    if(ImGui::Button("Add"))
+    {
+        PhysicsCategory physicsCategory;
+        physicsCategory.name_ = newCategoryName;
+        // TODO: avoid add duplicates
+        categories.push_back(physicsCategory);
+    }
+
+
+
+
+
+
     // number of categories +2 for the current category name and "all" option
-    ImGui::Columns(categories.size()+2);
+    // add last one column to avoid see weird effects caused by ImGui::Column width calculation limitations
+    ImGui::Columns(categories.size()+3);
+
+
+    for(int id = 1; id < categories.size()+2;id++)
+    {
+        ImGui::SetColumnWidth(id,30);
+    }
 
     // shift one column
     ImGui::NextColumn();
-    setPosToColumnCenter(ImGui::CalcTextSize("all").x);
-    ImGui::Text("all");
+    setPosToColumnCenter(ImGui::CalcTextSize("all").y);
+    ImGui::VerticalText("all");
     ImGui::NextColumn();
     for(const auto &category : categories)
     {
-        setPosToColumnCenter(ImGui::CalcTextSize(category.name_.c_str()).x);
-        ImGui::Text("%s", category.name_.c_str());
+        setPosToColumnCenter(ImGui::CalcTextSize(category.name_.c_str()).y);
+        ImGui::VerticalText(category.name_.c_str());
         ImGui::NextColumn();
     }
+    ImGui::NextColumn();
 
+    std::string categoryToDelete;
     for(auto &category : categories)
     {
         ImGui::PushID(category.name_.c_str());
         ImGui::Text("%s", category.name_.c_str());
+        ImGui::SameLine();
+        if(ImGui::Button("x"))
+        {
+            categoryToDelete = category.name_;
+        }
+
         ImGui::NextColumn();
 
         // "all" option column
@@ -488,23 +518,60 @@ void Editor::renderPhysicsInspector()
 
 
         // category options columns
-        for(const auto &other : categories)
+        for(auto &other : categories)
         {
             ImGui::PushID(other.name_.c_str());
-            auto it = std::find(category.mask_.begin(), category.mask_.end(), other.name_);
-            bool checked = it != category.mask_.end();
-            setPosToColumnCenter(20);
-            if(ImGui::Checkbox("", &checked))
+
+            if(category.name_ != other.name_)
             {
-                if(checked)
-                    category.mask_.push_back(other.name_);
-                else
-                    category.mask_.erase(it);
+                auto it = std::find(category.mask_.begin(), category.mask_.end(), other.name_);
+                bool checked = it != category.mask_.end();
+
+                setPosToColumnCenter(20);
+                if (ImGui::Checkbox("", &checked))
+                {
+                    if (checked)
+                    {
+                        category.mask_.push_back(other.name_);
+                        other.mask_.push_back(category.name_);
+                    } else
+                    {
+                        category.mask_.erase(it);
+                        auto itOther = std::find(other.mask_.begin(), other.mask_.end(), category.name_);
+                        assert(itOther != other.mask_.end());
+                        other.mask_.erase(itOther);
+                    }
+                }
             }
             ImGui::NextColumn();
             ImGui::PopID();
         }
+        ImGui::NextColumn();
         ImGui::PopID();
+    }
+
+    if(!categoryToDelete.empty())
+    {
+        auto it = std::remove_if(categories.begin(), categories.end(),
+                                 [&](const auto &c)
+                                 {
+                                     return c.name_ == categoryToDelete;
+                                 });
+        assert(it != categories.end());
+        categories.erase(it, categories.end());
+
+        for(auto &category : categories)
+        {
+            auto itOther = std::remove_if( category.mask_.begin(), category.mask_.end(),
+                                      [&](const auto &c)
+                                      {
+                                          return c == categoryToDelete;
+                                      });
+
+            if(itOther != category.mask_.end()){
+                category.mask_.erase(itOther, category.mask_.end());
+            }
+        }
     }
 
     // reset columns
@@ -807,24 +874,39 @@ void Editor::loadProject()
         // register data folder (if exists)
         sharedProject->dataPath_ = fs::path(fileFolder).append("data");
 
-        //TODO: load physics conf
-        std::vector<std::string> categoryNames = {
-            "player",
-            "enemy",
-            "playerBullet",
-            "enemyBullet",
-            "shelter"
-        };
-
-        std::vector<PhysicsCategory> categories;
-        for(const auto &category : categoryNames)
+        fs::path physicsPath = fs::path(fileFolder).append("conf").append("physics.yaml");
+        if(fs::exists(physicsPath))
         {
-            PhysicsCategory tmpCategory;
-            tmpCategory.name_ = category;
-            tmpCategory.mask_ = categoryNames;
-            categories.push_back(tmpCategory);
+            YAML::Node physicsNode = YAML::LoadFile(physicsPath.string());
+            std::vector<PhysicsCategory> categories;
+
+            if (physicsNode["categories"])
+            {
+                YAML::Node categoriesNode = physicsNode["categories"];
+
+                categories.reserve(categoriesNode.size());
+                for (int i = 0; i < categoriesNode.size(); ++i)
+                {
+                    PhysicsCategory tmpCategory;
+                    tmpCategory.name_ = categoriesNode[i].as<std::string>();
+
+                    if (physicsNode["masks"])
+                    {
+                        YAML::Node masksNode = physicsNode["masks"][tmpCategory.name_];
+                        if (masksNode.IsSequence())
+                        {
+                            for (int j = 0; j < masksNode.size(); ++j)
+                            {
+                                tmpCategory.mask_.push_back(masksNode[j].as<std::string>());
+                            }
+                        }
+                    }
+                    categories.push_back(tmpCategory);
+                }
+            }
+            sharedProject->physicsCategories_.swap(categories);
         }
-        sharedProject->physicsCategories_.swap(categories);
+
         setProject(sharedProject);
     }
 }
