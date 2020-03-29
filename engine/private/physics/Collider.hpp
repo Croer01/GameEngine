@@ -39,6 +39,8 @@ namespace Internal {
         struct PropertiesToSetInSafeMode {
             bool hasPosition = false;
             b2Vec2 position;
+            bool hasRotation = false;
+            float rotation;
             bool hasActive = false;
             bool active;
         };
@@ -90,6 +92,8 @@ namespace Internal {
         float getGravityScale() const;
 
         void setSize(float extendX, float extendY);
+
+        void setRotation(float radians);
 
         void doBeginCollision(Collider *other);
         void doBeginSensor(Collider *other);

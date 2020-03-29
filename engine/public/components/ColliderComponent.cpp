@@ -99,6 +99,10 @@ void ColliderComponent::onEvent(const Subject<Internal::ColliderEvent> &target, 
             if(!gameObject()->active() || collider_->getType() != Internal::Collider::ColliderTypes::Dynamic)
                 collider_->setPosition(convertWorldToPhysicsPos(gameObject()->position()));
         }
+        else if(event == GameObjectEvent::RotationChanged){
+            if(!gameObject()->active() || collider_->getType() != Internal::Collider::ColliderTypes::Dynamic)
+                collider_->setRotation(gameObject()->rotation());
+        }
         else if(event == GameObjectEvent::ScaleChanged){
             const Vec2D &scale = gameObject()->scale();
             collider_->setSize(std::abs(scale.x * size_.x)/2.f, std::abs(scale.y * size_.y)/2.f);

@@ -90,6 +90,12 @@ namespace Internal {
                        extendY / PhysicsEngine::getScalePixelsToMeter());
     }
 
+    void Collider::setRotation(float radians)
+    {
+        propertiesToSetInSafeMode_.hasRotation = true;
+        propertiesToSetInSafeMode_.rotation = radians;
+    }
+
     void Collider::doBeginCollision(Collider *other) {
         notify(ColliderEvent::BeginCollider, (void *) other);
     }
@@ -153,6 +159,11 @@ namespace Internal {
         if (propertiesToSetInSafeMode_.hasPosition) {
             body_->SetTransform(propertiesToSetInSafeMode_.position, body_->GetAngle());
             propertiesToSetInSafeMode_.hasPosition = false;
+        }
+
+        if (propertiesToSetInSafeMode_.hasRotation) {
+            body_->SetTransform(body_->GetPosition(), propertiesToSetInSafeMode_.rotation);
+            propertiesToSetInSafeMode_.hasRotation = false;
         }
 
         if (propertiesToSetInSafeMode_.hasActive) {
