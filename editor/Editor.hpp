@@ -44,7 +44,8 @@ class Editor
     bool renderSceneObjectNode(const PrototypeReferenceRef &object, const std::string &id);
     void renderSceneInspector();
     void renderPrototypeList();
-    void renderObjectInspector();
+    void renderPrototypeInspector();
+    bool renderObjectNode(const ObjectDataRef &object);
     void renderCentralRegion();
     void renderGuiInspector();
     void renderPhysicsInspector();

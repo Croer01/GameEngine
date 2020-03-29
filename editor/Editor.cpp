@@ -61,7 +61,7 @@ void Editor::render()
 
         renderSceneInspector();
         renderPrototypeList();
-        renderObjectInspector();
+        renderPrototypeInspector();
         renderCentralRegion();
 
         if(prevDirty != project_->dirty_)
@@ -235,7 +235,8 @@ void Editor::renderSceneInspector()
     ImGui::End();
 }
 
-void Editor::renderObjectInspector(){
+void Editor::renderPrototypeInspector()
+{
     ImVec2 size = ImGui::GetIO().DisplaySize;
     size.x *= 0.25f;
     size.y -= 20;
@@ -250,28 +251,43 @@ void Editor::renderObjectInspector(){
 
     if(objectSelected_)
     {
-        ObjectDataRef objectDataSelected = objectSelected_->data;
-        bool edited = false;
-        ImGui::InputText("Name",&objectDataSelected->name_);
-        if(ImGui::IsItemEdited())
+        bool edited = renderObjectNode(objectSelected_->data);
+        if(edited) {
+            project_->dirty_ = true;
+            projectDirectory_->markEdited(objectSelected_->sourceFile);
+        }
+    }
+    ImGui::End();
+}
+
+
+bool Editor::renderObjectNode(const ObjectDataRef &object)
+{
+    bool edited = false;
+
+        ImGui::InputText("Name", &object->name_);
+        if (ImGui::IsItemEdited())
             edited = true;
 
-        if(ImGui::Button("New Child"))
+        ImGui::PushID(object->name_.c_str());
+
+        if (ImGui::Button("New Child"))
         {
             ObjectDataRef newChild = std::make_shared<ObjectData>();
             std::stringstream ss;
-            ss << "Child" << objectDataSelected->children_.size();
+            ss << "Child" << object->children_.size();
             newChild->name_ = ss.str();
-            objectDataSelected->children_.push_back(newChild);
+            object->children_.push_back(newChild);
             edited = true;
         }
 
         ImGui::Separator();
         static std::string item_current = gameComponentsProvider_.getRegisteredPropertiesIds()[0];
-        if (ImGui::BeginCombo("Component", item_current.c_str())) // The second parameter is the label previewed before opening the combo.
+        if (ImGui::BeginCombo("Component",
+                              item_current.c_str())) // The second parameter is the label previewed before opening the combo.
         {
             auto components = gameComponentsProvider_.getRegisteredPropertiesIds();
-            for (std::string & component : components)
+            for (std::string &component : components)
             {
                 bool is_selected = item_current == component;
                 if (ImGui::Selectable(component.c_str(), is_selected))
@@ -283,34 +299,33 @@ void Editor::renderObjectInspector(){
             ImGui::EndCombo();
         }
 
-        if(ImGui::Button("Add Component..."))
+        if (ImGui::Button("Add Component..."))
         {
-            assert(objectDataSelected);
+            assert(object);
             ComponentDataRef newComponent = std::make_shared<ComponentData>();
             newComponent->name_ = item_current;
             newComponent->properties_ = gameComponentsProvider_.getPropertiesMetadata(item_current);
 
-            objectDataSelected->components_.push_back(newComponent);
+            object->components_.push_back(newComponent);
             edited = true;
         }
 
         ImGui::Separator();
         if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            if(ImGui::DragFloat2("position", objectDataSelected->position_.xy.data(),.1f))
+            if (ImGui::DragFloat2("position", object->position_.xy.data(), .1f))
                 edited = true;
-            if(ImGui::DragFloat2("size", objectDataSelected->scale_.xy.data(), .1f, 1.f, std::numeric_limits<float>::max()))
+            if (ImGui::DragFloat2("size", object->scale_.xy.data(), .1f, 1.f, std::numeric_limits<float>::max()))
                 edited = true;
-            if(ImGui::DragFloat("rotation", &objectDataSelected->rotation_,.1f))
+            if (ImGui::DragFloat("rotation", &object->rotation_, .1f))
                 edited = true;
         }
 
-        ImGui::PushID(objectDataSelected->name_.c_str());
         int i = 0;
-        for (const auto &component : objectDataSelected->components_)
+        for (const auto &component : object->components_)
         {
             ImGui::PushID(i);
-            if(renderComponent(component))
+            if (renderComponent(component))
                 edited = true;
             ImGui::PopID();
             i++;
@@ -318,20 +333,32 @@ void Editor::renderObjectInspector(){
         ImGui::PopID();
 
         //remove components safety
-        auto it = std::remove_if( objectDataSelected->components_.begin(),
-                objectDataSelected->components_.end(),
-                [](const ComponentDataRef &component){ return component->markToRemove_; } );
-        if(it != objectDataSelected->components_.end()){
-            objectDataSelected->components_.erase( it, objectDataSelected->components_.end() );
-            edited= true;
+        auto it = std::remove_if(object->components_.begin(),
+                                 object->components_.end(),
+                                 [](const ComponentDataRef &component)
+                                 { return component->markToRemove_; });
+
+        if (it != object->components_.end())
+        {
+            object->components_.erase(it, object->components_.end());
+            edited = true;
         }
 
-        if(edited) {
-            project_->dirty_ = true;
-            projectDirectory_->markEdited(objectSelected_->sourceFile);
+        // render children
+
+    for (const auto &child : object->children_)
+    {
+        ImGui::PushID(child.get());
+        if (ImGui::TreeNodeEx(child.get(), ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanFullWidth, "%s", child->name_.c_str()))
+        {
+            bool childEdited = renderObjectNode(child);
+            edited = edited || childEdited;
+            ImGui::TreePop();
+            ImGui::Separator();
         }
+        ImGui::PopID();
     }
-    ImGui::End();
+    return edited;
 }
 
 void Editor::renderCentralRegion()
