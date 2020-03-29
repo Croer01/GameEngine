@@ -4,6 +4,7 @@
 
 #include <game-engine/components/ColliderComponent.hpp>
 #include <game-engine/components/GeometryComponent.hpp>
+#include <iostream>
 #include "../private/physics/PhysicsEngine.hpp"
 #include "../../private/GameObject.hpp"
 
@@ -49,9 +50,12 @@ namespace {
 
         // size is 0
         if(size_.sqrMagnitude() <= 1e-6){
-            throw std::runtime_error(std::string("Can not set the size of the collider because there isn't a SpriteComponent, "
-                                     "SpriteAnimatedComponent or GeometryComponent attached in the GameObject ") +
-                                     gameObject()->name());
+            size_.x = 1.f;
+            size_.y = 1.f;
+            std::cerr << "Can not set the size of the collider because there isn't a SpriteComponent, " <<
+                      "SpriteAnimatedComponent or GeometryComponent attached in the GameObject " <<
+                      gameObject()->name() <<
+                      ". Set (1,1) by default" << std::endl;
         }
 
         updateColliderRef();
