@@ -12,11 +12,13 @@ Vector2DData::Vector2DData() :
 ObjectData::ObjectData()
 {
     scale_.xy = {1.f, 1.f};
+    rotation_ = 0;
 }
 
 PrototypeReference::PrototypeReference()
 {
     scale_.xy = {1.f, 1.f};
+    rotation_ = 0;
 }
 
 ColorData::ColorData() :
