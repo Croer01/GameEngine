@@ -438,7 +438,8 @@ struct convert<ObjectData> {
         node["rotation"] = rhs.rotation_;
         node["scale"] = rhs.scale_;
 
-        if(!rhs.components_.empty()) {
+        if(!rhs.components_.empty())
+        {
             Node components;
             for (const auto &component : rhs.components_)
             {
@@ -446,6 +447,17 @@ struct convert<ObjectData> {
                 components.push_back(componentNode);
             }
             node["components"] = components;
+        }
+
+        if(!rhs.children_.empty())
+        {
+            Node children;
+            for (const auto &child : rhs.children_)
+            {
+                const Node &childNode = YAML::convert<ObjectData>::encode(*child);
+                children.push_back(childNode);
+            }
+            node["children"] = children;
         }
 
         return node;
@@ -472,7 +484,19 @@ struct convert<ObjectData> {
                 rhs.components_.push_back(componentData);
             }
         }
-        
+
+        const Node &childrenNode = node["children"];
+        if(childrenNode.IsDefined() && childrenNode.IsSequence())
+        {
+            for(auto it = childrenNode.begin(); it != childrenNode.end(); ++it)
+            {
+                ObjectDataRef childData = std::make_shared<ObjectData>();
+                bool converted = YAML::convert<ObjectData>::decode(*it, *childData);
+                if(!converted)
+                    return false;
+                rhs.children_.push_back(childData);
+            }
+        }
         return true;
     }
 };
