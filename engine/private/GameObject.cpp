@@ -97,6 +97,7 @@ namespace Internal {
             parent_.lock()->registerObserver(this);
         }
         notify(GameObjectEvent::TransformChanged);
+        notify(GameObjectEvent::ActiveChanged);
     }
 
     GameObject::~GameObject(){
@@ -203,7 +204,10 @@ namespace Internal {
     }
 
     bool GameObject::active() const {
-        return activeValueToSetInSafeMode_;
+        if(auto parent = parent_.lock())
+            return parent->active() && activeValueToSetInSafeMode_;
+        else
+            return activeValueToSetInSafeMode_;
     }
 
     void GameObject::active(bool active) {
