@@ -11,7 +11,7 @@
 #include "ViewModels.hpp"
 #include "CreateProjectEditor.hpp"
 #include "GameComponentsProvider.hpp"
-#include "ProjectPrototypeProvider.h"
+#include "ProjectFileDataProvider.h"
 #include "dialogs/CreatePrototypeDialog.h"
 #include "dialogs/DeleteFileDialog.h"
 #include "dialogs/SaveAllDialog.h"
@@ -28,7 +28,7 @@ class Editor
     };
 
     SDL_Window* window_;
-    std::unique_ptr<SceneData> sceneData_;
+    SceneDataRef sceneData_;
     std::unique_ptr<ProjectDirectory> projectDirectory_;
     std::unique_ptr<TargetObject> objectSelected_;
     std::shared_ptr<ProjectData> project_;
@@ -38,7 +38,7 @@ class Editor
     std::shared_ptr<SaveAllDialog> saveAllDialog_;
     std::shared_ptr<ErrorDialog> errorDialog_;
     GameComponentsProvider gameComponentsProvider_;
-    ProjectPrototypeProvider projectPrototypeProvider_;
+    ProjectFileDataProvider projectFileDataProvider_;
 
     void renderMainMenu();
     bool renderSceneObjectNode(const PrototypeReferenceRef &object, const std::string &id);

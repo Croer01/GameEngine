@@ -147,8 +147,8 @@ void Editor::renderPrototypeList()
                 case DataFileType::Prototype :
                     try {
                         auto object = new TargetObject();
-                        object->data = projectPrototypeProvider_.getPrototype(dataFile);
-                        object->sourceFile = DataFile(filepath);
+                        object->data = projectFileDataProvider_.getObjectData(dataFile);
+                        object->sourceFile = dataFile;
 
                         objectSelected_.reset(object);
                     }
@@ -991,14 +991,25 @@ void Editor::saveProject()
     // save files
     for (const auto &file : projectDirectory_->getEditedFiles())
     {
+        YAML::Node fileDataNode;
         const fs::path& filepath = file.getFilePath();
-        const ObjectDataRef &prototype = projectPrototypeProvider_.getPrototype(file);
-
-        YAML::Node prototypeNode;
-        prototypeNode = *prototype;
+        if(file.getType() == DataFileType::Prototype)
+        {
+            const ObjectDataRef &prototype = projectFileDataProvider_.getObjectData(file);
+            fileDataNode = *prototype;
+        }
+        else if(file.getType() == DataFileType::Scene)
+        {
+            const SceneDataRef &scene = projectFileDataProvider_.getSceneData(file);
+            fileDataNode = *scene;
+        }
+        else
+        {
+            throw std::runtime_error("Unsuported file. Can't save file " + file.getFilePath().string());
+        }
         std::ofstream prototypeFile;
         prototypeFile.open(filepath.string());
-        prototypeFile << prototypeNode << std::endl;
+        prototypeFile << fileDataNode << std::endl;
         prototypeFile.close();
     }
 
@@ -1033,19 +1044,19 @@ void Editor::saveProject()
 void Editor::setProject(const std::shared_ptr<ProjectData> &project)
 {
     project_ = project;
-    objectSelected_.reset();
 
     if(project_->currentScenePath_.empty())
     {
-        sceneData_.reset(new SceneData());
+        sceneData_ = std::make_shared<SceneData>();
         sceneData_->name_ = "New Scene";
+        objectSelected_.reset();
+        projectFileDataProvider_.clearCache();
     }
     else
     {
         loadScene(project_->currentScenePath_);
     }
 
-    projectPrototypeProvider_.clearCache();
     projectDirectory_.reset(new ProjectDirectory(project_));
 
     updateWindowTitle();
@@ -1053,17 +1064,13 @@ void Editor::setProject(const std::shared_ptr<ProjectData> &project)
 
 void Editor::loadScene(const std::string &sceneFilePath)
 {
-    YAML::Node sceneNode = YAML::LoadFile(sceneFilePath);
-    SceneData scene = sceneNode.as<SceneData>();
-    scene.filePath_ = sceneFilePath;
-
     //TODO: move all related to "clean" into a method
     objectSelected_.reset();
-    projectPrototypeProvider_.clearCache();
+    projectFileDataProvider_.clearCache();
     project_->dirty_ = false;
     project_->currentScenePath_ = sceneFilePath;
 
-    sceneData_.reset(new SceneData(scene));
+    sceneData_ = projectFileDataProvider_.getSceneData(DataFile(sceneFilePath));
 
     updateWindowTitle();
 }
@@ -1082,7 +1089,8 @@ void Editor::deleteFile(const boost::filesystem::path &filePath)
     if(fs::remove(absolutePath))
     {
         projectDirectory_->removeFile(absolutePath);
-        if(objectSelected_->data == projectPrototypeProvider_.deletePrototype(absolutePath.string()))
+        projectFileDataProvider_.deleteData(absolutePath.string());
+        if(objectSelected_->sourceFile.getFilePath() == absolutePath)
             objectSelected_.reset();
     }
 }

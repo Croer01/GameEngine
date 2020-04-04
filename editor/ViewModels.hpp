@@ -203,6 +203,8 @@ public:
     float rotation_;
 };
 
+class SceneData;
+typedef std::shared_ptr<SceneData> SceneDataRef;
 class SceneData
 {
 public:
