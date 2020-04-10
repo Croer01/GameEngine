@@ -15,6 +15,7 @@ namespace GameEngine {
     class PUBLICAPI GeometryComponent : public geComponentInstantiable<GeometryComponent>, public Observer<GameObjectEvent> {
         std::shared_ptr<Internal::Graphic> graphicLoaded_;
         std::shared_ptr<Internal::GraphicHolder> graphic_;
+        std::shared_ptr<Internal::GraphicsEngine> graphicsEngine_;
         std::vector<Vec2D> path_;
         std::string anchor_;
         geColor color_;
@@ -29,6 +30,8 @@ namespace GameEngine {
         virtual ~GeometryComponent();
 
         PropertySetBase *getProperties() const override;
+
+        virtual void preInit();
 
         void init() override;
 

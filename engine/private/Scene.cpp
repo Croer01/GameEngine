@@ -23,6 +23,11 @@ namespace Internal {
         loadFile(game);
 
         auto size = gameObjects_.size();
+
+        for (auto i = 0; i < size; i++) {
+            gameObjects_[i]->preInit();
+        }
+
         for (auto i = 0; i < size; i++) {
             gameObjects_[i]->Init();
         }
@@ -53,7 +58,7 @@ namespace Internal {
 
             for (auto i = 0; i < prototypes.size(); ++i) {
                 YAML::Node prototype = prototypes[i];
-                std::shared_ptr<GameObject> gameObject = game->objectManager().createGameObject(
+                std::shared_ptr<GameObject> gameObject = game->objectManager()->createGameObject(
                         prototype["prototype"].as<std::string>(), game);
 
                 if (prototype["name"])
@@ -84,6 +89,7 @@ namespace Internal {
 
     void Scene::addGameObject(const std::shared_ptr<GameObject> &gameObject) {
         gameObjects_.push_back(gameObject);
+        gameObject->preInit();
         gameObject->Init();
     }
 

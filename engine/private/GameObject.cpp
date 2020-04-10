@@ -29,8 +29,27 @@ namespace Internal {
             scale_(1.f,1.f),
             destroyed_(false),
             initializating_(false),
+            preInitializating_(false),
             game_(nullptr){
         computeTransform();
+    }
+
+    void GameObject::preInit()
+    {
+        preInitializating_ = true;
+        std::cout << "Object " << prototype_.c_str() << "pre initialized" << std::endl;
+        // Use conventional for-loop to avoid access violation of components have added by others components in pre init time
+        auto componentSize = components_.size();
+        for (auto i = 0; i < componentSize; i++)
+        {
+            components_[i]->preInit();
+        }
+
+        for (auto &child : children_)
+        {
+            child->preInit();
+        }
+        preInitializating_ = false;
     }
 
     void GameObject::Init() {
@@ -75,9 +94,14 @@ namespace Internal {
             return;
         component->gameObject(this);
         components_.push_back(component);
-        //Ensure the component is initializated if this is added during the GameObject's init process
+
+        //Ensure the component is preInitialized if this is added during the GameObject's preInit process
+        if(preInitializating_)
+            component->preInit();
+        //the same as preInit process but with init process
         if(initializating_)
             component->init();
+
     }
 
     void GameObject::addChild(std::shared_ptr<GameObject> child) {

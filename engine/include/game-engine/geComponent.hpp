@@ -28,6 +28,7 @@ namespace GameEngine {
         virtual ~geComponent(){};
         virtual void Update(float elapsedTime){};
         virtual void init(){};
+        virtual void preInit(){};
         void gameObject(geGameObject *gameObject);
         geGameObject *gameObject() const;
         virtual geComponentRef clone() const = 0;

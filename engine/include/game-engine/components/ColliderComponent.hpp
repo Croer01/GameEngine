@@ -9,6 +9,7 @@
 #include <game-engine/components/SpriteComponent.hpp>
 #include "../private/physics/Collider.hpp"
 #include "SpriteAnimatedComponent.hpp"
+#include "../../../private/physics/PhysicsEngine.hpp"
 
 namespace GameEngine {
     class ColliderComponent;
@@ -17,6 +18,7 @@ namespace GameEngine {
 
 class PUBLICAPI ColliderComponent : public geComponentInstantiable<ColliderComponent>, public Observer<Internal::ColliderEvent>, public Observer<GameObjectEvent> {
         std::shared_ptr<Internal::Collider> collider_;
+        std::shared_ptr<Internal::PhysicsEngine> physicsEngine_;
         OnColliderEventCallback onColliderEnterCallback_;
         OnColliderEventCallback onSensorEnterCallback_;
         OnColliderEventCallback onColliderExitCallback_;

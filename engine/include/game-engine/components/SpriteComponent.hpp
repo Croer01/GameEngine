@@ -22,6 +22,8 @@ namespace GameEngine {
         std::string filePath_;
         std::string anchor_;
 
+        std::shared_ptr<Internal::GraphicsEngine> graphicsEngine_;
+
         void updateGraphicRef();
 
     protected:
@@ -31,6 +33,8 @@ namespace GameEngine {
         virtual ~SpriteComponent();
 
         PropertySetBase *getProperties() const override;
+
+        virtual void preInit();
 
         void init() override;
 

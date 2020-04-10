@@ -9,8 +9,15 @@
 #include "../../private/Game.hpp"
 
 namespace GameEngine {
-    void SpriteComponent::init() {
+
+    void SpriteComponent::preInit()
+    {
+        graphicsEngine_ = std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock())->graphicsEngine();
         updateGraphicRef();
+    }
+
+    void SpriteComponent::init() {
+        // the preInit ensure that the graphic is already created at this point
         setVisible(visible_);
         anchor(anchor_);
         graphic_->setModelTransform(gameObject()->position(),gameObject()->rotation(),gameObject()->scale());
@@ -36,7 +43,9 @@ namespace GameEngine {
 
     SpriteComponent::~SpriteComponent() {
         if(graphic_)
-            std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock())->graphicsEngine().unregisterGraphic(graphic_);
+        {
+            graphicsEngine_->unregisterGraphic(graphic_);
+        }
     }
 
     void SpriteComponent::setVisible(const bool &visible) {
@@ -74,9 +83,8 @@ namespace GameEngine {
         if(gameObject() == nullptr || gameObject()->game().expired())
             return;
 
-        Internal::GraphicsEngine &graphicsEngine = std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock())->graphicsEngine();
         if(graphic_)
-            graphicsEngine.unregisterGraphic(graphic_);
+            graphicsEngine_->unregisterGraphic(graphic_);
 
         if(filePath_.empty()){
             graphicLoaded_.reset();
@@ -84,7 +92,7 @@ namespace GameEngine {
         } else {
             graphicLoaded_ = std::make_shared<Internal::GraphicSprite>(filePath_);
             graphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
-            graphicsEngine.registerGraphic(graphic_);
+            graphicsEngine_->registerGraphic(graphic_);
         }
     }
 

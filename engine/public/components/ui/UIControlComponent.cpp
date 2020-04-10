@@ -8,6 +8,11 @@
 
 namespace GameEngine {
 
+void UIControlComponent::preInit()
+{
+    graphicsEngine_ = std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock())->graphicsEngine();
+}
+
 void UIControlComponent::screenPos(const Vec2D &pos)
 {
     screenPos_ = pos;
@@ -33,9 +38,9 @@ void UIControlComponent::Update(float elapsedTime)
     if(!visible_)
         return;
 
-    InputManager &inputManager = gameObject()->game().lock()->input();
+    std::shared_ptr<InputManager> inputManager = gameObject()->game().lock()->input();
 
-    const Vec2D &mousePos = inputManager.getMousePosition();
+    const Vec2D &mousePos = inputManager->getMousePosition();
     Vec2D min = calculateVirtualScreenPos();
     Vec2D max = min + calculateVirtualScreenSize();
     bool prevHover = hover_;
@@ -48,7 +53,7 @@ void UIControlComponent::Update(float elapsedTime)
             onHoverOut();
     }
 
-    if(hover_ && inputManager.isMouseButtonDown(MouseButton::LEFT))
+    if(hover_ && inputManager->isMouseButtonDown(MouseButton::LEFT))
     {
         onClick();
         if(!focused_)
@@ -58,7 +63,7 @@ void UIControlComponent::Update(float elapsedTime)
         }
     }
     //TODO: change this to a Centralized Focus Manager
-    else if(!hover_ && inputManager.isMouseButtonDown(MouseButton::LEFT))
+    else if(!hover_ && inputManager->isMouseButtonDown(MouseButton::LEFT))
     {
         if(focused_)
         {
@@ -133,20 +138,25 @@ void UIControlComponent::visible(const bool &value)
 
 Vec2D UIControlComponent::calculateVirtualScreenPos() const
 {
-    geScreen &screen = gameObject()->game().lock()->screen();
+    std::shared_ptr<geScreen> screen = gameObject()->game().lock()->screen();
     Vec2D position = screenPos();
-    position.x *= static_cast<float>(screen.virtualWidth());
-    position.y *= static_cast<float>(screen.virtualHeight());
+    position.x *= static_cast<float>(screen->virtualWidth());
+    position.y *= static_cast<float>(screen->virtualHeight());
     return position;
 }
 
 Vec2D UIControlComponent::calculateVirtualScreenSize() const
 {
-    geScreen &screen = gameObject()->game().lock()->screen();
+    std::shared_ptr<geScreen> screen = gameObject()->game().lock()->screen();
     Vec2D size = screenSize();
-    size.x *= static_cast<float>(screen.virtualWidth());
-    size.y *= static_cast<float>(screen.virtualHeight());
+    size.x *= static_cast<float>(screen->virtualWidth());
+    size.y *= static_cast<float>(screen->virtualHeight());
     return size;
+}
+
+std::shared_ptr<Internal::GraphicsEngine> UIControlComponent::graphicsEngine()
+{
+    return graphicsEngine_;
 }
 
 }

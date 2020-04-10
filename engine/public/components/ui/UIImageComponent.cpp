@@ -3,7 +3,6 @@
 //
 
 #include "game-engine/components/ui/UIImageComponent.hpp"
-#include "../private/graphics/GraphicsEngine.hpp"
 #include "../../../private/graphics/GraphicSprite.hpp"
 #include "../../../private/Game.hpp"
 
@@ -14,7 +13,7 @@ void UIImageComponent::init() {
 
 UIImageComponent::~UIImageComponent() {
     if(graphic_)
-        std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock())->graphicsEngine().unregisterGraphic(graphic_);
+        graphicsEngine()->unregisterGraphic(graphic_);
 }
 
 void UIImageComponent::filepath(const std::string &path) {
@@ -26,14 +25,11 @@ std::string UIImageComponent::filepath() const {
 }
 
 void UIImageComponent::updateGraphicRef() {
-    if(!gameObject()->game().expired())
+    if(gameObject() == nullptr || gameObject()->game().expired())
         return;
 
-    Internal::GraphicsEngine &graphicsEngine = std::dynamic_pointer_cast<Internal::Game>(
-        gameObject()->game().lock())->graphicsEngine();
-
     if(graphic_)
-        graphicsEngine.unregisterGraphic(graphic_);
+        graphicsEngine()->unregisterGraphic(graphic_);
 
     if(filePath_.empty()){
         graphicLoaded_.reset();
@@ -41,7 +37,7 @@ void UIImageComponent::updateGraphicRef() {
     } else {
         graphicLoaded_ = std::make_shared<Internal::GraphicSprite>(filePath_);
         graphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
-        graphicsEngine.unregisterGraphic(graphic_);
+        graphicsEngine()->unregisterGraphic(graphic_);
         graphic_->setTintColor(color_);
         anchor(anchor_);
         Vec2D calculatedUIScale = calculateVirtualScreenSize();

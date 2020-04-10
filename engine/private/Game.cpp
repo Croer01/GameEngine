@@ -33,28 +33,28 @@ namespace Internal {
             {
                 CheckSDLError();
             }
-            screen_ = std::make_unique<Screen>(environment_->configurationPath() + "/screen.yaml");
-            graphicsEngine_ = std::make_unique<GraphicsEngine>();
+            screen_ = std::make_shared<Screen>(environment_->configurationPath() + "/screen.yaml");
+            graphicsEngine_ = std::make_shared<GraphicsEngine>();
             graphicsEngine_->init(*screen_);
 
             initPhysics(environment_->configurationPath() + "/physics.yaml");
 
-            audioEngine_ = std::make_unique<AudioEngine>();
+            audioEngine_ = std::make_shared<AudioEngine>();
             audioEngine_->init();
-            fontManager_ = std::make_unique<FontManager>();
-            inputManager_ = std::make_unique<InputManager>();
+            fontManager_ = std::make_shared<FontManager>();
+            inputManager_ = std::make_shared<InputManager>();
 
-            environment_->sceneManager().bindGame(shared_from_this());
+            environment_->sceneManager()->bindGame(shared_from_this());
             if(!environment_->firstScene().empty())
             {
                 changeScene(environment_->firstScene());
-                environment_->sceneManager().changeSceneInSafeMode();
+                environment_->sceneManager()->changeSceneInSafeMode();
             }
         }
     }
 
     void Game::initPhysics(const std::string &configFilePath) {
-        physicsEngine_ = std::make_unique<PhysicsEngine>();
+        physicsEngine_ = std::make_shared<PhysicsEngine>();
 #ifdef DEBUG
         physicsEngine_->init(1.f / 60.f, screen_.get());
 #else
@@ -107,7 +107,7 @@ namespace Internal {
 
 #ifdef DEBUG
             if (inputManager_->isKeyDown(KeyCode::KEY_F5)) {
-                environment_->sceneManager().reloadScene();
+                environment_->sceneManager()->reloadScene();
             }
 #endif
 
@@ -120,13 +120,13 @@ namespace Internal {
             if (elapsedTime >= 5)
                 elapsedTime = 1.f / 60.f;
 #endif
-            environment_->sceneManager().update(elapsedTime);
+            environment_->sceneManager()->update(elapsedTime);
             physicsEngine_->update(elapsedTime);
 
             glClear(GL_COLOR_BUFFER_BIT);
             glViewport(screen_->calculatedX(), screen_->calculatedY(), screen_->calculatedWidth(),
                        screen_->calculatedHeight());
-            const std::shared_ptr<Camera> &cam = environment_->sceneManager().getCameraOfCurrentScene();
+            const std::shared_ptr<Camera> &cam = environment_->sceneManager()->getCameraOfCurrentScene();
             graphicsEngine_->draw(cam);
 #ifdef DEBUG
             physicsEngine_->drawDebug(cam);
@@ -134,7 +134,7 @@ namespace Internal {
             screen_->swapWindow();
             lastTime = currentTime;
 
-            environment_->sceneManager().changeSceneInSafeMode();
+            environment_->sceneManager()->changeSceneInSafeMode();
         }
 
         //TODO: should this call in shutdown instead of here?
@@ -156,7 +156,7 @@ namespace Internal {
 
             innerLoop();
             //TODO: create a way to bind game into components
-            environment_->sceneManager().unbindGame();
+            environment_->sceneManager()->unbindGame();
             return 0;
         }
         catch (const std::exception &e){
@@ -169,73 +169,73 @@ namespace Internal {
     {
         const std::shared_ptr<Internal::GameObject> &object = std::make_shared<Internal::GameObject>("");
         object->name(name);
-        if(environment_->sceneManager().isSceneLoaded())
-            environment_->sceneManager().addObjectIntoCurrentScene(object);
+        if(environment_->sceneManager()->isSceneLoaded())
+            environment_->sceneManager()->addObjectIntoCurrentScene(object);
 
         return object;
     }
 
     geGameObjectRef Game::createFromPrototype(const std::string &prototype)
     {
-        const std::shared_ptr<Internal::GameObject> &object = environment_->objectManager().createGameObject(prototype, shared_from_this());
-        if(environment_->sceneManager().isSceneLoaded())
-            environment_->sceneManager().addObjectIntoCurrentScene(object);
+        const std::shared_ptr<Internal::GameObject> &object = environment_->objectManager()->createGameObject(prototype, shared_from_this());
+        if(environment_->sceneManager()->isSceneLoaded())
+            environment_->sceneManager()->addObjectIntoCurrentScene(object);
 
         return object;
     }
 
     geGameObjectRef Game::findObjectByNameInCurrentScene(const std::string &gameObjectName)
     {
-        const std::shared_ptr<GameObject> &object = environment_->sceneManager().findObjectByName(gameObjectName);
+        const std::shared_ptr<GameObject> &object = environment_->sceneManager()->findObjectByName(gameObjectName);
         return std::dynamic_pointer_cast<geGameObject>(object);
     }
 
     void Game::changeScene(const std::string &name)
     {
-        environment_->sceneManager().changeScene(name);
+        environment_->sceneManager()->changeScene(name);
     }
 
     std::weak_ptr<geCamera> Game::cameraOfCurrentScene() const
     {
-        return environment_->sceneManager().getCameraOfCurrentScene();
+        return environment_->sceneManager()->getCameraOfCurrentScene();
     }
 
-    geScreen &Game::screen() const
+    std::shared_ptr<geScreen> Game::screen() const
     {
-        return *screen_;
+        return screen_;
     }
 
-    geAudio &Game::audio() const
+    std::shared_ptr<geAudio> Game::audio() const
     {
-        return *audioEngine_;
+        return audioEngine_;
     }
 
-GraphicsEngine &Game::graphicsEngine() const
+std::shared_ptr<GraphicsEngine> Game::graphicsEngine() const
 {
-    return *graphicsEngine_;
+    return graphicsEngine_;
 }
 
-PhysicsEngine &Game::physicsEngine() const
+std::shared_ptr<PhysicsEngine> Game::physicsEngine() const
 {
-    return *physicsEngine_;
+    return physicsEngine_;
 }
 
-AudioEngine &Game::audioEngine() const
+std::shared_ptr<AudioEngine> Game::audioEngine() const
 {
-    return *audioEngine_;
+    return audioEngine_;
 }
 
-InputManager &Game::input() const
+std::shared_ptr<InputManager> Game::input() const
 {
-    return *inputManager_;
+    return inputManager_;
 }
 
-FontManager &Game::fontManager() const
+std::shared_ptr<FontManager> Game::fontManager() const
 {
-    return *fontManager_;
+    return fontManager_;
 }
 
-ObjectManager &Game::objectManager() const
+std::shared_ptr<ObjectManager> Game::objectManager() const
 {
     return environment_->objectManager();
 }

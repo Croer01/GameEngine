@@ -12,7 +12,7 @@ namespace GameEngine
 UITextComponent::~UITextComponent()
 {
     if(graphicText_)
-        std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock())->graphicsEngine().unregisterText(graphicText_);
+        graphicsEngine()->unregisterText(graphicText_);
 }
 
 geComponentRef UITextComponent::instantiate() const
@@ -74,19 +74,19 @@ void UITextComponent::font(const std::string &fontName)
 
 void UITextComponent::UpdateTextGraphic()
 {
-    std::shared_ptr<Internal::Game> game = std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock());
-    if(!game)
+    if(!graphicsEngine())
         return;
 
     if(graphicText_)
-        game->graphicsEngine().unregisterText(graphicText_);
+        graphicsEngine()->unregisterText(graphicText_);
 
     if(!font_.empty())
     {
-        graphicText_ = game->fontManager().getFont(font_, fontSize_)->createText(text_);
+        std::shared_ptr<Internal::Game> game = std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock());
+        graphicText_ = game->fontManager()->getFont(font_, fontSize_)->createText(text_);
         setTextModelTransform(calculateVirtualScreenPos(), 0.f, Vec2D(1, 1));
         graphicText_->setTintColor(foregroundColor_);
-        game->graphicsEngine().registerText(graphicText_);
+        graphicsEngine()->registerText(graphicText_);
         graphicText_->setActive(visible());
     }
 }

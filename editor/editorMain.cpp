@@ -128,8 +128,8 @@ int main(int, char**)
 
     //Register components created from the game
     //TODO: improve the way to do this (maybe a macro or "if define"?)
-    GameEngine::geEnvironment env;
-    RegisterComponents(&env);
+    GameEngine::geEnvironmentRef env = GameEngine::geEnvironment::createInstance();
+    RegisterComponents(env);
 
     // Main loop
     bool done = false;

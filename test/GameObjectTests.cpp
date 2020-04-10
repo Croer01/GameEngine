@@ -157,6 +157,7 @@ TEST(GameObject, addChildDuringInitialization)
     go->addComponent(component);
 
     // force initialize object
+    std::dynamic_pointer_cast<Internal::GameObject>(go)->preInit();
     std::dynamic_pointer_cast<Internal::GameObject>(go)->Init();
 
     // We ensure a component added by other during the init process of a GameObject is correctly initialized too.

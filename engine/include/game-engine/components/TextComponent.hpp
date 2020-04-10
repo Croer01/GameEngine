@@ -15,6 +15,7 @@ namespace GameEngine {
 class PUBLICAPI TextComponent : public geComponentInstantiable<TextComponent>, public Observer<GameObjectEvent> {
         Internal::TextParameters textParams_;
         std::shared_ptr<Internal::Text> textGraphic_;
+        std::shared_ptr<Internal::GraphicsEngine> graphicsEngine_;
         bool visible_;
 
         void updateTextTransform();
@@ -24,9 +25,10 @@ class PUBLICAPI TextComponent : public geComponentInstantiable<TextComponent>, p
     public:
         virtual ~TextComponent();
 
-    PropertySetBase *getProperties() const override;
+        PropertySetBase *getProperties() const override;
 
-    void init() override;
+        void preInit() override;
+        void init() override;
 
         void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
 

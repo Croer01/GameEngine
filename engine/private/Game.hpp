@@ -24,12 +24,12 @@ namespace Internal {
 class Game : public geGame, public std::enable_shared_from_this<Game> {
         bool running_;
 
-        std::unique_ptr<Screen> screen_;
-        std::unique_ptr<GraphicsEngine> graphicsEngine_;
-        std::unique_ptr<AudioEngine> audioEngine_;
-        std::unique_ptr<PhysicsEngine> physicsEngine_;
-        std::unique_ptr<InputManager> inputManager_;
-        std::unique_ptr<FontManager> fontManager_;
+        std::shared_ptr<Screen> screen_;
+        std::shared_ptr<GraphicsEngine> graphicsEngine_;
+        std::shared_ptr<AudioEngine> audioEngine_;
+        std::shared_ptr<PhysicsEngine> physicsEngine_;
+        std::shared_ptr<InputManager> inputManager_;
+        std::shared_ptr<FontManager> fontManager_;
         std::shared_ptr<Environment> environment_;
 
         void initPhysics(const std::string &configFilePath);
@@ -51,16 +51,16 @@ class Game : public geGame, public std::enable_shared_from_this<Game> {
         geGameObjectRef findObjectByNameInCurrentScene(const std::string &gameObjectName) override;
         void changeScene(const std::string &name) override;
         std::weak_ptr<geCamera> cameraOfCurrentScene() const override;
-        geScreen &screen() const override;
-        geAudio &audio() const override;
-        InputManager &input() const override;
+        std::shared_ptr<geScreen> screen() const override;
+        std::shared_ptr<geAudio> audio() const override;
+        std::shared_ptr<InputManager> input() const override;
 
         // GameEngine internal API
-        GraphicsEngine &graphicsEngine() const;
-        PhysicsEngine &physicsEngine() const;
-        AudioEngine &audioEngine() const;
-        FontManager &fontManager() const;
-        ObjectManager &objectManager() const;
+        std::shared_ptr<GraphicsEngine> graphicsEngine() const;
+        std::shared_ptr<PhysicsEngine> physicsEngine() const;
+        std::shared_ptr<AudioEngine> audioEngine() const;
+        std::shared_ptr<FontManager> fontManager() const;
+        std::shared_ptr<ObjectManager> objectManager() const;
     };
 }
 }

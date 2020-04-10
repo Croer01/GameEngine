@@ -18,8 +18,8 @@ class Environment : public geEnvironment
 {
     std::string configurationPath_;
     std::string firstScene_;
-    std::unique_ptr<ObjectManager> objectManager_;
-    std::unique_ptr<SceneManager> sceneManager_;
+    std::shared_ptr<ObjectManager> objectManager_;
+    std::shared_ptr<SceneManager> sceneManager_;
 
 public:
     Environment();
@@ -34,8 +34,8 @@ public:
     virtual void addPrototype(const std::string &name, const std::string &filePath);
     virtual void addScene(const std::string &name, const std::string &filePath);
 
-    SceneManager &sceneManager() const;
-    ObjectManager &objectManager() const;
+    std::shared_ptr<SceneManager> sceneManager() const;
+    std::shared_ptr<ObjectManager> objectManager() const;
 };
 
 }

@@ -7,6 +7,7 @@
 
 
 #include <game-engine/geComponent.hpp>
+#include "../../../../private/graphics/GraphicsEngine.hpp"
 
 namespace GameEngine {
     class PUBLICAPI UIControlComponent : public geComponentInstantiable<UIControlComponent>
@@ -17,6 +18,7 @@ namespace GameEngine {
         bool hover_;
         bool focused_;
         bool visible_;
+        std::shared_ptr<Internal::GraphicsEngine> graphicsEngine_;
 
     protected:
         virtual void onClick() {};
@@ -24,6 +26,7 @@ namespace GameEngine {
         virtual void onHoverOut() {};
         virtual void onFocusChanged() {};
         virtual void onVisibleChanged() {};
+        std::shared_ptr<Internal::GraphicsEngine> graphicsEngine();
 
         Vec2D calculateVirtualScreenPos() const;
         Vec2D calculateVirtualScreenSize() const;
@@ -31,6 +34,7 @@ namespace GameEngine {
         virtual ~UIControlComponent() = default;
         PropertySetBase *getProperties() const override;
 
+        virtual void preInit();
         void Update(float elapsedTime) override;
         void screenPos(const Vec2D &pos);
         Vec2D screenPos() const;

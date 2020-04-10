@@ -6,10 +6,11 @@
 #include "GameComponentsProvider.hpp"
 #include "ViewModels.hpp"
 
+using namespace GameEngine;
+
 void GameComponentsProvider::updateNames()
 {
-    GameEngine::geEnvironment env;
-    namesCached_ = env.getRegisteredPropertiesIds();
+    namesCached_ = geEnvironment::createInstance()->getRegisteredPropertiesIds();
 }
 
 std::vector<std::string> GameComponentsProvider::getRegisteredPropertiesIds()
@@ -22,8 +23,7 @@ std::vector<std::string> GameComponentsProvider::getRegisteredPropertiesIds()
 
 std::vector<PropertyDataRef> GameComponentsProvider::getPropertiesMetadata(const std::string &name) const
 {
-    GameEngine::geEnvironment env;
-    std::shared_ptr<GameEngine::PropertySetBase> gameProperties = env.getProperties(name);
+    std::shared_ptr<GameEngine::PropertySetBase> gameProperties = geEnvironment::createInstance()->getProperties(name);
 
     std::vector<PropertyDataRef> properties;
     properties.reserve(gameProperties->size());
@@ -38,8 +38,7 @@ std::vector<PropertyDataRef> GameComponentsProvider::getPropertiesMetadata(const
 std::vector<std::shared_ptr<PropertyData>>
 GameComponentsProvider::getPropertiesMetadataByComponent(const std::string &componentName) const
 {
-    GameEngine::geEnvironment env;
-    std::shared_ptr<GameEngine::PropertySetBase> gameProperties = env.getProperties(componentName);
+    std::shared_ptr<GameEngine::PropertySetBase> gameProperties = geEnvironment::createInstance()->getProperties(componentName);
 
     std::vector<PropertyDataRef> properties;
     properties.reserve(gameProperties->size());

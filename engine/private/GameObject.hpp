@@ -38,6 +38,7 @@ namespace Internal {
         glm::mat4 transform_;
         bool destroyed_;
         bool initializating_;
+        bool preInitializating_;
         std::shared_ptr<Game> game_;
 
         void fromYamlNode(const YAML::Node &node, ObjectManager *objectManager);
@@ -48,6 +49,7 @@ namespace Internal {
         virtual ~GameObject();
 
         void Init();
+        void preInit();
 
         void Update(float elapsedTime);
 

@@ -8,6 +8,11 @@
 #include "../../private/Game.hpp"
 
 namespace GameEngine {
+    void TextComponent::preInit()
+    {
+        graphicsEngine_ = std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock())->graphicsEngine();
+    }
+
     void TextComponent::init() {
         visible_ = true;
 
@@ -59,7 +64,7 @@ namespace GameEngine {
 
     TextComponent::~TextComponent() {
         if(textGraphic_)
-            std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock())->graphicsEngine().unregisterText(textGraphic_);
+            graphicsEngine_->unregisterText(textGraphic_);
     }
 
     void TextComponent::setVisible(bool visible) {
@@ -93,11 +98,11 @@ namespace GameEngine {
             return;
 
         if(textGraphic_)
-            game->graphicsEngine().unregisterText(textGraphic_);
+            graphicsEngine_->unregisterText(textGraphic_);
 
         if(!textParams_.fontName.empty()){
-            textGraphic_ = game->fontManager().getFont(textParams_.fontName, textParams_.fontSize)->createText(textParams_.text);
-            game->graphicsEngine().registerText(textGraphic_);
+            textGraphic_ = game->fontManager()->getFont(textParams_.fontName, textParams_.fontSize)->createText(textParams_.text);
+            graphicsEngine_->registerText(textGraphic_);
         }else{
             textGraphic_.reset();
         }

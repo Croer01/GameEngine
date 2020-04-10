@@ -35,9 +35,9 @@ namespace GameEngine {
         virtual void changeScene(const std::string &name) = 0;
         virtual std::weak_ptr<geCamera> cameraOfCurrentScene() const = 0;
 
-        virtual geScreen &screen() const = 0;
-        virtual geAudio &audio() const = 0;
-        virtual InputManager &input() const = 0;
+        virtual std::shared_ptr<geScreen> screen() const = 0;
+        virtual std::shared_ptr<geAudio> audio() const = 0;
+        virtual std::shared_ptr<InputManager> input() const = 0;
     };
 }
 

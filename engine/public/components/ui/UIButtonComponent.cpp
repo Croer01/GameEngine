@@ -36,7 +36,7 @@ void UIButtonComponent::setCommand(const CommandRef &command)
 UIButtonComponent::~UIButtonComponent()
 {
     if(backgroundGraphic_)
-        std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock())->graphicsEngine().unregisterGraphic(backgroundGraphic_);
+        graphicsEngine()->unregisterGraphic(backgroundGraphic_);
 }
 
 geComponentRef UIButtonComponent::instantiate() const
@@ -70,7 +70,7 @@ void UIButtonComponent::createBackgroundGraphic()
     auto graphicLoaded_ = std::make_shared<Internal::GraphicGeometry>(path);
     backgroundGraphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
     backgroundGraphic_->setModelTransform(calculateVirtualScreenPos(), 0.f, calculateVirtualScreenSize());
-    std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock())->graphicsEngine().registerGraphic(backgroundGraphic_);
+    graphicsEngine()->registerGraphic(backgroundGraphic_);
     backgroundGraphic_->setActive(visible());
 
     // move the text position to center inside the button

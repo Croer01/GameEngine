@@ -21,7 +21,7 @@ namespace Internal
 
 Environment::Environment() : configurationPath_("conf")
 {
-    objectManager_ = std::make_unique<ObjectManager>();
+    objectManager_ = std::make_shared<ObjectManager>();
     //Register the engine's default components
     objectManager_->registerComponentBuilder("SpriteComponent", new ComponentTBuilder<SpriteComponent>());
     objectManager_->registerComponentBuilder("GeometryComponent", new ComponentTBuilder<GeometryComponent>());
@@ -37,7 +37,7 @@ Environment::Environment() : configurationPath_("conf")
     objectManager_->registerComponentBuilder("UIPanelComponent", new ComponentTBuilder<UIPanelComponent>());
     objectManager_->registerComponentBuilder("UIImageComponent", new ComponentTBuilder<UIImageComponent>());
 
-    sceneManager_ = std::make_unique<SceneManager>();
+    sceneManager_ = std::make_shared<SceneManager>();
 }
 
 void Environment::configurationPath(const std::string &config)
@@ -89,14 +89,14 @@ std::shared_ptr<PropertySetBase> Environment::getProperties(const std::string &i
     return objectManager_->createProperties(id);
 }
 
-SceneManager &Environment::sceneManager() const
+std::shared_ptr<SceneManager> Environment::sceneManager() const
 {
-    return *sceneManager_;
+    return sceneManager_;
 }
 
-ObjectManager &Environment::objectManager() const
+std::shared_ptr<ObjectManager> Environment::objectManager() const
 {
-    return *objectManager_;
+    return objectManager_;
 }
 
 }

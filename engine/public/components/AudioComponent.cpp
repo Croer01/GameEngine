@@ -90,7 +90,7 @@ void AudioComponent::loadSource()
     {
         const std::shared_ptr<Internal::Game> &game = std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock());
         if(game)
-            source_ = game->audioEngine().getAudio(filePath_);
+            source_ = game->audioEngine()->getAudio(filePath_);
     }
 }
 

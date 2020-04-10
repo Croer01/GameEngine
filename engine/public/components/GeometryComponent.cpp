@@ -7,8 +7,14 @@
 #include "../../private/Game.hpp"
 
 namespace GameEngine {
-    void GeometryComponent::init() {
+    void GeometryComponent::preInit()
+    {
+        graphicsEngine_ = std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock())->graphicsEngine();
         updateGraphicRef();
+    }
+
+    void GeometryComponent::init() {
+        // the preInit ensure that the graphic is already created at this point
         visible(visible_);
         anchor(anchor_);
         color(color_);
@@ -17,13 +23,11 @@ namespace GameEngine {
     }
 
     void GeometryComponent::updateGraphicRef() {
-        if(gameObject()->game().expired())
+        if(gameObject() == nullptr || gameObject()->game().expired())
             return;
 
-        Internal::GraphicsEngine &graphicsEngine = std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock())->graphicsEngine();
-
         if (graphic_)
-            graphicsEngine.unregisterGraphic(graphic_);
+            graphicsEngine_->unregisterGraphic(graphic_);
 
         if(path_.empty()){
             graphicLoaded_.reset();
@@ -31,7 +35,7 @@ namespace GameEngine {
         } else {
             graphicLoaded_ = std::make_shared<Internal::GraphicGeometry>(path_);
             graphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
-            graphicsEngine.registerGraphic(graphic_);
+            graphicsEngine_->registerGraphic(graphic_);
         }
     }
 
@@ -65,7 +69,8 @@ namespace GameEngine {
     }
 
     GeometryComponent::~GeometryComponent() {
-        std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock())->graphicsEngine().unregisterGraphic(graphic_);
+        if(graphic_)
+            graphicsEngine_->unregisterGraphic(graphic_);
     }
 
     void GeometryComponent::visible(const bool &visible) {

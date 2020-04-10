@@ -85,12 +85,12 @@ TEST(Game, titleChange)
     game->init();
     std::thread t([&](){
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        const std::string &originalTitle = game->screen().title();
+        const std::string &originalTitle = game->screen()->title();
         const std::string &newTitle = "This is a awesome title";
-        auto &screen = dynamic_cast<Internal::Screen&>(game->screen());
-        screen.title(newTitle);
+        auto screen = std::dynamic_pointer_cast<Internal::Screen>(game->screen());
+        screen->title(newTitle);
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        ASSERT_EQ(SDL_GetWindowTitle(&screen.sdlWindow()), newTitle);
+        ASSERT_EQ(SDL_GetWindowTitle(&screen->sdlWindow()), newTitle);
         game->shutdown();
     });
     EXPECT_NO_THROW(

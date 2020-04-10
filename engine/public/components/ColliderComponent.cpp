@@ -31,6 +31,7 @@ namespace {
 }
 
     void ColliderComponent::init() {
+        physicsEngine_ = std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock())->physicsEngine();
         if(auto sprite = gameObject()->getComponent<SpriteComponent>().lock()) {
             size_ = GameEngine::Vec2D(sprite->getWidth(), sprite->getHeight());
             glm::vec2 offset = Internal::parseGraphicPositionToVec2D(Internal::parseStringToGraphicAnchor(sprite->anchor()));
@@ -119,7 +120,7 @@ void ColliderComponent::onEvent(const Subject<Internal::ColliderEvent> &target, 
 
     ColliderComponent::~ColliderComponent() {
         if(collider_) {
-            std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock())->physicsEngine().unregisterCollider(collider_);
+            physicsEngine_->unregisterCollider(collider_);
             collider_->unregisterObserver(this);
         }
 
@@ -223,11 +224,8 @@ void ColliderComponent::onEvent(const Subject<Internal::ColliderEvent> &target, 
         if(gameObject()->game().expired())
             return;
 
-        Internal::PhysicsEngine &physicsEngine = std::dynamic_pointer_cast<Internal::Game>(
-            gameObject()->game().lock())->physicsEngine();
-
         if(collider_)
-            physicsEngine.unregisterCollider(collider_);
+            physicsEngine_->unregisterCollider(collider_);
 
         collider_ = std::make_shared<Internal::Collider>();
         collider_->setShape(stringToColliderShape(colliderShape_));
@@ -237,7 +235,7 @@ void ColliderComponent::onEvent(const Subject<Internal::ColliderEvent> &target, 
         collider_->setGravityScale(gravityScale_);
         collider_->setComponent(std::dynamic_pointer_cast<ColliderComponent>(shared_from_this()));
 
-        physicsEngine.registerCollider(collider_);
+        physicsEngine_->registerCollider(collider_);
         collider_->setPosition(convertWorldToPhysicsPos(gameObject()->position()));
         collider_->setActive(gameObject()->active());
 
