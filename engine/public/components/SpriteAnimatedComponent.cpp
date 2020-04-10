@@ -6,6 +6,7 @@
 #include "../private/graphics/GraphicsEngine.hpp"
 #include "../../private/GameObject.hpp"
 #include "../../private/graphics/GraphicSprite.hpp"
+#include "../../private/Game.hpp"
 
 namespace GameEngine {
     void SpriteAnimatedComponent::init() {
@@ -39,7 +40,7 @@ namespace GameEngine {
     }
 
     SpriteAnimatedComponent::~SpriteAnimatedComponent() {
-        Internal::GraphicsEngine::GetInstance().unregisterGraphic(graphic_);
+        std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock())->graphicsEngine().unregisterGraphic(graphic_);
     }
 
     void SpriteAnimatedComponent::setVisible(const bool &visible) {
@@ -201,11 +202,15 @@ void SpriteAnimatedComponent::setFrame(int frame) {
     }
 
 void SpriteAnimatedComponent::updateGraphicRef() {
-        assert(columns_ > 0);
-        assert(rows_ > 0);
+    assert(columns_ > 0);
+    assert(rows_ > 0);
 
-        if(graphic_)
-            Internal::GraphicsEngine::GetInstance().unregisterGraphic(graphic_);
+    if(gameObject()->game().expired())
+        return;
+
+    Internal::GraphicsEngine &graphicsEngine = std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock())->graphicsEngine();
+    if(graphic_)
+            graphicsEngine.unregisterGraphic(graphic_);
 
         if(filePath_.empty()){
             graphicLoaded_.reset();
@@ -215,7 +220,7 @@ void SpriteAnimatedComponent::updateGraphicRef() {
             graphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
             graphic_->setGrid(columns_, rows_);
             resetAnimation();
-            Internal::GraphicsEngine::GetInstance().registerGraphic(graphic_);
+            graphicsEngine.registerGraphic(graphic_);
         }
     }
 

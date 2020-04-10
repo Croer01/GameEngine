@@ -8,15 +8,19 @@
 
 #include <memory>
 #include <unordered_map>
-#include "Singleton.hpp"
 #include "Scene.hpp"
+
 namespace GameEngine {
 namespace Internal {
-    class SceneManager : public Singleton<SceneManager> {
+
+    class Game;
+
+    class SceneManager {
         std::unordered_map<std::string, std::shared_ptr<Scene>> scenes_;
         std::shared_ptr<Scene> currentScene_;
         std::string currentSceneName_;
         std::string sceneNameToChange_;
+        std::shared_ptr<Game> game_;
     public:
         void update(float elapsedTime);
 
@@ -37,6 +41,9 @@ namespace Internal {
         bool isSceneLoaded() const;
 
         std::shared_ptr<Camera> getCameraOfCurrentScene() const;
+
+        void bindGame(const std::shared_ptr<Game> &game);
+        void unbindGame();
     };
 }
 }

@@ -6,6 +6,7 @@
 #include "GraphicHolder.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
+
 namespace GameEngine {
 namespace Internal {
     GraphicHolder::GraphicHolder(const std::shared_ptr<Graphic> &graphic) :
@@ -39,7 +40,7 @@ namespace Internal {
         else
             scaleTransform = glm::scale(glm::mat4(1), glm::vec3(cellSize_.x, cellSize_.y, 1.f));
 
-        if (GraphicsEngine::GetInstance().isPixelPerfect())
+        if (engine_ != nullptr && engine_->isPixelPerfect())
             desiredPosition = glm::round(desiredPosition);
 
         glm::mat4 anchorTransform = glm::translate(glm::mat4(1), glm::vec3(anchor_, 0.f));
@@ -102,6 +103,11 @@ namespace Internal {
 void GraphicHolder::setTintColor(geColor tint)
 {
    tintColor_ = glm::vec4(tint.r,tint.g,tint.b,1.f);
+}
+
+void GraphicHolder::setEngine(GraphicsEngine *engine)
+{
+    engine_ = engine;
 }
 
 GraphicAnchor parseStringToGraphicAnchor(const std::string &anchorName) {

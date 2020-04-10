@@ -8,10 +8,11 @@
 #include <exception>
 #include <chrono>
 #include <iostream>
+#include <assert.h>
 
 namespace GameEngine {
 namespace Internal {
-    AudioSource::AudioSource(const std::shared_ptr<AudioBuffer> &buffer) {
+    AudioSource::AudioSource(const std::shared_ptr<AudioBuffer> &buffer, AudioEngine *engine) {
         currentChunk_ = 0;
         looping_ = false;
         buffer_ = buffer;
@@ -22,7 +23,9 @@ namespace Internal {
 
         alGenBuffers(AUDIOSOURCE_BUFFERS, streamBuffers_);
 
-        AudioEngine::GetInstance().registerSource(this);
+        assert(engine_ != nullptr);
+        engine_ = engine;
+        engine_->registerSource(this);
     }
 
     AudioSource::~AudioSource() {
@@ -31,11 +34,14 @@ namespace Internal {
         streamRunning_ = false;
         if(streamThread_.joinable())
             streamThread_.join();
-        AudioEngine::GetInstance().unregisterSource(this);
+
+        assert(engine_ != nullptr);
+        engine_->unregisterSource(this);
     }
 
     void AudioSource::play() {
-        if(AudioEngine::GetInstance().muteAll())
+        assert(engine_ != nullptr);
+        if(engine_->muteAll())
             return;
 
         //prepare data to stream sound

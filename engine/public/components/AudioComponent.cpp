@@ -4,9 +4,11 @@
 
 #include <game-engine/components/AudioComponent.hpp>
 #include "../private/audio/AudioEngine.hpp"
+#include "../../private/Game.hpp"
 
 namespace GameEngine {
     void AudioComponent::init() {
+        loadSource();
         if (playOnInit_)
             play();
         setLooping(loopOnInit_);
@@ -31,11 +33,11 @@ namespace GameEngine {
     }
 
     void AudioComponent::filepath(const std::string &path) {
+        filePath_ = path;
         if(path.empty())
             source_.reset();
         else
-            source_ = Internal::AudioEngine::GetInstance().getAudio(path);
-        filePath_ = path;
+            loadSource();
     }
 
     std::string AudioComponent::filepath() const {
@@ -80,6 +82,16 @@ PropertySetBase *AudioComponent::getProperties() const
             false));
 
     return properties;
+}
+
+void AudioComponent::loadSource()
+{
+    if(gameObject() != nullptr)
+    {
+        const std::shared_ptr<Internal::Game> &game = std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock());
+        if(game)
+            source_ = game->audioEngine().getAudio(filePath_);
+    }
 }
 
 }

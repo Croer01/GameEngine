@@ -14,17 +14,20 @@
 
 namespace GameEngine {
 namespace Internal {
+
+    class Game;
+
     class Scene {
         std::string filename_;
-        std::vector<std::shared_ptr<GameObject>> gameobjects_;
+        std::vector<std::shared_ptr<GameObject>> gameObjects_;
         std::shared_ptr<Camera> cam_;
 
-        void loadFile();
+        void loadFile(const std::shared_ptr<Game> &game);
 
     public:
         explicit Scene(const std::string &filename);
 
-        void init();
+        void init(const std::shared_ptr<Game> &game);
 
         void update(float elapsedTime);
 

@@ -6,6 +6,7 @@
 #include <game-engine/components/ui/UIPanelComponent.hpp>
 #include "../../../private/graphics/GraphicGeometry.hpp"
 #include "../../../private/graphics/GraphicsEngine.hpp"
+#include "../../../private/Game.hpp"
 
 namespace GameEngine
 {
@@ -30,7 +31,7 @@ void UIPanelComponent::createBackgroundGraphic()
     auto graphicLoaded_ = std::make_shared<Internal::GraphicGeometry>(path);
     backgroundGraphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
     backgroundGraphic_->setModelTransform(calculateVirtualScreenPos(), 0.f, calculateVirtualScreenSize());
-    Internal::GraphicsEngine::GetInstance().registerGraphic(backgroundGraphic_);
+    std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock())->graphicsEngine().registerGraphic(backgroundGraphic_);
     backgroundGraphic_->setActive(visible());
 }
 
@@ -55,7 +56,7 @@ void UIPanelComponent::onVisibleChanged()
 UIPanelComponent::~UIPanelComponent()
 {
     if(backgroundGraphic_)
-        Internal::GraphicsEngine::GetInstance().unregisterGraphic(backgroundGraphic_);
+        std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock())->graphicsEngine().unregisterGraphic(backgroundGraphic_);
 }
 
 geComponentRef UIPanelComponent::instantiate() const

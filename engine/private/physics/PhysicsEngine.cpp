@@ -5,21 +5,28 @@
 #include "PhysicsEngine.hpp"
 namespace GameEngine {
 namespace Internal {
-    void PhysicsEngine::init(float timeStep) {
-        timeStep_ = timeStep;
-        timeAcumulator_ = 0;
-        velocityIterations_ = 6;
-        positionIterations_ = 2;
-        colliders_.clear();
+void PhysicsEngine::init(float timeStep) {
+    timeStep_ = timeStep;
+    timeAcumulator_ = 0;
+    velocityIterations_ = 6;
+    positionIterations_ = 2;
+    colliders_.clear();
 
-        world_.reset(new b2World(b2Vec2(0, 9.8f)));
-        world_->SetContactListener(this);
+    // It isn't necessary to clear all the physics objects in
+    // the PhysicsEngine's destructor because Box2D destroy those objects registered.
+    world_.reset(new b2World(b2Vec2(0, 9.8f)));
+    world_->SetContactListener(this);
+}
+
 #ifdef DEBUG
-        debugView_.reset(new DebugView());
+void PhysicsEngine::init(float timeStep, Screen *screen) {
+        init(timeStep);
+
+        debugView_.reset(new DebugView(screen));
         world_->SetDebugDraw(debugView_.get());
         debugView_->SetFlags(b2Draw::e_shapeBit);
-#endif
     }
+#endif
 
     void PhysicsEngine::update(float elapsedTime) {
         //update all the colliders in safe mode

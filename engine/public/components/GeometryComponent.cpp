@@ -4,6 +4,7 @@
 
 #include <game-engine/components/GeometryComponent.hpp>
 #include "../../private/graphics/GraphicsEngine.hpp"
+#include "../../private/Game.hpp"
 
 namespace GameEngine {
     void GeometryComponent::init() {
@@ -16,8 +17,13 @@ namespace GameEngine {
     }
 
     void GeometryComponent::updateGraphicRef() {
+        if(gameObject()->game().expired())
+            return;
+
+        Internal::GraphicsEngine &graphicsEngine = std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock())->graphicsEngine();
+
         if (graphic_)
-            Internal::GraphicsEngine::GetInstance().unregisterGraphic(graphic_);
+            graphicsEngine.unregisterGraphic(graphic_);
 
         if(path_.empty()){
             graphicLoaded_.reset();
@@ -25,7 +31,7 @@ namespace GameEngine {
         } else {
             graphicLoaded_ = std::make_shared<Internal::GraphicGeometry>(path_);
             graphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
-            Internal::GraphicsEngine::GetInstance().registerGraphic(graphic_);
+            graphicsEngine.registerGraphic(graphic_);
         }
     }
 
@@ -59,7 +65,7 @@ namespace GameEngine {
     }
 
     GeometryComponent::~GeometryComponent() {
-        Internal::GraphicsEngine::GetInstance().unregisterGraphic(graphic_);
+        std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock())->graphicsEngine().unregisterGraphic(graphic_);
     }
 
     void GeometryComponent::visible(const bool &visible) {

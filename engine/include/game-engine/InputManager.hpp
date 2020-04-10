@@ -7,7 +7,6 @@
 
 
 #include <map>
-#include "../private/Singleton.hpp"
 #include <game-engine/api.hpp>
 #include <game-engine/KeyCodes.hpp>
 #include <game-engine/events/Subject.hpp>
@@ -20,6 +19,7 @@ enum class InputTextSubjectEvent
     INPUT,
     ERASE
 };
+
 class InputTextSubject;
 typedef std::shared_ptr<InputTextSubject> InputTextSubjectRef;
 class InputTextSubject : public Subject<InputTextSubjectEvent>
@@ -27,7 +27,7 @@ class InputTextSubject : public Subject<InputTextSubjectEvent>
 
 };
 
-class InputManager : public Internal::Singleton<InputManager>
+class InputManager
 {
     enum class InputState
     {

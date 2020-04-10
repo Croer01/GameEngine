@@ -81,7 +81,8 @@ set(ENGINE_PRIVATE_SOURCES
         engine/private/graphics/Camera.cpp
         engine/private/graphics/MeshData.cpp
         engine/private/graphics/GraphicSprite.cpp
-        engine/private/graphics/GraphicGeometry.cpp)
+        engine/private/graphics/GraphicGeometry.cpp
+        engine/private/Environment.cpp)
 
 add_library(GameEngine ${ENGINE_SOURCES} ${ENGINE_PRIVATE_SOURCES})
 

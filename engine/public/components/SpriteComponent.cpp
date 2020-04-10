@@ -6,6 +6,7 @@
 #include "../private/graphics/GraphicsEngine.hpp"
 #include "../private/GameObject.hpp"
 #include "../../private/graphics/GraphicSprite.hpp"
+#include "../../private/Game.hpp"
 
 namespace GameEngine {
     void SpriteComponent::init() {
@@ -34,7 +35,8 @@ namespace GameEngine {
     }
 
     SpriteComponent::~SpriteComponent() {
-        Internal::GraphicsEngine::GetInstance().unregisterGraphic(graphic_);
+        if(graphic_)
+            std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock())->graphicsEngine().unregisterGraphic(graphic_);
     }
 
     void SpriteComponent::setVisible(const bool &visible) {
@@ -69,8 +71,12 @@ namespace GameEngine {
     }
 
     void SpriteComponent::updateGraphicRef() {
+        if(gameObject() == nullptr || gameObject()->game().expired())
+            return;
+
+        Internal::GraphicsEngine &graphicsEngine = std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock())->graphicsEngine();
         if(graphic_)
-            Internal::GraphicsEngine::GetInstance().unregisterGraphic(graphic_);
+            graphicsEngine.unregisterGraphic(graphic_);
 
         if(filePath_.empty()){
             graphicLoaded_.reset();
@@ -78,7 +84,7 @@ namespace GameEngine {
         } else {
             graphicLoaded_ = std::make_shared<Internal::GraphicSprite>(filePath_);
             graphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
-            Internal::GraphicsEngine::GetInstance().registerGraphic(graphic_);
+            graphicsEngine.registerGraphic(graphic_);
         }
     }
 

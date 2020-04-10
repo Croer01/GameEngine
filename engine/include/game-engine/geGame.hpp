@@ -12,32 +12,32 @@
 #include "geScreen.hpp"
 #include "geAudio.hpp"
 #include "geCamera.hpp"
+#include "InputManager.hpp"
 
 namespace GameEngine {
     class geGame;
+    typedef std::shared_ptr<geGame> geGameRef;
+
     class geGameObject;
     typedef std::shared_ptr<geGameObject> geGameObjectRef;
 
     class PUBLICAPI geGame {
-        geEnvironment environment_;
-        std::unique_ptr<geAudio> audio_;
-        bool initialized_;
     public:
-        geGame();
-        virtual ~geGame();
-        void init();
-        int loop();
-        void shutdown();
+        virtual ~geGame() = 0;
+        virtual void init() = 0;
+        virtual int loop() = 0;
+        virtual void shutdown() = 0;
 
-        geGameObjectRef createObject(const std::string &name);
-        geGameObjectRef createFromPrototype(const std::string &prototype);
-        void configEnvironment(const geEnvironment &environment);
-        geGameObjectRef findObjectByNameInCurrentScene(const std::string &gameObjectName);
-        void changeScene(const std::string &name);
-        std::weak_ptr<geCamera> cameraOfCurrentScene() const;
+        static geGameRef createInstance(const std::shared_ptr<geEnvironment> &env);
+        virtual geGameObjectRef createObject(const std::string &name) = 0;
+        virtual geGameObjectRef createFromPrototype(const std::string &prototype) = 0;
+        virtual geGameObjectRef findObjectByNameInCurrentScene(const std::string &gameObjectName) = 0;
+        virtual void changeScene(const std::string &name) = 0;
+        virtual std::weak_ptr<geCamera> cameraOfCurrentScene() const = 0;
 
-        geScreen &screen() const;
-        geAudio &audio() const;
+        virtual geScreen &screen() const = 0;
+        virtual geAudio &audio() const = 0;
+        virtual InputManager &input() const = 0;
     };
 }
 

@@ -12,11 +12,10 @@
 // FreeType
 #include <ft2build.h>
 #include FT_FREETYPE_H
-#include "../../Singleton.hpp"
 
 namespace GameEngine {
 namespace Internal {
-    class FontManager : public Singleton<FontManager> {
+    class FontManager {
         FT_Library ftLibrary_;
         std::map<std::string, std::shared_ptr<Font>> fonts_;
     public:

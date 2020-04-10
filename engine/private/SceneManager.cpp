@@ -4,6 +4,8 @@
 
 #include "SceneManager.hpp"
 #include "ObjectManager.hpp"
+#include "Game.hpp"
+
 namespace GameEngine {
 namespace Internal {
     void SceneManager::registerScene(const std::string &name, const std::string &filename) {
@@ -36,7 +38,8 @@ namespace Internal {
             if (currentScene_)
                 currentScene_->shutDown();
             currentScene_ = scenes_[sceneNameToChange_];
-            currentScene_->init();
+            assert(game_);
+            currentScene_->init(game_);
             currentSceneName_ = sceneNameToChange_;
             sceneNameToChange_.clear();
         }
@@ -73,6 +76,16 @@ namespace Internal {
             cam = std::dynamic_pointer_cast<Camera>(currentScene_->cam());
 
         return cam;
+    }
+
+    void SceneManager::bindGame(const std::shared_ptr<Game> &game)
+    {
+        game_ = game;
+    }
+
+    void SceneManager::unbindGame()
+    {
+        game_ = nullptr;
     }
 }
 }

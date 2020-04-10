@@ -2,72 +2,64 @@
 // Created by adria on 22/09/2018.
 //
 
-#include <iostream>
 #include "Game.hpp"
-#include "ObjectManager.hpp"
+#include <iostream>
 #include "utils.hpp"
-#include <game-engine/components/SpriteComponent.hpp>
-#include "graphics/GraphicsEngine.hpp"
 #include "Scene.hpp"
-#include "SceneManager.hpp"
-#include <game-engine/InputManager.hpp>
-#include <game-engine/components/ColliderComponent.hpp>
-#include "physics/PhysicsEngine.hpp"
-#include <game-engine/components/TextComponent.hpp>
-#include <game-engine/components/SpriteAnimatedComponent.hpp>
-#include "audio/AudioEngine.hpp"
-#include "game-engine/components/ui/UIButtonComponent.hpp"
-#include "game-engine/components/ui/UITextComponent.hpp"
-#include "game-engine/components/ui/UITextInputComponent.hpp"
-#include <game-engine/components/AudioComponent.hpp>
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
-#include <game-engine/components/GeometryComponent.hpp>
-#include <game-engine/components/ui/UIPanelComponent.hpp>
-#include <game-engine/components/ui/UIImageComponent.hpp>
+#include <memory>
 
 namespace GameEngine {
 namespace Internal {
 
-    void Game::onCreateInstance() {
-
-        //Register the engine's default components
-        ObjectManager::GetInstance().registerComponentBuilder("SpriteComponent",
-                                                              new ComponentTBuilder<SpriteComponent>());
-        ObjectManager::GetInstance().registerComponentBuilder("GeometryComponent",
-                                                              new ComponentTBuilder<GeometryComponent>());
-        ObjectManager::GetInstance().registerComponentBuilder("SpriteAnimatedComponent",
-                                                              new ComponentTBuilder<SpriteAnimatedComponent>());
-        ObjectManager::GetInstance().registerComponentBuilder("ColliderComponent",
-                                                              new ComponentTBuilder<ColliderComponent>());
-        ObjectManager::GetInstance().registerComponentBuilder("TextComponent", new ComponentTBuilder<TextComponent>());
-        ObjectManager::GetInstance().registerComponentBuilder("AudioComponent",
-                                                              new ComponentTBuilder<AudioComponent>());
-        //GUI Components
-        ObjectManager::GetInstance().registerComponentBuilder("UIButtonComponent", new ComponentTBuilder<UIButtonComponent>());
-        ObjectManager::GetInstance().registerComponentBuilder("UITextComponent", new ComponentTBuilder<UITextComponent>());
-        ObjectManager::GetInstance().registerComponentBuilder("UITextInputComponent", new ComponentTBuilder<UITextInputComponent>());
-        ObjectManager::GetInstance().registerComponentBuilder("UIPanelComponent", new ComponentTBuilder<UIPanelComponent>());
-        ObjectManager::GetInstance().registerComponentBuilder("UIImageComponent", new ComponentTBuilder<UIImageComponent>());
+    Game::Game(const std::shared_ptr<Environment> &environment)
+    {
+        running_ = false;
+        environment_ = environment;
     }
 
-    void Game::init(const std::string &configRoot) {
-        running_ = true;
-        // Initialize SDL's Video subsystem
-        if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-            CheckSDLError();
+    Game::~Game()
+    {
+        // TODO: implement destructor?
+    }
+
+    void Game::init() {
+        if(!running_)
+        {
+            running_ = true;
+            // Initialize SDL's Video subsystem
+            if (SDL_Init(SDL_INIT_VIDEO) < 0)
+            {
+                CheckSDLError();
+            }
+            screen_ = std::make_unique<Screen>(environment_->configurationPath() + "/screen.yaml");
+            graphicsEngine_ = std::make_unique<GraphicsEngine>();
+            graphicsEngine_->init(*screen_);
+
+            initPhysics(environment_->configurationPath() + "/physics.yaml");
+
+            audioEngine_ = std::make_unique<AudioEngine>();
+            audioEngine_->init();
+            fontManager_ = std::make_unique<FontManager>();
+            inputManager_ = std::make_unique<InputManager>();
+
+            environment_->sceneManager().bindGame(shared_from_this());
+            if(!environment_->firstScene().empty())
+            {
+                changeScene(environment_->firstScene());
+                environment_->sceneManager().changeSceneInSafeMode();
+            }
         }
-        screen_.reset( new Screen(configRoot + "/screen.yaml"));
-        GraphicsEngine::GetInstance().init(*screen_);
-
-        initPhysics(configRoot + "/physics.yaml");
-
-        AudioEngine::GetInstance().init();
     }
 
     void Game::initPhysics(const std::string &configFilePath) {
-        PhysicsEngine::GetInstance().init(1.f / 60.f);
-
+        physicsEngine_ = std::make_unique<PhysicsEngine>();
+#ifdef DEBUG
+        physicsEngine_->init(1.f / 60.f, screen_.get());
+#else
+        physicsEngine_->init(1.f / 60.f);
+#endif
         YAML::Node physicsConfig;
         try {
             physicsConfig = YAML::LoadFile(configFilePath);
@@ -84,7 +76,7 @@ namespace Internal {
             for (int i = 0; i < categoriesNode.size(); ++i) {
                 categories.push_back(categoriesNode[i].as<std::string>());
             }
-            PhysicsEngine::GetInstance().createCategories(categories);
+            physicsEngine_->createCategories(categories);
         }
         if (physicsConfig["masks"]) {
             std::unordered_map<std::string, std::vector<std::string>> masks;
@@ -99,23 +91,23 @@ namespace Internal {
                 masks.insert(std::pair<std::string, std::vector<std::string>>(category, mask));
             }
 
-            PhysicsEngine::GetInstance().createMasks(masks);
+            physicsEngine_->createMasks(masks);
         }
     }
 
-    void Game::loop() {
+    void Game::innerLoop() {
         unsigned int lastTime = 0, currentTime;
 
         while (running_) {
-            InputManager::GetInstance().update();
-            if (InputManager::GetInstance().isQuitDown()) {
+            inputManager_->update();
+            if (inputManager_->isQuitDown()) {
                 shutdown();
                 continue;
             }
 
 #ifdef DEBUG
-            if (InputManager::GetInstance().isKeyDown(KeyCode::KEY_F5)) {
-                SceneManager::GetInstance().reloadScene();
+            if (inputManager_->isKeyDown(KeyCode::KEY_F5)) {
+                environment_->sceneManager().reloadScene();
             }
 #endif
 
@@ -128,52 +120,125 @@ namespace Internal {
             if (elapsedTime >= 5)
                 elapsedTime = 1.f / 60.f;
 #endif
-            SceneManager::GetInstance().update(elapsedTime);
-            PhysicsEngine::GetInstance().update(elapsedTime);
+            environment_->sceneManager().update(elapsedTime);
+            physicsEngine_->update(elapsedTime);
 
             glClear(GL_COLOR_BUFFER_BIT);
             glViewport(screen_->calculatedX(), screen_->calculatedY(), screen_->calculatedWidth(),
                        screen_->calculatedHeight());
-            const std::shared_ptr<Camera> &cam = SceneManager::GetInstance().getCameraOfCurrentScene();
-            GraphicsEngine::GetInstance().draw(cam);
+            const std::shared_ptr<Camera> &cam = environment_->sceneManager().getCameraOfCurrentScene();
+            graphicsEngine_->draw(cam);
 #ifdef DEBUG
-            PhysicsEngine::GetInstance().drawDebug(cam);
+            physicsEngine_->drawDebug(cam);
 #endif
             screen_->swapWindow();
             lastTime = currentTime;
 
-            SceneManager::GetInstance().changeSceneInSafeMode();
+            environment_->sceneManager().changeSceneInSafeMode();
         }
 
-        // shutdown or clear all Game Systems
-        SceneManager::GetInstance().clear();
-        ObjectManager::GetInstance().clear();
-        // Restore default Components' Builder
-        onCreateInstance();
-
-        //TODO: Do physics and graphics engines shutdown?
-        screen_.reset();
-
-        // Shutdown SDL 2
+        //TODO: should this call in shutdown instead of here?
         SDL_Quit();
     }
 
 
     void Game::shutdown() {
         running_ = false;
-        context_ = nullptr;
     }
 
-    void Game::context(geGame *context) {
-        context_ = context;
+    const geGame &Game::context() const {
+        return (const geGame &) *this;
     }
 
-    geGame &Game::context() const {
-        return *context_;
+    int Game::loop() {
+        try {
+            init();
+
+            innerLoop();
+            //TODO: create a way to bind game into components
+            environment_->sceneManager().unbindGame();
+            return 0;
+        }
+        catch (const std::exception &e){
+            std::cerr << e.what() << std::endl;
+            return 1;
+        }
     }
 
-    Screen &Game::screen() const {
+    geGameObjectRef Game::createObject(const std::string &name)
+    {
+        const std::shared_ptr<Internal::GameObject> &object = std::make_shared<Internal::GameObject>("");
+        object->name(name);
+        if(environment_->sceneManager().isSceneLoaded())
+            environment_->sceneManager().addObjectIntoCurrentScene(object);
+
+        return object;
+    }
+
+    geGameObjectRef Game::createFromPrototype(const std::string &prototype)
+    {
+        const std::shared_ptr<Internal::GameObject> &object = environment_->objectManager().createGameObject(prototype, shared_from_this());
+        if(environment_->sceneManager().isSceneLoaded())
+            environment_->sceneManager().addObjectIntoCurrentScene(object);
+
+        return object;
+    }
+
+    geGameObjectRef Game::findObjectByNameInCurrentScene(const std::string &gameObjectName)
+    {
+        const std::shared_ptr<GameObject> &object = environment_->sceneManager().findObjectByName(gameObjectName);
+        return std::dynamic_pointer_cast<geGameObject>(object);
+    }
+
+    void Game::changeScene(const std::string &name)
+    {
+        environment_->sceneManager().changeScene(name);
+    }
+
+    std::weak_ptr<geCamera> Game::cameraOfCurrentScene() const
+    {
+        return environment_->sceneManager().getCameraOfCurrentScene();
+    }
+
+    geScreen &Game::screen() const
+    {
         return *screen_;
     }
+
+    geAudio &Game::audio() const
+    {
+        return *audioEngine_;
+    }
+
+GraphicsEngine &Game::graphicsEngine() const
+{
+    return *graphicsEngine_;
+}
+
+PhysicsEngine &Game::physicsEngine() const
+{
+    return *physicsEngine_;
+}
+
+AudioEngine &Game::audioEngine() const
+{
+    return *audioEngine_;
+}
+
+InputManager &Game::input() const
+{
+    return *inputManager_;
+}
+
+FontManager &Game::fontManager() const
+{
+    return *fontManager_;
+}
+
+ObjectManager &Game::objectManager() const
+{
+    return environment_->objectManager();
+}
+
 }
 }

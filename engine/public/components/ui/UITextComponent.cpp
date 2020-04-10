@@ -5,13 +5,14 @@
 #include "game-engine/components/ui/UITextComponent.hpp"
 #include "../../../private/graphics/font/FontManager.hpp"
 #include "../../../private/graphics/GraphicsEngine.hpp"
+#include "../../../private/Game.hpp"
 
 namespace GameEngine
 {
 UITextComponent::~UITextComponent()
 {
     if(graphicText_)
-        Internal::GraphicsEngine::GetInstance().unregisterText(graphicText_);
+        std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock())->graphicsEngine().unregisterText(graphicText_);
 }
 
 geComponentRef UITextComponent::instantiate() const
@@ -73,15 +74,19 @@ void UITextComponent::font(const std::string &fontName)
 
 void UITextComponent::UpdateTextGraphic()
 {
+    std::shared_ptr<Internal::Game> game = std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock());
+    if(!game)
+        return;
+
     if(graphicText_)
-        Internal::GraphicsEngine::GetInstance().unregisterText(graphicText_);
+        game->graphicsEngine().unregisterText(graphicText_);
 
     if(!font_.empty())
     {
-        graphicText_ = Internal::FontManager::GetInstance().getFont(font_, fontSize_)->createText(text_);
+        graphicText_ = game->fontManager().getFont(font_, fontSize_)->createText(text_);
         setTextModelTransform(calculateVirtualScreenPos(), 0.f, Vec2D(1, 1));
         graphicText_->setTintColor(foregroundColor_);
-        Internal::GraphicsEngine::GetInstance().registerText(graphicText_);
+        game->graphicsEngine().registerText(graphicText_);
         graphicText_->setActive(visible());
     }
 }

@@ -29,21 +29,21 @@ namespace Internal {
 
         std::unique_ptr<GameObject> prototype;
         prototype.reset(new GameObject(objectType));
-        prototype->fromFile(filename);
+        prototype->fromFile(filename, this);
         prototypes_.insert(std::make_pair(objectType, std::move(prototype)));
     }
 
-    std::shared_ptr<GameObject> ObjectManager::createGameObject(const std::string &objectType) {
+    std::shared_ptr<GameObject> ObjectManager::createGameObject(const std::string &objectType, const std::shared_ptr<Game> &game) {
         auto it = prototypes_.find(objectType);
 
         if (it == prototypes_.end())
             throw std::runtime_error(("prototype " + objectType + " not found").c_str());
 
 
-        return it->second->Clone();
+        return it->second->Clone(game);
     }
 
-    void ObjectManager::clear() {
+    ObjectManager::~ObjectManager() {
         prototypes_.clear();
         componentFactory_ = Factory<geComponent, ComponentBuilder, std::string>();
     }

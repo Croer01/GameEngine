@@ -19,6 +19,9 @@
 namespace GameEngine {
 namespace Internal {
 
+    class Game;
+    class ObjectManager;
+
     class GameObject : public geGameObject, private Observer<GameObjectEvent>, public std::enable_shared_from_this<GameObject> {
         static int ID_GENERATOR;
         int id_;
@@ -35,8 +38,9 @@ namespace Internal {
         glm::mat4 transform_;
         bool destroyed_;
         bool initializating_;
+        std::shared_ptr<Game> game_;
 
-        void fromYamlNode(const YAML::Node &node);
+        void fromYamlNode(const YAML::Node &node, ObjectManager *objectManager);
 
     public:
 
@@ -55,9 +59,9 @@ namespace Internal {
 
         virtual GameEngine::geGameObjectRef findChildByName(const std::string &name);
 
-        void fromFile(const std::string &filename);
+        void fromFile(const std::string &filename, ObjectManager *objectManager);
 
-        std::shared_ptr<GameObject> Clone() const;
+        std::shared_ptr<GameObject> Clone(const std::shared_ptr<Game> &game) const;
 
         void parent(const geGameObjectRef &parent) override;
 
@@ -82,7 +86,7 @@ namespace Internal {
         std::string name() const override;
         void name(const std::string &name) override;
 
-        virtual geGame &game() const;
+        virtual std::weak_ptr<geGame> game() const;
 
         virtual bool isDestroyed() const;
         virtual void destroy();

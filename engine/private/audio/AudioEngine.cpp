@@ -8,6 +8,10 @@
 
 namespace GameEngine {
 namespace Internal {
+    AudioEngine::AudioEngine() {
+        mute_ = false;
+    }
+
     void AudioEngine::init() {
         device_ = alcOpenDevice(nullptr);
         if (!device_)
@@ -31,11 +35,8 @@ namespace Internal {
             buffers_[filename] = buffer;
         }
 
-        return std::make_shared<AudioSource>(buffer);
-    }
-
-    void AudioEngine::onCreateInstance() {
-        mute_ = false;
+        const std::shared_ptr<AudioSource> &source = std::make_shared<AudioSource>(buffer, this);
+        return source;
     }
 
     void AudioEngine::muteAll(bool mute) {

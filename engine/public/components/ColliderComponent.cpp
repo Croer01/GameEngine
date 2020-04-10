@@ -7,6 +7,7 @@
 #include <iostream>
 #include "../private/physics/PhysicsEngine.hpp"
 #include "../../private/GameObject.hpp"
+#include "../../private/Game.hpp"
 
 namespace GameEngine {
 namespace {
@@ -118,7 +119,7 @@ void ColliderComponent::onEvent(const Subject<Internal::ColliderEvent> &target, 
 
     ColliderComponent::~ColliderComponent() {
         if(collider_) {
-            Internal::PhysicsEngine::GetInstance().unregisterCollider(collider_);
+            std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock())->physicsEngine().unregisterCollider(collider_);
             collider_->unregisterObserver(this);
         }
 
@@ -219,8 +220,14 @@ void ColliderComponent::onEvent(const Subject<Internal::ColliderEvent> &target, 
     }
 
     void ColliderComponent::updateColliderRef() {
+        if(gameObject()->game().expired())
+            return;
+
+        Internal::PhysicsEngine &physicsEngine = std::dynamic_pointer_cast<Internal::Game>(
+            gameObject()->game().lock())->physicsEngine();
+
         if(collider_)
-            Internal::PhysicsEngine::GetInstance().unregisterCollider(collider_);
+            physicsEngine.unregisterCollider(collider_);
 
         collider_ = std::make_shared<Internal::Collider>();
         collider_->setShape(stringToColliderShape(colliderShape_));
@@ -230,7 +237,7 @@ void ColliderComponent::onEvent(const Subject<Internal::ColliderEvent> &target, 
         collider_->setGravityScale(gravityScale_);
         collider_->setComponent(std::dynamic_pointer_cast<ColliderComponent>(shared_from_this()));
 
-        Internal::PhysicsEngine::GetInstance().registerCollider(collider_);
+        physicsEngine.registerCollider(collider_);
         collider_->setPosition(convertWorldToPhysicsPos(gameObject()->position()));
         collider_->setActive(gameObject()->active());
 

@@ -33,6 +33,8 @@ namespace GameEngine {
 
         void setLooping(bool loop);
 
+        void loadSource();
+
         void filepath(const std::string &path);
         std::string filepath() const;
     };

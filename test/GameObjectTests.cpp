@@ -47,9 +47,9 @@ public:
 
 TEST(GameObject, createObject)
 {
-    geGame game;
+    geGameRef game = geGame::createInstance(geEnvironment::createInstance());
 
-    geGameObjectRef go = game.createObject("test1");
+    geGameObjectRef go = game->createObject("test1");
 
     ASSERT_EQ(go->name(), "test1");
 }
@@ -58,8 +58,8 @@ TEST(GameObject, changeName)
 {
     const std::string &oldName = "old name";
     const std::string &newName = "new name";
-    geGame game;
-    geGameObjectRef go = game.createObject(oldName);
+    geGameRef game = geGame::createInstance(geEnvironment::createInstance());
+    geGameObjectRef go = game->createObject(oldName);
 
     ASSERT_EQ(go->name(), oldName);
     go->name(newName);
@@ -69,9 +69,9 @@ TEST(GameObject, changeName)
 
 TEST(GameObject, positionChangedByParent)
 {
-    geGame game;
-    geGameObjectRef parent = game.createObject("parent");
-    geGameObjectRef child = game.createObject("child");
+    geGameRef game = geGame::createInstance(geEnvironment::createInstance());
+    geGameObjectRef parent = game->createObject("parent");
+    geGameObjectRef child = game->createObject("child");
     const Vec2D &parentPos = Vec2D(5,5);
     const Vec2D &childPos = Vec2D(2,2);
     parent->position(parentPos);
@@ -92,9 +92,9 @@ TEST(GameObject, positionChangedByParent)
 
 TEST(GameObject, rotationChangedByParent)
 {
-    geGame game;
-    geGameObjectRef parent = game.createObject("parent");
-    geGameObjectRef child = game.createObject("child");
+    geGameRef game = geGame::createInstance(geEnvironment::createInstance());
+    geGameObjectRef parent = game->createObject("parent");
+    geGameObjectRef child = game->createObject("child");
     float parentRot = 5;
     float childRot = 2;
     parent->rotation(parentRot);
@@ -115,9 +115,9 @@ TEST(GameObject, rotationChangedByParent)
 
 TEST(GameObject, scaleChangedByParent)
 {
-    geGame game;
-    geGameObjectRef parent = game.createObject("parent");
-    geGameObjectRef child = game.createObject("child");
+    geGameRef game = geGame::createInstance(geEnvironment::createInstance());
+    geGameObjectRef parent = game->createObject("parent");
+    geGameObjectRef child = game->createObject("child");
     const Vec2D &parentScale = Vec2D(5,5);
     const Vec2D &childScale = Vec2D(2,2);
     parent->scale(parentScale);
@@ -139,22 +139,20 @@ TEST(GameObject, loadGameObject)
 {
     const std::string &prototype = "ObjectLoaded";
 
-    geGame game;
+    geEnvironmentRef environment = geEnvironment::createInstance();
+    environment->addPrototype(prototype, "data/goLoadTest.yaml");
 
-    geEnvironment environment;
-    environment.addPrototype(prototype, "data/goLoadTest.yaml");
+    geGameRef game = geGame::createInstance(environment);
 
-    game.configEnvironment(environment);
-
-    geGameObjectRef gameObject = game.createFromPrototype(prototype);
+    geGameObjectRef gameObject = game->createFromPrototype(prototype);
     ASSERT_EQ(gameObject->name(), "loadedFromFile");
 }
 
 
 TEST(GameObject, addChildDuringInitialization)
 {
-    geGame game;
-    geGameObjectRef go = game.createObject("test");
+    geGameRef game = geGame::createInstance(geEnvironment::createInstance());
+    geGameObjectRef go = game->createObject("test");
     auto component = std::make_shared<AddOnInitializeComponent>();
     go->addComponent(component);
 
@@ -171,15 +169,13 @@ TEST(SpriteComponent, load)
 {
     const std::string &prototype = "ObjectWithSpriteLoaded";
 
-    geGame game;
-    game.init();
+    geEnvironmentRef environment = geEnvironment::createInstance();
+    environment->addPrototype(prototype, "data/spriteComponentLoadTest.yaml");
 
-    geEnvironment environment;
+    geGameRef game = geGame::createInstance(environment);
+    game->init();
 
-    game.configEnvironment(environment);
-    environment.addPrototype(prototype, "data/spriteComponentLoadTest.yaml");
-
-    geGameObjectRef gameObject = game.createFromPrototype(prototype);
+    geGameObjectRef gameObject = game->createFromPrototype(prototype);
     const std::weak_ptr<SpriteComponent> &component = gameObject->getComponent<SpriteComponent>();
     ASSERT_EQ(gameObject->name(), "loadedFromFile");
     ASSERT_TRUE(component.lock());

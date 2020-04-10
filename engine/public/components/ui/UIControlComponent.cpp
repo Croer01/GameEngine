@@ -4,6 +4,7 @@
 
 #include <game-engine/InputManager.hpp>
 #include "game-engine/components/ui/UIControlComponent.hpp"
+#include "../../../private/Game.hpp"
 
 namespace GameEngine {
 
@@ -32,7 +33,9 @@ void UIControlComponent::Update(float elapsedTime)
     if(!visible_)
         return;
 
-    const Vec2D &mousePos = InputManager::GetInstance().getMousePosition();
+    InputManager &inputManager = gameObject()->game().lock()->input();
+
+    const Vec2D &mousePos = inputManager.getMousePosition();
     Vec2D min = calculateVirtualScreenPos();
     Vec2D max = min + calculateVirtualScreenSize();
     bool prevHover = hover_;
@@ -45,7 +48,7 @@ void UIControlComponent::Update(float elapsedTime)
             onHoverOut();
     }
 
-    if(hover_ && InputManager::GetInstance().isMouseButtonDown(MouseButton::LEFT))
+    if(hover_ && inputManager.isMouseButtonDown(MouseButton::LEFT))
     {
         onClick();
         if(!focused_)
@@ -55,7 +58,7 @@ void UIControlComponent::Update(float elapsedTime)
         }
     }
     //TODO: change this to a Centralized Focus Manager
-    else if(!hover_ && InputManager::GetInstance().isMouseButtonDown(MouseButton::LEFT))
+    else if(!hover_ && inputManager.isMouseButtonDown(MouseButton::LEFT))
     {
         if(focused_)
         {
@@ -130,7 +133,7 @@ void UIControlComponent::visible(const bool &value)
 
 Vec2D UIControlComponent::calculateVirtualScreenPos() const
 {
-    geScreen &screen = gameObject()->game().screen();
+    geScreen &screen = gameObject()->game().lock()->screen();
     Vec2D position = screenPos();
     position.x *= static_cast<float>(screen.virtualWidth());
     position.y *= static_cast<float>(screen.virtualHeight());
@@ -139,7 +142,7 @@ Vec2D UIControlComponent::calculateVirtualScreenPos() const
 
 Vec2D UIControlComponent::calculateVirtualScreenSize() const
 {
-    geScreen &screen = gameObject()->game().screen();
+    geScreen &screen = gameObject()->game().lock()->screen();
     Vec2D size = screenSize();
     size.x *= static_cast<float>(screen.virtualWidth());
     size.y *= static_cast<float>(screen.virtualHeight());

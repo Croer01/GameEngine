@@ -5,10 +5,10 @@
 #include <iostream>
 #include <sstream>
 #include "GameObject.hpp"
-#include "Game.hpp"
 #include "yamlConverters.hpp"
-#include <game-engine/geComponent.hpp>
 #include "ObjectManager.hpp"
+#include "Game.hpp"
+#include <game-engine/geComponent.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -28,7 +28,8 @@ namespace Internal {
             rotation_(0.f),
             scale_(1.f,1.f),
             destroyed_(false),
-            initializating_(false){
+            initializating_(false),
+            game_(nullptr){
         computeTransform();
     }
 
@@ -114,8 +115,9 @@ namespace Internal {
         children_.clear();
     }
 
-    std::shared_ptr<GameObject> GameObject::Clone() const {
+    std::shared_ptr<GameObject> GameObject::Clone(const std::shared_ptr<Game> &game) const {
         auto cloned = std::make_shared<GameObject>(prototype_);
+        cloned->game_ = game;
 
         cloned->name_ = name_;
         cloned->position_ = position_;
@@ -130,7 +132,7 @@ namespace Internal {
         }
 
         for (auto &child : children_) {
-            std::shared_ptr<GameObject> clonedChild = child->Clone();
+            std::shared_ptr<GameObject> clonedChild = child->Clone(game);
             if(!clonedChild)
                 throw std::runtime_error("one of the child of " + prototype_ + " has an error during cloning process");
             cloned->addChild(clonedChild);
@@ -139,10 +141,10 @@ namespace Internal {
         return cloned;
     }
 
-    void GameObject::fromFile(const std::string &filename) {
+    void GameObject::fromFile(const std::string &filename, ObjectManager *objectManager) {
         try {
             YAML::Node gameObjectConfig = YAML::LoadFile(filename);
-            fromYamlNode(gameObjectConfig);
+            fromYamlNode(gameObjectConfig, objectManager);
         } catch (const std::exception &e) {
             throw std::runtime_error("Can't load '" + filename + "'. cause: " + e.what());
         }
@@ -223,7 +225,7 @@ namespace Internal {
         name_ = name;
     }
 
-    void GameObject::fromYamlNode(const YAML::Node &node) {
+    void GameObject::fromYamlNode(const YAML::Node &node, ObjectManager *objectManager) {
         if(node["name"])
             name_ = node["name"].as<std::string>();
 
@@ -242,9 +244,8 @@ namespace Internal {
         if(components) {
             for (auto i = 0; i < components.size(); ++i) {
                 YAML::Node componentConfig = components[i];
-                geComponentRef component = ObjectManager::GetInstance().createComponent(
-                        componentConfig["type"].as<std::string>(),componentConfig);
-
+                const std::string &idType = componentConfig["type"].as<std::string>();
+                geComponentRef component = objectManager->createComponent(idType, componentConfig);
                 addComponent(component);
             }
         }
@@ -256,7 +257,7 @@ namespace Internal {
                 YAML::Node childConfig = children[i];
                 std::string defaultName = "Child" + std::to_string(i);
                 std::shared_ptr<GameObject> child = std::make_shared<GameObject>(defaultName);
-                child->fromYamlNode(childConfig);
+                child->fromYamlNode(childConfig, objectManager);
                 children_.push_back(child);
             }
         }
@@ -282,8 +283,9 @@ namespace Internal {
             glm::scale(glm::mat4(1),glm::vec3(scale_.x, scale_.y, 1.f));
     }
 
-    geGame &GameObject::game() const {
-        return Internal::Game::GetInstance().context();
+    std::weak_ptr<geGame> GameObject::game() const
+    {
+        return std::dynamic_pointer_cast<geGame>(game_);
     }
 
     bool GameObject::isDestroyed() const {

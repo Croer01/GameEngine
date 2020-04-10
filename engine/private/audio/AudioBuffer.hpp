@@ -12,6 +12,7 @@
 #include <vector>
 #include <thread>
 #include <atomic>
+
 namespace GameEngine {
 namespace Internal {
     class AudioBuffer {

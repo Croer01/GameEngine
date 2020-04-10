@@ -9,15 +9,15 @@
 #include <memory>
 #include <Box2D/Box2D.h>
 #include <unordered_map>
-#include "../Singleton.hpp"
 #include "Collider.hpp"
 #ifdef DEBUG
 #include "DebugView.hpp"
 #include "../graphics/Camera.hpp"
+#include "../Screen.hpp"
 #endif
 namespace GameEngine {
 namespace Internal {
-    class PhysicsEngine : public Singleton<PhysicsEngine>, b2ContactListener {
+    class PhysicsEngine : b2ContactListener {
 
         struct ColliderCategory {
             uint16 categoryBit = 0;
@@ -42,6 +42,9 @@ namespace Internal {
 public:
         static float getScalePixelsToMeter() { return 32.f; }
 
+#ifdef DEBUG
+        void init(float timeStep, Screen *screen);
+#endif
         void init(float timeStep);
 
         void createCategories(const std::vector<std::string> &categories);

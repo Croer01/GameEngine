@@ -18,6 +18,8 @@ namespace GameEngine {
 namespace Internal {
     #define AUDIOSOURCE_BUFFERS 4
 
+    class AudioEngine;
+
     class AudioSource {
 
         ALuint sourceId_;
@@ -27,9 +29,11 @@ namespace Internal {
         bool looping_;
         std::thread streamThread_;
         std::atomic<bool> streamRunning_;
+        AudioEngine *engine_;
+
         void processStream();
     public:
-        explicit AudioSource(const std::shared_ptr<AudioBuffer> &buffer);
+        AudioSource(const std::shared_ptr<AudioBuffer> &buffer, AudioEngine *engine);
         ~AudioSource();
 
         void play();

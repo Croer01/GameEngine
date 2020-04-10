@@ -7,6 +7,7 @@
 #include <utf8.h>
 #include "../../../private/graphics/GraphicGeometry.hpp"
 #include "../../../private/graphics/GraphicsEngine.hpp"
+#include "../../../private/Game.hpp"
 
 namespace GameEngine {
 
@@ -90,7 +91,9 @@ void UITextInputComponent::Update(float elapsedTime)
     {
         if(keyStepCounter_ <= 0.f)
         {
-            if (InputManager::GetInstance().isKeyPressed(KeyCode::KEY_LEFT))
+            InputManager &input = std::dynamic_pointer_cast<Internal::Game>(
+                gameObject()->game().lock())->input();
+            if (input.isKeyPressed(KeyCode::KEY_LEFT))
             {
                 moveCursor(-1);
                 keyStepCounter_ = KEY_STEP_TIME_SECONDS;
@@ -99,7 +102,7 @@ void UITextInputComponent::Update(float elapsedTime)
                 graphicCursor_->setActive(true);
                 cursorBlinkCounter_ = BLINK_TIME_SECONDS;
             }
-            else if (InputManager::GetInstance().isKeyPressed(KeyCode::KEY_RIGHT))
+            else if (input.isKeyPressed(KeyCode::KEY_RIGHT))
             {
                 moveCursor(1);
                 keyStepCounter_ = KEY_STEP_TIME_SECONDS;
@@ -149,7 +152,7 @@ void UITextInputComponent::createBottomLineGeometry()
     auto graphicLoaded_ = std::make_shared<Internal::GraphicGeometry>(path);
     graphicBottomLine_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
     graphicBottomLine_->setModelTransform(Vec2D(0,0), 0.f, Vec2D(1,1));
-    Internal::GraphicsEngine::GetInstance().registerGraphic(graphicBottomLine_);
+    std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock())->graphicsEngine().registerGraphic(graphicBottomLine_);
     graphicBottomLine_->setActive(visible());
 }
 
@@ -174,16 +177,18 @@ void UITextInputComponent::createCursorGeometry()
     auto graphicLoaded_ = std::make_shared<Internal::GraphicGeometry>(path);
     graphicCursor_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
     graphicCursor_->setModelTransform(Vec2D(0,0), 0.f, Vec2D(1,fontSize()));
-    Internal::GraphicsEngine::GetInstance().registerGraphic(graphicCursor_);
+    std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock())->graphicsEngine().registerGraphic(graphicCursor_);
     graphicCursor_->setActive(visible());
 }
 
 UITextInputComponent::~UITextInputComponent()
 {
+    Internal::GraphicsEngine &graphicsEngine = std::dynamic_pointer_cast<Internal::Game>(
+        gameObject()->game().lock())->graphicsEngine();
     if(graphicCursor_)
-        Internal::GraphicsEngine::GetInstance().unregisterGraphic(graphicCursor_);
+        graphicsEngine.unregisterGraphic(graphicCursor_);
     if(graphicBottomLine_)
-        Internal::GraphicsEngine::GetInstance().unregisterGraphic(graphicBottomLine_);
+        graphicsEngine.unregisterGraphic(graphicBottomLine_);
 }
 
 void UITextInputComponent::onFocusChanged()
@@ -195,12 +200,12 @@ void UITextInputComponent::onFocusChanged()
     {
         InputTextSubjectRef subject = std::make_shared<InputTextSubject>();
         subject->registerObserver(this);
-        InputManager::GetInstance().startRecordingTextInput(subject);
+        gameObject()->game().lock()->input().startRecordingTextInput(subject);
         graphicCursor_->setActive(true);
     }
     else
     {
-        InputManager::GetInstance().stopRecordingTextInput();
+        gameObject()->game().lock()->input().stopRecordingTextInput();
         graphicCursor_->setActive(false);
         moveCursor(-cursorPos_);
         keyStepCounter_ = 0;
@@ -223,7 +228,7 @@ void UITextInputComponent::createBackgroundGraphic()
     auto graphicLoaded_ = std::make_shared<Internal::GraphicGeometry>(path);
     backgroundGraphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
     backgroundGraphic_->setModelTransform(calculateVirtualScreenPos(), 0.f, calculateVirtualScreenSize());
-    Internal::GraphicsEngine::GetInstance().registerGraphic(backgroundGraphic_);
+    std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock())->graphicsEngine().registerGraphic(backgroundGraphic_);
     backgroundGraphic_->setActive(visible());
 }
 

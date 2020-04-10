@@ -3,9 +3,9 @@
 //
 
 #include <game-engine/components/TextComponent.hpp>
-#include "../private/graphics/font/FontManager.hpp"
 #include "../private/graphics/GraphicsEngine.hpp"
 #include "../../private/GameObject.hpp"
+#include "../../private/Game.hpp"
 
 namespace GameEngine {
     void TextComponent::init() {
@@ -59,7 +59,7 @@ namespace GameEngine {
 
     TextComponent::~TextComponent() {
         if(textGraphic_)
-            Internal::GraphicsEngine::GetInstance().unregisterText(textGraphic_);
+            std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock())->graphicsEngine().unregisterText(textGraphic_);
     }
 
     void TextComponent::setVisible(bool visible) {
@@ -88,12 +88,16 @@ namespace GameEngine {
     }
 
     void TextComponent::updateTextRef() {
+        std::shared_ptr<Internal::Game> game = std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock());
+        if(!game)
+            return;
+
         if(textGraphic_)
-            Internal::GraphicsEngine::GetInstance().unregisterText(textGraphic_);
+            game->graphicsEngine().unregisterText(textGraphic_);
 
         if(!textParams_.fontName.empty()){
-            textGraphic_ = Internal::FontManager::GetInstance().getFont(textParams_.fontName, textParams_.fontSize)->createText(textParams_.text);
-            Internal::GraphicsEngine::GetInstance().registerText(textGraphic_);
+            textGraphic_ = game->fontManager().getFont(textParams_.fontName, textParams_.fontSize)->createText(textParams_.text);
+            game->graphicsEngine().registerText(textGraphic_);
         }else{
             textGraphic_.reset();
         }

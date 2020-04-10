@@ -10,7 +10,6 @@
 #include <memory>
 #include "GraphicHolder.hpp"
 #include "Shader.h"
-#include "../Singleton.hpp"
 #include "../Screen.hpp"
 #include "font/Text.hpp"
 #include "Camera.hpp"
@@ -18,8 +17,7 @@
 
 namespace GameEngine {
 namespace Internal {
-    class GraphicsEngine : public Singleton<GraphicsEngine> {
-
+    class GraphicsEngine {
         std::vector<std::shared_ptr<GraphicHolder>> graphics_;
         std::vector<std::shared_ptr<Text>> texts_;
         std::shared_ptr<Shader> spriteShader_;
@@ -27,7 +25,7 @@ namespace Internal {
         glm::mat4 projMatrix_;
         bool pixelPerfect_;
     public:
-        ~GraphicsEngine() override;
+        ~GraphicsEngine();
 
         void init(const Screen &screen);
 

@@ -9,6 +9,7 @@
 #include "game-engine/components/ui/UIButtonComponent.hpp"
 #include "../../../private/graphics/font/FontManager.hpp"
 #include "../../../private/graphics/GraphicsEngine.hpp"
+#include "../../../private/Game.hpp"
 
 namespace GameEngine {
 UIButtonComponent::UIButtonComponent()
@@ -35,7 +36,7 @@ void UIButtonComponent::setCommand(const CommandRef &command)
 UIButtonComponent::~UIButtonComponent()
 {
     if(backgroundGraphic_)
-        Internal::GraphicsEngine::GetInstance().unregisterGraphic(backgroundGraphic_);
+        std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock())->graphicsEngine().unregisterGraphic(backgroundGraphic_);
 }
 
 geComponentRef UIButtonComponent::instantiate() const
@@ -69,7 +70,7 @@ void UIButtonComponent::createBackgroundGraphic()
     auto graphicLoaded_ = std::make_shared<Internal::GraphicGeometry>(path);
     backgroundGraphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
     backgroundGraphic_->setModelTransform(calculateVirtualScreenPos(), 0.f, calculateVirtualScreenSize());
-    Internal::GraphicsEngine::GetInstance().registerGraphic(backgroundGraphic_);
+    std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock())->graphicsEngine().registerGraphic(backgroundGraphic_);
     backgroundGraphic_->setActive(visible());
 
     // move the text position to center inside the button

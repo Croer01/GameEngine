@@ -75,10 +75,10 @@ namespace Internal {
         }
     }
 
-void Text::setModelTransform(const Vec2D &position, float rotation, const Vec2D &scale) {
+    void Text::setModelTransform(const Vec2D &position, float rotation, const Vec2D &scale) {
         glm::vec3 desiredPosition = glm::vec3(position.x,position.y,0.f);
 
-        if (GraphicsEngine::GetInstance().isPixelPerfect())
+        if (engine_ != nullptr && engine_->isPixelPerfect())
             desiredPosition = glm::round(desiredPosition);
 
         //remember the order of matrix multiplication is from right to left
@@ -141,6 +141,11 @@ size_t Text::size() const
 void Text::setTintColor(geColor tint)
 {
     tintColor_ = glm::vec4(tint.r,tint.g,tint.b,1.f);
+}
+
+void Text::setEngine(GraphicsEngine *engine)
+{
+    engine_ = engine;
 }
 }
 }

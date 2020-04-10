@@ -16,6 +16,8 @@
 namespace GameEngine {
 namespace Internal {
 
+    class GraphicsEngine;
+
     struct TextParameters {
         std::string text;
         std::string fontName;
@@ -48,6 +50,7 @@ namespace Internal {
         bool active_;
         glm::vec4 tintColor_;
         std::shared_ptr<Font> font_;
+        GraphicsEngine *engine_;
         unsigned int VAO;
         unsigned int vbo;
         unsigned int ibo;
@@ -71,6 +74,8 @@ namespace Internal {
         int height() const;
         size_t size() const;
         void setTintColor(geColor tint);
+
+        void setEngine(GraphicsEngine *engine);
     };
 }
 }

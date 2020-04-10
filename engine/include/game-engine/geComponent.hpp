@@ -34,6 +34,11 @@ namespace GameEngine {
         virtual PropertySetBase *getProperties() const = 0;
     };
 
+    /**
+     * This is a helper class that implement the boiler plate code to instantiate a class derived from \class geComponent.
+     * This is only for the first inheritance level, if you derive a class currently derived from \class geComponentInstantiable,
+     * you must implement the methods that this class implements: instantiate, clone and getProperties.
+     * */
     template<typename T>
     class PUBLICAPI geComponentInstantiable : public geComponent, public PropertiesHolder
     {
