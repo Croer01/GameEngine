@@ -10,7 +10,7 @@
 namespace GameEngine {
     void TextComponent::preInit()
     {
-        graphicsEngine_ = std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock())->graphicsEngine();
+        graphicsEngine_ = dynamic_cast<Internal::Game*>(gameObject()->game())->graphicsEngine();
     }
 
     void TextComponent::init() {
@@ -63,7 +63,7 @@ namespace GameEngine {
     }
 
     TextComponent::~TextComponent() {
-        if(textGraphic_)
+        if(graphicsEngine_ != nullptr && textGraphic_)
             graphicsEngine_->unregisterText(textGraphic_);
     }
 
@@ -93,8 +93,8 @@ namespace GameEngine {
     }
 
     void TextComponent::updateTextRef() {
-        std::shared_ptr<Internal::Game> game = std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock());
-        if(!game)
+        Internal::Game *game = dynamic_cast<Internal::Game*>(gameObject()->game());
+        if(game == nullptr)
             return;
 
         if(textGraphic_)

@@ -14,7 +14,7 @@ namespace GameEngine {
             unsigned int textureID_;
             int width_;
             int height_;
-            std::shared_ptr<MeshData> mesh_;
+            std::unique_ptr<MeshData> mesh_;
 
         public:
             explicit GraphicSprite(const std::string &filename);

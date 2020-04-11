@@ -18,8 +18,9 @@ class Environment : public geEnvironment
 {
     std::string configurationPath_;
     std::string firstScene_;
-    std::shared_ptr<ObjectManager> objectManager_;
-    std::shared_ptr<SceneManager> sceneManager_;
+    std::unique_ptr<ObjectManager> objectManager_;
+    std::unique_ptr<SceneManager> sceneManager_;
+    bool gameEmbedded_;
 
 public:
     Environment();
@@ -33,9 +34,11 @@ public:
     virtual std::string firstScene() const;
     virtual void addPrototype(const std::string &name, const std::string &filePath);
     virtual void addScene(const std::string &name, const std::string &filePath);
+    virtual void setGameEmbedded(bool embedded);
+    virtual bool isGameEmbedded() const;
 
-    std::shared_ptr<SceneManager> sceneManager() const;
-    std::shared_ptr<ObjectManager> objectManager() const;
+    SceneManager *sceneManager() const;
+    ObjectManager *objectManager() const;
 };
 
 }

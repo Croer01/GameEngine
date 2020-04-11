@@ -82,7 +82,7 @@ void UITextComponent::UpdateTextGraphic()
 
     if(!font_.empty())
     {
-        std::shared_ptr<Internal::Game> game = std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock());
+        auto game = dynamic_cast<Internal::Game*>(gameObject()->game());
         graphicText_ = game->fontManager()->getFont(font_, fontSize_)->createText(text_);
         setTextModelTransform(calculateVirtualScreenPos(), 0.f, Vec2D(1, 1));
         graphicText_->setTintColor(foregroundColor_);

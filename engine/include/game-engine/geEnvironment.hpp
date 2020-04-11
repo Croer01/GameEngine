@@ -27,6 +27,8 @@ namespace GameEngine {
         virtual std::string firstScene() const = 0;
         virtual void addPrototype(const std::string &name, const std::string &filePath) = 0;
         virtual void addScene(const std::string &name, const std::string &filePath) = 0;
+        virtual void setGameEmbedded(bool embedded) = 0;
+        virtual bool isGameEmbedded() const = 0;
     };
 }
 

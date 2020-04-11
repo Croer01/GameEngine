@@ -15,7 +15,7 @@ namespace GameEngine {
 class PUBLICAPI TextComponent : public geComponentInstantiable<TextComponent>, public Observer<GameObjectEvent> {
         Internal::TextParameters textParams_;
         std::shared_ptr<Internal::Text> textGraphic_;
-        std::shared_ptr<Internal::GraphicsEngine> graphicsEngine_;
+        Internal::GraphicsEngine *graphicsEngine_;
         bool visible_;
 
         void updateTextTransform();

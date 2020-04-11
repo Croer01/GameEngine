@@ -19,9 +19,9 @@ namespace GameEngine
 namespace Internal
 {
 
-Environment::Environment() : configurationPath_("conf")
+Environment::Environment() : configurationPath_("conf"), gameEmbedded_(false)
 {
-    objectManager_ = std::make_shared<ObjectManager>();
+    objectManager_ = std::make_unique<ObjectManager>();
     //Register the engine's default components
     objectManager_->registerComponentBuilder("SpriteComponent", new ComponentTBuilder<SpriteComponent>());
     objectManager_->registerComponentBuilder("GeometryComponent", new ComponentTBuilder<GeometryComponent>());
@@ -37,7 +37,7 @@ Environment::Environment() : configurationPath_("conf")
     objectManager_->registerComponentBuilder("UIPanelComponent", new ComponentTBuilder<UIPanelComponent>());
     objectManager_->registerComponentBuilder("UIImageComponent", new ComponentTBuilder<UIImageComponent>());
 
-    sceneManager_ = std::make_shared<SceneManager>();
+    sceneManager_ = std::make_unique<SceneManager>();
 }
 
 void Environment::configurationPath(const std::string &config)
@@ -89,14 +89,24 @@ std::shared_ptr<PropertySetBase> Environment::getProperties(const std::string &i
     return objectManager_->createProperties(id);
 }
 
-std::shared_ptr<SceneManager> Environment::sceneManager() const
+SceneManager *Environment::sceneManager() const
 {
-    return sceneManager_;
+    return sceneManager_.get();
 }
 
-std::shared_ptr<ObjectManager> Environment::objectManager() const
+ObjectManager *Environment::objectManager() const
 {
-    return objectManager_;
+    return objectManager_.get();
+}
+
+void Environment::setGameEmbedded(bool embedded)
+{
+    gameEmbedded_ = embedded;
+}
+
+bool Environment::isGameEmbedded() const
+{
+    return gameEmbedded_;
 }
 
 }

@@ -139,7 +139,7 @@ namespace Internal {
         children_.clear();
     }
 
-    std::shared_ptr<GameObject> GameObject::Clone(const std::shared_ptr<Game> &game) const {
+    std::shared_ptr<GameObject> GameObject::Clone(Game *game) const {
         auto cloned = std::make_shared<GameObject>(prototype_);
         cloned->game_ = game;
 
@@ -307,9 +307,9 @@ namespace Internal {
             glm::scale(glm::mat4(1),glm::vec3(scale_.x, scale_.y, 1.f));
     }
 
-    std::weak_ptr<geGame> GameObject::game() const
+    geGame *GameObject::game() const
     {
-        return std::dynamic_pointer_cast<geGame>(game_);
+        return dynamic_cast<geGame*>(game_);
     }
 
     bool GameObject::isDestroyed() const {

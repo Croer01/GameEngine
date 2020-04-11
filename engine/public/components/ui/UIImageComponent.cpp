@@ -25,7 +25,7 @@ std::string UIImageComponent::filepath() const {
 }
 
 void UIImageComponent::updateGraphicRef() {
-    if(gameObject() == nullptr || gameObject()->game().expired())
+    if(graphicsEngine() == nullptr)
         return;
 
     if(graphic_)

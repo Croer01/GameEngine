@@ -15,7 +15,7 @@ namespace GameEngine {
     namespace Internal {
         class GraphicGeometry : public Graphic {
             std::vector<Vec2D> points_;
-            std::shared_ptr<MeshData> mesh_;
+            std::unique_ptr<MeshData> mesh_;
             int width_;
             int height_;
             GLuint textureID_;

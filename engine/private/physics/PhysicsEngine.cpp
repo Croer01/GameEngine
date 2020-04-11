@@ -61,7 +61,11 @@ void PhysicsEngine::init(float timeStep, Screen *screen) {
         }
     }
 
-    void PhysicsEngine::unregisterCollider(const std::shared_ptr<Collider> &collider) {
+    void PhysicsEngine::unregisterCollider(const std::shared_ptr<Collider> &collider)
+    {
+        if(colliders_.empty())
+            return;
+
         auto it = std::find(colliders_.begin(), colliders_.end(), collider);
         if (it == colliders_.end())
             return;
@@ -155,6 +159,15 @@ void PhysicsEngine::drawDebug(const std::shared_ptr<Camera> &cam) {
                 categories_[it.first].maskBits |= categories_[categoryToMask].categoryBit;
             }
         }
+    }
+
+    PhysicsEngine::~PhysicsEngine()
+    {
+        for(auto collider : colliders_)
+        {
+            world_->DestroyBody(collider->getBody());
+        }
+        colliders_.clear();
     }
 }
 }

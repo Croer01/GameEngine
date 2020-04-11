@@ -18,7 +18,7 @@ namespace GameEngine {
         bool hover_;
         bool focused_;
         bool visible_;
-        std::shared_ptr<Internal::GraphicsEngine> graphicsEngine_;
+        Internal::GraphicsEngine *graphicsEngine_;
 
     protected:
         virtual void onClick() {};
@@ -26,7 +26,7 @@ namespace GameEngine {
         virtual void onHoverOut() {};
         virtual void onFocusChanged() {};
         virtual void onVisibleChanged() {};
-        std::shared_ptr<Internal::GraphicsEngine> graphicsEngine();
+        Internal::GraphicsEngine *graphicsEngine();
 
         Vec2D calculateVirtualScreenPos() const;
         Vec2D calculateVirtualScreenSize() const;

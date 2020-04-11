@@ -33,7 +33,7 @@ namespace Internal {
         prototypes_.insert(std::make_pair(objectType, std::move(prototype)));
     }
 
-    std::shared_ptr<GameObject> ObjectManager::createGameObject(const std::string &objectType, const std::shared_ptr<Game> &game) {
+    std::shared_ptr<GameObject> ObjectManager::createGameObject(const std::string &objectType, Game *game) {
         auto it = prototypes_.find(objectType);
 
         if (it == prototypes_.end())

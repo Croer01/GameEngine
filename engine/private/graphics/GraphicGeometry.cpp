@@ -56,7 +56,7 @@ namespace GameEngine {
                 indices.push_back(i + 1);
             }
 
-            mesh_ = std::make_shared<MeshData>(vertices, indices);
+            mesh_ = std::make_unique<MeshData>(vertices, indices);
         }
 
         void GraphicGeometry::draw(const std::shared_ptr<Shader> &shader) const {

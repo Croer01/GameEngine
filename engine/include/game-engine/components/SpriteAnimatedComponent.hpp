@@ -16,7 +16,7 @@ namespace GameEngine {
     class PUBLICAPI SpriteAnimatedComponent : public geComponentInstantiable<SpriteAnimatedComponent>, public Observer<GameObjectEvent> {
         std::shared_ptr<Internal::Graphic> graphicLoaded_;
         std::shared_ptr<Internal::GraphicHolder> graphic_;
-        std::shared_ptr<Internal::GraphicsEngine> graphicsEngine_;
+        Internal::GraphicsEngine *graphicsEngine_;
 
         int columns_ = 1;
         int rows_ = 1;

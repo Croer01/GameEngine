@@ -17,7 +17,7 @@ namespace Internal {
     Scene::Scene(const std::string &filename) : filename_(filename) {
     }
 
-    void Scene::init(const std::shared_ptr<Game> &game) {
+    void Scene::init(Game *game) {
         cam_.reset(new Camera());
         gameObjects_.clear();
         loadFile(game);
@@ -50,7 +50,7 @@ namespace Internal {
             }), gameObjects_.end());
     }
 
-    void Scene::loadFile(const std::shared_ptr<Game> &game) {
+    void Scene::loadFile(Game *game) {
         try {
             YAML::Node sceneConfig = YAML::LoadFile(filename_);
 

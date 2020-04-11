@@ -30,7 +30,7 @@ namespace Internal {
 
         void registerPrototype(const std::string &objectType, const std::string &filename);
 
-        std::shared_ptr<GameObject> createGameObject(const std::string &objectType, const std::shared_ptr<Game> &game);
+        std::shared_ptr<GameObject> createGameObject(const std::string &objectType, Game *game);
 
         std::vector<std::string> getComponentIds() const;
     };

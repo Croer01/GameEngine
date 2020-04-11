@@ -10,7 +10,7 @@ namespace GameEngine {
 
 void UIControlComponent::preInit()
 {
-    graphicsEngine_ = std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock())->graphicsEngine();
+    graphicsEngine_ = dynamic_cast<Internal::Game*>(gameObject()->game())->graphicsEngine();
 }
 
 void UIControlComponent::screenPos(const Vec2D &pos)
@@ -38,7 +38,7 @@ void UIControlComponent::Update(float elapsedTime)
     if(!visible_)
         return;
 
-    std::shared_ptr<InputManager> inputManager = gameObject()->game().lock()->input();
+    InputManager *inputManager = gameObject()->game()->input();
 
     const Vec2D &mousePos = inputManager->getMousePosition();
     Vec2D min = calculateVirtualScreenPos();
@@ -138,7 +138,7 @@ void UIControlComponent::visible(const bool &value)
 
 Vec2D UIControlComponent::calculateVirtualScreenPos() const
 {
-    std::shared_ptr<geScreen> screen = gameObject()->game().lock()->screen();
+    geScreen *screen = gameObject()->game()->screen();
     Vec2D position = screenPos();
     position.x *= static_cast<float>(screen->virtualWidth());
     position.y *= static_cast<float>(screen->virtualHeight());
@@ -147,14 +147,14 @@ Vec2D UIControlComponent::calculateVirtualScreenPos() const
 
 Vec2D UIControlComponent::calculateVirtualScreenSize() const
 {
-    std::shared_ptr<geScreen> screen = gameObject()->game().lock()->screen();
+    geScreen *screen = gameObject()->game()->screen();
     Vec2D size = screenSize();
     size.x *= static_cast<float>(screen->virtualWidth());
     size.y *= static_cast<float>(screen->virtualHeight());
     return size;
 }
 
-std::shared_ptr<Internal::GraphicsEngine> UIControlComponent::graphicsEngine()
+Internal::GraphicsEngine *UIControlComponent::graphicsEngine()
 {
     return graphicsEngine_;
 }

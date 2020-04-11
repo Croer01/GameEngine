@@ -12,51 +12,61 @@ namespace Internal {
     template<typename T>
     void Shader::setUniform(const char *uniformName, T value) const {
         glUniform1i(glGetUniformLocation(programId_, uniformName), value);
+        CheckGlError();
     }
 
-    template<>
+template<>
     void Shader::setUniform(const char *uniformName, bool value) const {
         glUniform1i(glGetUniformLocation(programId_, uniformName), (int) value);
+        CheckGlError();
     }
 
     template<>
     void Shader::setUniform(const char *uniformName, int value) const {
         glUniform1i(glGetUniformLocation(programId_, uniformName), value);
+        CheckGlError();
     }
 
     template<>
     void Shader::setUniform(const char *uniformName, float value) const {
         glUniform1f(glGetUniformLocation(programId_, uniformName), value);
+        CheckGlError();
     }
 
     template<>
     void Shader::setUniform(const char *uniformName, glm::vec2 value) const {
         glUniform2fv(glGetUniformLocation(programId_, uniformName), 1, glm::value_ptr(value));
+        CheckGlError();
     }
 
     template<>
     void Shader::setUniform(const char *uniformName, glm::vec3 value) const {
         glUniform3fv(glGetUniformLocation(programId_, uniformName), 1, glm::value_ptr(value));
+        CheckGlError();
     }
 
     template<>
     void Shader::setUniform(const char *uniformName, glm::vec4 value) const {
         glUniform4fv(glGetUniformLocation(programId_, uniformName), 1, glm::value_ptr(value));
+        CheckGlError();
     }
 
     template<>
     void Shader::setUniform(const char *uniformName, glm::mat2 value) const {
         glUniformMatrix2fv(glGetUniformLocation(programId_, uniformName), 1, GL_FALSE, glm::value_ptr(value));
+        CheckGlError();
     }
 
     template<>
     void Shader::setUniform(const char *uniformName, glm::mat3 value) const {
         glUniformMatrix3fv(glGetUniformLocation(programId_, uniformName), 1, GL_FALSE, glm::value_ptr(value));
+        CheckGlError();
     }
 
     template<>
     void Shader::setUniform(const char *uniformName, glm::mat4 value) const {
         glUniformMatrix4fv(glGetUniformLocation(programId_, uniformName), 1, GL_FALSE, glm::value_ptr(value));
+        CheckGlError();
     }
 
     void Shader::printShaderLog(GLuint shader) {
@@ -108,6 +118,7 @@ namespace Internal {
         if (vShaderCompiled != GL_TRUE) {
             printShaderLog(vertexShader_);
         }
+        CheckGlError();
     }
 
     void Shader::buildFragmentShader() {
@@ -129,6 +140,7 @@ namespace Internal {
         if (fShaderCompiled != GL_TRUE) {
             printShaderLog(fragmentShader_);
         }
+        CheckGlError();
     }
 
     void Shader::build() {
@@ -153,6 +165,7 @@ namespace Internal {
         glGenTextures(1, &dummyTextureID_);
         glBindTexture(GL_TEXTURE_2D, dummyTextureID_);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &white);
+        CheckGlError();
     }
 
     void Shader::bind() {

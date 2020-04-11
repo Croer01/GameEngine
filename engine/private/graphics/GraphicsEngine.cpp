@@ -175,7 +175,6 @@ namespace Internal {
 
         CheckGlError();
         for (const std::shared_ptr<GraphicHolder> &graphic : graphics_) {
-            CheckGlError();
             spriteShader_->bind();
             spriteShader_->setUniform("projView", projViewMatrix);
             graphic->draw(spriteShader_);
@@ -199,6 +198,17 @@ namespace Internal {
     }
 
     GraphicsEngine::~GraphicsEngine() {
+        for(auto graphic : graphics_)
+        {
+            graphic->setEngine(nullptr);
+        }
+        graphics_.clear();
+
+        for(auto text : texts_)
+        {
+            text->setEngine(nullptr);
+        }
+        texts_.clear();
     }
 
     void GraphicsEngine::registerGraphic(const std::shared_ptr<GraphicHolder> &graphic) {
@@ -207,6 +217,9 @@ namespace Internal {
     }
 
     void GraphicsEngine::unregisterGraphic(const std::shared_ptr<GraphicHolder> &graphic) {
+        if(graphics_.empty())
+            return;
+
         auto it = std::find(graphics_.begin(), graphics_.end(), graphic);
         if (it != graphics_.end()) {
             (*it)->setEngine(nullptr);
@@ -222,6 +235,9 @@ namespace Internal {
 
 
     void GraphicsEngine::unregisterText(const std::shared_ptr<Text> &textGraphic) {
+        if(texts_.empty())
+            return;
+
         auto it = std::find(texts_.begin(), texts_.end(), textGraphic);
         if (it != texts_.end()) {
             (*it)->setEngine(nullptr);

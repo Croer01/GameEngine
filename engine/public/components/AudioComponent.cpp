@@ -88,7 +88,7 @@ void AudioComponent::loadSource()
 {
     if(gameObject() != nullptr)
     {
-        const std::shared_ptr<Internal::Game> &game = std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock());
+        auto game = dynamic_cast<Internal::Game*>(gameObject()->game());
         if(game)
             source_ = game->audioEngine()->getAudio(filePath_);
     }

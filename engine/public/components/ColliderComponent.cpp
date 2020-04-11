@@ -31,7 +31,7 @@ namespace {
 }
 
     void ColliderComponent::init() {
-        physicsEngine_ = std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock())->physicsEngine();
+        physicsEngine_ = dynamic_cast<Internal::Game*>(gameObject()->game())->physicsEngine();
         if(auto sprite = gameObject()->getComponent<SpriteComponent>().lock()) {
             size_ = GameEngine::Vec2D(sprite->getWidth(), sprite->getHeight());
             glm::vec2 offset = Internal::parseGraphicPositionToVec2D(Internal::parseStringToGraphicAnchor(sprite->anchor()));
@@ -119,7 +119,7 @@ void ColliderComponent::onEvent(const Subject<Internal::ColliderEvent> &target, 
     }
 
     ColliderComponent::~ColliderComponent() {
-        if(collider_) {
+        if(physicsEngine_ != nullptr && collider_) {
             physicsEngine_->unregisterCollider(collider_);
             collider_->unregisterObserver(this);
         }
@@ -221,7 +221,7 @@ void ColliderComponent::onEvent(const Subject<Internal::ColliderEvent> &target, 
     }
 
     void ColliderComponent::updateColliderRef() {
-        if(gameObject()->game().expired())
+        if(physicsEngine_ == nullptr)
             return;
 
         if(collider_)

@@ -40,6 +40,8 @@ namespace Internal {
         void EndContact(b2Contact *contact) override;
 
 public:
+        ~PhysicsEngine();
+
         static float getScalePixelsToMeter() { return 32.f; }
 
 #ifdef DEBUG

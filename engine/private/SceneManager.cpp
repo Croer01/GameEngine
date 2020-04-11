@@ -78,7 +78,7 @@ namespace Internal {
         return cam;
     }
 
-    void SceneManager::bindGame(const std::shared_ptr<Game> &game)
+    void SceneManager::bindGame(Game *game)
     {
         game_ = game;
     }

@@ -22,7 +22,7 @@ namespace GameEngine {
         std::string filePath_;
         std::string anchor_;
 
-        std::shared_ptr<Internal::GraphicsEngine> graphicsEngine_;
+        Internal::GraphicsEngine *graphicsEngine_;
 
         void updateGraphicRef();
 

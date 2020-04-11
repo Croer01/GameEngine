@@ -39,7 +39,7 @@ namespace Internal {
         bool destroyed_;
         bool initializating_;
         bool preInitializating_;
-        std::shared_ptr<Game> game_;
+        Game *game_;
 
         void fromYamlNode(const YAML::Node &node, ObjectManager *objectManager);
 
@@ -63,7 +63,7 @@ namespace Internal {
 
         void fromFile(const std::string &filename, ObjectManager *objectManager);
 
-        std::shared_ptr<GameObject> Clone(const std::shared_ptr<Game> &game) const;
+        std::shared_ptr<GameObject> Clone(Game *game) const;
 
         void parent(const geGameObjectRef &parent) override;
 
@@ -88,7 +88,7 @@ namespace Internal {
         std::string name() const override;
         void name(const std::string &name) override;
 
-        virtual std::weak_ptr<geGame> game() const;
+        virtual geGame *game() const;
 
         virtual bool isDestroyed() const;
         virtual void destroy();

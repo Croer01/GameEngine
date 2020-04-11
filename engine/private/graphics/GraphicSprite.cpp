@@ -44,26 +44,21 @@ namespace GameEngine {
             SDL_FreeSurface(surface);
             CheckSDLError();
 
-            // use this static variable to avoid create multiple instances of the same mesh
-            static std::shared_ptr<MeshData> meshInstance;
-            if(!meshInstance) {
-                //The order of the vertices are flipped to from "n" to "u" way to deal with the inverted y axis
-                //VBO data
-                std::vector<float> vertices = std::vector<float>({ //vertex(3) | uv(2)
-                                                                         0.f, 1.f, 0.f, 0.f, 1.f,
-                                                                         0.f, 0.f, 0.f, 0.f, 0.f,
-                                                                         1.f, 0.f, 0.f, 1.f, 0.f,
-                                                                         1.f, 1.f, 0.f, 1.f, 1.f
-                                                                 });
-                //IBO data
-                std::vector<unsigned int> indices = std::vector<unsigned int>({
-                                                                                      0, 1, 2,
-                                                                                      0, 2, 3
-                                                                              });
+            //The order of the vertices are flipped to from "n" to "u" way to deal with the inverted y axis
+            //VBO data
+            std::vector<float> vertices = std::vector<float>({ //vertex(3) | uv(2)
+                                                                 0.f, 1.f, 0.f, 0.f, 1.f,
+                                                                 0.f, 0.f, 0.f, 0.f, 0.f,
+                                                                 1.f, 0.f, 0.f, 1.f, 0.f,
+                                                                 1.f, 1.f, 0.f, 1.f, 1.f
+                                                             });
+            //IBO data
+            std::vector<unsigned int> indices = std::vector<unsigned int>({
+                                                                              0, 1, 2,
+                                                                              0, 2, 3
+                                                                          });
 
-                meshInstance = std::make_shared<MeshData>(vertices, indices);
-            }
-            mesh_ = meshInstance;
+            mesh_ = std::make_unique<MeshData>(vertices, indices);
         }
 
         GraphicSprite::~GraphicSprite() {

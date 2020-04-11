@@ -91,8 +91,7 @@ void UITextInputComponent::Update(float elapsedTime)
     {
         if(keyStepCounter_ <= 0.f)
         {
-            std::shared_ptr<InputManager> input = std::dynamic_pointer_cast<Internal::Game>(
-                gameObject()->game().lock())->input();
+            InputManager *input = gameObject()->game()->input();
             if (input->isKeyPressed(KeyCode::KEY_LEFT))
             {
                 moveCursor(-1);
@@ -198,12 +197,12 @@ void UITextInputComponent::onFocusChanged()
     {
         InputTextSubjectRef subject = std::make_shared<InputTextSubject>();
         subject->registerObserver(this);
-        gameObject()->game().lock()->input()->startRecordingTextInput(subject);
+        gameObject()->game()->input()->startRecordingTextInput(subject);
         graphicCursor_->setActive(true);
     }
     else
     {
-        gameObject()->game().lock()->input()->stopRecordingTextInput();
+        gameObject()->game()->input()->stopRecordingTextInput();
         graphicCursor_->setActive(false);
         moveCursor(-cursorPos_);
         keyStepCounter_ = 0;

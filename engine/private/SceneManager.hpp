@@ -20,7 +20,7 @@ namespace Internal {
         std::shared_ptr<Scene> currentScene_;
         std::string currentSceneName_;
         std::string sceneNameToChange_;
-        std::shared_ptr<Game> game_;
+        Game *game_;
     public:
         void update(float elapsedTime);
 
@@ -42,7 +42,7 @@ namespace Internal {
 
         std::shared_ptr<Camera> getCameraOfCurrentScene() const;
 
-        void bindGame(const std::shared_ptr<Game> &game);
+        void bindGame(Game *game);
         void unbindGame();
     };
 }

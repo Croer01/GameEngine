@@ -12,7 +12,7 @@ namespace GameEngine {
 
     void SpriteComponent::preInit()
     {
-        graphicsEngine_ = std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock())->graphicsEngine();
+        graphicsEngine_ = dynamic_cast<Internal::Game*>(gameObject()->game())->graphicsEngine();
         updateGraphicRef();
     }
 
@@ -42,10 +42,8 @@ namespace GameEngine {
     }
 
     SpriteComponent::~SpriteComponent() {
-        if(graphic_)
-        {
+        if(graphicsEngine_ != nullptr && graphic_)
             graphicsEngine_->unregisterGraphic(graphic_);
-        }
     }
 
     void SpriteComponent::setVisible(const bool &visible) {
@@ -80,7 +78,7 @@ namespace GameEngine {
     }
 
     void SpriteComponent::updateGraphicRef() {
-        if(gameObject() == nullptr || gameObject()->game().expired())
+        if(gameObject() == nullptr || gameObject()->game() == nullptr)
             return;
 
         if(graphic_)

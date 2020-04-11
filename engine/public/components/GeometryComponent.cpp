@@ -9,7 +9,7 @@
 namespace GameEngine {
     void GeometryComponent::preInit()
     {
-        graphicsEngine_ = std::dynamic_pointer_cast<Internal::Game>(gameObject()->game().lock())->graphicsEngine();
+        graphicsEngine_ = dynamic_cast<Internal::Game*>(gameObject()->game())->graphicsEngine();
         updateGraphicRef();
     }
 
@@ -23,7 +23,7 @@ namespace GameEngine {
     }
 
     void GeometryComponent::updateGraphicRef() {
-        if(gameObject() == nullptr || gameObject()->game().expired())
+        if(gameObject() == nullptr || gameObject()->game() == nullptr)
             return;
 
         if (graphic_)
@@ -69,7 +69,7 @@ namespace GameEngine {
     }
 
     GeometryComponent::~GeometryComponent() {
-        if(graphic_)
+        if(graphicsEngine_ != nullptr && graphic_)
             graphicsEngine_->unregisterGraphic(graphic_);
     }
 

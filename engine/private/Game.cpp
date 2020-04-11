@@ -21,7 +21,13 @@ namespace Internal {
 
     Game::~Game()
     {
-        // TODO: implement destructor?
+        // destroy all the engines and APIs to ensure the components won't try to use them
+        // in a inconsistence state
+        graphicsEngine_.reset(nullptr);
+        audioEngine_.reset(nullptr);
+        physicsEngine_.reset(nullptr);
+        inputManager_.reset(nullptr);
+        fontManager_.reset(nullptr);
     }
 
     void Game::init() {
@@ -33,18 +39,18 @@ namespace Internal {
             {
                 CheckSDLError();
             }
-            screen_ = std::make_shared<Screen>(environment_->configurationPath() + "/screen.yaml");
-            graphicsEngine_ = std::make_shared<GraphicsEngine>();
+            screen_ = std::make_unique<Screen>(environment_->configurationPath() + "/screen.yaml");
+            graphicsEngine_ = std::make_unique<GraphicsEngine>();
             graphicsEngine_->init(*screen_);
 
             initPhysics(environment_->configurationPath() + "/physics.yaml");
 
-            audioEngine_ = std::make_shared<AudioEngine>();
+            audioEngine_ = std::make_unique<AudioEngine>();
             audioEngine_->init();
-            fontManager_ = std::make_shared<FontManager>();
-            inputManager_ = std::make_shared<InputManager>();
+            fontManager_ = std::make_unique<FontManager>();
+            inputManager_ = std::make_unique<InputManager>();
 
-            environment_->sceneManager()->bindGame(shared_from_this());
+            environment_->sceneManager()->bindGame(this);
             if(!environment_->firstScene().empty())
             {
                 changeScene(environment_->firstScene());
@@ -54,7 +60,7 @@ namespace Internal {
     }
 
     void Game::initPhysics(const std::string &configFilePath) {
-        physicsEngine_ = std::make_shared<PhysicsEngine>();
+        physicsEngine_ = std::make_unique<PhysicsEngine>();
 #ifdef DEBUG
         physicsEngine_->init(1.f / 60.f, screen_.get());
 #else
@@ -138,7 +144,8 @@ namespace Internal {
         }
 
         //TODO: should this call in shutdown instead of here?
-        SDL_Quit();
+        if(!environment_->isGameEmbedded())
+            SDL_Quit();
     }
 
 
@@ -177,7 +184,7 @@ namespace Internal {
 
     geGameObjectRef Game::createFromPrototype(const std::string &prototype)
     {
-        const std::shared_ptr<Internal::GameObject> &object = environment_->objectManager()->createGameObject(prototype, shared_from_this());
+        const std::shared_ptr<Internal::GameObject> &object = environment_->objectManager()->createGameObject(prototype, this);
         if(environment_->sceneManager()->isSceneLoaded())
             environment_->sceneManager()->addObjectIntoCurrentScene(object);
 
@@ -200,42 +207,42 @@ namespace Internal {
         return environment_->sceneManager()->getCameraOfCurrentScene();
     }
 
-    std::shared_ptr<geScreen> Game::screen() const
+    geScreen * Game::screen() const
     {
-        return screen_;
+        return screen_.get();
     }
 
-    std::shared_ptr<geAudio> Game::audio() const
+    geAudio * Game::audio() const
     {
-        return audioEngine_;
+        return audioEngine_.get();
     }
 
-std::shared_ptr<GraphicsEngine> Game::graphicsEngine() const
+GraphicsEngine *Game::graphicsEngine() const
 {
-    return graphicsEngine_;
+    return graphicsEngine_.get();
 }
 
-std::shared_ptr<PhysicsEngine> Game::physicsEngine() const
+PhysicsEngine *Game::physicsEngine() const
 {
-    return physicsEngine_;
+    return physicsEngine_.get();
 }
 
-std::shared_ptr<AudioEngine> Game::audioEngine() const
+AudioEngine *Game::audioEngine() const
 {
-    return audioEngine_;
+    return audioEngine_.get();
 }
 
-std::shared_ptr<InputManager> Game::input() const
+InputManager *Game::input() const
 {
-    return inputManager_;
+    return inputManager_.get();
 }
 
-std::shared_ptr<FontManager> Game::fontManager() const
+FontManager *Game::fontManager() const
 {
-    return fontManager_;
+    return fontManager_.get();
 }
 
-std::shared_ptr<ObjectManager> Game::objectManager() const
+ObjectManager *Game::objectManager() const
 {
     return environment_->objectManager();
 }

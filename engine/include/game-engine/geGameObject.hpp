@@ -53,7 +53,7 @@ enum class GameObjectEvent{
 
         virtual geGameObjectRef findChildByName(const std::string &name) = 0;
 
-        virtual std::weak_ptr<geGame> game() const = 0;
+        virtual geGame *game() const = 0;
 
         virtual bool isDestroyed() const = 0;
         virtual void destroy() = 0;
