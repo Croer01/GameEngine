@@ -3,9 +3,11 @@
 //
 
 #include <imgui.h>
+#include <chrono>
 #include "imgui_backend/imgui_stdlib.h"
 #include <sstream>
 #include "Editor.hpp"
+#include "../../componentsRegistered.hpp"
 #include <functional>
 #include <boost/filesystem/path.hpp>
 #include <tinyfiledialogs.h>
@@ -13,8 +15,11 @@
 #include <boost/filesystem/operations.hpp>
 #include <iostream>
 #include <game-engine/geEnvironment.hpp>
+#include <game-engine/geGame.hpp>
 
 namespace fs = boost::filesystem;
+using namespace std::chrono_literals;
+
 
 Editor::Editor(SDL_Window *window):
     window_(window)
@@ -371,12 +376,20 @@ void Editor::renderCentralRegion()
     ImGui::SetNextWindowSize(size);
     ImGui::Begin("Central",0,ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
 
-    if (ImGui::BeginTabBar("##tabs", ImGuiTabBarFlags_None)){
+    if (ImGui::BeginTabBar("##tabs", ImGuiTabBarFlags_None))
+    {
+        if (sceneData_ && ImGui::BeginTabItem("Scene viewer"))
+        {
+            renderSceneViewer();
+            ImGui::EndTabItem();
+        }
+
         if (ImGui::BeginTabItem("Physics"))
         {
             renderPhysicsInspector();
             ImGui::EndTabItem();
         }
+
         if (objectSelected_ && ImGui::BeginTabItem("GUI editor"))
         {
             renderGuiInspector();
@@ -1125,4 +1138,54 @@ void Editor::setPosToColumnCenter(float width)
     float scrollX = ImGui::GetScrollX();
     float spacing = ImGui::GetStyle().ItemSpacing.x;
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + column - scrollX - spacing - (width/2.f));
+}
+
+void Editor::renderSceneViewer()
+{
+    if(!sceneData_)
+        return;
+
+    bool runGame = false;
+    // If the thead is finished, a new game instance will be run
+    if(!gameThread_.valid())
+    {
+        runGame = true;
+    }
+    else if(gameThread_.wait_for(0ms) == std::future_status::ready)
+    {
+        if(gameThread_.get() != 0)
+        {
+            throw std::runtime_error("Game closed by a internal error");
+        }
+    }
+
+    if(runGame && ImGui::Button("run game"))
+    {
+        gameThread_ = std::async(std::launch::async,[&]()
+        {
+            try
+            {
+                GameEngine::geEnvironmentRef env = GameEngine::geEnvironment::createInstance();
+                env->setGameEmbedded(true);
+                RegisterComponents(env);
+                env->configurationPath(project_->folderPath_ + "/conf");
+                env->addPrototype("Player", project_->dataPath_.string() + "/Player.prototype");
+                env->addPrototype("Wall", project_->dataPath_.string() + "/Wall.prototype");
+                env->addPrototype("Pincers", project_->dataPath_.string() + "/Pincers.prototype");
+                env->addPrototype("Enemy", project_->dataPath_.string() + "/Enemy.prototype");
+                env->addScene("Test", project_->dataPath_.string() + "/Test1.scene");
+                env->firstScene("Test");
+
+                GameEngine::geGameRef game = GameEngine::geGame::createInstance(env);
+                game->init();
+
+                return game->loop();
+            }
+            catch (const std::exception &e)
+            {
+                std::cerr << e.what() << std::endl;
+                return 1;
+            }
+        });
+    }
 }

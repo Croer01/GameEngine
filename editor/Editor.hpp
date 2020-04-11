@@ -7,6 +7,7 @@
 
 
 #include <memory>
+#include <future>
 #include <SDL2/SDL_video.h>
 #include "ViewModels.hpp"
 #include "CreateProjectEditor.hpp"
@@ -39,10 +40,12 @@ class Editor
     std::shared_ptr<ErrorDialog> errorDialog_;
     GameComponentsProvider gameComponentsProvider_;
     ProjectFileDataProvider projectFileDataProvider_;
+    std::future<int> gameThread_;
 
     void renderMainMenu();
     bool renderSceneObjectNode(const PrototypeReferenceRef &object, const std::string &id);
     void renderSceneInspector();
+    void renderSceneViewer();
     void renderPrototypeList();
     void renderPrototypeInspector();
     bool renderObjectNode(const ObjectDataRef &object);
