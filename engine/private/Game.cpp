@@ -21,6 +21,7 @@ namespace Internal {
 
     Game::~Game()
     {
+        environment_->sceneManager()->clear();
         // destroy all the engines and APIs to ensure the components won't try to use them
         // in a inconsistence state
         graphicsEngine_.reset(nullptr);

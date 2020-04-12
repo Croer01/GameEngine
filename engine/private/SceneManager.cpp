@@ -62,7 +62,6 @@ namespace Internal {
             currentScene_->shutDown();
         currentScene_.reset();
         sceneNameToChange_.clear();
-        scenes_.clear();
     }
 
     bool SceneManager::isSceneLoaded() const {
