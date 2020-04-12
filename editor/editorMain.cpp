@@ -32,9 +32,6 @@
 #include IMGUI_IMPL_OPENGL_LOADER_CUSTOM
 #endif
 
-// Provisional include
-#include "../../componentsRegistered.hpp"
-
 // Main code
 int main(int, char**)
 {
@@ -125,11 +122,6 @@ int main(int, char**)
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     std::unique_ptr<Editor> editor(new Editor(window));
-
-    //Register components created from the game
-    //TODO: improve the way to do this (maybe a macro or "if define"?)
-    GameEngine::geEnvironmentRef env = GameEngine::geEnvironment::createInstance();
-    RegisterComponents(env);
 
     // Main loop
     bool done = false;

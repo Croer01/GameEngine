@@ -6,11 +6,14 @@
 #include "GameComponentsProvider.hpp"
 #include "ViewModels.hpp"
 
+// Provisional include
+#include "../../componentsRegistered.hpp"
+
 using namespace GameEngine;
 
 void GameComponentsProvider::updateNames()
 {
-    namesCached_ = geEnvironment::createInstance()->getRegisteredPropertiesIds();
+    namesCached_ = env_->getRegisteredPropertiesIds();
 }
 
 std::vector<std::string> GameComponentsProvider::getRegisteredPropertiesIds()
@@ -23,7 +26,7 @@ std::vector<std::string> GameComponentsProvider::getRegisteredPropertiesIds()
 
 std::vector<PropertyDataRef> GameComponentsProvider::getPropertiesMetadata(const std::string &name) const
 {
-    std::shared_ptr<GameEngine::PropertySetBase> gameProperties = geEnvironment::createInstance()->getProperties(name);
+    std::shared_ptr<GameEngine::PropertySetBase> gameProperties = env_->getProperties(name);
 
     std::vector<PropertyDataRef> properties;
     properties.reserve(gameProperties->size());
@@ -38,7 +41,7 @@ std::vector<PropertyDataRef> GameComponentsProvider::getPropertiesMetadata(const
 std::vector<std::shared_ptr<PropertyData>>
 GameComponentsProvider::getPropertiesMetadataByComponent(const std::string &componentName) const
 {
-    std::shared_ptr<GameEngine::PropertySetBase> gameProperties = geEnvironment::createInstance()->getProperties(componentName);
+    std::shared_ptr<GameEngine::PropertySetBase> gameProperties = env_->getProperties(componentName);
 
     std::vector<PropertyDataRef> properties;
     properties.reserve(gameProperties->size());
@@ -149,4 +152,13 @@ PropertyDataRef GameComponentsProvider::buildPropertyByType(const GameEngine::Pr
     propertyData->requrired_ = property.required();
 
     return propertyData;
+}
+
+GameComponentsProvider::GameComponentsProvider()
+{
+
+    //Register components created from the game
+    //TODO: improve the way to do this (maybe a macro or "if define"?)
+    env_ = GameEngine::geEnvironment::createInstance();
+    RegisterComponents(env_);
 }

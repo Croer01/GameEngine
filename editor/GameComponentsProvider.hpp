@@ -8,15 +8,18 @@
 
 #include <vector>
 #include <game-engine/properties/Property.hpp>
+#include <game-engine/geEnvironment.hpp>
 
 class PropertyData;
 class GameComponentsProvider
 {
     std::vector<std::string> namesCached_;
+    GameEngine::geEnvironmentRef env_;
 
     void updateNames();
     std::shared_ptr<PropertyData> buildPropertyByType(const GameEngine::PropertyBase &property) const;
 public:
+    GameComponentsProvider();
 
     std::vector<std::string> getRegisteredPropertiesIds();
 
