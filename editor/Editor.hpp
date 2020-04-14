@@ -9,6 +9,7 @@
 #include <memory>
 #include <future>
 #include <SDL2/SDL_video.h>
+#include <game-engine/geGame.hpp>
 #include "ViewModels.hpp"
 #include "CreateProjectEditor.hpp"
 #include "GameComponentsProvider.hpp"
@@ -29,6 +30,9 @@ class Editor
     };
 
     SDL_Window* window_;
+    SDL_GLContext glContext_;
+    SDL_GLContext gameGlContext_;
+    GameEngine::geRendererLock renderMutex_;
     SceneDataRef sceneData_;
     std::unique_ptr<ProjectDirectory> projectDirectory_;
     std::unique_ptr<TargetObject> objectSelected_;
@@ -41,6 +45,8 @@ class Editor
     GameComponentsProvider gameComponentsProvider_;
     ProjectFileDataProvider projectFileDataProvider_;
     std::future<int> gameThread_;
+    GameEngine::geGameRef game_;
+    unsigned int gameTextid_;
 
     void renderMainMenu();
     bool renderSceneObjectNode(const PrototypeReferenceRef &object, const std::string &id);
@@ -63,10 +69,13 @@ class Editor
 
     static void setPosToColumnCenter(float width = 0);
 public:
-    explicit Editor(SDL_Window* window);
+    Editor(SDL_Window* window, SDL_GLContext glContext);
     void render();
     void loadProject();
     void saveProject();
+    void makeCurrentContext();
+    void releaseCurrentContext();
+    void shutdown();
 };
 
 

@@ -21,8 +21,10 @@ namespace fs = boost::filesystem;
 using namespace std::chrono_literals;
 
 
-Editor::Editor(SDL_Window *window):
-    window_(window)
+Editor::Editor(SDL_Window *window, SDL_GLContext glContext) :
+    window_(window),
+    glContext_(glContext),
+    gameTextid_(-1)
 {
     ImGui::GetStyle().WindowRounding = 0.f;
     ImGui::GetStyle().FrameRounding = 3.f;
@@ -42,6 +44,10 @@ Editor::Editor(SDL_Window *window):
             loadScene(result.string());
     });
     errorDialog_ = std::make_shared<ErrorDialog>();
+
+    gameGlContext_ = SDL_GL_CreateContext(window_);
+    // restore the gl context after create the gl context to use in game thread
+    SDL_GL_MakeCurrent(window_, glContext_);
 }
 
 void Editor::render()
@@ -1140,16 +1146,17 @@ void Editor::setPosToColumnCenter(float width)
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + column - scrollX - spacing - (width/2.f));
 }
 
+
 void Editor::renderSceneViewer()
 {
     if(!sceneData_)
         return;
 
-    bool runGame = false;
+    bool canRunGame = false;
     // If the thead is finished, a new game instance will be run
     if(!gameThread_.valid())
     {
-        runGame = true;
+        canRunGame = true;
     }
     else if(gameThread_.wait_for(0ms) == std::future_status::ready)
     {
@@ -1159,33 +1166,96 @@ void Editor::renderSceneViewer()
         }
     }
 
-    if(runGame && ImGui::Button("run game"))
+    if(canRunGame)
     {
-        gameThread_ = std::async(std::launch::async,[&]()
+        if (ImGui::Button("run game"))
         {
-            try
+            gameThread_ = std::async(std::launch::async, [&]()
             {
-                GameEngine::geEnvironmentRef env = GameEngine::geEnvironment::createInstance();
-                env->setGameEmbedded(true);
-                RegisterComponents(env);
-                env->configurationPath(project_->folderPath_ + "/conf");
-                env->addPrototype("Player", project_->dataPath_.string() + "/Player.prototype");
-                env->addPrototype("Wall", project_->dataPath_.string() + "/Wall.prototype");
-                env->addPrototype("Pincers", project_->dataPath_.string() + "/Pincers.prototype");
-                env->addPrototype("Enemy", project_->dataPath_.string() + "/Enemy.prototype");
-                env->addScene("Test", project_->dataPath_.string() + "/Test1.scene");
-                env->firstScene("Test");
+                int exitStatus = 0;
+                try
+                {
+                    GameEngine::geEnvironmentRef env = GameEngine::geEnvironment::createInstance();
+                    env->setMakeCurrentContextCallback([=](){
+                        SDL_GL_MakeCurrent(window_, gameGlContext_);
+                    });
+                    RegisterComponents(env);
+                    env->configurationPath(project_->folderPath_ + "/conf");
+                    env->addPrototype("Player", project_->dataPath_.string() + "/Player.prototype");
+                    env->addPrototype("Wall", project_->dataPath_.string() + "/Wall.prototype");
+                    env->addPrototype("Pincers", project_->dataPath_.string() + "/Pincers.prototype");
+                    env->addPrototype("Enemy", project_->dataPath_.string() + "/Enemy.prototype");
+                    env->addScene("Test", project_->dataPath_.string() + "/Test1.scene");
+                    env->firstScene("Test");
 
-                GameEngine::geGameRef game = GameEngine::geGame::createInstance(env);
-                game->init();
+                    game_ = GameEngine::geGame::createInstance(env);
+                    gameTextid_ = game_->getRenderer();
+                    while(game_->isRunning())
+                    {
+                        game_->update();
+                        game_->render();
+                    }
+                }
+                catch (const std::exception &e)
+                {
+                    std::cerr << e.what() << std::endl;
+                    exitStatus = 1;
+                }
 
-                return game->loop();
-            }
-            catch (const std::exception &e)
-            {
-                std::cerr << e.what() << std::endl;
-                return 1;
-            }
-        });
+                gameTextid_ = -1;
+
+                game_.reset();
+                return exitStatus;
+            });
+        }
     }
+    else if(game_ && game_->isRunning())
+    {
+        if (ImGui::Button("stop game"))
+        {
+            game_->shutdown();
+        }
+    }
+
+    if(gameTextid_ != -1)
+    {
+        const int w = 512;
+        const int h = 512;
+        ImVec2 pos = ImGui::GetCursorScreenPos();
+
+        // Ask ImGui to draw it as an image:
+        // Under OpenGL the ImGUI image type is GLuint
+        // So make sure to use "(void *)tex" but not "&tex"
+        ImGui::GetWindowDrawList()->AddImage(
+            (void *)gameTextid_,
+            pos,
+
+            ImVec2(pos.x + w, pos.y + h),
+            ImVec2(-1, 1),
+            ImVec2(0, 0));
+    }
+}
+
+void Editor::releaseCurrentContext()
+{
+//    SDL_GL_MakeCurrent(window_, nullptr);
+    renderMutex_.unlock();
+}
+void Editor::makeCurrentContext()
+{
+    if(game_)
+        renderMutex_ = game_->getRendererLock();
+    SDL_GL_MakeCurrent(window_, glContext_);
+}
+
+void Editor::shutdown()
+{
+    renderMutex_.unlock();
+    if(game_)
+        game_->shutdown();
+
+    if(gameThread_.valid())
+        gameThread_.wait();
+
+    SDL_GL_DeleteContext(gameGlContext_);
 }
