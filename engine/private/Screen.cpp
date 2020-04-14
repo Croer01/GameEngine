@@ -26,7 +26,7 @@ namespace Internal {
         return 0;
     }
 
-    Screen::Screen(const std::string &filePath) {
+    Screen::Screen(const std::string &filePath, bool embedded) {
         YAML::Node screenConfig;
         try {
             screenConfig = YAML::LoadFile(filePath);
@@ -67,7 +67,11 @@ namespace Internal {
         pixelPerfect_ = screenConfig["pixelPerfect"].as<bool>(false);
         allowResize_ = screenConfig["resizable"].as<bool>(false);
 
-        initSDLWindow();
+        if(!embedded)
+            initSDLWindow();
+
+        //configure Gl context from the SDL window
+        initGlAttributes();
     }
 
     std::string Screen::title() const {
@@ -76,7 +80,8 @@ namespace Internal {
 
     void Screen::title(const std::string &value) {
         title_ = value;
-        SDL_SetWindowTitle(mainWindow_.get(), title_.c_str());
+        if(mainWindow_)
+            SDL_SetWindowTitle(mainWindow_.get(), title_.c_str());
     }
 
     int Screen::windowWidth() const {
@@ -165,18 +170,8 @@ namespace Internal {
         calculatedY_ = (deviceHeight_ / 2) - (calculatedHeight_ / 2);
     }
 
-    void Screen::initSDLWindow() {
-        uint32_t flags = SDL_WINDOW_OPENGL;
-        if(allowResize_)
-            flags |= SDL_WINDOW_RESIZABLE;
-        mainWindow_.reset(SDL_CreateWindow(title_.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                                           deviceWidth_, deviceHeight_, flags),
-                          [](SDL_Window *wind) { SDL_DestroyWindow(wind); });
-        SDL_AddEventWatch(resizingEventWatcher, this);
-        CheckSDLError();
-
-        //configure Gl context from the SDL window
-
+    void Screen::initGlAttributes()
+    {
         glViewport(calculatedX_, calculatedY_, calculatedWidth_, calculatedHeight_);
 
         // Decide GL+GLSL versions
@@ -205,15 +200,18 @@ namespace Internal {
         SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
         SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
-        mainContext_ = SDL_GL_CreateContext(mainWindow_.get());
-        makeCurrentContext();
+        if(mainWindow_)
+        {
+            mainContext_ = SDL_GL_CreateContext(mainWindow_.get());
+            makeCurrentContext();
+        }
 
         // This makes our buffer swap synchronized with the monitor's vertical refresh
         // Enable vsync
         SDL_GL_SetSwapInterval(1);
 
         // Init GLEW
-        // Apparently, this is needed for Apple. Thanks to Ross Vander for letting me know
+        // Apparently, this is needed for Apple. Thanks to Ross Vander for letting me know <- (original comment)
 #ifndef __APPLE__
         glewExperimental = GL_TRUE;
         glewInit();
@@ -226,12 +224,25 @@ namespace Internal {
         CheckSDLError();
     }
 
+    void Screen::initSDLWindow() {
+        uint32_t flags = SDL_WINDOW_OPENGL;
+        if(allowResize_)
+            flags |= SDL_WINDOW_RESIZABLE;
+        mainWindow_.reset(SDL_CreateWindow(title_.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                                           deviceWidth_, deviceHeight_, flags),
+                          [](SDL_Window *wind) { SDL_DestroyWindow(wind); });
+        SDL_AddEventWatch(resizingEventWatcher, this);
+        CheckSDLError();
+    }
+
     void Screen::makeCurrentContext() {
-        SDL_GL_MakeCurrent(mainWindow_.get(), mainContext_);
+        if(mainWindow_)
+            SDL_GL_MakeCurrent(mainWindow_.get(), mainContext_);
     }
 
     void Screen::swapWindow() {
-        SDL_GL_SwapWindow(mainWindow_.get());
+        if(mainWindow_)
+            SDL_GL_SwapWindow(mainWindow_.get());
     }
 
     Screen::~Screen() {
@@ -244,12 +255,13 @@ namespace Internal {
     }
 
     void Screen::resizable(bool value) {
+        //TODO: check this. Maybe in embedded games this doesn't work correctly
         allowResize_ = value;
         SDL_SetWindowResizable(mainWindow_.get(), allowResize_? SDL_TRUE : SDL_FALSE);
     }
 
-    SDL_Window &Screen::sdlWindow() const {
-        return *mainWindow_;
+    SDL_Window *Screen::sdlWindow() const {
+        return mainWindow_.get();
     }
 }
 }

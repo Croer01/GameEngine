@@ -8,12 +8,14 @@
 
 #include <vector>
 #include <memory>
+#include <game-engine/geEnvironment.hpp>
 #include "GraphicHolder.hpp"
 #include "Shader.h"
 #include "../Screen.hpp"
 #include "font/Text.hpp"
 #include "Camera.hpp"
 #include "MeshData.hpp"
+#include "FBO.hpp"
 
 namespace GameEngine {
 namespace Internal {
@@ -24,10 +26,12 @@ namespace Internal {
         std::shared_ptr<Shader> textShader_;
         glm::mat4 projMatrix_;
         bool pixelPerfect_;
+        std::unique_ptr<FBO> fbo_;
+        Screen *screen_;
     public:
         ~GraphicsEngine();
 
-        void init(const Screen &screen);
+        GraphicsEngine(Screen *screen, bool embedded);
 
         void draw(const std::shared_ptr<Camera> &cam);
 
@@ -40,6 +44,8 @@ namespace Internal {
         void unregisterText(const std::shared_ptr<Text> &textGraphic);
 
         bool isPixelPerfect() const;
+
+        FBO *getFbo() const;
     };
 }
 }

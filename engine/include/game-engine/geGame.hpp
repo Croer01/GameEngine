@@ -21,11 +21,23 @@ namespace GameEngine {
     class geGameObject;
     typedef std::shared_ptr<geGameObject> geGameObjectRef;
 
-    class PUBLICAPI geGame {
+
+class PUBLICAPI geRendererLock
+{
+public:
+    virtual void unlock(){};
+    virtual ~geRendererLock() {};
+};
+
+class PUBLICAPI geGame {
     public:
         virtual ~geGame() = 0;
-        virtual void init() = 0;
-        virtual int loop() = 0;
+        virtual void update() = 0;
+        virtual void render() = 0;
+        virtual unsigned int getRenderer() const = 0;
+        virtual geRendererLock getRendererLock() = 0;
+
+        virtual bool isRunning() const = 0;
         virtual void shutdown() = 0;
 
         static geGameRef createInstance(const std::shared_ptr<geEnvironment> &env);

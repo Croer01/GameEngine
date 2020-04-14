@@ -13,14 +13,67 @@
 namespace GameEngine {
 namespace Internal {
 
+RendererLock::RendererLock(std::mutex &mutex) : mutex_(mutex), unlocked_(false)
+{
+    mutex_.lock();
+}
+
+void RendererLock::unlock()
+{
+    if(!unlocked_)
+    {
+        unlocked_ = true;
+        mutex_.unlock();
+    }
+}
+
+RendererLock::~RendererLock()
+{
+    unlock();
+}
+
     Game::Game(const std::shared_ptr<Environment> &environment)
     {
-        running_ = false;
+        auto lock = getRendererLock();
+        lastTime_ = 0;
+        running_ = true;
         environment_ = environment;
+
+        // Initialize SDL's Video subsystem
+        if (SDL_Init(SDL_INIT_VIDEO) < 0)
+        {
+            CheckSDLError();
+        }
+
+        if(environment_->getMakeCurrentContextCallback())
+        {
+            environment_->getMakeCurrentContextCallback()();
+            CheckSDLError();
+            CheckGlError();
+        }
+        bool embeddedGraphics = (bool)environment_->getMakeCurrentContextCallback();
+        screen_ = std::make_unique<Screen>(environment_->configurationPath() + "/screen.yaml", embeddedGraphics);
+
+        graphicsEngine_ = std::make_unique<GraphicsEngine>(screen_.get(), embeddedGraphics);
+
+        initPhysics(environment_->configurationPath() + "/physics.yaml");
+
+        audioEngine_ = std::make_unique<AudioEngine>();
+        audioEngine_->init();
+        fontManager_ = std::make_unique<FontManager>();
+        inputManager_ = std::make_unique<InputManager>();
+
+        environment_->sceneManager()->bindGame(this);
+        if(!environment_->firstScene().empty())
+        {
+            changeScene(environment_->firstScene());
+            environment_->sceneManager()->changeSceneInSafeMode();
+        }
     }
 
     Game::~Game()
     {
+        geRendererLock lock = getRendererLock();
         environment_->sceneManager()->clear();
         // destroy all the engines and APIs to ensure the components won't try to use them
         // in a inconsistence state
@@ -29,38 +82,16 @@ namespace Internal {
         physicsEngine_.reset(nullptr);
         inputManager_.reset(nullptr);
         fontManager_.reset(nullptr);
+
+        //TODO: should this call in shutdown instead of here?
+        if(!environment_->getMakeCurrentContextCallback())
+            SDL_Quit();
+
+        //TODO: create a way to bind game into components
+        environment_->sceneManager()->unbindGame();
     }
 
-    void Game::init() {
-        if(!running_)
-        {
-            running_ = true;
-            // Initialize SDL's Video subsystem
-            if (SDL_Init(SDL_INIT_VIDEO) < 0)
-            {
-                CheckSDLError();
-            }
-            screen_ = std::make_unique<Screen>(environment_->configurationPath() + "/screen.yaml");
-            graphicsEngine_ = std::make_unique<GraphicsEngine>();
-            graphicsEngine_->init(*screen_);
-
-            initPhysics(environment_->configurationPath() + "/physics.yaml");
-
-            audioEngine_ = std::make_unique<AudioEngine>();
-            audioEngine_->init();
-            fontManager_ = std::make_unique<FontManager>();
-            inputManager_ = std::make_unique<InputManager>();
-
-            environment_->sceneManager()->bindGame(this);
-            if(!environment_->firstScene().empty())
-            {
-                changeScene(environment_->firstScene());
-                environment_->sceneManager()->changeSceneInSafeMode();
-            }
-        }
-    }
-
-    void Game::initPhysics(const std::string &configFilePath) {
+void Game::initPhysics(const std::string &configFilePath) {
         physicsEngine_ = std::make_unique<PhysicsEngine>();
 #ifdef DEBUG
         physicsEngine_->init(1.f / 60.f, screen_.get());
@@ -102,53 +133,65 @@ namespace Internal {
         }
     }
 
-    void Game::innerLoop() {
-        unsigned int lastTime = 0, currentTime;
-
-        while (running_) {
-            inputManager_->update();
-            if (inputManager_->isQuitDown()) {
-                shutdown();
-                continue;
-            }
-
-#ifdef DEBUG
-            if (inputManager_->isKeyDown(KeyCode::KEY_F5)) {
-                environment_->sceneManager()->reloadScene();
-            }
-#endif
-
-            //calculate elapsed time
-            currentTime = SDL_GetTicks();
-            float elapsedTime = (currentTime - lastTime) / 1000.f;
-#ifdef DEBUG
-            //this is a dirty solution to avoid big elapsed times when debugging.
-            // Common situation is the execution stops in breakpoint to a long time.
-            if (elapsedTime >= 5)
-                elapsedTime = 1.f / 60.f;
-#endif
-            environment_->sceneManager()->update(elapsedTime);
-            physicsEngine_->update(elapsedTime);
-
-            glClear(GL_COLOR_BUFFER_BIT);
-            glViewport(screen_->calculatedX(), screen_->calculatedY(), screen_->calculatedWidth(),
-                       screen_->calculatedHeight());
-            const std::shared_ptr<Camera> &cam = environment_->sceneManager()->getCameraOfCurrentScene();
-            graphicsEngine_->draw(cam);
-#ifdef DEBUG
-            physicsEngine_->drawDebug(cam);
-#endif
-            screen_->swapWindow();
-            lastTime = currentTime;
-
-            environment_->sceneManager()->changeSceneInSafeMode();
+    void Game::update()
+    {
+        inputManager_->update();
+        if (inputManager_->isQuitDown()) {
+            shutdown();
+            return;
         }
 
-        //TODO: should this call in shutdown instead of here?
-        if(!environment_->isGameEmbedded())
-            SDL_Quit();
+        //calculate elapsed time
+        unsigned int currentTime = SDL_GetTicks();
+        float elapsedTime = (currentTime - lastTime_) / 1000.f;
+
+        environment_->sceneManager()->changeSceneInSafeMode();
+
+#ifdef DEBUG
+        if (inputManager_->isKeyDown(KeyCode::KEY_F5)) {
+            environment_->sceneManager()->reloadScene();
+        }
+
+        // This is a dirty solution to avoid big elapsed times when debugging.
+        // A common situation is when the execution is stopped a long time by a breakpoint.
+        if (elapsedTime >= 5)
+            elapsedTime = 1.f / 60.f;
+#endif
+        environment_->sceneManager()->update(elapsedTime);
+        physicsEngine_->update(elapsedTime);
+
+        lastTime_ = currentTime;
     }
 
+    void Game::render()
+    {
+        geRendererLock lock = getRendererLock();
+
+        if(environment_->getMakeCurrentContextCallback())
+        {
+            environment_->getMakeCurrentContextCallback()();
+            CheckSDLError();
+            CheckGlError();
+        }
+
+        const std::shared_ptr<Camera> &cam = environment_->sceneManager()->getCameraOfCurrentScene();
+        graphicsEngine_->draw(cam);
+#ifdef DEBUG
+        if(graphicsEngine_->getFbo() != nullptr)
+        {
+            graphicsEngine_->getFbo()->bind();
+            physicsEngine_->drawDebug(cam);
+            graphicsEngine_->getFbo()->unBind();
+        }
+        else
+            physicsEngine_->drawDebug(cam);
+#endif
+
+        if (environment_->getMakeCurrentContextCallback())
+            glFinish();
+        else
+            screen_->swapWindow();
+    }
 
     void Game::shutdown() {
         running_ = false;
@@ -156,21 +199,6 @@ namespace Internal {
 
     const geGame &Game::context() const {
         return (const geGame &) *this;
-    }
-
-    int Game::loop() {
-        try {
-            init();
-
-            innerLoop();
-            //TODO: create a way to bind game into components
-            environment_->sceneManager()->unbindGame();
-            return 0;
-        }
-        catch (const std::exception &e){
-            std::cerr << e.what() << std::endl;
-            return 1;
-        }
     }
 
     geGameObjectRef Game::createObject(const std::string &name)
@@ -248,5 +276,19 @@ ObjectManager *Game::objectManager() const
     return environment_->objectManager();
 }
 
+bool Game::isRunning() const
+{
+    return running_;
+}
+
+unsigned int Game::getRenderer() const
+{
+    return graphicsEngine_->getFbo()->getTextId();
+}
+
+geRendererLock Game::getRendererLock()
+{
+    return RendererLock(renderMutex_);
+}
 }
 }

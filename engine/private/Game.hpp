@@ -18,9 +18,23 @@
 #include "graphics/font/FontManager.hpp"
 #include <string>
 #include <game-engine/InputManager.hpp>
+#include <mutex>
 
 namespace GameEngine {
 namespace Internal {
+
+class RendererLock : public geRendererLock
+{
+    std::mutex &mutex_;
+    bool unlocked_;
+public:
+    RendererLock(const RendererLock&) = delete;
+    explicit RendererLock(std::mutex &mutex);
+
+    virtual void unlock();
+    virtual ~RendererLock();
+};
+
 class Game : public geGame {
         bool running_;
 
@@ -31,20 +45,23 @@ class Game : public geGame {
         std::unique_ptr<PhysicsEngine> physicsEngine_;
         std::unique_ptr<InputManager> inputManager_;
         std::unique_ptr<FontManager> fontManager_;
+        unsigned int lastTime_;
+        std::mutex renderMutex_;
 
         void initPhysics(const std::string &configFilePath);
-        void innerLoop();
 
-    public:
+public:
         Game(const std::shared_ptr<Environment> &environment);
         virtual ~Game();
 
-        void init(const std::string &configRoot);
         const geGame &context() const;
 
         // geGame implementation
-        void init() override;
-        int loop() override;
+        virtual void update();
+        virtual void render();
+        virtual unsigned int getRenderer() const;
+        virtual geRendererLock getRendererLock();
+        virtual bool isRunning() const;
         void shutdown() override;
         geGameObjectRef createObject(const std::string &name) override;
         geGameObjectRef createFromPrototype(const std::string &prototype) override;

@@ -40,7 +40,7 @@ namespace Internal {
         SDL_GLContext mainContext_;
     public:
 
-        explicit Screen(const std::string &filePath);
+        explicit Screen(const std::string &filePath, bool embedded);
         virtual ~Screen();
         virtual std::string title() const;
         virtual void title(const std::string &value);
@@ -66,10 +66,11 @@ namespace Internal {
 
         void makeCurrentContext();
         void swapWindow();
-        SDL_Window &sdlWindow() const;
+        SDL_Window *sdlWindow() const;
     private:
         void recalculateWindow();
         void initSDLWindow();
+        void initGlAttributes();
 
     };
 }

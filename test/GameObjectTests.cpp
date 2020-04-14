@@ -174,7 +174,6 @@ TEST(SpriteComponent, load)
     environment->addPrototype(prototype, "data/spriteComponentLoadTest.yaml");
 
     geGameRef game = geGame::createInstance(environment);
-    game->init();
 
     geGameObjectRef gameObject = game->createFromPrototype(prototype);
     const std::weak_ptr<SpriteComponent> &component = gameObject->getComponent<SpriteComponent>();

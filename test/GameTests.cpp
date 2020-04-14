@@ -17,7 +17,11 @@ TEST(Game, start)
         game->shutdown();
     });
     EXPECT_NO_THROW(
-        EXPECT_HRESULT_SUCCEEDED(game->loop());
+        while(game->isRunning())
+        {
+            game->update();
+            game->render();
+        }
     );
     t.join();
 }
@@ -35,8 +39,6 @@ TEST(Game, renderSprite)
     environment->addPrototype(prototype, "data/spriteComponentLoadTest.yaml");
 
     geGameRef game = geGame::createInstance(environment);
-    game->init();
-
 
     std::thread t([&](){
         auto spriteComponent = game->findObjectByNameInCurrentScene(prototype)->getComponent<SpriteComponent>();
@@ -46,7 +48,11 @@ TEST(Game, renderSprite)
         game->shutdown();
     });
     EXPECT_NO_THROW(
-            EXPECT_HRESULT_SUCCEEDED(game->loop());
+        while(game->isRunning())
+        {
+            game->update();
+            game->render();
+        }
     );
     t.join();
 }
@@ -61,7 +67,6 @@ TEST(Game, playSound)
     environment->addPrototype(prototype, "data/audioComponentLoadTest.yaml");
 
     geGameRef game = geGame::createInstance(environment);
-    game->init();
 
     std::thread t([&](){
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
@@ -74,7 +79,11 @@ TEST(Game, playSound)
     });
 
     EXPECT_NO_THROW(
-        EXPECT_HRESULT_SUCCEEDED(game->loop());
+        while(game->isRunning())
+        {
+            game->update();
+            game->render();
+        }
     );
     t.join();
 }
@@ -82,19 +91,22 @@ TEST(Game, playSound)
 TEST(Game, titleChange)
 {
     geGameRef game = geGame::createInstance(geEnvironment::createInstance());
-    game->init();
     std::thread t([&](){
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
         const std::string &originalTitle = game->screen()->title();
         const std::string &newTitle = "This is a awesome title";
-        auto screen = std::dynamic_pointer_cast<Internal::Screen>(game->screen());
+        auto screen = dynamic_cast<Internal::Screen*>(game->screen());
         screen->title(newTitle);
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        ASSERT_EQ(SDL_GetWindowTitle(&screen->sdlWindow()), newTitle);
+        ASSERT_EQ(SDL_GetWindowTitle(screen->sdlWindow()), newTitle);
         game->shutdown();
     });
     EXPECT_NO_THROW(
-            EXPECT_HRESULT_SUCCEEDED(game->loop());
+        while(game->isRunning())
+        {
+            game->update();
+            game->render();
+        }
     );
     t.join();
 }

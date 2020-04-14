@@ -66,7 +66,8 @@ namespace Internal {
     }
 #endif
 
-    void GraphicsEngine::init(const Screen &screen) {
+    GraphicsEngine::GraphicsEngine(Screen *screen, bool embedded)
+    {
 
 #if _DEBUG
         if(glDebugMessageCallback) {
@@ -83,6 +84,7 @@ namespace Internal {
         else
             std::cerr << "glDebugMessageCallback not available" << std::endl;
 #endif
+        screen_ = screen;
 
         //set alpha blending
         glEnable(GL_BLEND);
@@ -160,13 +162,23 @@ namespace Internal {
         CheckGlError();
 
         //init projection matrix
-        projMatrix_ = glm::ortho(0.0f, (float) screen.virtualWidth(), (float) screen.virtualHeight(), 0.0f, 0.f, 1.f);
+        projMatrix_ = glm::ortho(0.0f, (float) screen_->virtualWidth(), (float) screen_->virtualHeight(), 0.0f, 0.f, 1.f);
         CheckGlError();
 
-        pixelPerfect_ = screen.pixelPerfect();
+        pixelPerfect_ = screen_->pixelPerfect();
+        if(embedded)
+            fbo_ = std::make_unique<FBO>(screen->virtualWidth(), screen->virtualHeight());
     }
 
-    void GraphicsEngine::draw(const std::shared_ptr<Camera> &cam) {
+    void GraphicsEngine::draw(const std::shared_ptr<Camera> &cam)
+    {
+        if(fbo_)
+            fbo_->bind();
+
+        glClear(GL_COLOR_BUFFER_BIT);
+        glViewport(screen_->calculatedX(), screen_->calculatedY(), screen_->calculatedWidth(),
+                   screen_->calculatedHeight());
+
         glm::mat4 projViewMatrix = projMatrix_;
 
         CheckGlError();
@@ -182,8 +194,6 @@ namespace Internal {
             CheckGlError();
         }
 
-
-
         //draw text
         textShader_->bind();
 
@@ -195,9 +205,16 @@ namespace Internal {
         }
         textShader_->unbind();
         CheckGlError();
+
+        if(fbo_)
+            fbo_->unBind();
     }
 
-    GraphicsEngine::~GraphicsEngine() {
+    GraphicsEngine::~GraphicsEngine()
+    {
+        if(fbo_)
+            fbo_->bind();
+
         for(auto graphic : graphics_)
         {
             graphic->setEngine(nullptr);
@@ -209,6 +226,11 @@ namespace Internal {
             text->setEngine(nullptr);
         }
         texts_.clear();
+
+        if(fbo_)
+            fbo_->unBind();
+
+        fbo_.reset();
     }
 
     void GraphicsEngine::registerGraphic(const std::shared_ptr<GraphicHolder> &graphic) {
@@ -249,5 +271,11 @@ namespace Internal {
     bool GraphicsEngine::isPixelPerfect() const {
         return pixelPerfect_;
     }
+
+FBO *GraphicsEngine::getFbo() const
+{
+    return fbo_.get();
+}
+
 }
 }

@@ -19,7 +19,7 @@ namespace GameEngine
 namespace Internal
 {
 
-Environment::Environment() : configurationPath_("conf"), gameEmbedded_(false)
+Environment::Environment() : configurationPath_("conf")
 {
     objectManager_ = std::make_unique<ObjectManager>();
     //Register the engine's default components
@@ -77,15 +77,11 @@ void Environment::registerComponent(const std::string &idType, ComponentBuilder 
 
 std::vector<std::string> Environment::getRegisteredPropertiesIds() const
 {
-//    //TODO: Do this in a better way. Now is a workarround to force initialize properties
-//    GameEngine::Internal::Game::GetInstance();
     return objectManager_->getComponentIds();
 }
 
 std::shared_ptr<PropertySetBase> Environment::getProperties(const std::string &id) const
 {
-//    //TODO: Do this in a better way. Now is a workarround to force initialize properties
-//    GameEngine::Internal::Game::GetInstance();
     return objectManager_->createProperties(id);
 }
 
@@ -99,14 +95,14 @@ ObjectManager *Environment::objectManager() const
     return objectManager_.get();
 }
 
-void Environment::setGameEmbedded(bool embedded)
+void Environment::setMakeCurrentContextCallback(const MakeCurrentContextCallback &callback)
 {
-    gameEmbedded_ = embedded;
+    makeCurrentContextCallback_ = callback;
 }
 
-bool Environment::isGameEmbedded() const
+MakeCurrentContextCallback Environment::getMakeCurrentContextCallback() const
 {
-    return gameEmbedded_;
+    return makeCurrentContextCallback_;
 }
 
 }

@@ -37,7 +37,7 @@ namespace Internal {
     void GameObject::preInit()
     {
         preInitializating_ = true;
-        std::cout << "Object " << prototype_.c_str() << "pre initialized" << std::endl;
+        std::cout << "Object " << prototype_.c_str() << " pre initialized" << std::endl;
         // Use conventional for-loop to avoid access violation of components have added by others components in pre init time
         auto componentSize = components_.size();
         for (auto i = 0; i < componentSize; i++)
