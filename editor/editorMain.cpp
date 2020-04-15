@@ -143,6 +143,9 @@ int main(int, char**)
                 done = true;
             if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(window))
                 done = true;
+
+            if(editor->game())
+                editor->game()->input()->addEvent(event);
         }
 
         // Start the Dear ImGui frame

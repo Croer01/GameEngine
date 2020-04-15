@@ -58,90 +58,93 @@ Vec2D InputManager::getMousePosition()
 void InputManager::update()
 {
     reset();
-
-    SDL_Event event;
-
-    while (SDL_PollEvent(&event) != 0)
+    for (auto event : events_)
     {
+        processEvent(event);
+    }
 
-        switch (event.type)
-        {
-            case SDL_QUIT:
+    events_.clear();
+}
+
+void InputManager::processEvent(SDL_Event event)
+{
+    switch (event.type)
+    {
+        case SDL_QUIT:
+            quit_ = true;
+            break;
+        case SDL_WINDOWEVENT:
+            if (event.window.event == SDL_WINDOWEVENT_CLOSE)
                 quit_ = true;
-                break;
-            case SDL_WINDOWEVENT:
-                if (event.window.event == SDL_WINDOWEVENT_CLOSE)
-                    quit_ = true;
-                break;
-            case SDL_KEYDOWN:
-                if (event.key.repeat == 0)
-                    keyboardState[keyMap[event.key.keysym.sym]] = InputState::DOWN;
-                else
-                    keyboardState[keyMap[event.key.keysym.sym]] = InputState::PRESSED;
+            break;
+        case SDL_KEYDOWN:
+            if (event.key.repeat == 0)
+                keyboardState[keyMap[event.key.keysym.sym]] = InputState::DOWN;
+            else
+                keyboardState[keyMap[event.key.keysym.sym]] = InputState::PRESSED;
 
-                if(inputSubject_)
+            if(inputSubject_)
+            {
+                if(event.key.keysym.sym == SDLK_RETURN)
                 {
-                    if(event.key.keysym.sym == SDLK_RETURN)
-                    {
-                        std::string NewLine = "\n";
-                        inputSubject_->notify(InputTextSubjectEvent::INPUT, (void *)NewLine.c_str());
-                    }
-
-                    if(event.key.keysym.sym == SDLK_BACKSPACE)
-                    {
-                        inputSubject_->notify(InputTextSubjectEvent::ERASE);
-                    }
+                    std::string NewLine = "\n";
+                    inputSubject_->notify(InputTextSubjectEvent::INPUT, (void *)NewLine.c_str());
                 }
 
-                break;
-            case SDL_KEYUP:
-                keyboardState[keyMap[event.key.keysym.sym]] = InputState::UP;
-                break;
-            case SDL_MOUSEBUTTONDOWN:
-                switch (event.button.button)
+                if(event.key.keysym.sym == SDLK_BACKSPACE)
                 {
-                    case SDL_BUTTON_LEFT:
-                        mouseState[MouseButton::LEFT] = InputState::DOWN;
-                        break;
-                    case SDL_BUTTON_RIGHT:
-                        mouseState[MouseButton::RIGHT] = InputState::DOWN;
-                        break;
-                    case SDL_BUTTON_MIDDLE:
-                        mouseState[MouseButton::MIDDLE] = InputState::DOWN;
-                        break;
-                    default:
-                        break;
+                    inputSubject_->notify(InputTextSubjectEvent::ERASE);
                 }
-                break;
-            case SDL_MOUSEBUTTONUP:
-                switch (event.button.button)
-                {
-                    case SDL_BUTTON_LEFT:
-                        mouseState[MouseButton::LEFT] = InputState::UP;
-                        break;
-                    case SDL_BUTTON_RIGHT:
-                        mouseState[MouseButton::RIGHT] = InputState::UP;
-                        break;
-                    case SDL_BUTTON_MIDDLE:
-                        mouseState[MouseButton::MIDDLE] = InputState::UP;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case SDL_TEXTEDITING:
-                if(inputSubject_)
-                    inputSubject_->notify(InputTextSubjectEvent::INPUT, event.edit.text);
-                break;
-            case SDL_TEXTINPUT:
-                if(inputSubject_)
-                {
-                    inputSubject_->notify(InputTextSubjectEvent::INPUT, &event.text.text);
-                }
-                break;
-            default:
-                break;
-        }
+            }
+
+            break;
+        case SDL_KEYUP:
+            keyboardState[keyMap[event.key.keysym.sym]] = InputState::UP;
+            break;
+        case SDL_MOUSEBUTTONDOWN:
+            switch (event.button.button)
+            {
+                case SDL_BUTTON_LEFT:
+                    mouseState[MouseButton::LEFT] = InputState::DOWN;
+                    break;
+                case SDL_BUTTON_RIGHT:
+                    mouseState[MouseButton::RIGHT] = InputState::DOWN;
+                    break;
+                case SDL_BUTTON_MIDDLE:
+                    mouseState[MouseButton::MIDDLE] = InputState::DOWN;
+                    break;
+                default:
+                    break;
+            }
+            break;
+        case SDL_MOUSEBUTTONUP:
+            switch (event.button.button)
+            {
+                case SDL_BUTTON_LEFT:
+                    mouseState[MouseButton::LEFT] = InputState::UP;
+                    break;
+                case SDL_BUTTON_RIGHT:
+                    mouseState[MouseButton::RIGHT] = InputState::UP;
+                    break;
+                case SDL_BUTTON_MIDDLE:
+                    mouseState[MouseButton::MIDDLE] = InputState::UP;
+                    break;
+                default:
+                    break;
+            }
+            break;
+        case SDL_TEXTEDITING:
+            if(inputSubject_)
+                inputSubject_->notify(InputTextSubjectEvent::INPUT, event.edit.text);
+            break;
+        case SDL_TEXTINPUT:
+            if(inputSubject_)
+            {
+                inputSubject_->notify(InputTextSubjectEvent::INPUT, &event.text.text);
+            }
+            break;
+        default:
+            break;
     }
 }
 
@@ -152,7 +155,6 @@ void InputManager::reset()
     //reset keyboard state
     for (auto iterator : keyboardState)
     {
-
         if (iterator.second == InputState::DOWN || iterator.second == InputState::PRESSED)
             keyboardState[iterator.first] = InputState::PRESSED;
         else
@@ -185,5 +187,10 @@ void InputManager::stopRecordingTextInput()
 {
     inputSubject_ = nullptr;
     SDL_StopTextInput();
+}
+
+void InputManager::addEvent(SDL_Event event)
+{
+    events_.push_back(event);
 }
 }

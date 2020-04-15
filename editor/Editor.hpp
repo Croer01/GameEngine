@@ -76,6 +76,7 @@ public:
     void makeCurrentContext();
     void releaseCurrentContext();
     void shutdown();
+    GameEngine::geGameRef game() const;
 };
 
 

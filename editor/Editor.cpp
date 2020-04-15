@@ -1259,3 +1259,8 @@ void Editor::shutdown()
 
     SDL_GL_DeleteContext(gameGlContext_);
 }
+
+GameEngine::geGameRef Editor::game() const
+{
+    return game_;
+}

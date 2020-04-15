@@ -11,6 +11,7 @@
 #include <game-engine/KeyCodes.hpp>
 #include <game-engine/events/Subject.hpp>
 #include <memory>
+#include <SDL2/SDL_events.h>
 
 namespace GameEngine {
 
@@ -38,7 +39,10 @@ class InputManager
     std::map<MouseButton, InputState> mouseState;
     std::map<KeyCode, InputState> keyboardState;
     InputTextSubjectRef inputSubject_;
+    std::vector<SDL_Event> events_;
+
     void reset();
+    void processEvent(SDL_Event event);
 
 public:
     InputManager();
@@ -60,6 +64,7 @@ public:
     Vec2D getMousePosition();
 
     void update();
+    void addEvent(SDL_Event event);
 
     void startRecordingTextInput(const InputTextSubjectRef &subject);
     void stopRecordingTextInput();
