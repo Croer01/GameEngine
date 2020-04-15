@@ -94,9 +94,9 @@ RendererLock::~RendererLock()
 void Game::initPhysics(const std::string &configFilePath) {
         physicsEngine_ = std::make_unique<PhysicsEngine>();
 #ifdef DEBUG
-        physicsEngine_->init(1.f / 60.f, screen_.get());
+        physicsEngine_->init(1.f / 120.f, screen_.get());
 #else
-        physicsEngine_->init(1.f / 60.f);
+        physicsEngine_->init(1.f / 120.f);
 #endif
         YAML::Node physicsConfig;
         try {

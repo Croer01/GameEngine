@@ -37,7 +37,7 @@ void PhysicsEngine::init(float timeStep, Screen *screen) {
         timeAcumulator_ += elapsedTime;
         if (timeAcumulator_ >= timeStep_) {
             world_->Step(timeStep_, velocityIterations_, positionIterations_);
-            timeAcumulator_ = 0;
+            timeAcumulator_ -= timeStep_;
         }
     }
 
