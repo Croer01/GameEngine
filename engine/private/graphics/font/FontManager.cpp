@@ -28,6 +28,7 @@ namespace Internal {
     }
 
     FontManager::~FontManager() {
+        fonts_.clear();
         FT_Done_FreeType(ftLibrary_);
     }
 }
