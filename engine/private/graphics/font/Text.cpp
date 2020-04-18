@@ -14,7 +14,8 @@ namespace Internal {
             textDef_(textDef),
             modelTransform_(glm::mat4(1)),
             active_(true),
-            tintColor_(glm::vec4(0.f, 0.f, 0.f, 1.f))
+            tintColor_(glm::vec4(0.f, 0.f, 0.f, 1.f)),
+            engine_(nullptr)
     {
 
         glGenVertexArrays(1, &VAO);
