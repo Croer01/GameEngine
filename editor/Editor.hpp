@@ -32,7 +32,7 @@ class Editor
     SDL_Window* window_;
     SDL_GLContext glContext_;
     SDL_GLContext gameGlContext_;
-    GameEngine::geRendererLock renderMutex_;
+    std::unique_ptr<GameEngine::geRendererLock> renderMutex_;
     SceneDataRef sceneData_;
     std::unique_ptr<ProjectDirectory> projectDirectory_;
     std::unique_ptr<TargetObject> objectSelected_;
@@ -46,7 +46,6 @@ class Editor
     ProjectFileDataProvider projectFileDataProvider_;
     std::future<int> gameThread_;
     GameEngine::geGameRef game_;
-    unsigned int gameTextid_;
 
     void renderMainMenu();
     bool renderSceneObjectNode(const PrototypeReferenceRef &object, const std::string &id);

@@ -23,8 +23,7 @@ using namespace std::chrono_literals;
 
 Editor::Editor(SDL_Window *window, SDL_GLContext glContext) :
     window_(window),
-    glContext_(glContext),
-    gameTextid_(-1)
+    glContext_(glContext)
 {
     ImGui::GetStyle().WindowRounding = 0.f;
     ImGui::GetStyle().FrameRounding = 3.f;
@@ -1189,7 +1188,6 @@ void Editor::renderSceneViewer()
                     env->firstScene("Test");
 
                     game_ = GameEngine::geGame::createInstance(env);
-                    gameTextid_ = game_->getRenderer();
                     while(game_->isRunning())
                     {
                         game_->update();
@@ -1201,8 +1199,6 @@ void Editor::renderSceneViewer()
                     std::cerr << e.what() << std::endl;
                     exitStatus = 1;
                 }
-
-                gameTextid_ = -1;
 
                 game_.reset();
                 return exitStatus;
@@ -1217,7 +1213,7 @@ void Editor::renderSceneViewer()
         }
     }
 
-    if(gameTextid_ != -1)
+    if(game_)
     {
         const int w = 512;
         const int h = 512;
@@ -1227,9 +1223,8 @@ void Editor::renderSceneViewer()
         // Under OpenGL the ImGUI image type is GLuint
         // So make sure to use "(void *)tex" but not "&tex"
         ImGui::GetWindowDrawList()->AddImage(
-            (void *)gameTextid_,
+            (void *)game_->getRenderer(),
             pos,
-
             ImVec2(pos.x + w, pos.y + h),
             ImVec2(-1, 1),
             ImVec2(0, 0));
@@ -1238,25 +1233,33 @@ void Editor::renderSceneViewer()
 
 void Editor::releaseCurrentContext()
 {
-//    SDL_GL_MakeCurrent(window_, nullptr);
-    renderMutex_.unlock();
+    renderMutex_.reset();
 }
+
 void Editor::makeCurrentContext()
 {
     if(game_)
-        renderMutex_ = game_->getRendererLock();
+    {
+        GameEngine::geRendererLock lock = game_->getRendererLock();
+        GameEngine::geRendererLock *lockPtr = new GameEngine::geRendererLock(std::forward<GameEngine::geRendererLock>(lock));
+        renderMutex_.reset(lockPtr);
+    }
+
     SDL_GL_MakeCurrent(window_, glContext_);
 }
 
 void Editor::shutdown()
 {
-    renderMutex_.unlock();
+    renderMutex_.reset();
+
     if(game_)
         game_->shutdown();
 
     if(gameThread_.valid())
         gameThread_.wait();
 
+    // Ensure we don't use the gl context of game to be able to delete it
+    SDL_GL_MakeCurrent(window_, glContext_);
     SDL_GL_DeleteContext(gameGlContext_);
 }
 

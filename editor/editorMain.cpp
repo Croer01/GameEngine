@@ -130,6 +130,7 @@ int main(int, char**)
     bool done = false;
     while (!done)
     {
+        editor->makeCurrentContext();
         // Poll and handle events (inputs, window resize, etc.)
         // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
         // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application.
@@ -145,14 +146,18 @@ int main(int, char**)
                 done = true;
 
             if(editor->game())
+            {
                 editor->game()->input()->addEvent(event);
+                if(done)
+                    editor->game()->shutdown();
+            }
         }
 
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplSDL2_NewFrame(window);
-        editor->makeCurrentContext();
         ImGui::NewFrame();
+        editor->releaseCurrentContext();
 
         // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
         if (show_demo_window)
@@ -162,6 +167,7 @@ int main(int, char**)
 
         // Rendering
         ImGui::Render();
+        editor->makeCurrentContext();
         glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
         glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -172,7 +178,10 @@ int main(int, char**)
 
     // Cleanup
     editor->shutdown();
+
+    editor->makeCurrentContext();
     ImGui_ImplOpenGL3_Shutdown();
+    editor->releaseCurrentContext();
     ImGui_ImplSDL2_Shutdown();
     ImGui::DestroyContext();
 
