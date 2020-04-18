@@ -16,6 +16,7 @@
 #include "SceneManager.hpp"
 #include "Environment.hpp"
 #include "graphics/font/FontManager.hpp"
+#include "TimeManager.hpp"
 #include <string>
 #include <game-engine/InputManager.hpp>
 #include <mutex>
@@ -33,11 +34,10 @@ class Game : public geGame {
         std::unique_ptr<PhysicsEngine> physicsEngine_;
         std::unique_ptr<InputManager> inputManager_;
         std::unique_ptr<FontManager> fontManager_;
-        unsigned int lastTime_;
+        std::unique_ptr<TimeManager> timeManager_;
         std::mutex renderMutex_;
 
         void initPhysics(const std::string &configFilePath);
-
 public:
         Game(const std::shared_ptr<Environment> &environment);
         virtual ~Game();

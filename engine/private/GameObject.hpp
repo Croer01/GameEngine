@@ -89,6 +89,7 @@ namespace Internal {
         void name(const std::string &name) override;
 
         virtual geGame *game() const;
+        void game(Game *value);
 
         virtual bool isDestroyed() const;
         virtual void destroy();

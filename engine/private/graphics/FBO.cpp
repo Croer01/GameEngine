@@ -14,6 +14,8 @@ FBO::FBO(int width, int height)
     glGenFramebuffers(1, &fbo_);
 
     glGenTextures(1, &textureAttatchment_);
+    CheckGlError();
+
     glBindTexture(GL_TEXTURE_2D, textureAttatchment_);
 
     // generate empty texture. This will be filled by FBO

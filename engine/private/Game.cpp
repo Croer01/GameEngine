@@ -16,7 +16,6 @@ namespace Internal {
     Game::Game(const std::shared_ptr<Environment> &environment)
     {
         const geRendererLock &lock = getRendererLock();
-        lastTime_ = SDL_GetTicks();
         running_ = true;
         environment_ = environment;
 
@@ -37,12 +36,13 @@ namespace Internal {
 
         graphicsEngine_ = std::make_unique<GraphicsEngine>(screen_.get(), embeddedGraphics);
 
-        initPhysics(environment_->configurationPath() + "/physics.yaml");
-
         audioEngine_ = std::make_unique<AudioEngine>();
         audioEngine_->init();
         fontManager_ = std::make_unique<FontManager>();
         inputManager_ = std::make_unique<InputManager>();
+
+        timeManager_ = std::make_unique<TimeManager>(this);
+        initPhysics(environment_->configurationPath() + "/physics.yaml");
 
         environment_->sceneManager()->bindGame(this);
         if(!environment_->firstScene().empty())
@@ -55,6 +55,7 @@ namespace Internal {
     Game::~Game()
     {
         const geRendererLock &lock = getRendererLock();
+        timeManager_.reset();
         environment_->sceneManager()->clear();
         // destroy all the engines and APIs to ensure the components won't try to use them
         // in a inconsistence state
@@ -74,10 +75,11 @@ namespace Internal {
 
 void Game::initPhysics(const std::string &configFilePath) {
         physicsEngine_ = std::make_unique<PhysicsEngine>();
+        //TODO: improve how to calculate the elapsed time to use in physics
 #ifdef DEBUG
-        physicsEngine_->init(1.f / 120.f, screen_.get());
+        physicsEngine_->init(timeManager_->getPhysicsElapsedTime(), screen_.get());
 #else
-        physicsEngine_->init(1.f / 120.f);
+        physicsEngine_->init(timeManager_->getPhysicsElapsedTime());
 #endif
         YAML::Node physicsConfig;
         try {
@@ -122,10 +124,10 @@ void Game::initPhysics(const std::string &configFilePath) {
             return;
         }
 
-        //calculate elapsed time
-        unsigned int currentTime = SDL_GetTicks();
-        float elapsedTime = (currentTime - lastTime_) / 1000.f;
-
+        timeManager_->calculateTime();
+        if(timeManager_->isFrameSkipped())
+            return;
+        float elapsedTime = timeManager_->getElapsedTime();
         environment_->sceneManager()->changeSceneInSafeMode();
 
 #ifdef DEBUG
@@ -140,8 +142,6 @@ void Game::initPhysics(const std::string &configFilePath) {
 #endif
         environment_->sceneManager()->update(elapsedTime);
         physicsEngine_->update(elapsedTime);
-
-        lastTime_ = currentTime;
     }
 
     void Game::render()
@@ -277,5 +277,6 @@ geRendererLock Game::getRendererLock()
 {
     return geRendererLock(renderMutex_);
 }
+
 }
 }

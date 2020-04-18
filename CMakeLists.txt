@@ -83,7 +83,8 @@ set(ENGINE_PRIVATE_SOURCES
         engine/private/graphics/GraphicSprite.cpp
         engine/private/graphics/GraphicGeometry.cpp
         engine/private/Environment.cpp
-        engine/private/graphics/FBO.cpp)
+        engine/private/graphics/FBO.cpp
+        engine/private/TimeManager.cpp)
 
 add_library(GameEngine ${ENGINE_SOURCES} ${ENGINE_PRIVATE_SOURCES})
 

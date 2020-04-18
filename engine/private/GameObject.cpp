@@ -319,5 +319,10 @@ namespace Internal {
     void GameObject::destroy() {
         destroyed_ = true;
     }
+
+void GameObject::game(Game *value)
+{
+    game_ = value;
+}
 }
 }
