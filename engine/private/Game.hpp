@@ -23,18 +23,6 @@
 namespace GameEngine {
 namespace Internal {
 
-class RendererLock : public geRendererLock
-{
-    std::mutex &mutex_;
-    bool unlocked_;
-public:
-    RendererLock(const RendererLock&) = delete;
-    explicit RendererLock(std::mutex &mutex);
-
-    virtual void unlock();
-    virtual ~RendererLock();
-};
-
 class Game : public geGame {
         bool running_;
 

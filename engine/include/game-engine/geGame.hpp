@@ -9,6 +9,7 @@
 #include <game-engine/geEnvironment.hpp>
 #include <string>
 #include <memory>
+#include <mutex>
 #include "geScreen.hpp"
 #include "geAudio.hpp"
 #include "geCamera.hpp"
@@ -24,9 +25,15 @@ namespace GameEngine {
 
 class PUBLICAPI geRendererLock
 {
+    std::unique_lock<std::mutex> lock_;
+    bool unlocked_;
 public:
-    virtual void unlock(){};
-    virtual ~geRendererLock() {};
+    geRendererLock(const geRendererLock&) = delete;
+    geRendererLock(geRendererLock && other) noexcept;
+    explicit geRendererLock(std::mutex &mutex);
+
+    void unlock();
+    ~geRendererLock();
 };
 
 class PUBLICAPI geGame {

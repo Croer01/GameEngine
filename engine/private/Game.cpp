@@ -13,28 +13,9 @@
 namespace GameEngine {
 namespace Internal {
 
-RendererLock::RendererLock(std::mutex &mutex) : mutex_(mutex), unlocked_(false)
-{
-    mutex_.lock();
-}
-
-void RendererLock::unlock()
-{
-    if(!unlocked_)
-    {
-        unlocked_ = true;
-        mutex_.unlock();
-    }
-}
-
-RendererLock::~RendererLock()
-{
-    unlock();
-}
-
     Game::Game(const std::shared_ptr<Environment> &environment)
     {
-        auto lock = getRendererLock();
+        const geRendererLock &lock = getRendererLock();
         lastTime_ = SDL_GetTicks();
         running_ = true;
         environment_ = environment;
@@ -73,7 +54,7 @@ RendererLock::~RendererLock()
 
     Game::~Game()
     {
-        geRendererLock lock = getRendererLock();
+        const geRendererLock &lock = getRendererLock();
         environment_->sceneManager()->clear();
         // destroy all the engines and APIs to ensure the components won't try to use them
         // in a inconsistence state
@@ -165,11 +146,12 @@ void Game::initPhysics(const std::string &configFilePath) {
 
     void Game::render()
     {
-        geRendererLock lock = getRendererLock();
+        const geRendererLock &lock = getRendererLock();
+        const MakeCurrentContextCallback &makeContext = environment_->getMakeCurrentContextCallback();
 
-        if(environment_->getMakeCurrentContextCallback())
+        if(makeContext)
         {
-            environment_->getMakeCurrentContextCallback()();
+            makeContext();
             CheckSDLError();
             CheckGlError();
         }
@@ -187,10 +169,15 @@ void Game::initPhysics(const std::string &configFilePath) {
             physicsEngine_->drawDebug(cam);
 #endif
 
-        if (environment_->getMakeCurrentContextCallback())
+        if (makeContext)
+        {
+            // before change context we ensure all is drawn in the FBO
             glFinish();
+        }
         else
+        {
             screen_->swapWindow();
+        }
     }
 
     void Game::shutdown() {
@@ -288,7 +275,7 @@ unsigned int Game::getRenderer() const
 
 geRendererLock Game::getRendererLock()
 {
-    return RendererLock(renderMutex_);
+    return geRendererLock(renderMutex_);
 }
 }
 }
