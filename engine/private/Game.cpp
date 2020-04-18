@@ -35,7 +35,7 @@ RendererLock::~RendererLock()
     Game::Game(const std::shared_ptr<Environment> &environment)
     {
         auto lock = getRendererLock();
-        lastTime_ = 0;
+        lastTime_ = SDL_GetTicks();
         running_ = true;
         environment_ = environment;
 
