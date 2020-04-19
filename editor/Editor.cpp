@@ -709,7 +709,12 @@ bool Editor::renderComponent(const ComponentDataRef &component)
                 case PropertyDataType::STRING:
                 {
                     auto propertyString = std::dynamic_pointer_cast<PropertyStringData>(property);
-                    ImGui::InputText(propertyString->name_.c_str(), &propertyString->value_);
+                    // Always include the first line
+                    float numLines = 1 + std::count(propertyString->value_.begin(), propertyString->value_.end(), '\n');
+                    // Arbitrary limit to avoid text block grows indefinitely
+                    if(numLines > 10)
+                        numLines = 10;
+                    ImGui::InputTextMultiline(propertyString->name_.c_str(), &propertyString->value_, ImVec2(0, ImGui::GetFrameHeight() + ImGui::GetTextLineHeight() * numLines));
                     if(ImGui::IsItemEdited())
                         edited = true;
                 }
