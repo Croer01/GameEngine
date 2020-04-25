@@ -23,7 +23,7 @@ using namespace ::testing;
 
 void testPath(const std::vector<Vec2D> &expected)
 {
-    std::unique_ptr<AStarPathfinding> pathfinder_ =std::make_unique<AStarPathfinding>(5,5,1);
+    std::unique_ptr<AStarPathfinding> pathfinder_ =std::make_unique<AStarPathfinding>(5,5);
 
     const Path &path = pathfinder_->findPath(expected[0], expected[4]);
     EXPECT_THAT(path.cells_, ElementsAreArray(expected));
@@ -31,7 +31,7 @@ void testPath(const std::vector<Vec2D> &expected)
 
 void testPathWithModifiers(const std::vector<Vec2D> &expected, const Vec2D &minModifierPos, const Vec2D &maxModifierPos, int modifier)
 {
-    std::unique_ptr<AStarPathfinding> pathfinder_ =std::make_unique<AStarPathfinding>(5,5,1);
+    std::unique_ptr<AStarPathfinding> pathfinder_ =std::make_unique<AStarPathfinding>(5,5);
 
     pathfinder_->setModifier(minModifierPos, maxModifierPos, modifier);
     const Path &path = pathfinder_->findPath(expected[0], expected[4]);

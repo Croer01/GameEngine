@@ -9,8 +9,8 @@
 namespace GameEngine {
 namespace Internal {
 
-AStarPathfinding::AStarPathfinding(int width, int height, int resolutionPixels) :
-    width_(width), height_(height), resolutionPixels_(resolutionPixels)
+AStarPathfinding::AStarPathfinding(int width, int height) :
+    width_(width), height_(height)
 {
     grid_ = std::vector<std::vector<CellRef>>(height_);
 

@@ -20,14 +20,13 @@ class AStarPathfinding
 {
     int width_;
     int height_;
-    int resolutionPixels_;
     std::vector<std::vector<CellRef>> grid_;
 
     std::vector<CellRef> findNeighborCells (const CellRef &cell);
     int calculateGScore (const CellRef &origin, const CellRef &destination);
     int calculateHeuristic (const CellRef &origin, const CellRef &destination);
 public:
-    AStarPathfinding(int width, int height, int resolutionPixels);
+    AStarPathfinding(int width, int height);
     //TODO: (maybe a helper class?)
     void setModifier(const Vec2D &minPos, const Vec2D &maxPos, int modifierValue);
 //TODO:    void addActor(Actor actor);
