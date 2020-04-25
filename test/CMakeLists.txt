@@ -18,6 +18,7 @@ CreateTestTarget(GameObject GameObjectTests.cpp)
 CreateTestTarget(Game GameTests.cpp)
 CreateTestTarget(Properties PropertiesTests.cpp)
 CreateTestTarget(Math MathTests.cpp)
+CreateTestTarget(Pathfinding PathfindingTests.cpp)
 
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND}
         DEPENDS ${TEST_NAMES})

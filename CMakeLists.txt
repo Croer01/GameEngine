@@ -84,7 +84,11 @@ set(ENGINE_PRIVATE_SOURCES
         engine/private/graphics/GraphicGeometry.cpp
         engine/private/Environment.cpp
         engine/private/graphics/FBO.cpp
-        engine/private/TimeManager.cpp)
+        engine/private/TimeManager.cpp
+        engine/private/pathfinding/AStarPathfinding.cpp
+        engine/private/pathfinding/Cell.cpp
+        engine/private/pathfinding/Actor.cpp
+        engine/private/pathfinding/Path.cpp)
 
 add_library(GameEngine ${ENGINE_SOURCES} ${ENGINE_PRIVATE_SOURCES})
 
