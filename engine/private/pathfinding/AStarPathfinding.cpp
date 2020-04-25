@@ -32,12 +32,19 @@ void AStarPathfinding::setModifier(const Vec2D &minPos, const Vec2D &maxPos, int
     if(minPos.y > maxPos.y)
         throw std::invalid_argument("min Y is greater than max Y");
 
-    for(int y = minPos.y; y < maxPos.y; y++)
+    if(minPos == maxPos)
     {
-        std::vector<CellRef> row = grid_[y];
-        for(int x = minPos.x; x < maxPos.x; x++)
+        grid_[minPos.y][minPos.x]->modifier = modifierValue;
+    }
+    else
+    {
+        for (int y = minPos.y; y <= maxPos.y; y++)
         {
-            row[x]->modifier = modifierValue;
+            std::vector<CellRef> row = grid_[y];
+            for (int x = minPos.x; x <= maxPos.x; x++)
+            {
+                row[x]->modifier = modifierValue;
+            }
         }
     }
 }
@@ -120,7 +127,7 @@ int AStarPathfinding::calculateHeuristic(const CellRef &origin, const CellRef &d
     Vec2D originPoint(origin->x, origin->y);
     Vec2D destinationPoint(destination->x, destination->y);
 
-    return std::abs((destinationPoint - originPoint).sqrMagnitude()) + origin->modifier;
+    return std::abs((destinationPoint - originPoint).sqrMagnitude()) + origin->modifier * origin->modifier;
 
     //int x = origin->x - destination->x;
     //int y = origin->y - destination->y;
