@@ -119,23 +119,48 @@ std::vector<CellRef> AStarPathfinding::findNeighborCells(const CellRef &cell)
 
 int AStarPathfinding::calculateGScore(const CellRef &origin, const CellRef &destination)
 {
-    return origin->g + destination->modifier + 1;// always have a minimum cost of 1 step
+    if (destination->blocked)
+    {
+        constexpr int highValue = 1000000;
+        return highValue;
+    }
+    else
+        return origin->g + destination->modifier + 1;// always have a minimum cost of 1 step
 }
 
 int AStarPathfinding::calculateHeuristic(const CellRef &origin, const CellRef &destination)
 {
-    Vec2D originPoint(origin->x, origin->y);
-    Vec2D destinationPoint(destination->x, destination->y);
+    if (origin->blocked)
+    {
+        constexpr int highValue = 1000000;
+        return highValue;
+    }
+    else
+    {
+        Vec2D originPoint(origin->x, origin->y);
+        Vec2D destinationPoint(destination->x, destination->y);
 
-    return std::abs((destinationPoint - originPoint).sqrMagnitude()) + origin->modifier * origin->modifier;
-
-    //int x = origin->x - destination->x;
-    //int y = origin->y - destination->y;
-    //if (x == 0)
-    //    x = 1;
-    //if (y == 0)
-    //    y = 1;
-    //return std::abs(static_cast<int>(std::rint(x * y)) + origin->modifier);
+        return std::abs((destinationPoint - originPoint).sqrMagnitude()) + origin->modifier * origin->modifier;
+    }
 }
+
+void AStarPathfinding::addAgent(const AgentRef &agent)
+{
+    //TODO: calcular la posicio de la cel·la i posar-le com a blocada
+    const Vec2D &position = agent->getPosition();
+    grid_[position.y][position.x]->blocked = true;
+    agent->registerObserver(this);
+    agents_.push_back(agent);
+}
+
+void AStarPathfinding::onEvent(const Subject<AgentEvents> &target, const AgentEvents &event, void *args)
+{
+    const Agent &agent = dynamic_cast<const Agent &>(target);
+    Vec2D prevPos = *(Vec2D*)args;
+
+    grid_[prevPos.y][prevPos.x]->blocked = false;
+    grid_[agent.getPosition().y][agent.getPosition().x]->blocked = true;
+}
+
 }
 }

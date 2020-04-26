@@ -9,5 +9,6 @@ GameEngine::Internal::Cell::Cell(int x, int y) :
     y(y),
     modifier(0),
     f(0),
-    g(0)
+    g(0),
+    blocked(false)
 {}

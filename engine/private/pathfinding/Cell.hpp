@@ -30,6 +30,7 @@ public:
     int f;
     // a reference to the previous cell to be able to the previous cell that could chain to form a path
     std::weak_ptr<Cell> parent;
+    bool blocked;
 };
 
 }
