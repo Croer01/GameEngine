@@ -233,6 +233,8 @@ void Editor::createScene(const std::string &sceneName)
 
 void Editor::renderSceneInspector()
 {
+    bool dirty = false;
+
     ImVec2 size = ImGui::GetIO().DisplaySize;
     size.x *= 0.25f;
     size.y -= 20;
@@ -243,6 +245,7 @@ void Editor::renderSceneInspector()
 
     if(ImGui::InputText("Name", &sceneData_->name_))
     {
+        dirty = true;
         updateWindowTitle();
     }
     ImGui::Separator();
@@ -253,18 +256,24 @@ void Editor::renderSceneInspector()
         ss << "Object" << sceneData_->objects_.size();
         newObject->name_ = ss.str();
         sceneData_->objects_.push_back(newObject);
+        dirty = true;
     }
 
     for (auto i = 0; i < sceneData_->objects_.size(); i++)
     {
         if(renderSceneObjectNode(sceneData_->objects_[i], std::to_string(i)))
         {
-            project_->dirty_ = true;
-            projectDirectory_->markEdited(DataFile(sceneData_->filePath_));
+            dirty = true;
         }
     }
 
     ImGui::End();
+
+    if(dirty)
+    {
+        project_->dirty_ = true;
+        projectDirectory_->markEdited(DataFile(sceneData_->filePath_));
+    }
 }
 
 void Editor::renderPrototypeInspector()
@@ -947,7 +956,13 @@ void Editor::renderMainMenu()
                 sceneFile << sceneNode << std::endl;
                 sceneFile.close();
 
-                //TODO: review this block code "if(save){ ... }"
+                // The scene has saved from memory copy, so that, we load the sceneData again from file to link with the project data management system
+                if(saveAs)
+                {
+                    projectDirectory_->addFile(sceneData_->filePath_);
+                    sceneData_ = projectFileDataProvider_.getSceneData(DataFile(sceneData_->filePath_));
+                }
+
                 project_->currentScenePath_ = sceneData_->filePath_;
                 YAML::Node projectNode;
                 projectNode = *project_;
@@ -1090,7 +1105,9 @@ void Editor::setProject(const std::shared_ptr<ProjectData> &project)
 {
     project_ = project;
 
-    if(project_->currentScenePath_.empty())
+    //TODO: advert about the missed scene?
+    fs::path scenePath = fs::path(project_->currentScenePath_);
+    if(project_->currentScenePath_.empty() || !fs::exists(scenePath))
     {
         sceneData_ = std::make_shared<SceneData>();
         sceneData_->name_ = "New Scene";
