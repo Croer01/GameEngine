@@ -258,7 +258,10 @@ namespace Internal {
             this->position(node["position"].as<Vec2D>());
 
         if(node["rotation"])
-            this->rotation(node["rotation"].as<float>());
+        {
+            float degrees = node["rotation"].as<float>();
+            this->rotation(glm::radians(degrees));
+        }
 
         if(node["scale"])
             this->scale(node["scale"].as<Vec2D>());

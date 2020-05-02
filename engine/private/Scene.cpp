@@ -68,7 +68,10 @@ namespace Internal {
                 if (prototype["position"])
                     gameObject->position(prototype["position"].as<Vec2D>());
                 if (prototype["rotation"])
-                    gameObject->rotation(prototype["rotation"].as<float>());
+                {
+                    float degrees = prototype["rotation"].as<float>();
+                    gameObject->rotation(glm::radians(degrees));
+                }
                 if (prototype["scale"])
                     gameObject->scale(prototype["scale"].as<Vec2D>());
 
