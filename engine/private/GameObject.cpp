@@ -174,6 +174,10 @@ namespace Internal {
         }
     }
 
+    Vec2D GameObject::localPosition() const {
+        return position_;
+    }
+
     Vec2D GameObject::position() const {
         Vec2D position = position_;
         if(auto parent = parent_.lock())

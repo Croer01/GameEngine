@@ -67,6 +67,7 @@ namespace Internal {
 
         void parent(const geGameObjectRef &parent) override;
 
+        virtual Vec2D localPosition() const;
         Vec2D position() const override;
 
         void position(const Vec2D &position) override;
