@@ -28,17 +28,13 @@ Editor::Editor(SDL_Window *window, SDL_GLContext glContext) :
     ImGui::GetStyle().WindowRounding = 0.f;
     ImGui::GetStyle().FrameRounding = 3.f;
 
-    auto createProjectCallback = std::bind(&Editor::setProject, this, std::placeholders::_1);
-    createProjectEditor_= std::make_shared<CreateProjectEditor>(createProjectCallback);
-    
-    auto createPrototypeCallback = std::bind(&Editor::createPrototype, this, std::placeholders::_1);
-    createPrototypeDialog_ = std::make_shared<CreatePrototypeDialog>(createPrototypeCallback);
-
-    auto deleteFileCallback = std::bind(&Editor::deleteFile, this, std::placeholders::_1);
-    deleteFileDialog_ = std::make_shared<DeleteFileDialog>(deleteFileCallback);
-
+    createProjectEditor_= std::make_shared<CreateProjectEditor>([=] (const ProjectDataRef &projectData) { setProject(projectData); });
+    createPrototypeDialog_ = std::make_shared<CreatePrototypeDialog>([=] (const std::string &prototypeName) { createPrototype(prototypeName); });
+    createSceneDialog_ = std::make_shared<CreateSceneDialog>([=] (const std::string &sceneName) { createScene(sceneName); });
+    deleteFileDialog_ = std::make_shared<DeleteFileDialog>([=] (const boost::filesystem::path &filePath){ deleteFile(filePath); });
     saveAllDialog_ = std::make_shared<SaveAllDialog>([=](const fs::path &result){
         saveProject();
+        // the result is the scene file we want to load. This is used when choose a scene but there are changes to save
         if(!result.empty())
             loadScene(result.string());
     });
@@ -55,6 +51,7 @@ void Editor::render()
 
     createProjectEditor_->Render();
     createPrototypeDialog_->Render();
+    createSceneDialog_->Render();
     deleteFileDialog_->Render();
     saveAllDialog_->Render();
     errorDialog_->Render();
@@ -207,6 +204,31 @@ void Editor::createPrototype(const std::string &prototypeName)
     prototypeFile << prototypeNode << std::endl;
     prototypeFile.close();
     projectDirectory_->addFile(prototypePath);
+}
+
+void Editor::createScene(const std::string &sceneName)
+{
+    fs::path scenePath(this->project_->dataPath_);
+
+    std::stringstream ss;
+    ss << sceneName << ".scene";
+    scenePath.append(ss.str());
+
+    SceneData newScene;
+    newScene.name_ = scenePath.stem().string();
+
+    YAML::Node sceneNode;
+    sceneNode = newScene;
+    std::ofstream sceneFile;
+    sceneFile.open(scenePath.string());
+    sceneFile << sceneNode << std::endl;
+    sceneFile.close();
+    projectDirectory_->addFile(scenePath);
+
+    // Load created scene
+    sceneData_ = projectFileDataProvider_.getSceneData(DataFile(scenePath));
+    objectSelected_.reset();
+    updateWindowTitle();
 }
 
 void Editor::renderSceneInspector()
@@ -875,9 +897,9 @@ void Editor::renderMainMenu()
             ImGui::MenuItem(sceneName.c_str(), NULL, false, false);
             if (ImGui::MenuItem("Create...", NULL, false, (bool)sceneData_))
             {
-                sceneData_.reset(new SceneData());
-                objectSelected_.reset();
-                updateWindowTitle();
+                const std::string &defaultValue =
+                    "Scene" + std::to_string(projectDirectory_->getFiles().size());
+                createSceneDialog_->open(defaultValue);
             }
 
             if (ImGui::MenuItem("Load...", NULL, false, (bool)sceneData_))
