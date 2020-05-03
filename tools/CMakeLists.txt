@@ -76,7 +76,7 @@ function(generate_components_register file_name generated_file)
     endif()
 
     set(COMPONENTS_REGISTERED_HPP ${CMAKE_CURRENT_SOURCE_DIR}/${file_name}.hpp)
-    file(GLOB COMPONENTS_REGISTERED_HEADERS ${GEN_COMPONENTS_COMPONENTS})
+    file(GLOB COMPONENTS_REGISTERED_HEADERS CONFIGURE_DEPENDS ${GEN_COMPONENTS_COMPONENTS})
     # ensure the COMPONENTS_REGISTERED_HEADERS's dependency list doesn't include file_name
     list(REMOVE_ITEM COMPONENTS_REGISTERED_HEADERS ${COMPONENTS_REGISTERED_HPP})
 
@@ -96,29 +96,21 @@ endfunction()
 
 
 function(generate_data_register file_name generated_file)
-    cmake_parse_arguments(
-            GEN_DATA
-            ""
-            ""
-            "COMPONENTS"
-            ${ARGN}
-    )
 
-    if(NOT DEFINED GEN_DATA_COMPONENTS)
-        message( FATAL_ERROR "The list of data files to generate register file is empty" )
-    endif()
+    set(DATA_REGISTERED_HPP ${CMAKE_CURRENT_SOURCE_DIR}/${file_name}.hpp)
 
-    set(COMPONENTS_REGISTERED_HPP ${CMAKE_CURRENT_SOURCE_DIR}/${file_name}.hpp)
-    file(GLOB COMPONENTS_REGISTERED_HEADERS "${GEN_DATA_COMPONENTS}")
-    # ensure the COMPONENTS_REGISTERED_HEADERS's dependency list doesn't include file_name
-    list(REMOVE_ITEM COMPONENTS_REGISTERED_HEADERS ${COMPONENTS_REGISTERED_HPP})
+    file(GLOB DATAOBJECTS_REGISTERED CONFIGURE_DEPENDS "*.scene" "*.prototype")
 
     add_custom_command(
-            COMMAND ${PYTHON_EXECUTABLE} ${TOOLS_SOURCE_DIR}/data_register_generator.py > ${COMPONENTS_REGISTERED_HPP}
-            DEPENDS ${COMPONENTS_REGISTERED_HEADERS}
-            OUTPUT ${COMPONENTS_REGISTERED_HPP}
+            COMMAND ${PYTHON_EXECUTABLE} ${TOOLS_SOURCE_DIR}/data_register_generator.py > ${DATA_REGISTERED_HPP}
+            DEPENDS ${DATAOBJECTS_REGISTERED}
+            OUTPUT ${DATA_REGISTERED_HPP}
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
             COMMENT "Generating code to register data into the object manager"
     )
-    set(${generated_file} ${COMPONENTS_REGISTERED_HPP} PARENT_SCOPE)
+    add_custom_target(
+            generate_data_register_manual ALL
+            DEPENDS ${DATA_REGISTERED_HPP}
+    )
+    set(${generated_file} ${DATA_REGISTERED_HPP} PARENT_SCOPE)
 endfunction()

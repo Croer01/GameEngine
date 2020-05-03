@@ -8,25 +8,30 @@ dataFolder = "data"
 prototypeRegisters = []
 sceneRegisters = []
 
-for filename in glob.iglob("data/**/*.yaml", recursive=True):
-    prototypeName = Path(filename).stem
-    prototypeName = prototypeName[:1].upper() + prototypeName[1:]
+# get all the supported data files recursively
+dataFolderPath = Path(dataFolder)
+dataFiles = []
+dataFiles.extend(dataFolderPath.rglob("*.scene"))
+dataFiles.extend(dataFolderPath.rglob("*.prototype"))
 
-    if os.name == 'nt':
-        filename = filename.replace('\\', "/")
+for filename in dataFiles:
+    dataObjectName = filename.stem
 
-    if not "Scene" in prototypeName:
-        prototypeRegisters.append("\tenv->addPrototype(\"" + prototypeName + "\", \"" + filename + "\");")
+    if ".scene" == filename.suffix:
+        sceneRegisters.append("\tenv->addScene(\"" + dataObjectName + "\", \"" + filename.as_posix() + "\");")
+    elif ".prototype" == filename.suffix:
+        prototypeRegisters.append("\tenv->addPrototype(\"" + dataObjectName + "\", \"" + filename.as_posix() + "\");")
     else:
-        prototypeName = prototypeName.replace("Scene", "")
-        sceneRegisters.append("\tenv->addScene(\"" + prototypeName + "\", \"" + filename + "\");")
+        raise ValueError("unkown file format " + filename.suffix)
 
 print("#ifndef DATA_REGISTERS_GENERATED_HPP")
 print("#define DATA_REGISTERS_GENERATED_HPP")
 print("#include <game-engine/geEnvironment.hpp>")
 print("")
 print("/*")
-print(" * This file has been generated")
+print(" * This file has been generated based in the content of data folder")
+print(" * data folder: " + str(dataFolderPath))
+print(" * cwd: " + str(os.getcwd()))
 print(" */")
 print("void inline RegisterData(const GameEngine::geEnvironmentRef &env) {")
 print(*prototypeRegisters, sep="\n")
