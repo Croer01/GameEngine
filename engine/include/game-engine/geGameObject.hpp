@@ -36,6 +36,7 @@ enum class GameObjectEvent{
         virtual void name(const std::string &name) = 0;
 
         virtual Vec2D position() const = 0;
+        virtual Vec2D localPosition() const = 0;
         virtual void position(const Vec2D &position) = 0;
 
         virtual float rotation() const = 0;
