@@ -98,8 +98,7 @@ endfunction()
 function(generate_data_register file_name generated_file)
 
     set(DATA_REGISTERED_HPP ${CMAKE_CURRENT_SOURCE_DIR}/${file_name}.hpp)
-
-    file(GLOB DATAOBJECTS_REGISTERED CONFIGURE_DEPENDS "*.scene" "*.prototype")
+    file(GLOB_RECURSE DATAOBJECTS_REGISTERED "*.scene" "*.prototype")
 
     add_custom_command(
             COMMAND ${PYTHON_EXECUTABLE} ${TOOLS_SOURCE_DIR}/data_register_generator.py > ${DATA_REGISTERED_HPP}
