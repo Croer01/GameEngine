@@ -68,6 +68,7 @@ namespace Internal {
         void setAnchor(GameEngine::Internal::GraphicAnchor anchor);
 
         void setTintColor(geColor tint);
+        void setTintColor(geColor tint, float opacity);
 
         void setEngine(GraphicsEngine *engine);
     };

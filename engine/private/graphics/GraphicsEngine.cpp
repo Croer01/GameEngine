@@ -120,7 +120,7 @@ namespace Internal {
 
         void main() {
             vec4 texColor = texture(Texture, TexCoord);
-            FragColor = vec4(texColor.rgb * Color.rgb, texColor.a);
+            FragColor = texColor * Color;
         }
         )EOF");
         spriteShader_->build();

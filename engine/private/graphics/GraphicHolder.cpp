@@ -102,12 +102,17 @@ namespace Internal {
 
 void GraphicHolder::setTintColor(geColor tint)
 {
-   tintColor_ = glm::vec4(tint.r,tint.g,tint.b,1.f);
+   tintColor_ = glm::vec4(tint.r, tint.g, tint.b, 1.f);
 }
 
 void GraphicHolder::setEngine(GraphicsEngine *engine)
 {
     engine_ = engine;
+}
+
+void GraphicHolder::setTintColor(geColor tint, float opacity)
+{
+    tintColor_ = glm::vec4(tint.r, tint.g, tint.b, opacity);
 }
 
 GraphicAnchor parseStringToGraphicAnchor(const std::string &anchorName) {
