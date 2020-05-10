@@ -43,7 +43,7 @@ namespace Internal {
         if (engine_ != nullptr && engine_->isPixelPerfect())
             desiredPosition = glm::round(desiredPosition);
 
-        glm::mat4 anchorTransform = glm::translate(glm::mat4(1), glm::vec3(anchor_, 0.f));
+        glm::mat4 anchorTransform = glm::translate(glm::mat4(1), glm::vec3(anchor_.x * scale.x, anchor_.y * scale.y, 0.f));
 
         //remember the order of matrix multiplication is from right to left
         modelTransform_ = glm::translate(glm::mat4(1), desiredPosition) *
