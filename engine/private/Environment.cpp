@@ -12,6 +12,7 @@
 #include <game-engine/components/ui/UIImageComponent.hpp>
 #include <game-engine/components/ColliderComponent.hpp>
 #include <game-engine/components/AudioComponent.hpp>
+#include <game-engine/components/ParticleEmitterComponent.hpp>
 #include "Environment.hpp"
 
 namespace GameEngine
@@ -29,6 +30,7 @@ Environment::Environment() : configurationPath_("conf")
     objectManager_->registerComponentBuilder("ColliderComponent", new ComponentTBuilder<ColliderComponent>());
     objectManager_->registerComponentBuilder("TextComponent", new ComponentTBuilder<TextComponent>());
     objectManager_->registerComponentBuilder("AudioComponent", new ComponentTBuilder<AudioComponent>());
+    objectManager_->registerComponentBuilder("ParticleEmitterComponent", new ComponentTBuilder<ParticleEmitterComponent>());
 
     //GUI Components
     objectManager_->registerComponentBuilder("UIButtonComponent", new ComponentTBuilder<UIButtonComponent>());

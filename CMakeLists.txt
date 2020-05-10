@@ -54,6 +54,7 @@ set(ENGINE_SOURCES
         engine/public/Random.cpp
         engine/public/geAudio.cpp
         engine/public/geIO.cpp
+        engine/public/components/ParticleEmitterComponent.cpp
         )
 
 # private stuff
@@ -88,7 +89,8 @@ set(ENGINE_PRIVATE_SOURCES
         engine/private/pathfinding/AStarPathfinding.cpp
         engine/private/pathfinding/Cell.cpp
         engine/private/pathfinding/Agent.cpp
-        engine/private/pathfinding/Path.cpp)
+        engine/private/pathfinding/Path.cpp
+        engine/private/graphics/Particle.cpp)
 
 add_library(GameEngine ${ENGINE_SOURCES} ${ENGINE_PRIVATE_SOURCES})
 

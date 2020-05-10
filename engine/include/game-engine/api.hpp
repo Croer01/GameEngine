@@ -12,6 +12,7 @@
 #endif
 
 #include <cmath>
+#include <cassert>
 
 namespace GameEngine {
 
@@ -107,6 +108,28 @@ struct PUBLICAPI geColor{
     geColor() : r(0),g(0),b(0){};
     geColor(float greyValue) : r(greyValue),g(greyValue),b(greyValue){};
     geColor(float rValue, float gValue, float bValue) : r(rValue),g(gValue),b(bValue){};
+};
+
+struct PUBLICAPI Range{
+    float min;
+    float max;
+
+    Range() : min(0.f), max(1.f){};
+    Range(float min, float max) : min(min), max(max) {};
+
+    float normalizedToValue(float normalized)
+    {
+        assert(min <= max);
+        assert(0 <= normalized && normalized <= 1);
+        return min + (max - min) * normalized;
+    }
+
+    float valueToNormalized(float value)
+    {
+        assert(min <= max);
+        assert(min <= value && value <= max);
+        return (value - min) / (max - min);
+    }
 };
 }
 
