@@ -12,6 +12,9 @@ Particle::Particle(GraphicsEngine *graphicEngine, const std::shared_ptr<Internal
     size_(1.f),
     active_(false),
     timeLife_(0.f),
+    speed_(Range(0.f,1.f)),
+    scale_(Range(1.f,1.f)),
+    color_(ColorRange({0.f}, {0.f})),
     lifetimeAccumulator_(0.f),
     graphicEngine_(graphicEngine),
     direction_(Vec2D(0.f, -1.f))
@@ -67,8 +70,17 @@ void Particle::setTimeLife(float timeLife)
 
 void Particle::setSpeed(float min, float max)
 {
-    speed_.min = min;
-    speed_.max = max;
+    speed_ = Range(min, max);
+}
+
+void Particle::setScale(float min, float max)
+{
+    scale_ = Range(min, max);
+}
+
+void Particle::setColor(geColor start, geColor end)
+{
+    color_ = ColorRange(start, end);
 }
 
 void Particle::update(float elapsedTime)
@@ -82,9 +94,13 @@ void Particle::update(float elapsedTime)
         float t = lifetimeAccumulator_ / timeLife_;
 
         float speed = speed_.normalizedToValue(t) * elapsedTime;
+        float scale = scale_.normalizedToValue(t);
         position_.x += direction_.x * speed;
         position_.y += direction_.y * speed;
-        graphic_->setModelTransform(position_, std::atan2(direction_.x, direction_.y),Vec2D(1.f,1.f));
+        graphic_->setModelTransform(position_, std::atan2(direction_.x, direction_.y),Vec2D(scale, scale));
+
+        geColor tint = color_.normalizedToValue(t);
+        graphic_->setTintColor(tint);
     }
 }
 
