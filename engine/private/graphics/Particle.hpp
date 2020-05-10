@@ -23,6 +23,7 @@ class Particle
     float timeLife_;
     Range speed_;
     Range scale_;
+    Range opacity_;
     ColorRange color_;
     // internal
     float lifetimeAccumulator_;
@@ -46,8 +47,9 @@ public:
 
     void setTimeLife(float timeLife);
 
-    void setSpeed(float min, float max);
-    void setScale(float min, float max);
+    void setSpeed(float start, float end);
+    void setScale(float start, float end);
+    void setOpacity(float start, float end);
 
     void setColor(geColor start, geColor end);
 
