@@ -5,7 +5,7 @@
 #ifndef GAMEENGINE_PARTICLE_HPP
 #define GAMEENGINE_PARTICLE_HPP
 
-#include <game-engine/api.hpp>
+#include <game-engine/Range.hpp>
 #include "GraphicHolder.hpp"
 
 namespace GameEngine{
