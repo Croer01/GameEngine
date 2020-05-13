@@ -17,6 +17,8 @@ namespace GameEngine {
     }
 
     void SpriteAnimatedComponent::init() {
+        //TODO: implement Layers or improve how to register sprites
+        updateGraphicRef();
         // the preInit ensure that the graphic is already created at this point
         setVisible(visible_);
         anchor(anchor_);
