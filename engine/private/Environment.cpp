@@ -31,6 +31,7 @@ Environment::Environment() : configurationPath_("conf")
     objectManager_->registerComponentBuilder("TextComponent", new ComponentTBuilder<TextComponent>());
     objectManager_->registerComponentBuilder("AudioComponent", new ComponentTBuilder<AudioComponent>());
     objectManager_->registerComponentBuilder("ParticleEmitterComponent", new ComponentTBuilder<ParticleEmitterComponent>());
+    objectManager_->registerComponentBuilder("ParticlesPropertiesComponent", new ComponentTBuilder<ParticlesPropertiesComponent>());
 
     //GUI Components
     objectManager_->registerComponentBuilder("UIButtonComponent", new ComponentTBuilder<UIButtonComponent>());

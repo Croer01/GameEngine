@@ -12,6 +12,7 @@
 #include <iostream>
 #include <memory>
 #include "../../../private/graphics/Particle.hpp"
+#include "ParticlesPropertiesComponent.hpp"
 
 namespace GameEngine
 {
@@ -28,6 +29,7 @@ class ParticleEmitterComponent : public geComponentInstantiable<ParticleEmitterC
     bool emitOnInit_;
 
     // internally variables to do all work
+    std::weak_ptr<ParticlesPropertiesComponent> particleProperties_;
     bool emitting_;
     float spawnTimeAccumulator_;
     float timeLifeAccumulator_;
@@ -40,7 +42,7 @@ public:
     void emit();
     void stop();
     virtual void Update(float elapsedTime);
-    virtual void preInit();
+    virtual void init();
     virtual PropertySetBase *getProperties() const;
 };
 

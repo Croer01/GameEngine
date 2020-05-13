@@ -3,39 +3,29 @@
 //
 
 #include <game-engine/components/ParticleEmitterComponent.hpp>
-#include "../../private/graphics/GraphicGeometry.hpp"
-#include "../../private/Game.hpp"
 
 namespace GameEngine
 {
 
-void ParticleEmitterComponent::preInit()
+void ParticleEmitterComponent::init()
 {
-    maxParticles_ = 20;
+    particleProperties_ = gameObject()->getComponent<ParticlesPropertiesComponent>();
+    auto particleProperties = particleProperties_.lock();
+   if(!particleProperties)
+       throw std::runtime_error("The GameObject doesn't have a ParticlesPropertiesComponent attached");
+
+    maxParticles_ = 81;
     pool_.reserve(maxParticles_);
 
-    std::vector<Vec2D> path = {
-        Vec2D(0.f,0.f),
-        Vec2D(10.f,0.f),
-        Vec2D(10.f,10.f),
-        Vec2D(0.f,10.f)
-    };
-    std::shared_ptr<Internal::GraphicGeometry> graphicLoaded = std::make_shared<Internal::GraphicGeometry>(path);
-    Internal::GraphicsEngine *graphicsEngine = dynamic_cast<Internal::Game *>(gameObject()->game())->graphicsEngine();
-
-    Range rotation = Range(0,2*3.1416f);
     for(auto i = 0; i < maxParticles_; i++)
     {
-        const Internal::ParticleRef &particle = std::make_shared<Internal::Particle>(graphicsEngine, graphicLoaded);
-        particle->setRotation(rotation.normalizedToValue(i / (float)maxParticles_));
-        particle->setSpeed(10,100);
-        pool_.push_back(particle);
+        pool_.push_back(particleProperties->createParticle());
     }
 
     //TODO: remove this
     emitOnInit_ = true;
     infinite_ = true;
-    spawnFrequency_ = 0.05f;
+    spawnFrequency_ = 0.01f;
     //////////////////////
 
     if(emitOnInit_)
@@ -79,6 +69,7 @@ void ParticleEmitterComponent::Update(float elapsedTime)
         else
             next++;
     }
+//    std::cout << "particles active: " << particlesActive_.size() << std::endl;
 }
 
 void ParticleEmitterComponent::spawnParticle()
@@ -93,8 +84,6 @@ void ParticleEmitterComponent::spawnParticle()
         Internal::ParticleRef particle = *it;
         particle->setActive(true);
         particle->setPosition(gameObject()->position());
-        // TODO: set other stuff from particle component
-        particle->setTimeLife(1.f);
         particlesActive_.push_back(particle);
     }
 }
