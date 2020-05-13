@@ -11,22 +11,19 @@ void ParticleEmitterComponent::init()
 {
     particleProperties_ = gameObject()->getComponent<ParticlesPropertiesComponent>();
     auto particleProperties = particleProperties_.lock();
-   if(!particleProperties)
-       throw std::runtime_error("The GameObject doesn't have a ParticlesPropertiesComponent attached");
+    if(!particleProperties)
+        throw std::runtime_error("The GameObject doesn't have a ParticlesPropertiesComponent attached");
 
-    maxParticles_ = 81;
-    pool_.reserve(maxParticles_);
+    // if the maxParticles is set to 0, this is calculate with the maximum number of possible particles can be spawn per second
+    int numParticles = maxParticles_;
+    if(maxParticles_ == 0 && spawnFrequency_ != 0)
+        numParticles = static_cast<int>(std::round(1.f / spawnFrequency_));
 
-    for(auto i = 0; i < maxParticles_; i++)
+    pool_.reserve(numParticles);
+    for(auto i = 0; i < numParticles; i++)
     {
         pool_.push_back(particleProperties->createParticle());
     }
-
-    //TODO: remove this
-    emitOnInit_ = true;
-    infinite_ = true;
-    spawnFrequency_ = 0.01f;
-    //////////////////////
 
     if(emitOnInit_)
         emit();
@@ -111,7 +108,91 @@ void ParticleEmitterComponent::stop()
 
 PropertySetBase *ParticleEmitterComponent::getProperties() const
 {
-    return new PropertySet<ParticleEmitterComponent>();
+    auto *properties = new PropertySet<ParticleEmitterComponent>();
+
+    properties->add(new Property<ParticleEmitterComponent, int>(
+        "maxParticles",
+        &ParticleEmitterComponent::maxParticles,
+        &ParticleEmitterComponent::maxParticles,
+        0
+        ));
+
+    properties->add(new Property<ParticleEmitterComponent, float>(
+        "spawnFrequency",
+        &ParticleEmitterComponent::spawnFrequency,
+        &ParticleEmitterComponent::spawnFrequency,
+        1
+    ));
+    properties->add(new Property<ParticleEmitterComponent, float>(
+        "timeLife",
+        &ParticleEmitterComponent::timeLife,
+        &ParticleEmitterComponent::timeLife,
+        1
+    ));
+    properties->add(new Property<ParticleEmitterComponent, bool>(
+        "infinite",
+        &ParticleEmitterComponent::infinite,
+        &ParticleEmitterComponent::infinite,
+        false
+    ));
+    properties->add(new Property<ParticleEmitterComponent, bool>(
+        "emitOnInit",
+        &ParticleEmitterComponent::emitOnInit,
+        &ParticleEmitterComponent::emitOnInit,
+        false
+    ));
+
+    return properties;
+}
+
+int ParticleEmitterComponent::maxParticles() const
+{
+    return maxParticles_;
+}
+
+void ParticleEmitterComponent::maxParticles(const int &value)
+{
+    maxParticles_ = value;
+}
+
+float ParticleEmitterComponent::spawnFrequency() const
+{
+    return spawnFrequency_;
+}
+
+void ParticleEmitterComponent::spawnFrequency(const float &value)
+{
+    spawnFrequency_ = value;
+}
+
+float ParticleEmitterComponent::timeLife() const
+{
+    return timeLife_;
+}
+
+void ParticleEmitterComponent::timeLife(const float &value)
+{
+    timeLife_ = value;
+}
+
+bool ParticleEmitterComponent::infinite() const
+{
+    return infinite_;
+}
+
+void ParticleEmitterComponent::infinite(const bool &value)
+{
+    infinite_ = value;
+}
+
+bool ParticleEmitterComponent::emitOnInit() const
+{
+    return emitOnInit_;
+}
+
+void ParticleEmitterComponent::emitOnInit(const bool &value)
+{
+    emitOnInit_ = value;
 }
 
 }
