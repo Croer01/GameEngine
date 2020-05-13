@@ -19,6 +19,8 @@ public:
 
     float normalizedToValue(float normalized) const;
     float valueToNormalized(float value) const;
+    float getStart() const;
+    float getEnd() const;
 };
 
 class PUBLICAPI ColorRange
@@ -29,6 +31,8 @@ public:
     ColorRange(geColor start, geColor end);
 
     geColor normalizedToValue(float normalized) const;
+    const geColor &getStart() const;
+    const geColor &getEnd() const;
 };
 
 }

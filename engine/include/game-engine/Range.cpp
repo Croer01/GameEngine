@@ -23,6 +23,16 @@ float Range::valueToNormalized(float value) const
     return (value - start_) / (end_ - start_);
 }
 
+float Range::getStart() const
+{
+    return start_;
+}
+
+float Range::getEnd() const
+{
+    return end_;
+}
+
 ColorRange::ColorRange(geColor start, geColor end) : start_(start), end_(end)
 {}
 
@@ -32,5 +42,15 @@ geColor ColorRange::normalizedToValue(float normalized) const
     float g = start_.g + (end_.g - start_.g) * normalized;
     float b = start_.b + (end_.b - start_.b) * normalized;
     return geColor(r, g, b);
+}
+
+const geColor &ColorRange::getStart() const
+{
+    return start_;
+}
+
+const geColor &ColorRange::getEnd() const
+{
+    return end_;
 }
 }
