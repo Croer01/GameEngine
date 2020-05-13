@@ -35,10 +35,8 @@ namespace GameEngine {
 
         void unregisterObserver(Observer<EventType> *observer) {
             auto it = std::find(observers_.begin(), observers_.end(), observer);
-            if (it != observers_.end()) {
-                std::swap(*it, *(--observers_.end()));
-                observers_.pop_back();
-            }
+            if (it != observers_.end())
+                observers_.erase(it);
         }
 
         void notify(const EventType &event, void *args) const {

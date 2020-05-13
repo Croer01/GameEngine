@@ -57,10 +57,8 @@ namespace Internal {
 
     void AudioEngine::unregisterSource(AudioSource *source) {
         auto it = std::find(sources_.begin(), sources_.end(), source);
-        if (it != sources_.end()) {
-            std::swap(*it, *(--sources_.end()));
-            sources_.pop_back();
-        }
+        if (it != sources_.end())
+            sources_.erase(it);
     }
 }
 }

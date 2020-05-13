@@ -245,8 +245,7 @@ namespace Internal {
         auto it = std::find(graphics_.begin(), graphics_.end(), graphic);
         if (it != graphics_.end()) {
             (*it)->setEngine(nullptr);
-            std::swap(*it, *(--graphics_.end()));
-            graphics_.pop_back();
+            graphics_.erase(it);
         }
     }
 
@@ -263,8 +262,7 @@ namespace Internal {
         auto it = std::find(texts_.begin(), texts_.end(), textGraphic);
         if (it != texts_.end()) {
             (*it)->setEngine(nullptr);
-            std::swap(*it, *(--texts_.end()));
-            texts_.pop_back();
+            texts_.erase(it);
         }
     }
 

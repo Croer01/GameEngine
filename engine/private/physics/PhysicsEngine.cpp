@@ -67,12 +67,11 @@ void PhysicsEngine::init(float timeStep, Screen *screen) {
             return;
 
         auto it = std::find(colliders_.begin(), colliders_.end(), collider);
-        if (it == colliders_.end())
-            return;
-
-        std::swap(*it, *(--colliders_.end()));
-        colliders_.pop_back();
-        world_->DestroyBody(collider->getBody());
+        if (it != colliders_.end())
+        {
+            colliders_.erase(it);
+            world_->DestroyBody(collider->getBody());
+        }
     }
 
     void PhysicsEngine::BeginContact(b2Contact *contact) {
