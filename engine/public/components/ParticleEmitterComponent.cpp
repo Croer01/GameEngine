@@ -16,8 +16,10 @@ void ParticleEmitterComponent::init()
 
     // if the maxParticles is set to 0, this is calculate with the maximum number of possible particles can be spawn per second
     int numParticles = maxParticles_;
+    // Add 1 extra particle to ensure always there is one particle disabled and the particle system spawn
+    // particles smoothly, without cuts
     if(maxParticles_ == 0 && spawnFrequency_ != 0)
-        numParticles = static_cast<int>(std::round(1.f / spawnFrequency_));
+        numParticles = static_cast<int>(std::ceil(particleProperties->endLifetime() / spawnFrequency_) + 1);
 
     pool_.reserve(numParticles);
     for(auto i = 0; i < numParticles; i++)
