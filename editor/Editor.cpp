@@ -363,27 +363,41 @@ bool Editor::renderObjectNode(const ObjectDataRef &object)
         }
 
         int i = 0;
+        int removeComponent = -1;
+        int moveComponent = 0;
         for (const auto &component : object->components_)
         {
             ImGui::PushID(i);
-            if (renderComponent(component))
+            if (renderComponent(component, i, object->components_.size(), &moveComponent, &removeComponent))
                 edited = true;
             ImGui::PopID();
             i++;
         }
         ImGui::PopID();
 
-        //remove components safety
-        auto it = std::remove_if(object->components_.begin(),
-                                 object->components_.end(),
-                                 [](const ComponentDataRef &component)
-                                 { return component->markToRemove_; });
+    // This code doesn't manage the case that multiple components are removed or moved at the same time.
+    // Simply because the GUI doesn't allow to do that and simplify the code.
 
-        if (it != object->components_.end())
-        {
-            object->components_.erase(it, object->components_.end());
-            edited = true;
-        }
+    // move component
+    // Negative means move up the element, positive means move down. The value is the position, not the array index
+    // eg: if moveComponent is -3, the array[2] element will move up
+    if(moveComponent > 0)
+    {
+        int index = moveComponent - 1;
+        std::iter_swap(object->components_.begin() + index, object->components_.begin() + (index + 1));
+    }
+    else if(moveComponent < 0)
+    {
+        int index = std::abs(moveComponent) - 1;
+        std::iter_swap(object->components_.begin() + index, object->components_.begin() + (index - 1));
+    }
+
+    // remove components safety
+    if (removeComponent != -1)
+    {
+        object->components_.erase(object->components_.begin() + removeComponent, object->components_.end());
+        edited = true;
+    }
 
         // render children
 
@@ -703,15 +717,39 @@ void Editor::renderPhysicsInspector()
     ImGui::PopID();
 }
 
-bool Editor::renderComponent(const ComponentDataRef &component)
+bool Editor::renderComponent(const ComponentDataRef &component, int index, int length, int *moveComponent, int *removeComponent)
 {
     bool edited = false;
     ImGui::PushID(component->name_.c_str());
     bool opened = ImGui::CollapsingHeader(component->name_.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap);
-    ImGui::SameLine(ImGui::GetWindowContentRegionWidth() - 3);
+    float reserveSpaceForButtons = 0.f;
+    if(index != 0)
+        reserveSpaceForButtons += 23.f;
+    if(index != length -1)
+        reserveSpaceForButtons += 23.f;
+    ImGui::SameLine(ImGui::GetWindowContentRegionWidth() - 3 - reserveSpaceForButtons);
+    if(index != 0)
+    {
+        if (ImGui::Button("^"))
+        {
+            (*moveComponent) = (index + 1) * -1;
+            edited = true;
+        }
+        ImGui::SameLine();
+    }
+    if(index != length -1)
+    {
+        if (ImGui::Button("v"))
+        {
+            (*moveComponent) = index + 1;
+            edited = true;
+        }
+        ImGui::SameLine();
+    }
     if(ImGui::Button("x"))
     {
-        component->markToRemove_ = true;
+        (*removeComponent) = index;
+        edited = true;
     }
 
     if (opened)

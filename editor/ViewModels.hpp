@@ -172,7 +172,6 @@ class ComponentData
 public:
     std::string name_;
     std::vector<PropertyDataRef> properties_;
-    bool markToRemove_ = false;
 };
 
 class ObjectData;

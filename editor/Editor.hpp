@@ -59,7 +59,7 @@ class Editor
     void renderCentralRegion();
     void renderGuiInspector();
     void renderPhysicsInspector();
-    bool renderComponent(const ComponentDataRef &component);
+    bool renderComponent(const ComponentDataRef &component, int index, int length, int *moveComponent, int *removeComponent);
     bool renderFileSelector(const std::string &label, const std::string &currentFile, DataFileType typeSupported, DataFile *result);
 
     void setProject(const std::shared_ptr<ProjectData> &project);
