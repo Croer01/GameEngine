@@ -197,4 +197,9 @@ void ParticleEmitterComponent::emitOnInit(const bool &value)
     emitOnInit_ = value;
 }
 
+bool ParticleEmitterComponent::isEmitting() const
+{
+    return emitting_;
+}
+
 }

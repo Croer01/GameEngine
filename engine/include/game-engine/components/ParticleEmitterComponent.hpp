@@ -40,6 +40,7 @@ class ParticleEmitterComponent : public geComponentInstantiable<ParticleEmitterC
 public:
     void emit();
     void stop();
+    bool isEmitting() const;
     virtual void Update(float elapsedTime);
     virtual void init();
     virtual PropertySetBase *getProperties() const;
