@@ -328,74 +328,74 @@ bool Editor::renderObjectNode(const ObjectDataRef &object)
 {
     bool edited = false;
 
-        ImGui::InputText("Name", &object->name_);
-        if (ImGui::IsItemEdited())
+    ImGui::InputText("Name", &object->name_);
+    if (ImGui::IsItemEdited())
+        edited = true;
+
+    ImGui::PushID(object->name_.c_str());
+
+    if (ImGui::Button("New Child"))
+    {
+        ObjectDataRef newChild = std::make_shared<ObjectData>();
+        std::stringstream ss;
+        ss << "Child" << object->children_.size();
+        newChild->name_ = ss.str();
+        object->children_.push_back(newChild);
+        edited = true;
+    }
+
+    ImGui::Separator();
+    static std::string item_current = gameComponentsProvider_.getRegisteredPropertiesIds()[0];
+    if (ImGui::BeginCombo("Component",
+                          item_current.c_str())) // The second parameter is the label previewed before opening the combo.
+    {
+        auto components = gameComponentsProvider_.getRegisteredPropertiesIds();
+        for (std::string &component : components)
+        {
+            bool is_selected = item_current == component;
+            if (ImGui::Selectable(component.c_str(), is_selected))
+                item_current = component;
+            // Set the initial focus when opening the combo (scrolling + for keyboard navigation support in the upcoming navigation branch)
+            if (is_selected)
+                ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndCombo();
+    }
+
+    if (ImGui::Button("Add Component..."))
+    {
+        assert(object);
+        ComponentDataRef newComponent = std::make_shared<ComponentData>();
+        newComponent->name_ = item_current;
+        newComponent->properties_ = gameComponentsProvider_.getPropertiesMetadata(item_current);
+
+        object->components_.push_back(newComponent);
+        edited = true;
+    }
+
+    ImGui::Separator();
+    if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
+    {
+        if (ImGui::DragFloat2("position", object->position_.xy.data(), .1f))
             edited = true;
-
-        ImGui::PushID(object->name_.c_str());
-
-        if (ImGui::Button("New Child"))
-        {
-            ObjectDataRef newChild = std::make_shared<ObjectData>();
-            std::stringstream ss;
-            ss << "Child" << object->children_.size();
-            newChild->name_ = ss.str();
-            object->children_.push_back(newChild);
+        if (ImGui::DragFloat2("size", object->scale_.xy.data(), .1f, 1.f, std::numeric_limits<float>::max()))
             edited = true;
-        }
-
-        ImGui::Separator();
-        static std::string item_current = gameComponentsProvider_.getRegisteredPropertiesIds()[0];
-        if (ImGui::BeginCombo("Component",
-                              item_current.c_str())) // The second parameter is the label previewed before opening the combo.
-        {
-            auto components = gameComponentsProvider_.getRegisteredPropertiesIds();
-            for (std::string &component : components)
-            {
-                bool is_selected = item_current == component;
-                if (ImGui::Selectable(component.c_str(), is_selected))
-                    item_current = component;
-                // Set the initial focus when opening the combo (scrolling + for keyboard navigation support in the upcoming navigation branch)
-                if (is_selected)
-                    ImGui::SetItemDefaultFocus();
-            }
-            ImGui::EndCombo();
-        }
-
-        if (ImGui::Button("Add Component..."))
-        {
-            assert(object);
-            ComponentDataRef newComponent = std::make_shared<ComponentData>();
-            newComponent->name_ = item_current;
-            newComponent->properties_ = gameComponentsProvider_.getPropertiesMetadata(item_current);
-
-            object->components_.push_back(newComponent);
+        if (ImGui::DragFloat("rotation", &object->rotation_, .1f))
             edited = true;
-        }
+    }
 
-        ImGui::Separator();
-        if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
-        {
-            if (ImGui::DragFloat2("position", object->position_.xy.data(), .1f))
-                edited = true;
-            if (ImGui::DragFloat2("size", object->scale_.xy.data(), .1f, 1.f, std::numeric_limits<float>::max()))
-                edited = true;
-            if (ImGui::DragFloat("rotation", &object->rotation_, .1f))
-                edited = true;
-        }
-
-        int i = 0;
-        int removeComponent = -1;
-        int moveComponent = 0;
-        for (const auto &component : object->components_)
-        {
-            ImGui::PushID(i);
-            if (renderComponent(component, i, object->components_.size(), &moveComponent, &removeComponent))
-                edited = true;
-            ImGui::PopID();
-            i++;
-        }
+    int i = 0;
+    int removeComponent = -1;
+    int moveComponent = 0;
+    for (const auto &component : object->components_)
+    {
+        ImGui::PushID(i);
+        if (renderComponent(component, i, object->components_.size(), &moveComponent, &removeComponent))
+            edited = true;
         ImGui::PopID();
+        i++;
+    }
+    ImGui::PopID();
 
     // This code doesn't manage the case that multiple components are removed or moved at the same time.
     // Simply because the GUI doesn't allow to do that and simplify the code.
@@ -421,7 +421,7 @@ bool Editor::renderObjectNode(const ObjectDataRef &object)
         edited = true;
     }
 
-        // render children
+    // render children
 
     for (const auto &child : object->children_)
     {
