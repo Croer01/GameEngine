@@ -81,7 +81,7 @@ function(generate_components_register file_name generated_file)
     list(REMOVE_ITEM COMPONENTS_REGISTERED_HEADERS ${COMPONENTS_REGISTERED_HPP})
 
     add_custom_command(
-            COMMAND ${PYTHON_EXECUTABLE} ${TOOLS_SOURCE_DIR}/engine_components_generator.py ${CMAKE_CURRENT_SOURCE_DIR} ${COMPONENTS_REGISTERED_HEADERS} > ${COMPONENTS_REGISTERED_HPP}
+            COMMAND ${PYTHON_EXECUTABLE} ${TOOLS_SOURCE_DIR}/engine_components_generator.py ${COMPONENTS_REGISTERED_HEADERS} > ${COMPONENTS_REGISTERED_HPP}
             DEPENDS ${COMPONENTS_REGISTERED_HEADERS}
             OUTPUT ${COMPONENTS_REGISTERED_HPP}
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
@@ -98,7 +98,7 @@ endfunction()
 function(generate_data_register file_name generated_file)
 
     set(DATA_REGISTERED_HPP ${CMAKE_CURRENT_SOURCE_DIR}/${file_name}.hpp)
-    file(GLOB_RECURSE DATAOBJECTS_REGISTERED "*.scene" "*.prototype")
+    file(GLOB_RECURSE DATAOBJECTS_REGISTERED CONFIGURE_DEPENDS "*.scene" "*.prototype")
 
     add_custom_command(
             COMMAND ${PYTHON_EXECUTABLE} ${TOOLS_SOURCE_DIR}/data_register_generator.py > ${DATA_REGISTERED_HPP}
