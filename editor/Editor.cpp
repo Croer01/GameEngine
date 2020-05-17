@@ -1164,6 +1164,7 @@ void Editor::saveProject()
 void Editor::setProject(const std::shared_ptr<ProjectData> &project)
 {
     project_ = project;
+    projectFileDataProvider_.setProject(project);
 
     //TODO: advert about the missed scene?
     fs::path scenePath = fs::path(project_->currentScenePath_);

@@ -2,17 +2,19 @@
 // Created by adria on 31/12/2019.
 //
 
+#include <boost/filesystem/operations.hpp>
 #include "ProjectFileDataProvider.h"
 
+namespace fs = boost::filesystem;
 ObjectDataRef ProjectFileDataProvider::getObjectData(const DataFile &file)
 {
     if(file.getType() != DataFileType::Prototype)
         throw std::invalid_argument("the file " + file.getFilePath().string() + " is not a Prototype");
 
     ObjectDataRef prototype;
-    const std::string &filepath = file.getFilePath().string();
-    auto it = _objectsLoadedCache.find(filepath);
-    if(it != _objectsLoadedCache.end())
+    const std::string &filepath = fs::absolute(file.getFilePath(), project_->dataPath_).string();
+    auto it = objectsLoadedCache_.find(filepath);
+    if(it != objectsLoadedCache_.end())
     {
         prototype = it->second;
     }
@@ -22,7 +24,7 @@ ObjectDataRef ProjectFileDataProvider::getObjectData(const DataFile &file)
         {
             YAML::Node prototypeNode = YAML::LoadFile(filepath);
             prototype = std::make_shared<ObjectData>(prototypeNode.as<ObjectData>());
-            _objectsLoadedCache[filepath] = prototype;
+            objectsLoadedCache_[filepath] = prototype;
 
         }
         catch (const std::exception &e)
@@ -41,9 +43,9 @@ SceneDataRef ProjectFileDataProvider::getSceneData(const DataFile &file)
         throw std::invalid_argument("the file " + file.getFilePath().string() + " is not a Scene");
 
     SceneDataRef scene;
-    const std::string &filepath = file.getFilePath().string();
-    auto it = _scenesLoadedCache.find(filepath);
-    if(it != _scenesLoadedCache.end())
+    const std::string &filepath = fs::absolute(file.getFilePath(), project_->dataPath_).string();
+    auto it = scenesLoadedCache_.find(filepath);
+    if(it != scenesLoadedCache_.end())
     {
         scene = it->second;
     }
@@ -54,7 +56,7 @@ SceneDataRef ProjectFileDataProvider::getSceneData(const DataFile &file)
             YAML::Node prototypeNode = YAML::LoadFile(filepath);
             scene = std::make_shared<SceneData>(prototypeNode.as<SceneData>());
             scene->filePath_ = file.getFilePath().string();
-            _scenesLoadedCache[filepath] = scene;
+            scenesLoadedCache_[filepath] = scene;
 
         }
         catch (const std::exception &e)
@@ -74,20 +76,20 @@ bool ProjectFileDataProvider::deleteData(const std::string &filepath)
 
     if(dataFile.getType() == DataFileType::Prototype)
     {
-        auto it = _objectsLoadedCache.find(filepath);
-        if (it != _objectsLoadedCache.end())
+        auto it = objectsLoadedCache_.find(filepath);
+        if (it != objectsLoadedCache_.end())
         {
             deleted = true;
-            _objectsLoadedCache.erase(it);
+            objectsLoadedCache_.erase(it);
         }
     }
     else if(dataFile.getType() == DataFileType::Scene)
     {
-        auto it = _scenesLoadedCache.find(filepath);
-        if (it != _scenesLoadedCache.end())
+        auto it = scenesLoadedCache_.find(filepath);
+        if (it != scenesLoadedCache_.end())
         {
             deleted = true;
-            _scenesLoadedCache.erase(it);
+            scenesLoadedCache_.erase(it);
         }
     }
     else {
@@ -99,6 +101,11 @@ bool ProjectFileDataProvider::deleteData(const std::string &filepath)
 
 void ProjectFileDataProvider::clearCache()
 {
-    _objectsLoadedCache.clear();
-    _scenesLoadedCache.clear();
+    objectsLoadedCache_.clear();
+    scenesLoadedCache_.clear();
+}
+
+void ProjectFileDataProvider::setProject(const ProjectDataRef &projectData)
+{
+    project_ = projectData;
 }
