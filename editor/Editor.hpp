@@ -54,6 +54,7 @@ class Editor
     void renderSceneInspector();
     void renderSceneViewer();
     void renderPrototypeList();
+    void renderPrototypeListInternal(const DataDirectoryRef &dir);
     void renderPrototypeInspector();
     bool renderObjectNode(const ObjectDataRef &object);
     void renderCentralRegion();

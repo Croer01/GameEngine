@@ -120,6 +120,69 @@ bool Editor::renderSceneObjectNode(const PrototypeReferenceRef &object, const st
     return edited;
 }
 
+void Editor::renderPrototypeListInternal(const DataDirectoryRef &dir)
+{
+    ImGui::PushID("files");
+    for(const auto &file : dir->getFiles())
+    {
+        ImGui::PushID(file->getFilePath().c_str());
+        ImGuiTreeNodeFlags PrototypesNodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_AllowItemOverlap;
+        ImGui::TreeNodeEx(file->getFilePath().filename().string().c_str(), PrototypesNodeFlags);
+        if(ImGui::IsItemClicked())
+        {
+            DataFile &dataFile = *file.get();
+            switch (file->getType())
+            {
+                case DataFileType::Prototype :
+                    try {
+                        auto object = new TargetObject();
+                        object->data = projectFileDataProvider_.getObjectData(dataFile);
+                        object->sourceFile = dataFile;
+
+                        objectSelected_.reset(object);
+                    }
+                    catch (const std::exception &e)
+                    {
+                        errorDialog_->open(e.what());
+                    }
+                    break;
+                case DataFileType::Scene:
+                    if(projectDirectory_->hasEditedFiles())
+                    {
+                        saveAllDialog_->setFilesToSave(projectDirectory_->getEditedFiles());
+                        saveAllDialog_->open(file->getFilePath());
+                    }
+                    else
+                    {
+                        loadScene(file->getFilePath().string());
+                    }
+                    break;
+            }
+        }
+        ImGui::SameLine(ImGui::GetWindowContentRegionWidth() - 3);
+        if(ImGui::Button("X"))
+        {
+            const boost::filesystem::path &relativeFilePath = file->getFilePath();
+            deleteFileDialog_->open(relativeFilePath);
+        }
+        ImGui::PopID();
+    }
+    ImGui::PopID();
+
+    ImGui::PushID("dirs");
+    for(const auto &subdir : dir->getFolders())
+    {
+        ImGui::PushID(subdir->name().c_str());
+        if(ImGui::TreeNode(subdir->name().c_str()))
+        {
+            renderPrototypeListInternal(subdir);
+            ImGui::TreePop();
+        }
+        ImGui::PopID();
+    }
+    ImGui::PopID();
+}
+
 void Editor::renderPrototypeList()
 {
     ImVec2 size = ImGui::GetIO().DisplaySize;
@@ -140,48 +203,7 @@ void Editor::renderPrototypeList()
     ImGui::Separator();
     ImGuiTreeNodeFlags PrototypesNodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_AllowItemOverlap;
 
-    int i = 0;
-    for (const auto &dataFile : projectDirectory_->getFiles())
-    {
-        const fs::path& filepath = dataFile.getFilePath();
-        ImGui::PushID(i++);
-        const boost::filesystem::path &relativeFilePath = fs::relative(filepath, project_->dataPath_);
-        ImGui::TreeNodeEx(relativeFilePath.string().c_str(), PrototypesNodeFlags);
-        if(ImGui::IsItemClicked())
-        {
-            switch (dataFile.getType())
-            {
-                case DataFileType::Prototype :
-                    try {
-                        auto object = new TargetObject();
-                        object->data = projectFileDataProvider_.getObjectData(dataFile);
-                        object->sourceFile = dataFile;
-
-                        objectSelected_.reset(object);
-                    }
-                    catch (const std::exception &e)
-                    {
-                        errorDialog_->open(e.what());
-                    }
-                    break;
-                case DataFileType::Scene:
-                    if(projectDirectory_->hasEditedFiles())
-                    {
-                        saveAllDialog_->setFilesToSave(projectDirectory_->getEditedFiles());
-                        saveAllDialog_->open(filepath);
-                    }
-                    else
-                    {
-                        loadScene(filepath.string());
-                    }
-                    break;
-            }
-        }
-        ImGui::SameLine(ImGui::GetWindowWidth() - 20);
-        if(ImGui::Button("X"))
-            deleteFileDialog_->open(relativeFilePath);
-        ImGui::PopID();
-    }
+    renderPrototypeListInternal(projectDirectory_->getTree());
 
     ImGui::End();
 }
@@ -1190,7 +1212,7 @@ void Editor::deleteFile(const boost::filesystem::path &filePath)
     {
         projectDirectory_->removeFile(absolutePath);
         projectFileDataProvider_.deleteData(absolutePath.string());
-        if(objectSelected_->sourceFile.getFilePath() == absolutePath)
+        if(objectSelected_ && objectSelected_->sourceFile.getFilePath() == absolutePath)
             objectSelected_.reset();
     }
 }

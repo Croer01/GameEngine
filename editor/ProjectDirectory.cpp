@@ -28,13 +28,16 @@ void ProjectDirectory::markAllSaved()
 
 ProjectDirectory::ProjectDirectory(const ProjectDataRef &project)
 {
+    project_ = project;
+
     // List the data files
     // TODO: observe directory to update list if some file is created/deleted
     // probably  Implement in a separate thread
-    recursiveDataFilesRegister(project->dataPath_);
+    directory_ = std::make_shared<DataDirectory>("/");
+    recursiveDataFilesRegister(project->dataPath_, directory_);
 }
 
-void ProjectDirectory::recursiveDataFilesRegister(const boost::filesystem::path &directoryPath)
+void ProjectDirectory::recursiveDataFilesRegister(const boost::filesystem::path &directoryPath, const DataDirectoryRef &directory)
 {
     if(fs::exists(directoryPath) && fs::is_directory(directoryPath))
     {
@@ -45,10 +48,14 @@ void ProjectDirectory::recursiveDataFilesRegister(const boost::filesystem::path 
             if (is_regular_file(itr->path()))
             {
                 files_.emplace_back(itr->path());
+                directory->addFile(std::make_shared<DataFile>(fs::relative(itr->path(), directoryPath)));
             }
             else
             {
-                recursiveDataFilesRegister(itr->path());
+                // filename in this case is the last directory (based on boost::filesystem docs)
+                auto dir = std::make_shared<DataDirectory>(itr->path().filename().string());
+                directory->addFolder(dir);
+                recursiveDataFilesRegister(itr->path(), dir);
             }
         }
     }
@@ -74,11 +81,13 @@ std::vector<DataFile> ProjectDirectory::getEditedFiles() const
 
 void ProjectDirectory::addFile(const boost::filesystem::path &filePath)
 {
+    directory_->addFile(std::make_shared<DataFile>(fs::relative(filePath, project_->dataPath_)));
     files_.emplace_back(filePath);
 }
 
 void ProjectDirectory::removeFile(const boost::filesystem::path &filePath)
 {
+    directory_->removeFile(fs::relative(filePath, project_->dataPath_));
     //TODO: check if the file to delete is edited?
     auto it = std::remove_if( files_.begin(),
                               files_.end(),
@@ -86,4 +95,9 @@ void ProjectDirectory::removeFile(const boost::filesystem::path &filePath)
 
     assert(it != files_.end());
     files_.erase(it, files_.end());
+}
+
+DataDirectoryRef ProjectDirectory::getTree() const
+{
+    return directory_;
 }
