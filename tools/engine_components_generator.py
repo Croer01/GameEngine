@@ -1,4 +1,4 @@
-import os
+import posixpath
 import sys
 import re
 
@@ -6,14 +6,16 @@ import re
 includes = []
 componentRegisters = []
 
+# first argument is the base path to generate relative includes, the rest are the headers to looking for components
 # pre-condition: all the arguments from command are files
-for filename in sys.argv[1:]:
+basePath = sys.argv[1]
+for filename in sys.argv[2:]:
     for line in open(filename, "r"):
         include = None
         # register a component
         match = re.search("^\s*COMPONENT\(([^\)]+)\)", line)
         if match:
-            include = "#include \"" + os.path.basename(filename) + "\""
+            include = "#include \"" + posixpath.relpath(filename, basePath) + "\""
             componentRegisters.append("\tenv->registerComponent(\"" + match.group(1) + "\", new GameEngine::ComponentTBuilder<" + match.group(1) + ">());")
 
         if include is not None:
