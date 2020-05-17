@@ -417,7 +417,7 @@ bool Editor::renderObjectNode(const ObjectDataRef &object)
     // remove components safety
     if (removeComponent != -1)
     {
-        object->components_.erase(object->components_.begin() + removeComponent, object->components_.end());
+        object->components_.erase(object->components_.begin() + removeComponent);
         edited = true;
     }
 
