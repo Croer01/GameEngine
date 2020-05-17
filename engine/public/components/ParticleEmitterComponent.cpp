@@ -92,6 +92,11 @@ void ParticleEmitterComponent::emit()
     emitting_ = true;
     spawnTimeAccumulator_ = 0;
     timeLifeAccumulator_ = 0;
+}
+
+void ParticleEmitterComponent::cleanAndEmit()
+{
+    emit();
 
     auto next = particlesActive_.begin();
 
@@ -102,7 +107,6 @@ void ParticleEmitterComponent::emit()
     }
     particlesActive_.clear();
 }
-
 void ParticleEmitterComponent::stop()
 {
     emitting_ = false;

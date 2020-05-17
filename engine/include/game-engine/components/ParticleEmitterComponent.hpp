@@ -38,6 +38,7 @@ class ParticleEmitterComponent : public geComponentInstantiable<ParticleEmitterC
     void spawnParticle();
 
 public:
+    void cleanAndEmit();
     void emit();
     void stop();
     bool isEmitting() const;
