@@ -48,7 +48,9 @@ void ProjectDirectory::recursiveDataFilesRegister(const boost::filesystem::path 
             if (is_regular_file(itr->path()))
             {
                 files_.emplace_back(itr->path());
-                directory->addFile(std::make_shared<DataFile>(fs::relative(itr->path(), directoryPath)));
+                // Make file path relative to the data directory to work with the other Editor components
+                // TODO: Should Editor unify all the path to be relative to the project directory instead of data?
+                directory_->addFile(std::make_shared<DataFile>(fs::relative(itr->path(), project_->dataPath_)));
             }
             else
             {
