@@ -125,6 +125,11 @@ namespace Internal {
         notify(GameObjectEvent::ActiveChanged);
     }
 
+    std::weak_ptr<geGameObject> GameObject::parent() const
+    {
+        return parent_;
+    }
+
     GameObject::~GameObject(){
         if(!destroyed_)
             std::cerr << "You are trying to destroy a GameObject that still alive in current Scene" << std::endl;

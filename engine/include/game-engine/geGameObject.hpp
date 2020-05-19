@@ -49,6 +49,7 @@ enum class GameObjectEvent{
         virtual void active(bool isActive) = 0;
 
         virtual void parent(const geGameObjectRef &gameObject) = 0;
+        virtual std::weak_ptr<geGameObject> parent() const = 0;
 
         virtual void addComponent(const std::shared_ptr<geComponent> &component) = 0;
 

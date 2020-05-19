@@ -66,7 +66,12 @@ namespace {
 
     void ColliderComponent::Update(float elapsedTime) {
         if(collider_->getType() == Internal::Collider::ColliderTypes::Dynamic)
-            gameObject()->position(convertPhysicsToWorldPos(collider_->getPosition()));
+        {
+            Vec2D position = collider_->getPosition();
+            if(auto parent = gameObject()->parent().lock())
+                position -= parent->position();
+            gameObject()->position(convertPhysicsToWorldPos(position));
+        }
     }
 
     void ColliderComponent::setOnColliderEnter(const OnColliderEventCallback &callback) {
