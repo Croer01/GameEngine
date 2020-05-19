@@ -133,7 +133,7 @@ void Editor::renderPrototypeListInternal(const DataDirectoryRef &dir)
             DataFile &dataFile = *file.get();
             switch (file->getType())
             {
-                case DataFileType::Prototype :
+                case DataFileType::Prototype:
                     try {
                         auto object = new TargetObject();
                         object->data = projectFileDataProvider_.getObjectData(dataFile);
@@ -147,14 +147,20 @@ void Editor::renderPrototypeListInternal(const DataDirectoryRef &dir)
                     }
                     break;
                 case DataFileType::Scene:
-                    if(projectDirectory_->hasEditedFiles())
-                    {
-                        saveAllDialog_->setFilesToSave(projectDirectory_->getEditedFiles());
-                        saveAllDialog_->open(file->getFilePath());
+                    try {
+                        if(projectDirectory_->hasEditedFiles())
+                        {
+                            saveAllDialog_->setFilesToSave(projectDirectory_->getEditedFiles());
+                            saveAllDialog_->open(file->getFilePath());
+                        }
+                        else
+                        {
+                            loadScene(file->getFilePath().string());
+                        }
                     }
-                    else
+                    catch (const std::exception &e)
                     {
-                        loadScene(file->getFilePath().string());
+                        errorDialog_->open(e.what());
                     }
                     break;
             }
@@ -1125,10 +1131,10 @@ void Editor::saveProject()
         }
         else
         {
-            throw std::runtime_error("Unsuported file. Can't save file " + file.getFilePath().string());
+            throw std::runtime_error("Unsupported file. Can't save file " + file.getFilePath().string());
         }
         std::ofstream prototypeFile;
-        prototypeFile.open(filepath.string());
+        prototypeFile.open(fs::absolute(filepath, project_->dataPath_).string());
         prototypeFile << fileDataNode << std::endl;
         prototypeFile.close();
     }

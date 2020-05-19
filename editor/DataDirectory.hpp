@@ -19,7 +19,7 @@ class DataDirectory
     std::string name_;
     std::vector<DataDirectoryRef> folders_;
     std::vector<DataFileRef> files_;
-    DataDirectory *getDirectory(const boost::filesystem::path &filePath);
+    DataDirectory *getDirectory(const boost::filesystem::path &directory);
 
 public:
     explicit DataDirectory(const std::string &name);

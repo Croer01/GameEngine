@@ -43,9 +43,9 @@ DataDirectory *DataDirectory::getDirectory(const boost::filesystem::path &filePa
         {
             std::cout << part.string() << std::endl;
             auto it = std::find_if(target->folders_.begin(), target->folders_.end(),
-                                   [part](const DataDirectoryRef &file)
+                                   [part](const DataDirectoryRef &directory)
                                    {
-                                       return file->name() == part.string();
+                                       return directory->name() == part.string();
                                    });
             assert(it != target->folders_.end());
             target = (*it).get();
