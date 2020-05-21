@@ -183,6 +183,15 @@ namespace Internal {
             }
             propertiesToSetInSafeMode_.hasType = false;
         }
+
+        if(propertiesToSetInSafeMode_.hasMass)
+        {
+            b2MassData massData;
+            body_->GetMassData(&massData);
+            massData.mass = propertiesToSetInSafeMode_.mass;
+            body_->SetMassData(&massData);
+            propertiesToSetInSafeMode_.hasMass = false;
+        }
     }
 
     std::string Collider::getCategory() const {
@@ -211,6 +220,20 @@ void Collider::setGravityScale(float scale)
 float Collider::getGravityScale() const
 {
     return gravityScale_;
+}
+
+void Collider::setMass(float value)
+{
+    propertiesToSetInSafeMode_.mass = value;
+    propertiesToSetInSafeMode_.hasMass = true;
+}
+
+float Collider::getMass() const
+{
+    if(propertiesToSetInSafeMode_.hasMass)
+        return propertiesToSetInSafeMode_.mass;
+    else
+        return body_->GetMass();
 }
 }
 }

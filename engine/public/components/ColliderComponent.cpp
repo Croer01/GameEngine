@@ -245,6 +245,7 @@ void ColliderComponent::onEvent(const Subject<Internal::ColliderEvent> &target, 
         collider_->setCategory(colliderCategory_);
         collider_->setSensor(isSensor_);
         collider_->setGravityScale(gravityScale_);
+        collider_->setMass(mass_);
         collider_->setComponent(std::dynamic_pointer_cast<ColliderComponent>(shared_from_this()));
 
         physicsEngine_->registerCollider(collider_);
@@ -307,6 +308,12 @@ PropertySetBase *ColliderComponent::getProperties() const
             &ColliderComponent::gravityScale,
             1.f,
             false));
+    properties->add(new Property<ColliderComponent, float>(
+        "mass",
+        &ColliderComponent::mass,
+        &ColliderComponent::mass,
+        1.f,
+        false));
 
     return properties;
 }
@@ -332,6 +339,18 @@ void ColliderComponent::gravityScale(const float &value)
     gravityScale_ = value;
     if(collider_)
         collider_->setGravityScale(gravityScale_);
+}
+
+float ColliderComponent::mass() const
+{
+    return mass_;
+}
+
+void ColliderComponent::mass(const float &value)
+{
+    mass_ = value;
+    if(collider_)
+        collider_->setMass(mass_);
 }
 }
 

@@ -45,6 +45,8 @@ namespace Internal {
             bool active;
             bool hasType = false;
             ColliderTypes type;
+            bool hasMass = false;
+            float mass;
         };
 
 
@@ -90,8 +92,10 @@ namespace Internal {
         bool IsSensor() const;
 
         void setGravityScale(float scale);
-
         float getGravityScale() const;
+
+        void setMass(float value);
+        float getMass() const;
 
         void setSize(float extendX, float extendY);
 
