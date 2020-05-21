@@ -43,6 +43,8 @@ namespace Internal {
             float rotation;
             bool hasActive = false;
             bool active;
+            bool hasType = false;
+            ColliderTypes type;
         };
 
 
@@ -99,8 +101,6 @@ namespace Internal {
         void doBeginSensor(Collider *other);
         void doEndCollision(Collider *other);
         void doEndSensor(Collider *other);
-
-        std::shared_ptr<Collider> clone();
 
         void setComponent(const std::shared_ptr<ColliderComponent> &component);
 

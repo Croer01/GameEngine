@@ -54,19 +54,12 @@ namespace Internal {
 
     void Collider::setType(Collider::ColliderTypes type) {
         colliderType_ = type;
+        propertiesToSetInSafeMode_.hasType = true;
+        propertiesToSetInSafeMode_.type = type;
     }
 
     Collider::ColliderTypes Collider::getType() {
         return colliderType_;
-    }
-
-    std::shared_ptr<Collider> Collider::clone() {
-        std::shared_ptr<Collider> clone = std::make_shared<Collider>();
-        clone->colliderShape_ = colliderShape_;
-        clone->colliderType_ = colliderType_;
-        clone->category_ = category_;
-
-        return clone;
     }
 
     void Collider::setPosition(const Vec2D &pos) {
@@ -169,6 +162,26 @@ namespace Internal {
         if (propertiesToSetInSafeMode_.hasActive) {
             body_->SetActive(propertiesToSetInSafeMode_.active);
             propertiesToSetInSafeMode_.hasActive = false;
+        }
+
+        if (propertiesToSetInSafeMode_.hasType) {
+            if(body_)
+            {
+                switch (propertiesToSetInSafeMode_.type) {
+                    case ColliderTypes::Static:
+                        body_->SetType(b2_staticBody);
+                        break;
+                    case ColliderTypes::Dynamic:
+                        body_->SetType(b2_dynamicBody);
+                        break;
+                    case ColliderTypes::Kinematic:
+                        body_->SetType(b2_kinematicBody);
+                        break;
+                }
+                // awake body to ensure the engine calculates physics related to the collider
+                body_->SetAwake(true);
+            }
+            propertiesToSetInSafeMode_.hasType = false;
         }
     }
 

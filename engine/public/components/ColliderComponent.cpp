@@ -15,7 +15,7 @@ namespace {
         if(shapeName == "Box" || shapeName == "box")
             return Internal::Collider::ColliderShapes::Box;
 
-        throw std::runtime_error("Unknown " + shapeName + " collider type.");
+        throw std::runtime_error("Unknown " + shapeName + " collider shape.");
     }
 
     Internal::Collider::ColliderTypes stringToColliderType(const std::string &typeName) {
@@ -62,15 +62,17 @@ namespace {
 
         updateColliderRef();
         gameObject()->registerObserver(this);
+        typeChanged_ = false;
     }
 
     void ColliderComponent::Update(float elapsedTime) {
-        if(collider_->getType() == Internal::Collider::ColliderTypes::Dynamic)
+        if(typeChanged_ || collider_->getType() == Internal::Collider::ColliderTypes::Dynamic)
         {
             Vec2D position = collider_->getPosition();
             if(auto parent = gameObject()->parent().lock())
                 position -= parent->position();
             gameObject()->position(convertPhysicsToWorldPos(position));
+            typeChanged_ = false;
         }
     }
 
@@ -213,6 +215,7 @@ void ColliderComponent::onEvent(const Subject<Internal::ColliderEvent> &target, 
         colliderType_ = colliderType;
         if(collider_)
             collider_->setType(stringToColliderType(colliderType));
+        typeChanged_ = true;
     }
 
     std::string ColliderComponent::type() const {

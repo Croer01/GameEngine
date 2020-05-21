@@ -32,6 +32,9 @@ class PUBLICAPI ColliderComponent : public geComponentInstantiable<ColliderCompo
         std::string colliderCategory_;
         bool isSensor_;
         float gravityScale_;
+        // this flag is to ensure the position of the collider is set to the gameObject if the type is changed.
+        // For example, if change from Dynamic to Static we need to ensure the position of the collider is correctly set after change to static
+        bool typeChanged_;
 
         Vec2D convertWorldToPhysicsPos(const Vec2D &worldPos) const;
 
