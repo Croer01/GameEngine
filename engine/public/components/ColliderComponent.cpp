@@ -134,6 +134,12 @@ void ColliderComponent::onEvent(const Subject<Internal::ColliderEvent> &target, 
             gameObject()->unregisterObserver(this);
     }
 
+    Vec2D ColliderComponent::getVelocity() const
+    {
+        const b2Vec2 &velocity = collider_->getBody()->GetLinearVelocity();
+        return Vec2D(velocity.x, velocity.y);
+    }
+
     void ColliderComponent::setVelocity(const Vec2D &velocity) {
         collider_->getBody()->SetLinearVelocity(b2Vec2(velocity.x,velocity.y));
     }

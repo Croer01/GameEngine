@@ -52,6 +52,7 @@ class PUBLICAPI ColliderComponent : public geComponentInstantiable<ColliderCompo
         void setOnColliderExit(const OnColliderEventCallback &callback);
         void setOnSensorExit(const OnColliderEventCallback &callback);
 
+        Vec2D getVelocity() const;
         void setVelocity(const Vec2D &velocity);
 
         void applyForce(const Vec2D &force);
