@@ -157,6 +157,13 @@ void PhysicsEngine::drawDebug(const std::shared_ptr<Camera> &cam) {
             for (const std::string &categoryToMask : it.second) {
                 categories_[it.first].maskBits |= categories_[categoryToMask].categoryBit;
             }
+
+            // If is 0 at this point means that this category will collide with all
+            if(categories_[it.first].maskBits == 0)
+            {
+                // The default value of the maskBits defined by Box2D
+                categories_[it.first].maskBits = 0xFFFF;
+            }
         }
     }
 
