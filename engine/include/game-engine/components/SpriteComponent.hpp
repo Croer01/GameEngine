@@ -21,6 +21,7 @@ namespace GameEngine {
         bool visible_;
         std::string filePath_;
         std::string anchor_;
+        Vec2D displacement_;
 
         Internal::GraphicsEngine *graphicsEngine_;
 
@@ -55,6 +56,9 @@ namespace GameEngine {
         void anchor(const std::string &anchor);
 
         std::string anchor() const;
+
+        void displacement(const Vec2D &value);
+        Vec2D displacement() const;
     };
 }
 

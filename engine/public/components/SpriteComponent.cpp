@@ -22,6 +22,7 @@ namespace GameEngine {
         // the preInit ensure that the graphic is already created at this point
         setVisible(visible_);
         anchor(anchor_);
+        displacement(displacement_);
         graphic_->setModelTransform(gameObject()->position(),gameObject()->rotation(),gameObject()->scale());
         gameObject()->registerObserver(this);
     }
@@ -107,6 +108,18 @@ namespace GameEngine {
         anchor_ = anchor;
     }
 
+    Vec2D SpriteComponent::displacement() const
+    {
+        return displacement_;
+    }
+
+    void SpriteComponent::displacement(const Vec2D &value)
+    {
+        displacement_ = value;
+        if(graphic_)
+            graphic_->setDisplacement(displacement_);
+    }
+
 PropertySetBase *SpriteComponent::getProperties() const
 {
     auto *properties = new PropertySet<SpriteComponent>();
@@ -123,6 +136,11 @@ PropertySetBase *SpriteComponent::getProperties() const
             &SpriteComponent::isVisible,
             &SpriteComponent::setVisible,
             true));
+    properties->add(new Property<SpriteComponent, Vec2D>(
+        "displacement",
+        &SpriteComponent::displacement,
+        &SpriteComponent::displacement,
+        Vec2D()));
 
     properties->add(new PropertyEnum<SpriteComponent>(
             "anchor",
