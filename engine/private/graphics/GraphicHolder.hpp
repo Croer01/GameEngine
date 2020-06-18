@@ -70,6 +70,8 @@ namespace Internal {
         void setTintColor(geColor tint);
         void setTintColor(geColor tint, float opacity);
 
+        void setDisplacement(const Vec2D &displacement);
+
         void setEngine(GraphicsEngine *engine);
     };
 }

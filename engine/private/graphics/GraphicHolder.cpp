@@ -115,7 +115,12 @@ void GraphicHolder::setTintColor(geColor tint, float opacity)
     tintColor_ = glm::vec4(tint.r, tint.g, tint.b, opacity);
 }
 
-GraphicAnchor parseStringToGraphicAnchor(const std::string &anchorName) {
+void GraphicHolder::setDisplacement(const Vec2D &displacement)
+{
+    texOffset_ = glm::vec2(displacement.x, displacement.y);
+}
+
+    GraphicAnchor parseStringToGraphicAnchor(const std::string &anchorName) {
         GameEngine::Internal::GraphicAnchor graphicAnchor;
 
         if(anchorName == "TOP_LEFT")
