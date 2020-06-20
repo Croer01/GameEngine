@@ -1164,6 +1164,21 @@ void Editor::saveProject()
         physicsConfFile.close();
     }
 
+    {
+        std::ofstream projectFile;
+
+        fs::path projectPath(project_->folderPath_);
+        projectPath.append(project_->folderName_+ ".project");
+        if(!fs::exists(projectPath))
+            throw std::runtime_error("project file \"" + projectPath.string() + "\" not exist");
+
+        project_->currentScenePath_ = fs::absolute(sceneData_->filePath_, project_->dataPath_).string();
+        auto projectNode = YAML::Node(*project_);
+        projectFile.open(projectPath.string());
+        projectFile << projectNode << std::endl;
+        projectFile.close();
+    }
+
     project_->dirty_ = false;
     updateWindowTitle();
 }
