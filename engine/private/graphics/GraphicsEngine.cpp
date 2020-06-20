@@ -176,8 +176,16 @@ namespace Internal {
             fbo_->bind();
 
         glClear(GL_COLOR_BUFFER_BIT);
-        glViewport(screen_->calculatedX(), screen_->calculatedY(), screen_->calculatedWidth(),
-                   screen_->calculatedHeight());
+
+        if(fbo_)
+        {
+            glViewport(0, 0, screen_->virtualWidth(), screen_->virtualHeight());
+        }
+        else
+        {
+            glViewport(screen_->calculatedX(), screen_->calculatedY(), screen_->calculatedWidth(),
+                       screen_->calculatedHeight());
+        }
 
         glm::mat4 projViewMatrix = projMatrix_;
 
