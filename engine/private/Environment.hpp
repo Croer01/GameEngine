@@ -17,6 +17,7 @@ namespace Internal
 class Environment : public geEnvironment
 {
     std::string configurationPath_;
+    std::string dataPath_;
     std::string firstScene_;
     std::unique_ptr<ObjectManager> objectManager_;
     std::unique_ptr<SceneManager> sceneManager_;
@@ -29,6 +30,8 @@ public:
     virtual std::shared_ptr<PropertySetBase> getProperties(const std::string &id) const;
     virtual std::vector<std::string> getRegisteredPropertiesIds() const;
     virtual void configurationPath(const std::string &config);
+    virtual void dataPath(const std::string &data);
+    virtual std::string dataPath() const;
     virtual std::string configurationPath() const;
     virtual void firstScene(const std::string &sceneName);
     virtual std::string firstScene() const;

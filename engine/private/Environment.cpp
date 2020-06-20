@@ -20,7 +20,7 @@ namespace GameEngine
 namespace Internal
 {
 
-Environment::Environment() : configurationPath_("conf")
+Environment::Environment() : configurationPath_("conf"), dataPath_("data")
 {
     objectManager_ = std::make_unique<ObjectManager>();
     //Register the engine's default components
@@ -53,6 +53,16 @@ std::string Environment::configurationPath() const
     return configurationPath_;
 }
 
+void Environment::dataPath(const std::string &data)
+{
+    dataPath_ = data;
+}
+
+std::string Environment::dataPath() const
+{
+    return dataPath_;
+}
+
 void Environment::firstScene(const std::string &sceneName)
 {
     firstScene_ = sceneName;
@@ -65,12 +75,12 @@ std::string Environment::firstScene() const
 
 void Environment::addPrototype(const std::string &name, const std::string &filePath)
 {
-    objectManager_->registerPrototype(name, filePath);
+    objectManager_->registerPrototype(name, dataPath_ + "/" + filePath);
 }
 
 void Environment::addScene(const std::string &name, const std::string &filePath)
 {
-    sceneManager_->registerScene(name, filePath);
+    sceneManager_->registerScene(name, dataPath_ + "/" + filePath);
 }
 
 void Environment::registerComponent(const std::string &idType, ComponentBuilder *builder)

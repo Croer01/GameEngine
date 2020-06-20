@@ -29,6 +29,8 @@ public:
     virtual std::vector<std::string> getRegisteredPropertiesIds() const = 0;
     virtual void configurationPath(const std::string &config) = 0;
     virtual std::string configurationPath() const = 0;
+    virtual void dataPath(const std::string &data) = 0;
+    virtual std::string dataPath() const = 0;
     virtual void firstScene(const std::string &sceneName) = 0;
     virtual std::string firstScene() const = 0;
     virtual void addPrototype(const std::string &name, const std::string &filePath) = 0;

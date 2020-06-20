@@ -8,6 +8,7 @@
 #include <sstream>
 #include "Editor.hpp"
 #include "../../componentsRegistered.hpp"
+#include "../../dataRegistered.hpp"
 #include <functional>
 #include <boost/filesystem/path.hpp>
 #include <tinyfiledialogs.h>
@@ -1285,18 +1286,22 @@ void Editor::renderSceneViewer()
                 int exitStatus = 0;
                 try
                 {
+                    if (sceneData_->filePath_.empty())
+                    {
+                        errorDialog_->open("There is no scene loaded or the current scene is not saved");
+                        return exitStatus;
+                    }
+
                     GameEngine::geEnvironmentRef env = GameEngine::geEnvironment::createInstance();
                     env->setMakeCurrentContextCallback([=](){
                         SDL_GL_MakeCurrent(window_, gameGlContext_);
                     });
-                    RegisterComponents(env);
                     env->configurationPath(project_->folderPath_ + "/conf");
-                    env->addPrototype("Player", project_->dataPath_.string() + "/Player.prototype");
-                    env->addPrototype("Wall", project_->dataPath_.string() + "/Wall.prototype");
-                    env->addPrototype("Pincers", project_->dataPath_.string() + "/Pincers.prototype");
-                    env->addPrototype("Enemy", project_->dataPath_.string() + "/Enemy.prototype");
-                    env->addScene("Test", project_->dataPath_.string() + "/Test1.scene");
-                    env->firstScene("Test");
+
+                    RegisterComponents(env);
+                    RegisterData(env);
+
+                    env->firstScene(sceneData_->name_);
 
                     game_ = GameEngine::geGame::createInstance(env);
                     while(game_->isRunning())
