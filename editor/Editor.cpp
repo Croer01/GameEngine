@@ -1331,8 +1331,9 @@ void Editor::renderSceneViewer()
 
     if(game_)
     {
-        const int w = 512;
-        const int h = 512;
+        GameEngine::geScreen *screen = game_->screen();
+        const int w = screen->windowWidth();
+        const int h = screen->windowHeight();
         ImVec2 pos = ImGui::GetCursorScreenPos();
 
         // Ask ImGui to draw it as an image:
