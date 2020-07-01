@@ -17,6 +17,7 @@
 #    - tinyfiledialogs  3.3.7-1
 #    - utfcpp           2.3.5
 #    - yaml-cpp         0.6.2-2
+#    - zlib             1.2.11-5
 
 function exitIfError() {
   if [[ $1 -ne 0 ]]; then
@@ -56,14 +57,15 @@ git checkout ff9e982d ports/boost* \
                          ports/sdl2 \
                          ports/tinyfiledialogs \
                          ports/utfcpp \
-                         ports/yaml-cpp
+                         ports/yaml-cpp \
+                         ports/zlib
 
 git checkout 2019.12 ports/imgui
 popd || exit 1
 
 # workaround to force vcpkg use its own cmake. Related issue https://github.com/microsoft/vcpkg/issues/9109
 PATH=$(echo "$PATH" | sed -e 's/\/usr\/bin:$//')
-cmd /C "vcpkg install --triplet x64-windows glew glm sdl2-image sdl2 yaml-cpp box2d freetype openal-soft libsndfile gtest utfcpp imgui tinyfiledialogs boost-filesystem"
+cmd /C "vcpkg install --triplet x64-windows glew glm sdl2-image sdl2 yaml-cpp box2d freetype openal-soft libsndfile gtest utfcpp imgui tinyfiledialogs boost-filesystem zlib"
 # maybe some packages are already installed so we upgrade it to ensure use the correct version
 cmd /C "vcpkg upgrade --no-dry-run"
 

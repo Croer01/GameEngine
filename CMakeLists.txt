@@ -29,9 +29,12 @@ find_package(yaml-cpp CONFIG REQUIRED)
 find_package(unofficial-box2d CONFIG REQUIRED)
 find_package(Freetype REQUIRED)
 find_package(LibSndFile CONFIG REQUIRED)
+find_package(Boost 1.68.0 REQUIRED COMPONENTS filesystem)
+find_package(ZLIB REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIRS})
 include_directories(${SDL2_INCLUDE_DIR} ${SDL2_IMAGE_INCLUDE} ${GLEW_INCLUDE_DIR} ${glm_INCLUDE_DIR} ${UTF8_CPP_INCLUDE})
 include_directories(${SDL2_ROOT}/include)
+include_directories(${Boost_INCLUDE_DIRS})
 
 # public stuff
 set(ENGINE_SOURCES
@@ -118,7 +121,9 @@ target_link_libraries(GameEngine PUBLIC
         unofficial::box2d::Box2D
         Freetype::Freetype
         OpenAL::OpenAL
-        sndfile-shared)
+        sndfile-shared
+        Boost::filesystem
+        ZLIB::ZLIB)
 
 install(TARGETS GameEngine EXPORT GameEngineTargets
         LIBRARY DESTINATION lib
@@ -138,12 +143,10 @@ endif ()
 
 # Dependencies for the Editor's UI
 find_package(imgui CONFIG REQUIRED)
-find_package(Boost 1.68.0 REQUIRED COMPONENTS filesystem)
 find_package(yaml-cpp CONFIG REQUIRED)
 find_path(TINYFILEDIALOGS_INCLUDE tinyfiledialogs.h)
 find_library(TINYFILEDIALOGS_LIBRARY tinyfiledialogs)
 include_directories(${TINYFILEDIALOGS_INCLUDE})
-include_directories(${Boost_INCLUDE_DIRS})
 
 # This is a workaround to avoid issues related with the generated file
 set_source_files_properties(
