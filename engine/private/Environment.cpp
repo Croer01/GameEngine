@@ -15,6 +15,8 @@
 #include <game-engine/components/ParticleEmitterComponent.hpp>
 #include "Environment.hpp"
 
+namespace fs = boost::filesystem;
+
 namespace GameEngine
 {
 namespace Internal
@@ -118,5 +120,33 @@ MakeCurrentContextCallback Environment::getMakeCurrentContextCallback() const
     return makeCurrentContextCallback_;
 }
 
+void Environment::addResourcesFromPath(const std::string &dataPath)
+{
+    const boost::filesystem::path &directoryPath = fs::path(dataPath);
+    recursiveDataFilesRegister(directoryPath);
+}
+
+void Environment::recursiveDataFilesRegister(const boost::filesystem::path &directoryPath)
+{
+    if(fs::exists(directoryPath) && fs::is_directory(directoryPath))
+    {
+        fs::recursive_directory_iterator end;
+        for (fs::recursive_directory_iterator itr(directoryPath); itr != end; ++itr)
+        {
+            const fs::path &path = itr->path();
+            if (is_regular_file(path))
+            {
+                if(path.extension() == ".prototype")
+                {
+                    objectManager_->registerPrototype(path.stem().string(), path.string());
+                }
+                else if(path.extension() == ".scene")
+                {
+                    sceneManager_->registerScene(path.stem().string(), path.string());
+                }
+            }
+        }
+    }
+}
 }
 }

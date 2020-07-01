@@ -93,23 +93,3 @@ function(generate_components_register file_name generated_file)
     )
     set(${generated_file} ${COMPONENTS_REGISTERED_HPP} PARENT_SCOPE)
 endfunction()
-
-
-function(generate_data_register file_name generated_file)
-
-    set(DATA_REGISTERED_HPP ${CMAKE_CURRENT_SOURCE_DIR}/${file_name}.hpp)
-    file(GLOB_RECURSE DATAOBJECTS_REGISTERED CONFIGURE_DEPENDS "*.scene" "*.prototype")
-
-    add_custom_command(
-            COMMAND ${PYTHON_EXECUTABLE} ${TOOLS_SOURCE_DIR}/data_register_generator.py > ${DATA_REGISTERED_HPP}
-            DEPENDS ${DATAOBJECTS_REGISTERED}
-            OUTPUT ${DATA_REGISTERED_HPP}
-            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-            COMMENT "Generating code to register data into the object manager"
-    )
-    add_custom_target(
-            generate_data_register_manual ALL
-            DEPENDS ${DATA_REGISTERED_HPP}
-    )
-    set(${generated_file} ${DATA_REGISTERED_HPP} PARENT_SCOPE)
-endfunction()

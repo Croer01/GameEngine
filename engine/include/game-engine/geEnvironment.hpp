@@ -35,6 +35,7 @@ public:
     virtual std::string firstScene() const = 0;
     virtual void addPrototype(const std::string &name, const std::string &filePath) = 0;
     virtual void addScene(const std::string &name, const std::string &filePath) = 0;
+    virtual void addResourcesFromPath(const std::string &dataPath) = 0;
     // this automatically configure game instance to render in an image (GL FrameBufferObject)
     // use geGame::getRenderer() to get the gl texture's id
     virtual void setMakeCurrentContextCallback(const MakeCurrentContextCallback &callback) = 0;
