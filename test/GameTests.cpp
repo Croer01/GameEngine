@@ -97,7 +97,7 @@ TEST(Game, titleChange)
         const std::string &newTitle = "This is a awesome title";
         auto screen = dynamic_cast<Internal::Screen*>(game->screen());
         screen->title(newTitle);
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
         ASSERT_EQ(SDL_GetWindowTitle(screen->sdlWindow()), newTitle);
         game->shutdown();
     });

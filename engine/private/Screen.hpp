@@ -2,8 +2,8 @@
 // Created by adria on 28/10/2018.
 //
 
-#ifndef SPACEINVADERS_SCREEN_HPP
-#define SPACEINVADERS_SCREEN_HPP
+#ifndef GAMEENGINE_SCREEN_HPP
+#define GAMEENGINE_SCREEN_HPP
 
 
 #include <game-engine/geScreen.hpp>
@@ -11,6 +11,7 @@
 #include <SDL2/SDL_video.h>
 #include <SDL2/SDL_events.h>
 #include <memory>
+#include "DelayedSetter.hpp"
 
 namespace GameEngine {
 namespace Internal {
@@ -30,7 +31,7 @@ namespace Internal {
         int calculatedWidth_;
         int calculatedHeight_;
 
-        std::string title_;
+        DelayedSetter<std::string> title_;
         geColor background_;
         bool pixelPerfect_;
         bool allowResize_;
@@ -67,6 +68,8 @@ namespace Internal {
         void makeCurrentContext();
         void swapWindow();
         SDL_Window *sdlWindow() const;
+
+        void update();
     private:
         void recalculateWindow();
         void initSDLWindow();
@@ -75,4 +78,4 @@ namespace Internal {
     };
 }
 }
-#endif //SPACEINVADERS_SCREEN_HPP
+#endif //GAMEENGINE_SCREEN_HPP

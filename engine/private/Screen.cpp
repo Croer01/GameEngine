@@ -75,13 +75,11 @@ namespace Internal {
     }
 
     std::string Screen::title() const {
-        return title_;
+        return title_.get();
     }
 
     void Screen::title(const std::string &value) {
         title_ = value;
-        if(mainWindow_)
-            SDL_SetWindowTitle(mainWindow_.get(), title_.c_str());
     }
 
     int Screen::windowWidth() const {
@@ -228,7 +226,7 @@ namespace Internal {
         uint32_t flags = SDL_WINDOW_OPENGL;
         if(allowResize_)
             flags |= SDL_WINDOW_RESIZABLE;
-        mainWindow_.reset(SDL_CreateWindow(title_.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+        mainWindow_.reset(SDL_CreateWindow(title_.get().c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                            deviceWidth_, deviceHeight_, flags),
                           [](SDL_Window *wind) { SDL_DestroyWindow(wind); });
         SDL_AddEventWatch(resizingEventWatcher, this);
@@ -263,5 +261,12 @@ namespace Internal {
     SDL_Window *Screen::sdlWindow() const {
         return mainWindow_.get();
     }
+
+void Screen::update()
+{
+    if(mainWindow_ && title_.update())
+        SDL_SetWindowTitle(mainWindow_.get(), title_.get().c_str());
+}
+
 }
 }
