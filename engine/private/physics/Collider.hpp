@@ -12,6 +12,7 @@
 #include <glm/vec3.hpp>
 #include <game-engine/api.hpp>
 #include <game-engine/events/Subject.hpp>
+#include "../DelayedSetter.hpp"
 
 namespace GameEngine {
     class ColliderComponent;
@@ -36,26 +37,17 @@ namespace Internal {
             Kinematic
         };
     private:
-        struct PropertiesToSetInSafeMode {
-            bool hasPosition = false;
-            b2Vec2 position;
-            bool hasRotation = false;
-            float rotation;
-            bool hasActive = false;
-            bool active;
-            bool hasType = false;
-            ColliderTypes type;
-            bool hasMass = false;
-            float mass;
-        };
+       DelayedSetter<b2Vec2> position_;
+       DelayedSetter<float> rotation_;
+       DelayedSetter<bool> active_;
+       DelayedSetter<ColliderTypes> colliderType_;
+       DelayedSetter<float> mass_;
 
 
         std::unique_ptr<b2Body, std::function<void(b2Body *)>> body_;
         b2Filter filter_;
         std::weak_ptr<ColliderComponent> component_;
         ColliderShapes colliderShape_;
-        ColliderTypes colliderType_;
-        PropertiesToSetInSafeMode propertiesToSetInSafeMode_;
         std::string category_;
         bool isSensor_;
         float gravityScale_;

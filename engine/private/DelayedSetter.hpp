@@ -7,8 +7,8 @@
 namespace GameEngine {
 namespace Internal {
 
-// This class is used internally to help update a value when we want, but is able to return the
-// last value (newValue_ if is needUpdate_ == true or currentValue_ otherwise) anytime.
+// This class is used internally to help update a value when we want,
+// but always return the last value that it has been set
 template<typename T>
 class DelayedSetter
 {
@@ -44,6 +44,11 @@ public:
     T get() const
     {
         return needUpdate_ ? newValue_ : currentValue_;
+    }
+
+    bool hasChanges() const
+    {
+        return needUpdate_;
     }
 
     void operator= (const T &value)

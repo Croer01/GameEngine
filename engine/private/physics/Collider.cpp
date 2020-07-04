@@ -23,7 +23,7 @@ namespace Internal {
         if(isSensor_)
             bodyDef->allowSleep = false;
 
-        switch (colliderType_) {
+        switch (colliderType_.get()) {
             case ColliderTypes::Static:
                 bodyDef->type = b2_staticBody;
                 break;
@@ -54,25 +54,22 @@ namespace Internal {
 
     void Collider::setType(Collider::ColliderTypes type) {
         colliderType_ = type;
-        propertiesToSetInSafeMode_.hasType = true;
-        propertiesToSetInSafeMode_.type = type;
     }
 
     Collider::ColliderTypes Collider::getType() {
-        return colliderType_;
+        return colliderType_.get();
     }
 
     void Collider::setPosition(const Vec2D &pos) {
-        propertiesToSetInSafeMode_.hasPosition = true;
-        propertiesToSetInSafeMode_.position = b2Vec2(pos.x / PhysicsEngine::getScalePixelsToMeter(),
+        position_ = b2Vec2(pos.x / PhysicsEngine::getScalePixelsToMeter(),
                                                      pos.y / PhysicsEngine::getScalePixelsToMeter());
     }
 
     Vec2D Collider::getPosition() const {
         b2Vec2 position = body_->GetPosition();
 
-        if (propertiesToSetInSafeMode_.hasPosition)
-            position = propertiesToSetInSafeMode_.position;
+        if (position_.hasChanges())
+            position = position_.get();
 
         return Vec2D(position.x * PhysicsEngine::getScalePixelsToMeter(),
                          position.y * PhysicsEngine::getScalePixelsToMeter());
@@ -85,8 +82,7 @@ namespace Internal {
 
     void Collider::setRotation(float radians)
     {
-        propertiesToSetInSafeMode_.hasRotation = true;
-        propertiesToSetInSafeMode_.rotation = radians;
+        rotation_ = radians;
     }
 
     void Collider::doBeginCollision(Collider *other) {
@@ -114,8 +110,7 @@ namespace Internal {
     }
 
     void Collider::setActive(bool active) {
-        propertiesToSetInSafeMode_.hasActive = true;
-        propertiesToSetInSafeMode_.active = reinterpret_cast<bool *>(active);
+        active_ = active;
     }
 
     b2Body *Collider::getBody() {
@@ -149,25 +144,19 @@ namespace Internal {
     }
 
     void Collider::updateInSafeMode() {
-        if (propertiesToSetInSafeMode_.hasPosition) {
-            body_->SetTransform(propertiesToSetInSafeMode_.position, body_->GetAngle());
-            propertiesToSetInSafeMode_.hasPosition = false;
-        }
+        if (position_.update())
+            body_->SetTransform(position_.get(), body_->GetAngle());
 
-        if (propertiesToSetInSafeMode_.hasRotation) {
-            body_->SetTransform(body_->GetPosition(), propertiesToSetInSafeMode_.rotation);
-            propertiesToSetInSafeMode_.hasRotation = false;
-        }
+        if (rotation_.update())
+            body_->SetTransform(body_->GetPosition(), rotation_.get());
 
-        if (propertiesToSetInSafeMode_.hasActive) {
-            body_->SetActive(propertiesToSetInSafeMode_.active);
-            propertiesToSetInSafeMode_.hasActive = false;
-        }
+        if (active_.update())
+            body_->SetActive(active_.get());
 
-        if (propertiesToSetInSafeMode_.hasType) {
+        if (colliderType_.update()) {
             if(body_)
             {
-                switch (propertiesToSetInSafeMode_.type) {
+                switch (colliderType_.get()) {
                     case ColliderTypes::Static:
                         body_->SetType(b2_staticBody);
                         break;
@@ -181,16 +170,14 @@ namespace Internal {
                 // awake body to ensure the engine calculates physics related to the collider
                 body_->SetAwake(true);
             }
-            propertiesToSetInSafeMode_.hasType = false;
         }
 
-        if(propertiesToSetInSafeMode_.hasMass)
+        if(mass_.update())
         {
             b2MassData massData;
             body_->GetMassData(&massData);
-            massData.mass = propertiesToSetInSafeMode_.mass;
+            massData.mass = mass_.get();
             body_->SetMassData(&massData);
-            propertiesToSetInSafeMode_.hasMass = false;
         }
     }
 
@@ -224,16 +211,12 @@ float Collider::getGravityScale() const
 
 void Collider::setMass(float value)
 {
-    propertiesToSetInSafeMode_.mass = value;
-    propertiesToSetInSafeMode_.hasMass = true;
+    mass_ = value;
 }
 
 float Collider::getMass() const
 {
-    if(propertiesToSetInSafeMode_.hasMass)
-        return propertiesToSetInSafeMode_.mass;
-    else
-        return body_->GetMass();
+    return mass_.hasChanges()? mass_.get() : body_->GetMass();
 }
 }
 }
