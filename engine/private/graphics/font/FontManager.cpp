@@ -27,8 +27,22 @@ namespace Internal {
         return font;
     }
 
-    FontManager::~FontManager() {
-        fonts_.clear();
+std::shared_ptr<Font> FontManager::getDefaultFont(int pixelsSize) {
+    std::string fontName = "DEFAULT_FONT_" + std::to_string(pixelsSize);
+    auto it = fonts_.find(fontName);
+
+    if (it != fonts_.end())
+        return it->second;
+
+    std::shared_ptr<Font> font = std::make_shared<Font>(ftLibrary_, static_cast<unsigned int>(pixelsSize));
+
+    fonts_.insert(std::pair<std::string, std::shared_ptr<Font>>(fontName, font));
+
+    return font;
+}
+
+FontManager::~FontManager() {
+    fonts_.clear();
         FT_Done_FreeType(ftLibrary_);
     }
 }

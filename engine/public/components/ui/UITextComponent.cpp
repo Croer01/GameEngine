@@ -80,15 +80,16 @@ void UITextComponent::UpdateTextGraphic()
     if(graphicText_)
         graphicsEngine()->unregisterText(graphicText_);
 
+    auto game = dynamic_cast<Internal::Game*>(gameObject()->game());
     if(!font_.empty())
-    {
-        auto game = dynamic_cast<Internal::Game*>(gameObject()->game());
         graphicText_ = game->fontManager()->getFont(font_, fontSize_)->createText(text_);
-        setTextModelTransform(calculateVirtualScreenPos(), 0.f, Vec2D(1, 1));
-        graphicText_->setTintColor(foregroundColor_);
-        graphicsEngine()->registerText(graphicText_);
-        graphicText_->setActive(visible());
-    }
+    else
+        graphicText_ = game->fontManager()->getDefaultFont(fontSize_)->createText(text_);
+
+    setTextModelTransform(calculateVirtualScreenPos(), 0.f, Vec2D(1, 1));
+    graphicText_->setTintColor(foregroundColor_);
+    graphicsEngine()->registerText(graphicText_);
+    graphicText_->setActive(visible());
 }
 
 void UITextComponent::setTextModelTransform(const Vec2D &position, float rotation, const Vec2D &scale)

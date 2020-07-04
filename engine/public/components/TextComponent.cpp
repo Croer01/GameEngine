@@ -102,10 +102,10 @@ namespace GameEngine {
 
         if(!textParams_.fontName.empty()){
             textGraphic_ = game->fontManager()->getFont(textParams_.fontName, textParams_.fontSize)->createText(textParams_.text);
-            graphicsEngine_->registerText(textGraphic_);
         }else{
-            textGraphic_.reset();
+            textGraphic_ = game->fontManager()->getDefaultFont(textParams_.fontSize)->createText(textParams_.text);
         }
+        graphicsEngine_->registerText(textGraphic_);
     }
 
 PropertySetBase *TextComponent::getProperties() const

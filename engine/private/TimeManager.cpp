@@ -23,7 +23,6 @@ void TimeManager::createFpsCounter(Game *game)
 {
     goFpsCounter_ = std::make_unique<GameObject>("FPS Counter");
     fpsCounter_ = std::make_shared<UITextComponent>();
-    fpsCounter_->font("data/fonts/OpenSans/OpenSans-Regular.ttf");
     fpsCounter_->id("fps");
     fpsCounter_->fontSize(10);
     fpsCounter_->visible(true);

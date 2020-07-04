@@ -17,7 +17,6 @@
 namespace GameEngine {
 namespace Internal {
     struct TextDef;
-
     class Text;
 
     struct FontCharacter {
@@ -32,9 +31,13 @@ namespace Internal {
         int lineSpacing_;
         int pixelHeight_;
         FT_Face face_;
+        std::vector<unsigned char> inMemoryFont_; // used for default font
         void registerCharacter(FT_UInt glyph);
+        void initialize(unsigned int pixelsSize);
     public:
         Font(const FT_Library &ftLibrary, const std::string &fontPath, unsigned int pixelsSize);
+        // Create a default font instance
+        Font(const FT_Library &ftLibrary, unsigned int pixelsSize);
 
         ~Font();
 

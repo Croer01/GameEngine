@@ -24,6 +24,7 @@ namespace Internal {
         ~FontManager();
 
         std::shared_ptr<Font> getFont(const std::string &fontPath, int pixelsSize);
+        std::shared_ptr<Font> getDefaultFont(int pixelsSize);
     };
 }
 }
