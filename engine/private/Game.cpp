@@ -118,6 +118,8 @@ void Game::initPhysics(const std::string &configFilePath) {
 
     void Game::update()
     {
+        screen_->update();
+
         inputManager_->update();
         if (inputManager_->isQuitDown()) {
             shutdown();
@@ -192,6 +194,7 @@ void Game::initPhysics(const std::string &configFilePath) {
     {
         const std::shared_ptr<Internal::GameObject> &object = std::make_shared<Internal::GameObject>("");
         object->name(name);
+        object->game(this);
         if(environment_->sceneManager()->isSceneLoaded())
             environment_->sceneManager()->addObjectIntoCurrentScene(object);
 
