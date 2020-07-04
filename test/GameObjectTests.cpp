@@ -140,7 +140,7 @@ TEST(GameObject, loadGameObject)
     const std::string &prototype = "ObjectLoaded";
 
     geEnvironmentRef environment = geEnvironment::createInstance();
-    environment->addPrototype(prototype, "data/goLoadTest.yaml");
+    environment->addPrototype(prototype, "goLoadTest.yaml");
 
     geGameRef game = geGame::createInstance(environment);
 
@@ -171,7 +171,7 @@ TEST(SpriteComponent, load)
     const std::string &prototype = "ObjectWithSpriteLoaded";
 
     geEnvironmentRef environment = geEnvironment::createInstance();
-    environment->addPrototype(prototype, "data/spriteComponentLoadTest.yaml");
+    environment->addPrototype(prototype, "spriteComponentLoadTest.yaml");
 
     geGameRef game = geGame::createInstance(environment);
 

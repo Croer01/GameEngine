@@ -33,10 +33,10 @@ TEST(Game, renderSprite)
 
     geEnvironmentRef environment = geEnvironment::createInstance();
 
-    environment->addScene("testScene","data/testScene.yaml");
+    environment->addScene("testScene","testScene.yaml");
     environment->firstScene("testScene");
 
-    environment->addPrototype(prototype, "data/spriteComponentLoadTest.yaml");
+    environment->addPrototype(prototype, "spriteComponentLoadTest.yaml");
 
     geGameRef game = geGame::createInstance(environment);
 
@@ -62,9 +62,9 @@ TEST(Game, playSound)
     const std::string &prototype = "ObjectTest";
 
     geEnvironmentRef environment = geEnvironment::createInstance();
-    environment->addScene("testScene","data/testScene.yaml");
+    environment->addScene("testScene","testScene.yaml");
     environment->firstScene("testScene");
-    environment->addPrototype(prototype, "data/audioComponentLoadTest.yaml");
+    environment->addPrototype(prototype, "audioComponentLoadTest.yaml");
 
     geGameRef game = geGame::createInstance(environment);
 
