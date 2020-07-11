@@ -13,6 +13,7 @@
 #include <game-engine/components/ColliderComponent.hpp>
 #include <game-engine/components/AudioComponent.hpp>
 #include <game-engine/components/ParticleEmitterComponent.hpp>
+#include <game-engine/components/SpawnerComponent.hpp>
 #include "Environment.hpp"
 
 namespace fs = boost::filesystem;
@@ -34,6 +35,7 @@ Environment::Environment() : configurationPath_("conf"), dataPath_("data")
     objectManager_->registerComponentBuilder("AudioComponent", new ComponentTBuilder<AudioComponent>());
     objectManager_->registerComponentBuilder("ParticleEmitterComponent", new ComponentTBuilder<ParticleEmitterComponent>());
     objectManager_->registerComponentBuilder("ParticlesPropertiesComponent", new ComponentTBuilder<ParticlesPropertiesComponent>());
+    objectManager_->registerComponentBuilder("SpawnerComponent", new ComponentTBuilder<SpawnerComponent>());
 
     //GUI Components
     objectManager_->registerComponentBuilder("UIButtonComponent", new ComponentTBuilder<UIButtonComponent>());

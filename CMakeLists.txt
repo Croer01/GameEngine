@@ -59,6 +59,7 @@ set(ENGINE_SOURCES
         engine/public/geIO.cpp
         engine/public/components/ParticleEmitterComponent.cpp
         engine/public/components/ParticlesPropertiesComponent.cpp
+        engine/public/components/SpawnerComponent.cpp
         engine/public/Range.cpp
         )
 
