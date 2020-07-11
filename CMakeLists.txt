@@ -59,7 +59,7 @@ set(ENGINE_SOURCES
         engine/public/geIO.cpp
         engine/public/components/ParticleEmitterComponent.cpp
         engine/public/components/ParticlesPropertiesComponent.cpp
-        engine/include/game-engine/Range.cpp
+        engine/public/Range.cpp
         )
 
 # private stuff

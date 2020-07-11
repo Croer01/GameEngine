@@ -3,7 +3,7 @@
 //
 
 #include <stdexcept>
-#include "Range.hpp"
+#include "game-engine/Range.hpp"
 
 namespace GameEngine
 {
