@@ -104,17 +104,27 @@ namespace Internal {
 
     }
 
-    void GameObject::addChild(std::shared_ptr<GameObject> child) {
+    void GameObject::addChild(const std::shared_ptr<GameObject>& child) {
         auto it = std::find(children_.begin(),children_.end(),child);
         if(it != children_.end())
             return;
+
         child->parent(shared_from_this());
         children_.push_back(child);
     }
 
-    void GameObject::parent(const geGameObjectRef &goParent) {
+void GameObject::removeChild(const std::shared_ptr<GameObject>& child) {
+    auto it = std::find(children_.begin(),children_.end(),child);
+    if(it != children_.end())
+    {
+        unregisterObserver(it->get());
+        children_.erase(it);
+    }
+}
+
+void GameObject::parent(const geGameObjectRef &goParent) {
         if(auto parent = parent_.lock())
-            parent->unregisterObserver(this);
+            parent->removeChild(shared_from_this());
         parent_.reset();
         //goParent could be null
         if(goParent) {
@@ -186,7 +196,7 @@ namespace Internal {
     Vec2D GameObject::position() const {
         Vec2D position = position_;
         if(auto parent = parent_.lock())
-            position += parent->position_;
+            position += parent->position();
         return position;
     }
 
@@ -202,7 +212,7 @@ namespace Internal {
     float GameObject::rotation() const {
         float rotation = rotation_;
         if(auto parent = parent_.lock())
-            rotation += parent->rotation_;
+            rotation += parent->rotation();
         return rotation;
     }
 
@@ -218,7 +228,7 @@ namespace Internal {
     Vec2D GameObject::scale() const {
         Vec2D scale = scale_;
         if(auto parent = parent_.lock())
-            scale *= parent->scale_;
+            scale *= parent->scale();
         return scale;
     }
 

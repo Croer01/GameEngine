@@ -57,7 +57,9 @@ namespace Internal {
 
         void addComponent(const geComponentRef &component);
 
-        void addChild(std::shared_ptr<GameObject> child);
+        void addChild(const std::shared_ptr<GameObject>& child);
+
+        void removeChild(const std::shared_ptr<GameObject>& child);
 
         virtual GameEngine::geGameObjectRef findChildByName(const std::string &name);
 
