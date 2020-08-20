@@ -66,6 +66,7 @@ public:
         AudioEngine *audioEngine() const;
         FontManager *fontManager() const;
         ObjectManager *objectManager() const;
+        AStarPathfinding *pathFinder() const;
     };
 }
 }

@@ -44,6 +44,7 @@ namespace Internal {
 
         void bindGame(Game *game);
         void unbindGame();
+        AStarPathfinding *pathFinder() const;
     };
 }
 }

@@ -86,5 +86,10 @@ namespace Internal {
     {
         game_ = nullptr;
     }
+
+    AStarPathfinding *SceneManager::pathFinder() const
+    {
+        return currentScene_ ? currentScene_->getPathfinding() : nullptr;
+    }
 }
 }

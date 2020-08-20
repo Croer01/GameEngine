@@ -11,6 +11,7 @@
 #include <memory>
 #include "GameObject.hpp"
 #include "graphics/Camera.hpp"
+#include "pathfinding/AStarPathfinding.hpp"
 
 namespace GameEngine {
 namespace Internal {
@@ -18,9 +19,17 @@ namespace Internal {
     class Game;
 
     class Scene {
+        struct PathfindingConfig
+        {
+            int columns;
+            int rows;
+        };
+
         std::string filename_;
         std::vector<std::shared_ptr<GameObject>> gameObjects_;
         std::shared_ptr<Camera> cam_;
+        std::unique_ptr<PathfindingConfig> pathfindingConfig_;
+        std::unique_ptr<AStarPathfinding> pathfinding_;
 
         void loadFile(Game *game);
 
@@ -38,6 +47,8 @@ namespace Internal {
         void shutDown();
 
         std::shared_ptr<GameEngine::geCamera> cam() const;
+
+        AStarPathfinding *getPathfinding() const;
     };
 }
 }

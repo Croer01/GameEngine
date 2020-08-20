@@ -33,6 +33,7 @@ public:
     void addAgent(const AgentRef &agent);
     Path findPath(const Vec2D &initialPos, const Vec2D &targetPos);
     virtual void onEvent(const Subject<AgentEvents> &target, const AgentEvents &event, void *args);
+    void removeAgent(const AgentRef &agent);
 };
 
 }

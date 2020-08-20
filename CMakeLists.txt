@@ -57,6 +57,7 @@ set(ENGINE_SOURCES
         engine/public/Random.cpp
         engine/public/geAudio.cpp
         engine/public/geIO.cpp
+        engine/public/components/PathFindingAgentComponent.cpp
         engine/public/components/ParticleEmitterComponent.cpp
         engine/public/components/ParticlesPropertiesComponent.cpp
         engine/public/components/SpawnerComponent.cpp

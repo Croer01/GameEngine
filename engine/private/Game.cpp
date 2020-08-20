@@ -281,5 +281,10 @@ geRendererLock Game::getRendererLock()
     return geRendererLock(renderMutex_);
 }
 
+AStarPathfinding *Game::pathFinder() const
+{
+    return environment_->sceneManager()->pathFinder();
+}
+
 }
 }

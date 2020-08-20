@@ -12,6 +12,7 @@
 #include <game-engine/components/ui/UIImageComponent.hpp>
 #include <game-engine/components/ColliderComponent.hpp>
 #include <game-engine/components/AudioComponent.hpp>
+#include <game-engine/components/PathFindingAgentComponent.hpp>
 #include <game-engine/components/ParticleEmitterComponent.hpp>
 #include <game-engine/components/SpawnerComponent.hpp>
 #include "Environment.hpp"
@@ -33,6 +34,7 @@ Environment::Environment() : configurationPath_("conf"), dataPath_("data")
     objectManager_->registerComponentBuilder("ColliderComponent", new ComponentTBuilder<ColliderComponent>());
     objectManager_->registerComponentBuilder("TextComponent", new ComponentTBuilder<TextComponent>());
     objectManager_->registerComponentBuilder("AudioComponent", new ComponentTBuilder<AudioComponent>());
+    objectManager_->registerComponentBuilder("PathFindingAgentComponent", new ComponentTBuilder<PathFindingAgentComponent>());
     objectManager_->registerComponentBuilder("ParticleEmitterComponent", new ComponentTBuilder<ParticleEmitterComponent>());
     objectManager_->registerComponentBuilder("ParticlesPropertiesComponent", new ComponentTBuilder<ParticlesPropertiesComponent>());
     objectManager_->registerComponentBuilder("SpawnerComponent", new ComponentTBuilder<SpawnerComponent>());

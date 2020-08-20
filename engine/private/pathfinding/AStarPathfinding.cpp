@@ -146,11 +146,19 @@ int AStarPathfinding::calculateHeuristic(const CellRef &origin, const CellRef &d
 
 void AStarPathfinding::addAgent(const AgentRef &agent)
 {
-    //TODO: calcular la posicio de la cel·la i posar-le com a blocada
     const Vec2D &position = agent->getPosition();
     grid_[position.y][position.x]->blocked = true;
     agent->registerObserver(this);
     agents_.push_back(agent);
+}
+
+void AStarPathfinding::removeAgent(const AgentRef &agent)
+{
+    const Vec2D &position = agent->getPosition();
+    grid_[position.y][position.x]->blocked = false;
+    agent->unregisterObserver(this);
+    auto it = std::find(agents_.begin(), agents_.end(),agent);
+    agents_.erase(it);
 }
 
 void AStarPathfinding::onEvent(const Subject<AgentEvents> &target, const AgentEvents &event, void *args)

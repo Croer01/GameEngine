@@ -3,6 +3,7 @@
 //
 
 #include <yaml-cpp/yaml.h>
+#include <memory>
 #include <sstream>
 #include <algorithm>
 #include <iostream>
@@ -22,6 +23,11 @@ namespace Internal {
         gameObjects_.clear();
         loadFile(game);
 
+        if(pathfindingConfig_)
+        {
+            pathfinding_ = std::make_unique<AStarPathfinding>(pathfindingConfig_->columns, pathfindingConfig_->rows);
+        }
+
         auto size = gameObjects_.size();
 
         for (auto i = 0; i < size; i++) {
@@ -35,7 +41,7 @@ namespace Internal {
 
     void Scene::update(float elapsedTime) {
 
-        // get the current lenght of the objects list to avoid issues related to adding items
+        // get the current length of the objects list to avoid issues related to adding items
         // while iterate the list
         auto length = gameObjects_.size();
 
@@ -78,6 +84,16 @@ namespace Internal {
                 std::cout << "object created " << prototype["prototype"].as<std::string>() << std::endl;
                 gameObjects_.push_back(gameObject);
             }
+
+            YAML::Node pathfinding = sceneConfig["pathfinding"];
+
+            if(pathfinding)
+            {
+                pathfindingConfig_ = std::make_unique<PathfindingConfig>();
+                pathfindingConfig_->columns = pathfinding["columns"].as<int>();
+                pathfindingConfig_->rows = pathfinding["rows"].as<int>();
+            }
+
         } catch (const std::exception &e) {
             throw std::runtime_error("Can't load '" + filename_ + "'. cause: " + e.what());
         }
@@ -113,6 +129,11 @@ namespace Internal {
 
     std::shared_ptr<GameEngine::geCamera> Scene::cam() const {
         return cam_;
+    }
+
+    AStarPathfinding *Scene::getPathfinding() const
+    {
+        return pathfinding_.get();
     }
 }
 }
