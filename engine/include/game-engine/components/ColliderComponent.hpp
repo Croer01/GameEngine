@@ -43,6 +43,7 @@ class PUBLICAPI ColliderComponent : public geComponentInstantiable<ColliderCompo
 
         void updateColliderRef();
 
+        void updateColliderSize();
     public:
         virtual ~ColliderComponent();
 

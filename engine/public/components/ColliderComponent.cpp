@@ -109,14 +109,13 @@ void ColliderComponent::onEvent(const Subject<Internal::ColliderEvent> &target, 
 
     void ColliderComponent::onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) {
         if(event == GameObjectEvent::PositionChanged){
-                collider_->setPosition(convertWorldToPhysicsPos(gameObject()->position()));
+            collider_->setPosition(convertWorldToPhysicsPos(gameObject()->position()));
         }
         else if(event == GameObjectEvent::RotationChanged){
-                collider_->setRotation(gameObject()->rotation());
+            collider_->setRotation(gameObject()->rotation());
         }
         else if(event == GameObjectEvent::ScaleChanged){
-            const Vec2D &scale = gameObject()->scale();
-            collider_->setSize(std::abs(scale.x * size_.x)/2.f, std::abs(scale.y * size_.y)/2.f);
+            updateColliderSize();
         }
         else if(event == GameObjectEvent::ActiveChanged){
             collider_->setActive(gameObject()->active());
@@ -181,13 +180,7 @@ void ColliderComponent::onEvent(const Subject<Internal::ColliderEvent> &target, 
 
     void ColliderComponent::extends(const Vec2D &extends) {
         extends_ = extends;
-        if(collider_){
-            if(gameObject() && extends_.x == 0 && extends_.y == 0){
-                const Vec2D &scale = gameObject()->scale();
-                collider_->setSize(std::abs(scale.x * size_.x)/2.f, std::abs(scale.y * size_.y)/2.f);
-            }else
-                collider_->setSize(extends_.x/2.f, extends_.y/2.f);
-        }
+        updateColliderSize();
     }
 
     Vec2D ColliderComponent::extends() const {
@@ -351,6 +344,19 @@ void ColliderComponent::mass(const float &value)
     mass_ = value;
     if(collider_)
         collider_->setMass(mass_);
+}
+
+void ColliderComponent::updateColliderSize()
+{
+    if(collider_)
+    {
+        Vec2D scale = gameObject()? gameObject()->scale() : Vec2D(1.f, 1.f);
+
+        if(extends_.x == 0 && extends_.y == 0){
+            collider_->setSize(std::abs(scale.x * size_.x)/2.f, std::abs(scale.y * size_.y)/2.f);
+        }else
+            collider_->setSize(scale.x * extends_.x/2.f, scale.y * extends_.y/2.f);
+    }
 }
 }
 
