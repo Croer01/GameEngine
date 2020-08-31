@@ -97,7 +97,7 @@ set(ENGINE_PRIVATE_SOURCES
         engine/private/pathfinding/Agent.cpp
         engine/private/pathfinding/Path.cpp
         engine/private/graphics/Particle.cpp
-        )
+        engine/include/game-engine/FiniteStateMachine.hpp)
 
 add_library(GameEngine ${ENGINE_SOURCES} ${ENGINE_PRIVATE_SOURCES})
 
