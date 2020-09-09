@@ -6,10 +6,8 @@
 #include "PhysicsEngine.hpp"
 #include "../Game.hpp"
 #include "../utils.hpp"
-#include "../graphics/MeshData.hpp"
 
 #include <GL\glew.h>
-#include <game-engine/geGameObject.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace GameEngine {
@@ -41,9 +39,63 @@ namespace Internal {
 // We just need to have these to prevent override errors, they don't actually do anything right now
     void DebugView::DrawPolygon(const b2Vec2 *vertices, int32 vertexCount, const b2Color &color) {}
 
-    void DebugView::DrawCircle(const b2Vec2 &center, float32 radius, const b2Color &color) {}
+    void DebugView::DrawCircle(const b2Vec2 &center, float32 radius, const b2Color &color)
+    {
+        beginDraw();
+        DrawCircleInternal(center,radius,color);
+        endDraw();
+    }
 
-    void DebugView::DrawSolidCircle(const b2Vec2 &center, float32 radius, const b2Vec2 &axis, const b2Color &color) {}
+
+void DebugView::DrawSolidCircle(const b2Vec2 &center, float32 radius, const b2Vec2 &axis, const b2Color &color) {
+    beginDraw();
+    DrawCircleInternal(center,radius,color);
+
+    //The order of the vertices are flipped to from "n" to "u" way to deal with the inverted y axis
+    //VBO data
+    std::vector<float> verticesUVs;
+    //vertex(3) | uv(2)
+    verticesUVs.push_back(center.x + axis.x * radius);
+    verticesUVs.push_back(center.y + axis.y * radius);
+    verticesUVs.push_back(0.f);
+    verticesUVs.push_back(0.f);
+    verticesUVs.push_back(0.f);
+        
+    verticesUVs.push_back(center.x);
+    verticesUVs.push_back(center.y);
+    verticesUVs.push_back(0.f);
+    verticesUVs.push_back(0.f);
+    verticesUVs.push_back(0.f);
+
+    MeshData mesh(verticesUVs, std::vector<unsigned int> ());
+    shader_->setUniform("Color", glm::vec4(color.r, color.g, color.b, color.a));
+    mesh.draw(shader_);
+    shader_->draw();
+    endDraw();
+}
+
+void DebugView::DrawCircleInternal(const b2Vec2 &center, float32 radius, const b2Color &color)
+    {
+        constexpr int circleSubdivisions = 24;
+
+        //The order of the vertices are flipped to from "n" to "u" way to deal with the inverted y axis
+        //VBO data
+        std::vector<float> verticesUVs;
+        float angle = glm::radians(360.0f / circleSubdivisions);
+        for (int i = 0; i < circleSubdivisions; i++) {
+            //vertex(3) | uv(2)
+            verticesUVs.push_back(center.x + std::cos(i * angle) * radius);
+            verticesUVs.push_back(center.y + std::sin(i * angle) * radius);
+            verticesUVs.push_back(0.f);
+            verticesUVs.push_back(0.f);
+            verticesUVs.push_back(0.f);
+        }
+
+        MeshData mesh(verticesUVs, std::vector<unsigned int> ());
+        shader_->setUniform("Color", glm::vec4(color.r, color.g, color.b, color.a));
+        mesh.draw(shader_);
+        shader_->draw();
+    }
 
     void DebugView::DrawSegment(const b2Vec2 &p1, const b2Vec2 &p2, const b2Color &color) {}
 

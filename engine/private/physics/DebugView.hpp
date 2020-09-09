@@ -23,6 +23,7 @@ namespace Internal {
         // common instructions required after draw something
         void endDraw();
 
+        void DrawCircleInternal(const b2Vec2 &center, float32 radius, const b2Color &color);
     public:
         explicit DebugView(Screen *screen);
         // We won't be implementing all of these, but if we don't declare them here we'll get an override error
