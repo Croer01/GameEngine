@@ -14,6 +14,8 @@ namespace {
     Internal::Collider::ColliderShapes stringToColliderShape(const std::string &shapeName) {
         if(shapeName == "Box" || shapeName == "box")
             return Internal::Collider::ColliderShapes::Box;
+        else if(shapeName == "Circle" || shapeName == "circle")
+            return Internal::Collider::ColliderShapes::Circle;
 
         throw std::runtime_error("Unknown " + shapeName + " collider shape.");
     }
@@ -272,7 +274,8 @@ PropertySetBase *ColliderComponent::getProperties() const
             &ColliderComponent::shape,
             "Box",
             {
-                    "Box"
+                    "Box",
+                    "Circle"
             }));
     properties->add(new PropertyEnum<ColliderComponent>(
             "colliderType",

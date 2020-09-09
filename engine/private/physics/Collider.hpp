@@ -29,7 +29,8 @@ namespace Internal {
     class Collider : public Subject<ColliderEvent> {
     public:
         enum class ColliderShapes {
-            Box
+            Box,
+            Circle
         };
         enum class ColliderTypes {
             Static,

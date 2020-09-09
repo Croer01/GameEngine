@@ -126,24 +126,33 @@ namespace Internal {
             body_->DestroyFixture(fixtureToDestroy);
         }
 
+        b2FixtureDef fixtureDef;
         //create the fixture with the new shapes
         switch (colliderShape_) {
             case ColliderShapes::Box:
-                b2PolygonShape *shape = new b2PolygonShape();
+            {
+                auto *shape = new b2PolygonShape();
                 shape->SetAsBox(extendX, extendY);
-
-                b2FixtureDef fixtureDef;
                 fixtureDef.shape = shape;
-                fixtureDef.density = 1.f;
-                fixtureDef.friction = 0.0f;
-                fixtureDef.filter = filter_;
-                fixtureDef.isSensor = isSensor_;
-                body_->CreateFixture(&fixtureDef);
+            }
+                break;
+            case ColliderShapes::Circle:
+            {
+                auto *circle = new b2CircleShape();
+                circle->m_radius = extendX > extendY ? extendX : extendY;
+                fixtureDef.shape = circle;
+            }
                 break;
         }
+
+        fixtureDef.density = 1.f;
+        fixtureDef.friction = 0.0f;
+        fixtureDef.filter = filter_;
+        fixtureDef.isSensor = isSensor_;
+        body_->CreateFixture(&fixtureDef);
     }
 
-    void Collider::updateInSafeMode() {
+void Collider::updateInSafeMode() {
         if (position_.update())
             body_->SetTransform(position_.get(), body_->GetAngle());
 
