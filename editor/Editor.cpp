@@ -25,6 +25,13 @@ Editor::Editor(SDL_Window *window, SDL_GLContext glContext) :
     window_(window),
     glContext_(glContext)
 {
+    ImVec4* colors = ImGui::GetStyle().Colors;
+    colors[ImGuiCol_FrameBg]                = ImVec4(1.00f, 1.00f, 1.00f, 0.09f);
+    colors[ImGuiCol_CheckMark]              = ImVec4(0.00f, 0.92f, 1.00f, 1.00f);
+
+
+
+
     ImGui::GetStyle().WindowRounding = 0.f;
     ImGui::GetStyle().FrameRounding = 3.f;
 
