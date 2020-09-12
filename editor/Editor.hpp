@@ -50,7 +50,7 @@ class Editor
     GameEngine::geGameRef game_;
 
     void renderMainMenu();
-    bool renderSceneObjectNode(const PrototypeReferenceRef &object, const std::string &id);
+    bool renderSceneObjectNode(const PrototypeReferenceRef &object, const std::string &id, bool &deleteObject);
     void renderSceneInspector();
     void renderSceneViewer();
     void renderPrototypeList();

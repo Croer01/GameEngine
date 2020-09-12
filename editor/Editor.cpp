@@ -94,18 +94,27 @@ void Editor::render()
     }
 }
 
-bool Editor::renderSceneObjectNode(const PrototypeReferenceRef &object, const std::string &id)
+bool Editor::renderSceneObjectNode(const PrototypeReferenceRef &object, const std::string &id, bool &deleteObject)
 {
     bool edited = false;
 
     ImGui::PushID(("ObjectNode" + id).c_str());
-    if (ImGui::TreeNodeEx(id.c_str(), ImGuiTreeNodeFlags_OpenOnArrow, "%s", object->name_.c_str()))
+    bool showTreeContent = ImGui::TreeNodeEx(id.c_str(), ImGuiTreeNodeFlags_OpenOnArrow, "%s", object->name_.c_str());
+    ImGui::SameLine(ImGui::GetWindowContentRegionWidth() - 3);
+
+    if(ImGui::Button("X"))
+    {
+        deleteObject = true;
+        edited = true;
+    }
+
+    if (showTreeContent)
     {
         ImGui::InputText("Name",&object->name_);
         if(ImGui::IsItemEdited())
             edited = true;
 
-        ImGui::InputText("prototype",&object->prototype_);
+        ImGui::InputText("prototype",&object->prototype_,ImGuiInputTextFlags_ReadOnly);
         if(ImGui::IsItemEdited())
             edited = true;
 
@@ -120,7 +129,7 @@ bool Editor::renderSceneObjectNode(const PrototypeReferenceRef &object, const st
         }
 
         ImGui::TreePop();
-            ImGui::Separator();
+        ImGui::Separator();
     }
     ImGui::PopID();
 
@@ -284,22 +293,51 @@ void Editor::renderSceneInspector()
         updateWindowTitle();
     }
     ImGui::Separator();
+    static DataFile currentFile = projectDirectory_->getFiles(DataFileType::Prototype)[0];
+    if (ImGui::BeginCombo("Prototype",
+                          currentFile.getFilePath().string().c_str())) // The second parameter is the label previewed before opening the combo.
+    {
+        std::vector<DataFile> files = projectDirectory_->getFiles(DataFileType::Prototype);
+        for(auto item : files)
+        {
+            bool is_selected = (currentFile == item);
+            if (ImGui::Selectable(item.getFilePath().string().c_str(), is_selected))
+                currentFile = item;
+
+            if (is_selected)
+                ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndCombo();
+    }
     if(ImGui::Button("New Object"))
     {
         PrototypeReferenceRef newObject = std::make_shared<PrototypeReference>();
         std::stringstream ss;
         ss << "Object" << sceneData_->objects_.size();
         newObject->name_ = ss.str();
+        newObject->prototype_ = projectFileDataProvider_.getObjectData(currentFile)->name_;
         sceneData_->objects_.push_back(newObject);
         dirty = true;
     }
 
+    ImGui::Separator();
+
+    auto objectToDeleteId = -1;
     for (auto i = 0; i < sceneData_->objects_.size(); i++)
     {
-        if(renderSceneObjectNode(sceneData_->objects_[i], std::to_string(i)))
+        bool deleteObject = false;
+        if(renderSceneObjectNode(sceneData_->objects_[i], std::to_string(i), deleteObject))
         {
             dirty = true;
         }
+
+        if(deleteObject)
+            objectToDeleteId = i;
+    }
+
+    if(objectToDeleteId != -1)
+    {
+        sceneData_->objects_.erase(sceneData_->objects_.begin() + objectToDeleteId);
     }
 
     ImGui::End();
