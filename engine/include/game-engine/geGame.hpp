@@ -42,7 +42,7 @@ class PUBLICAPI geGame {
         virtual void update() = 0;
         virtual void render() = 0;
         virtual unsigned int getRenderer() const = 0;
-        virtual geRendererLock getRendererLock() = 0;
+        virtual std::mutex & getRendererMutex() = 0;
 
         virtual bool isRunning() const = 0;
         virtual void shutdown() = 0;

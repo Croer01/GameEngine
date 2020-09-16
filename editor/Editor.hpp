@@ -33,7 +33,7 @@ class Editor
     SDL_Window* window_;
     SDL_GLContext glContext_;
     SDL_GLContext gameGlContext_;
-    std::unique_ptr<GameEngine::geRendererLock> renderMutex_;
+    std::unique_lock<std::mutex> renderMutex_;
     SceneDataRef sceneData_;
     std::unique_ptr<ProjectDirectory> projectDirectory_;
     std::unique_ptr<TargetObject> objectSelected_;
@@ -80,6 +80,7 @@ public:
     void releaseCurrentContext();
     void shutdown();
     GameEngine::geGameRef game() const;
+    void starGame(bool update);
 };
 
 

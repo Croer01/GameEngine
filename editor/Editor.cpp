@@ -1262,6 +1262,23 @@ void Editor::loadScene(const std::string &sceneFilePath)
     sceneData_ = projectFileDataProvider_.getSceneData(DataFile(sceneFilePath));
 
     updateWindowTitle();
+
+    bool hasContext = static_cast<bool>(renderMutex_);
+
+    if(hasContext)
+        releaseCurrentContext();
+    if(game_ && game_->isRunning())
+    {
+        game_->shutdown();
+        
+        if(gameThread_.valid())
+            gameThread_.wait();
+    }
+
+    starGame(false);
+
+    if(hasContext)
+        makeCurrentContext();
 }
 
 void Editor::updateWindowTitle()
@@ -1323,7 +1340,7 @@ void Editor::renderSceneViewer()
         return;
 
     bool canRunGame = false;
-    // If the thead is finished, a new game instance will be run
+    // If the thread is finished, a new game instance will be run
     if(!gameThread_.valid())
     {
         canRunGame = true;
@@ -1332,7 +1349,7 @@ void Editor::renderSceneViewer()
     {
         if(gameThread_.get() != 0)
         {
-            throw std::runtime_error("Game closed by a internal error");
+            throw std::runtime_error("Game closed by an internal error");
         }
     }
 
@@ -1340,44 +1357,7 @@ void Editor::renderSceneViewer()
     {
         if (ImGui::Button("run game"))
         {
-            gameThread_ = std::async(std::launch::async, [&]()
-            {
-                int exitStatus = 0;
-                try
-                {
-                    if (sceneData_->filePath_.empty())
-                    {
-                        errorDialog_->open("There is no scene loaded or the current scene is not saved");
-                        return exitStatus;
-                    }
-
-                    GameEngine::geEnvironmentRef env = GameEngine::geEnvironment::createInstance();
-                    env->setMakeCurrentContextCallback([=](){
-                        SDL_GL_MakeCurrent(window_, gameGlContext_);
-                    });
-                    env->configurationPath(project_->folderPath_ + "/conf");
-
-                    RegisterComponents(env);
-                    env->addResourcesFromPath(project_->dataPath_.string());
-
-                    env->firstScene(sceneData_->name_);
-
-                    game_ = GameEngine::geGame::createInstance(env);
-                    while(game_->isRunning())
-                    {
-                        game_->update();
-                        game_->render();
-                    }
-                }
-                catch (const std::exception &e)
-                {
-                    std::cerr << e.what() << std::endl;
-                    exitStatus = 1;
-                }
-
-                game_.reset();
-                return exitStatus;
-            });
+            starGame(true);
         }
     }
     else if(game_ && game_->isRunning())
@@ -1407,18 +1387,66 @@ void Editor::renderSceneViewer()
     }
 }
 
+void Editor::starGame(bool update)
+{
+    gameThread_ = std::async(std::launch::async, [&, update]()
+    {
+        int exitStatus = 0;
+        try
+        {
+            if (sceneData_->filePath_.empty())
+            {
+                errorDialog_->open("There is no scene loaded or the current scene is not saved");
+                return exitStatus;
+            }
+
+            GameEngine::geEnvironmentRef env = GameEngine::geEnvironment::createInstance();
+            env->setMakeCurrentContextCallback([=](){
+                SDL_GL_MakeCurrent(window_, gameGlContext_);
+            });
+            env->configurationPath(project_->folderPath_ + "/conf");
+
+            RegisterComponents(env);
+            env->addResourcesFromPath(project_->dataPath_.string());
+
+            env->firstScene(sceneData_->name_);
+
+            game_ = GameEngine::geGame::createInstance(env);
+            while(game_->isRunning())
+            {
+                if(update)
+                    game_->update();
+                else
+                    std::this_thread::sleep_for (std::chrono::milliseconds (16/*60 frames*/));
+
+                game_->render();
+            }
+        }
+        catch (const std::exception &e)
+        {
+            std::cerr << e.what() << std::endl;
+            exitStatus = 1;
+        }
+
+        game_.reset();
+        return exitStatus;
+    });
+}
+
 void Editor::releaseCurrentContext()
 {
-    renderMutex_.reset();
+    if(renderMutex_)
+    {
+        renderMutex_.unlock();
+        renderMutex_.release();
+    }
 }
 
 void Editor::makeCurrentContext()
 {
     if(game_)
     {
-        GameEngine::geRendererLock lock = game_->getRendererLock();
-        GameEngine::geRendererLock *lockPtr = new GameEngine::geRendererLock(std::forward<GameEngine::geRendererLock>(lock));
-        renderMutex_.reset(lockPtr);
+        renderMutex_ = std::unique_lock<std::mutex>(game_->getRendererMutex());
     }
 
     SDL_GL_MakeCurrent(window_, glContext_);
@@ -1426,7 +1454,7 @@ void Editor::makeCurrentContext()
 
 void Editor::shutdown()
 {
-    renderMutex_.reset();
+    releaseCurrentContext();
 
     if(game_)
         game_->shutdown();

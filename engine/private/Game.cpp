@@ -15,7 +15,7 @@ namespace Internal {
 
     Game::Game(const std::shared_ptr<Environment> &environment)
     {
-        const geRendererLock &lock = getRendererLock();
+        std::unique_lock<std::mutex> lock(renderMutex_);
         running_ = true;
         environment_ = environment;
 
@@ -54,7 +54,7 @@ namespace Internal {
 
     Game::~Game()
     {
-        const geRendererLock &lock = getRendererLock();
+        std::unique_lock<std::mutex> lock(renderMutex_);
         timeManager_.reset();
         environment_->sceneManager()->clear();
         // destroy all the engines and APIs to ensure the components won't try to use them
@@ -148,7 +148,7 @@ void Game::initPhysics(const std::string &configFilePath) {
 
     void Game::render()
     {
-        const geRendererLock &lock = getRendererLock();
+        std::unique_lock<std::mutex> lock(renderMutex_);
         const MakeCurrentContextCallback &makeContext = environment_->getMakeCurrentContextCallback();
 
         if(makeContext)
@@ -276,9 +276,9 @@ unsigned int Game::getRenderer() const
     return graphicsEngine_->getFbo()->getTextId();
 }
 
-geRendererLock Game::getRendererLock()
+std::mutex & Game::getRendererMutex()
 {
-    return geRendererLock(renderMutex_);
+    return renderMutex_;
 }
 
 }

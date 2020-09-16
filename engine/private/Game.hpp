@@ -48,7 +48,7 @@ public:
         virtual void update();
         virtual void render();
         virtual unsigned int getRenderer() const;
-        virtual geRendererLock getRendererLock();
+        virtual std::mutex &getRendererMutex();
         virtual bool isRunning() const;
         void shutdown() override;
         geGameObjectRef createObject(const std::string &name) override;
