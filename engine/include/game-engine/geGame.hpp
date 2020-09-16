@@ -22,20 +22,6 @@ namespace GameEngine {
     class geGameObject;
     typedef std::shared_ptr<geGameObject> geGameObjectRef;
 
-
-class PUBLICAPI geRendererLock
-{
-    std::unique_lock<std::mutex> lock_;
-    bool unlocked_;
-public:
-    geRendererLock(const geRendererLock&) = delete;
-    geRendererLock(geRendererLock && other) noexcept;
-    explicit geRendererLock(std::mutex &mutex);
-
-    void unlock();
-    ~geRendererLock();
-};
-
 class PUBLICAPI geGame {
     public:
         virtual ~geGame() = 0;
