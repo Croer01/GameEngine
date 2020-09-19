@@ -15,6 +15,8 @@
 
 namespace GameEngine {
 
+class geScreen;
+
 enum class InputTextSubjectEvent
 {
     INPUT,
@@ -27,7 +29,6 @@ class InputTextSubject : public Subject<InputTextSubjectEvent>
 {
 
 };
-
 class InputManager
 {
     enum class InputState
@@ -40,12 +41,13 @@ class InputManager
     std::map<KeyCode, InputState> keyboardState;
     InputTextSubjectRef inputSubject_;
     std::vector<SDL_Event> events_;
+    geScreen *screen_;
 
     void reset();
     void processEvent(SDL_Event event);
 
 public:
-    InputManager();
+    explicit InputManager(geScreen *screen);
 
     bool isQuitDown();
 

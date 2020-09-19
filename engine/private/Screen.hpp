@@ -26,6 +26,7 @@ namespace Internal {
         int virtualWidth_;
         int virtualHeight_;
 
+        Vec2D windowRelativePos_;
         int calculatedX_;
         int calculatedY_;
         int calculatedWidth_;
@@ -59,6 +60,9 @@ namespace Internal {
         virtual void pixelPerfect(bool value);
         virtual bool resizable() const;
         virtual void resizable(bool value);
+        virtual void setWindowRelativePosition(int x, int y);
+        virtual Vec2D getWindowRelativePosition();
+        virtual Vec2D transformWindowToScreen(const Vec2D &position);
 
         int calculatedX() const;
         int calculatedY() const;

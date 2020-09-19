@@ -268,5 +268,28 @@ void Screen::update()
         SDL_SetWindowTitle(mainWindow_.get(), title_.get().c_str());
 }
 
+void Screen::setWindowRelativePosition(int x, int y)
+{
+    windowRelativePos_ = Vec2D(x, y);
+}
+
+Vec2D Screen::getWindowRelativePosition()
+{
+    Vec2D screenPos(calculatedX_, calculatedY_);
+    return windowRelativePos_;
+}
+
+Vec2D Screen::transformWindowToScreen(const Vec2D &position)
+{
+    Vec2D windowRelativePosition = getWindowRelativePosition();
+    float xScale = (float)virtualWidth_ / deviceWidth_;
+    float yScale = (float)virtualHeight_ / deviceHeight_;
+
+    Vec2D screenPosition;
+    screenPosition.x = (position.x - windowRelativePosition.x) * xScale;
+    screenPosition.y = (position.y - windowRelativePosition.y) * yScale;
+    return screenPosition;
+}
+
 }
 }

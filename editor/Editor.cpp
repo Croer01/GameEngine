@@ -1279,7 +1279,7 @@ void Editor::reloadGameStaticScene()
     if(game_ && game_->isRunning())
     {
         game_->shutdown();
-        
+
         if(gameThread_.valid())
             gameThread_.wait();
     }
@@ -1393,6 +1393,8 @@ void Editor::renderSceneViewer()
             ImVec2(pos.x + w, pos.y + h),
             ImVec2(-1, 1),
             ImVec2(0, 0));
+
+        screen->setWindowRelativePosition(pos.x, pos.y);
     }
 }
 

@@ -4,14 +4,14 @@
 
 #include <game-engine/InputManager.hpp>
 #include "../private/KeyCodeMap.hpp"
-#include <SDL2/SDL_events.h>
 #include <iostream>
+#include <game-engine/geScreen.hpp>
 
 namespace GameEngine {
 
 Internal::KeyMap keyMap;
 
-InputManager::InputManager() : mousePosition_({0, 0}), quit_(false)
+InputManager::InputManager(geScreen *screen) : mousePosition_({0, 0}), quit_(false), screen_(screen)
 {}
 
 
@@ -50,9 +50,7 @@ Vec2D InputManager::getMousePosition()
 {
     int x, y;
     SDL_GetMouseState(&x, &y);
-    mousePosition_.x = x;
-    mousePosition_.y = y;
-    return mousePosition_;
+    return screen_->transformWindowToScreen(Vec2D(x,y));
 }
 
 void InputManager::update()
