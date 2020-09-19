@@ -22,12 +22,12 @@ namespace Internal {
         std::vector<std::shared_ptr<GameObject>> gameObjects_;
         std::shared_ptr<Camera> cam_;
 
-        void loadFile(Game *game);
+        void loadFile(geGame *game);
 
     public:
         explicit Scene(const std::string &filename);
 
-        void init(Game *game);
+        void init(geGame *game);
 
         void update(float elapsedTime);
 

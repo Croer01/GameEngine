@@ -15,6 +15,7 @@ namespace Internal {
 
     Game::Game(const std::shared_ptr<Environment> &environment)
     {
+        initialized_ = false;
         std::unique_lock<std::mutex> lock(renderMutex_);
         running_ = true;
         environment_ = environment;
@@ -39,17 +40,10 @@ namespace Internal {
         audioEngine_ = std::make_unique<AudioEngine>();
         audioEngine_->init();
         fontManager_ = std::make_unique<FontManager>();
-        inputManager_ = std::make_unique<InputManager>();
+        inputManager_ = std::make_unique<InputManager>(screen_.get());
 
         timeManager_ = std::make_unique<TimeManager>(this);
         initPhysics(environment_->configurationPath() + "/physics.yaml");
-
-        environment_->sceneManager()->bindGame(this);
-        if(!environment_->firstScene().empty())
-        {
-            changeScene(environment_->firstScene());
-            environment_->sceneManager()->changeSceneInSafeMode();
-        }
     }
 
     Game::~Game()
@@ -118,6 +112,7 @@ void Game::initPhysics(const std::string &configFilePath) {
 
     void Game::update()
     {
+        assert(initialized_);
         screen_->update();
 
         inputManager_->update();
@@ -279,6 +274,18 @@ unsigned int Game::getRenderer() const
 std::mutex & Game::getRendererMutex()
 {
     return renderMutex_;
+}
+
+void Game::init()
+{
+    initialized_ = true;
+
+    environment_->sceneManager()->bindGame(this);
+    if(!environment_->firstScene().empty())
+    {
+        changeScene(environment_->firstScene());
+        environment_->sceneManager()->changeSceneInSafeMode();
+    }
 }
 
 }

@@ -77,7 +77,7 @@ namespace Internal {
         return cam;
     }
 
-    void SceneManager::bindGame(Game *game)
+    void SceneManager::bindGame(geGame *game)
     {
         game_ = game;
     }

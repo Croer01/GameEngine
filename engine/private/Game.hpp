@@ -25,8 +25,11 @@ namespace GameEngine {
 namespace Internal {
 
 class Game : public geGame {
-        bool running_;
-
+    bool running_;
+    std::mutex renderMutex_;
+    Vec2D rendererPosition_;
+protected:
+    bool initialized_;
         std::shared_ptr<Environment> environment_;
         std::unique_ptr<Screen> screen_;
         std::unique_ptr<GraphicsEngine> graphicsEngine_;
@@ -35,24 +38,24 @@ class Game : public geGame {
         std::unique_ptr<InputManager> inputManager_;
         std::unique_ptr<FontManager> fontManager_;
         std::unique_ptr<TimeManager> timeManager_;
-        std::mutex renderMutex_;
 
         void initPhysics(const std::string &configFilePath);
 public:
-        Game(const std::shared_ptr<Environment> &environment);
+        explicit Game(const std::shared_ptr<Environment> &environment);
         virtual ~Game();
 
         const geGame &context() const;
 
         // geGame implementation
+        virtual void init();
         virtual void update();
         virtual void render();
         virtual unsigned int getRenderer() const;
         virtual std::mutex &getRendererMutex();
         virtual bool isRunning() const;
         void shutdown() override;
-        geGameObjectRef createObject(const std::string &name) override;
-        geGameObjectRef createFromPrototype(const std::string &prototype) override;
+        virtual geGameObjectRef createObject(const std::string &name);
+        virtual geGameObjectRef createFromPrototype(const std::string &prototype);
         geGameObjectRef findObjectByNameInCurrentScene(const std::string &gameObjectName) override;
         void changeScene(const std::string &name) override;
         std::weak_ptr<geCamera> cameraOfCurrentScene() const override;

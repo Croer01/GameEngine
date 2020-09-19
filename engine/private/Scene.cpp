@@ -17,7 +17,7 @@ namespace Internal {
     Scene::Scene(const std::string &filename) : filename_(filename) {
     }
 
-    void Scene::init(Game *game) {
+    void Scene::init(geGame *game) {
         cam_.reset(new Camera());
         gameObjects_.clear();
         loadFile(game);
@@ -50,7 +50,7 @@ namespace Internal {
             }), gameObjects_.end());
     }
 
-    void Scene::loadFile(Game *game) {
+    void Scene::loadFile(geGame *game) {
         try {
             YAML::Node sceneConfig = YAML::LoadFile(filename_);
 
@@ -58,8 +58,8 @@ namespace Internal {
 
             for (auto i = 0; i < prototypes.size(); ++i) {
                 YAML::Node prototype = prototypes[i];
-                std::shared_ptr<GameObject> gameObject = game->objectManager()->createGameObject(
-                        prototype["prototype"].as<std::string>(), game);
+                auto newGameObject = game->createFromPrototype(prototype["prototype"].as<std::string>());
+                std::shared_ptr<GameObject> gameObject = std::dynamic_pointer_cast<GameObject>(newGameObject);
 
                 if (prototype["name"])
                     gameObject->name(prototype["name"].as<std::string>());

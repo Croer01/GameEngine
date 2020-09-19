@@ -25,6 +25,7 @@ namespace GameEngine {
 class PUBLICAPI geGame {
     public:
         virtual ~geGame() = 0;
+        virtual void init() = 0;
         virtual void update() = 0;
         virtual void render() = 0;
         virtual unsigned int getRenderer() const = 0;
@@ -43,7 +44,7 @@ class PUBLICAPI geGame {
         virtual geScreen *screen() const = 0;
         virtual geAudio *audio() const = 0;
         virtual InputManager *input() const = 0;
-    };
+};
 }
 
 #endif //SPACEINVADERS_GEGAME_HPP
