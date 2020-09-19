@@ -8,6 +8,7 @@
 #include <sstream>
 #include "Editor.hpp"
 #include "../../componentsRegistered.hpp"
+#include "GameEditor.hpp"
 #include <functional>
 #include <boost/filesystem/path.hpp>
 #include <tinyfiledialogs.h>
@@ -44,6 +45,8 @@ Editor::Editor(SDL_Window *window, SDL_GLContext glContext) :
         // the result is the scene file we want to load. This is used when choose a scene but there are changes to save
         if(!result.empty())
             loadScene(result.string());
+        else
+            reloadGameStaticScene();
     });
     errorDialog_ = std::make_shared<ErrorDialog>();
 
@@ -1005,6 +1008,7 @@ void Editor::renderMainMenu()
             if (ImGui::MenuItem("Save all", NULL, false, project_ && project_->dirty_))
             {
                 saveProject();
+                reloadGameStaticScene();
             }
             ImGui::Separator();
 
@@ -1263,6 +1267,11 @@ void Editor::loadScene(const std::string &sceneFilePath)
 
     updateWindowTitle();
 
+    reloadGameStaticScene();
+}
+
+void Editor::reloadGameStaticScene()
+{
     bool hasContext = static_cast<bool>(renderMutex_);
 
     if(hasContext)
@@ -1411,14 +1420,18 @@ void Editor::starGame(bool update)
 
             env->firstScene(sceneData_->name_);
 
-            game_ = GameEngine::geGame::createInstance(env);
+            if(update)
+                game_ = GameEngine::geGame::createInstance(env);
+            else
+            {
+                auto envInternal = std::dynamic_pointer_cast<GameEngine::Internal::Environment>(env);
+                game_ = std::make_shared<GameEditor>(envInternal);
+            }
+
+            game_->init();
             while(game_->isRunning())
             {
-                if(update)
-                    game_->update();
-                else
-                    std::this_thread::sleep_for (std::chrono::milliseconds (16/*60 frames*/));
-
+                game_->update();
                 game_->render();
             }
         }

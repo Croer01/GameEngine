@@ -173,7 +173,7 @@ add_executable(GameEngineEditor
         editor/dialogs/ErrorDialog.cpp
         editor/dialogs/CreateSceneDialog.cpp
         editor/DataDirectory.cpp
-        )
+        editor/GameEditor.cpp)
 
 target_compile_definitions(GameEngineEditor PUBLIC -DIMGUI_IMPL_OPENGL_LOADER_GLEW)
 

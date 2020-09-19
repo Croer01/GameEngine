@@ -81,6 +81,7 @@ public:
     void shutdown();
     GameEngine::geGameRef game() const;
     void starGame(bool update);
+    void reloadGameStaticScene();
 };
 
 
