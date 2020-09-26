@@ -11,6 +11,7 @@
 #include <memory>
 #include "GameObject.hpp"
 #include "graphics/Camera.hpp"
+#include <game-engine/geData.hpp>
 
 namespace GameEngine {
 namespace Internal {
@@ -18,14 +19,15 @@ namespace Internal {
     class Game;
 
     class Scene {
-        std::string filename_;
+        std::string filePath_;
+        std::string name_;
         std::vector<std::shared_ptr<GameObject>> gameObjects_;
         std::shared_ptr<Camera> cam_;
 
         void loadFile(geGame *game);
 
     public:
-        explicit Scene(const std::string &filename);
+        explicit Scene(const std::string &filePath);
 
         void init(geGame *game);
 
@@ -38,6 +40,8 @@ namespace Internal {
         void shutDown();
 
         std::shared_ptr<GameEngine::geCamera> cam() const;
+
+        geDataRef saveCurrentState() const;
     };
 }
 }

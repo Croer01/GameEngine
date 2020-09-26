@@ -288,5 +288,10 @@ void Game::init()
     }
 }
 
+geDataRef Game::saveCurrentSceneState() const
+{
+    return environment_->sceneManager()->saveCurrentSceneState();
+}
+
 }
 }

@@ -40,6 +40,7 @@ class PUBLICAPI geGame {
         virtual geGameObjectRef findObjectByNameInCurrentScene(const std::string &gameObjectName) = 0;
         virtual void changeScene(const std::string &name) = 0;
         virtual std::weak_ptr<geCamera> cameraOfCurrentScene() const = 0;
+        virtual geDataRef saveCurrentSceneState() const = 0;
 
         virtual geScreen *screen() const = 0;
         virtual geAudio *audio() const = 0;

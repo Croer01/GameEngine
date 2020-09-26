@@ -10,11 +10,12 @@
 #include "yamlConverters.hpp"
 #include "ObjectManager.hpp"
 #include "Game.hpp"
+#include "WritableData.hpp"
 
 namespace GameEngine {
 namespace Internal {
 
-    Scene::Scene(const std::string &filename) : filename_(filename) {
+    Scene::Scene(const std::string &filePath) : filePath_(filePath) {
     }
 
     void Scene::init(geGame *game) {
@@ -52,8 +53,9 @@ namespace Internal {
 
     void Scene::loadFile(geGame *game) {
         try {
-            YAML::Node sceneConfig = YAML::LoadFile(filename_);
+            YAML::Node sceneConfig = YAML::LoadFile(filePath_);
 
+            name_ = sceneConfig["name"].as<std::string>();
             YAML::Node prototypes = sceneConfig["prototypes"];
 
             for (auto i = 0; i < prototypes.size(); ++i) {
@@ -76,10 +78,9 @@ namespace Internal {
                     gameObject->scale(prototype["scale"].as<Vec2D>());
 
                 std::cout << "object created " << prototype["prototype"].as<std::string>() << std::endl;
-                gameObjects_.push_back(gameObject);
             }
         } catch (const std::exception &e) {
-            throw std::runtime_error("Can't load '" + filename_ + "'. cause: " + e.what());
+            throw std::runtime_error("Can't load '" + filePath_ + "'. cause: " + e.what());
         }
     }
 
@@ -114,5 +115,28 @@ namespace Internal {
     std::shared_ptr<GameEngine::geCamera> Scene::cam() const {
         return cam_;
     }
+
+geDataRef Scene::saveCurrentState() const
+{
+    std::shared_ptr<WritableData> data = std::make_shared<WritableData>();
+    std::vector<YAML::Node> prototypes;
+    prototypes.reserve(gameObjects_.size());
+    for (const auto &object : gameObjects_)
+    {
+        WritableData objectData;
+        objectData.setString("name", object->name());
+        objectData.setString("prototype", object->getType());
+        objectData.setVec2D("position", object->position());
+        objectData.setFloat("rotation", object->rotation());
+        objectData.setVec2D("scale", object->scale());
+
+        const YAML::Node &node = objectData.yamlNode();
+        prototypes.push_back(node);
+    }
+    data->setString("name", name_);
+    data->yamlNode()["prototypes"] = prototypes;
+    return data;
+}
+
 }
 }

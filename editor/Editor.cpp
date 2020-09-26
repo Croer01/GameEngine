@@ -1376,6 +1376,22 @@ void Editor::renderSceneViewer()
             game_->shutdown();
         }
     }
+    
+    if(game_)
+    {
+        if (ImGui::Button("save current scene"))
+        {
+            const GameEngine::geDataRef &sceneState = game_->saveCurrentSceneState();
+
+            auto data = std::dynamic_pointer_cast<GameEngine::Internal::Data>(sceneState);
+            SceneData sceneData = data->yamlNode().as<SceneData>();
+            sceneData_->objects_.clear();
+            YAML::convert<SceneData>::decode(data->yamlNode(), *sceneData_.get());
+
+            project_->dirty_ = true;
+            projectDirectory_->markEdited(DataFile(sceneData_->filePath_));
+        }
+    }
 
     if(game_)
     {

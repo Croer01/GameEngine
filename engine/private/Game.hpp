@@ -59,6 +59,7 @@ public:
         geGameObjectRef findObjectByNameInCurrentScene(const std::string &gameObjectName) override;
         void changeScene(const std::string &name) override;
         std::weak_ptr<geCamera> cameraOfCurrentScene() const override;
+        virtual geDataRef saveCurrentSceneState() const;
         geScreen *screen() const override;
         geAudio *audio() const override;
         InputManager *input() const override;

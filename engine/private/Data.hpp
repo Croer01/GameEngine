@@ -11,6 +11,7 @@
 namespace GameEngine{
 namespace Internal{
     class Data : public geData {
+    protected:
         YAML::Node data_;
     public:
         explicit Data(const YAML::Node &data);

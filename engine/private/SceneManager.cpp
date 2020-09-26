@@ -86,5 +86,10 @@ namespace Internal {
     {
         game_ = nullptr;
     }
+
+geDataRef SceneManager::saveCurrentSceneState() const
+{
+    return currentScene_->saveCurrentState();
+}
 }
 }
