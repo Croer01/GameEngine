@@ -1443,7 +1443,9 @@ void Editor::starGame(bool update)
             else
             {
                 auto envInternal = std::dynamic_pointer_cast<GameEngine::Internal::Environment>(env);
-                game_ = std::make_shared<GameEditor>(envInternal);
+                const std::shared_ptr<GameEditor> &gameEditor = std::make_shared<GameEditor>(envInternal);
+                game_ = gameEditor;
+                gameEditor->linkSceneFromEditor(sceneData_);
             }
 
             game_->init();

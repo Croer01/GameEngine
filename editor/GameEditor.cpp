@@ -8,15 +8,13 @@
 GameEditor::GameEditor(const std::shared_ptr<GameEngine::Internal::Environment> &environment) : Game(environment)
 {
     environment->registerComponent("GameEditorComponent", new GameEngine::ComponentTBuilder<GameEditorComponent>());
-
 }
 
 GameEngine::geGameObjectRef GameEditor::createFromPrototype(const std::string &prototype)
 {
     const GameEngine::geGameObjectRef &obj = Game::createFromPrototype(prototype);
     auto editorComponent = std::make_shared<GameEditorComponent>();
-    obj->addComponent(editorComponent);
-    components_.push_back(editorComponent);
+    addEditorComponent(obj);
     return obj;
 }
 
@@ -28,10 +26,15 @@ GameEngine::geGameObjectRef GameEditor::createObject(const std::string &name)
     if(environment_->sceneManager()->isSceneLoaded())
         environment_->sceneManager()->addObjectIntoCurrentScene(object);
 
+    addEditorComponent(object);
+    return object;
+}
+
+void GameEditor::addEditorComponent(const GameEngine::geGameObjectRef &object)
+{
     auto editorComponent = std::make_shared<GameEditorComponent>();
     object->addComponent(editorComponent);
     components_.push_back(editorComponent);
-    return object;
 }
 
 void GameEditor::update()
@@ -72,6 +75,34 @@ void GameEditor::changeScene(const std::string &name)
     Game::changeScene(name);
 }
 
+void GameEditor::linkSceneDataWithCurrentScene()
+{
+    for(const auto &component : components_)
+    {
+        if(auto comp = component.lock())
+        {
+            assert(sceneData_);
+            std::string name = comp->gameObject()->name();
+            auto it = std::find_if(sceneData_->objects_.begin(), sceneData_->objects_.end(),
+                                   [name](auto object) { return object->name_ == name; });
+            if(it != sceneData_->objects_.end())
+            {
+                comp->linkObject(*it);
+            }
+        }
+    }
+}
+void GameEditor::linkSceneFromEditor(const SceneDataRef &scene)
+{
+    sceneData_ = scene;
+}
+
+void GameEditor::init()
+{
+    Game::init();
+    linkSceneDataWithCurrentScene();
+}
+
 GameEngine::PropertySetBase *GameEditorComponent::getProperties() const
 {
     return new GameEngine::PropertySet<GameEditorComponent>();
@@ -83,7 +114,6 @@ void GameEditorComponent::Update(float elapsedTime)
 
     const GameEngine::Vec2D &mousePosition = input->getMousePosition();
 
-    std::cout << "x=" << mousePosition.x << " y=" << mousePosition.y << std::endl;
     GameEngine::Vec2D mouseDistance = gameObject()->position() - mousePosition;
 
     //std::cout << gameObject()->name() << " " << mouseDistance.magnitude() << std::endl;
@@ -111,4 +141,36 @@ void GameEditorComponent::Update(float elapsedTime)
 void GameEditorComponent::init()
 {
     drag_ = false;
+    gameObject()->registerObserver(this);
+}
+
+void GameEditorComponent::linkObject(const PrototypeReferenceRef &data)
+{
+    data_ = data;
+}
+
+void GameEditorComponent::onEvent(const GameEngine::Subject<GameEngine::GameObjectEvent> &target,
+                                  const GameEngine::GameObjectEvent &event, void *args)
+{
+    if(data_)
+    {
+        switch(event)
+        {
+            case GameEngine::GameObjectEvent::PositionChanged:
+                data_->position_.xy[0] = gameObject()->position().x;
+                data_->position_.xy[1] = gameObject()->position().y;
+                break;
+            case GameEngine::GameObjectEvent::RotationChanged:
+                data_->rotation_ = gameObject()->rotation();
+                break;
+            case GameEngine::GameObjectEvent::ScaleChanged:
+                data_->scale_.xy[0] = gameObject()->scale().x;
+                data_->scale_.xy[1] = gameObject()->scale().y;
+                break;
+            case GameEngine::GameObjectEvent::ActiveChanged:
+                break;
+            case GameEngine::GameObjectEvent::TransformChanged:
+                break;
+        }
+    }
 }
