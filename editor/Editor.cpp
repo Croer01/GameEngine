@@ -1352,13 +1352,7 @@ void Editor::renderSceneViewer()
     if(!sceneData_)
         return;
 
-    bool canRunGame = false;
-    // If the thread is finished, a new game instance will be run
-    if(!gameThread_.valid())
-    {
-        canRunGame = true;
-    }
-    else if(gameThread_.wait_for(0ms) == std::future_status::ready)
+    if(gameThread_.wait_for(0ms) == std::future_status::ready)
     {
         if(gameThread_.get() != 0)
         {
@@ -1366,28 +1360,44 @@ void Editor::renderSceneViewer()
         }
     }
 
-    if(canRunGame)
+    if(auto gameEditor = std::dynamic_pointer_cast<GameEditor>(game_))
     {
         if (ImGui::Button("run game"))
         {
+            bool hasContext = static_cast<bool>(renderMutex_);
+
+            if(hasContext)
+                releaseCurrentContext();
+
+            game_->shutdown();
+            gameThread_.wait();
             starGame(true);
+
+            if(hasContext)
+                makeCurrentContext();
+        }
+
+        if (gameEditor && gameEditor->isDirty())
+        {
+            project_->dirty_ = true;
+            projectDirectory_->markEdited(DataFile(sceneData_->filePath_));
         }
     }
     else if(game_ && game_->isRunning())
     {
         if (ImGui::Button("stop game"))
         {
+            bool hasContext = static_cast<bool>(renderMutex_);
+
+            if(hasContext)
+                releaseCurrentContext();
+
             game_->shutdown();
-        }
-    }
-    
-    if(game_)
-    {
-        auto gameEditor = std::dynamic_pointer_cast<GameEditor>(game_);
-        if (gameEditor && gameEditor->isDirty())
-        {
-            project_->dirty_ = true;
-            projectDirectory_->markEdited(DataFile(sceneData_->filePath_));
+            gameThread_.wait();
+            starGame(false);
+
+            if(hasContext)
+                makeCurrentContext();
         }
     }
 
