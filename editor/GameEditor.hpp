@@ -27,6 +27,7 @@ class GameEditor : public GameEngine::Internal::Game
 {
     std::vector<std::weak_ptr<GameEditorComponent>> components_;
     SceneDataRef sceneData_;
+    bool dirty_;
     void addEditorComponent(const GameEngine::geGameObjectRef &object);
     void linkSceneDataWithCurrentScene();
 public:
@@ -37,6 +38,9 @@ public:
     virtual void init();
     void update() override;
     void linkSceneFromEditor(const SceneDataRef &scene);
+
+    void setDirty(bool value);
+    bool isDirty() const;
 
     virtual ~GameEditor(){};
 };

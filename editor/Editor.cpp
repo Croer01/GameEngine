@@ -1227,6 +1227,10 @@ void Editor::saveProject()
         projectFile.close();
     }
 
+    auto gameEditor = std::dynamic_pointer_cast<GameEditor>(game_);
+    if (gameEditor)
+        gameEditor->setDirty(false);
+
     project_->dirty_ = false;
     updateWindowTitle();
 }
@@ -1379,15 +1383,9 @@ void Editor::renderSceneViewer()
     
     if(game_)
     {
-        if (ImGui::Button("save current scene"))
+        auto gameEditor = std::dynamic_pointer_cast<GameEditor>(game_);
+        if (gameEditor && gameEditor->isDirty())
         {
-            const GameEngine::geDataRef &sceneState = game_->saveCurrentSceneState();
-
-            auto data = std::dynamic_pointer_cast<GameEngine::Internal::Data>(sceneState);
-            SceneData sceneData = data->yamlNode().as<SceneData>();
-            sceneData_->objects_.clear();
-            YAML::convert<SceneData>::decode(data->yamlNode(), *sceneData_.get());
-
             project_->dirty_ = true;
             projectDirectory_->markEdited(DataFile(sceneData_->filePath_));
         }

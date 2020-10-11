@@ -7,6 +7,7 @@
 
 GameEditor::GameEditor(const std::shared_ptr<GameEngine::Internal::Environment> &environment) : Game(environment)
 {
+    dirty_ = false;
     environment->registerComponent("GameEditorComponent", new GameEngine::ComponentTBuilder<GameEditorComponent>());
 }
 
@@ -103,6 +104,16 @@ void GameEditor::init()
     linkSceneDataWithCurrentScene();
 }
 
+void GameEditor::setDirty(bool value)
+{
+    dirty_ = value;
+}
+
+bool GameEditor::isDirty() const
+{
+    return dirty_;
+}
+
 GameEngine::PropertySetBase *GameEditorComponent::getProperties() const
 {
     return new GameEngine::PropertySet<GameEditorComponent>();
@@ -172,5 +183,8 @@ void GameEditorComponent::onEvent(const GameEngine::Subject<GameEngine::GameObje
             case GameEngine::GameObjectEvent::TransformChanged:
                 break;
         }
+
+        auto gameEditor = dynamic_cast<GameEditor*>(gameObject()->game());
+        gameEditor->setDirty(true);
     }
 }
