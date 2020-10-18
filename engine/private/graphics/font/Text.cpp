@@ -60,6 +60,7 @@ namespace Internal {
         shader->setAttribute(Shader::Attributes::Indices, ibo);
 
         glBindVertexArray(VAO);
+        CheckGlError();
 
         for(const CharDef &charDef : textDef_.characters)
         {

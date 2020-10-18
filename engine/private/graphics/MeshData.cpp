@@ -16,6 +16,7 @@ namespace GameEngine {
 
             //  Set vertex data
             glBindVertexArray(VAO);
+            CheckGlError();
 
             //Create VBO
             glGenBuffers(1, &vbo);
@@ -47,10 +48,14 @@ namespace GameEngine {
             glDeleteVertexArrays(1, &VAO);
             verticesAndUV_.clear();
             indices_.clear();
+            VAO = -1;
+            ibo = -1;
+            vbo = -1;
         }
 
         void MeshData::draw(const std::shared_ptr<Shader> &shader) const {
             glBindVertexArray(VAO);
+            CheckGlError();
 
             shader->setAttribute(Shader::Attributes::Vertex, vbo);
             shader->setAttribute(Shader::Attributes::UV, vbo);
