@@ -17,6 +17,7 @@ TEST(Game, start)
         game->shutdown();
     });
     EXPECT_NO_THROW(
+        game->init();
         while(game->isRunning())
         {
             game->update();
@@ -40,6 +41,10 @@ TEST(Game, renderSprite)
 
     geGameRef game = geGame::createInstance(environment);
 
+    EXPECT_NO_THROW(
+    game->init();
+    );
+
     std::thread t([&](){
         auto spriteComponent = game->findObjectByNameInCurrentScene(prototype)->getComponent<SpriteComponent>();
 
@@ -47,6 +52,7 @@ TEST(Game, renderSprite)
         std::this_thread::sleep_for(std::chrono::milliseconds(2000));
         game->shutdown();
     });
+
     EXPECT_NO_THROW(
         while(game->isRunning())
         {
@@ -67,6 +73,10 @@ TEST(Game, playSound)
     environment->addPrototype(prototype, "audioComponentLoadTest.yaml");
 
     geGameRef game = geGame::createInstance(environment);
+
+    EXPECT_NO_THROW(
+        game->init();
+    );
 
     std::thread t([&](){
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
@@ -102,6 +112,7 @@ TEST(Game, titleChange)
         game->shutdown();
     });
     EXPECT_NO_THROW(
+        game->init();
         while(game->isRunning())
         {
             game->update();

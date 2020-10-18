@@ -1,3 +1,4 @@
+name: Test scene
 prototypes:
   - prototype: ObjectTest
     name: ObjectTest
