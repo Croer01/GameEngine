@@ -37,8 +37,6 @@ namespace GameEngine {
 
         virtual void preInit();
 
-        void init() override;
-
         int getWidth() const;
 
         int getHeight() const;

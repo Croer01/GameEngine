@@ -13,10 +13,7 @@ namespace GameEngine {
     void SpriteComponent::preInit()
     {
         graphicsEngine_ = dynamic_cast<Internal::Game*>(gameObject()->game())->graphicsEngine();
-        updateGraphicRef();
-    }
 
-    void SpriteComponent::init() {
         //TODO: implement Layers or improve how to register sprites
         updateGraphicRef();
         // the preInit ensure that the graphic is already created at this point

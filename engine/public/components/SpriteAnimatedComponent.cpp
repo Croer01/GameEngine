@@ -13,10 +13,7 @@ namespace GameEngine {
     void SpriteAnimatedComponent::preInit()
     {
         graphicsEngine_ = dynamic_cast<Internal::Game*>(gameObject()->game())->graphicsEngine();
-        updateGraphicRef();
-    }
 
-    void SpriteAnimatedComponent::init() {
         //TODO: implement Layers or improve how to register sprites
         updateGraphicRef();
         // the preInit ensure that the graphic is already created at this point
@@ -219,19 +216,22 @@ void SpriteAnimatedComponent::updateGraphicRef() {
         return;
 
     if(graphic_)
-            graphicsEngine_->unregisterGraphic(graphic_);
+        graphicsEngine_->unregisterGraphic(graphic_);
 
-        if(filePath_.empty()){
-            graphicLoaded_.reset();
-            graphic_.reset();
-        } else {
-            graphicLoaded_ = std::make_shared<Internal::GraphicSprite>(filePath_);
-            graphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
-            graphic_->setGrid(columns_, rows_);
-            resetAnimation();
-            graphicsEngine_->registerGraphic(graphic_);
-        }
+    if(filePath_.empty())
+    {
+        graphicLoaded_.reset();
+        graphic_.reset();
     }
+    else
+    {
+        graphicLoaded_ = std::make_shared<Internal::GraphicSprite>(filePath_);
+        graphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
+        graphic_->setGrid(columns_, rows_);
+        resetAnimation();
+        graphicsEngine_->registerGraphic(graphic_);
+    }
+}
 
 void SpriteAnimatedComponent::color(const geColor &value)
 {

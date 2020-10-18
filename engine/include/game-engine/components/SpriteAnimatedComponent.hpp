@@ -46,8 +46,6 @@ namespace GameEngine {
 
         virtual void preInit();
 
-        void init() override;
-
         void Update(float elapsedTime) override;
 
         int getWidth() const;
