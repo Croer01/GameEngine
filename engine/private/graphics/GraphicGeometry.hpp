@@ -24,7 +24,7 @@ namespace GameEngine {
         public:
             explicit GraphicGeometry(const std::vector<Vec2D> &points);
             virtual ~GraphicGeometry();
-
+            virtual void initializeGl();
             void draw(const std::shared_ptr<Shader> &shader) const override;
 
             int getWidth() const override;

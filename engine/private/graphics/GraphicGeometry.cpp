@@ -10,25 +10,27 @@ namespace GameEngine {
     namespace Internal {
         GraphicGeometry::GraphicGeometry(const std::vector<GameEngine::Vec2D> &points)
                 : points_(points) {
-
-            const auto minMaxX = std::minmax_element(points.begin(), points.end(),[](const Vec2D &a, const Vec2D &b){
+            const auto minMaxX = std::minmax_element(points_.begin(), points_.end(),[](const Vec2D &a, const Vec2D &b){
                 return a.x < b.x;
             });
 
-            const auto minMaxY = std::minmax_element(points.begin(), points.end(),[](const Vec2D &a, const Vec2D &b){
+            const auto minMaxY = std::minmax_element(points_.begin(), points_.end(),[](const Vec2D &a, const Vec2D &b){
                 return a.y < b.y;
             });
             width_ = std::ceil(std::abs((*minMaxX.first).x) + std::abs((*minMaxX.second).x));
             height_ = std::ceil(std::abs((*minMaxY.first).y) + std::abs((*minMaxY.second).y));
-
-            generateMesh();
-            GLubyte white[4] = {255, 255, 255, 255};
-            glGenTextures(1, &textureID_);
-            glBindTexture(GL_TEXTURE_2D, textureID_);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &white);
         }
 
-        void GraphicGeometry::generateMesh() {
+    void GraphicGeometry::initializeGl()
+    {
+        generateMesh();
+        GLubyte white[4] = {255, 255, 255, 255};
+        glGenTextures(1, &textureID_);
+        glBindTexture(GL_TEXTURE_2D, textureID_);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &white);
+    }
+
+    void GraphicGeometry::generateMesh() {
 
             //generate vertices and uvs
             std::vector<float> vertices; // vertex + uv

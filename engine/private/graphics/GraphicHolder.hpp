@@ -45,6 +45,8 @@ namespace Internal {
     public:
         explicit GraphicHolder(const std::shared_ptr<Graphic> &graphic);
 
+        void initializeGl();
+
         void draw(const std::shared_ptr<Shader> &shader);
 
         void setModelTransform(const Vec2D &position, float rotation, const Vec2D &scale);

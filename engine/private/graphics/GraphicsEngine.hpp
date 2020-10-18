@@ -8,6 +8,7 @@
 
 #include <vector>
 #include <memory>
+#include <mutex>
 #include <game-engine/geEnvironment.hpp>
 #include "GraphicHolder.hpp"
 #include "Shader.h"
@@ -21,6 +22,7 @@ namespace GameEngine {
 namespace Internal {
     class GraphicsEngine {
         std::vector<std::shared_ptr<GraphicHolder>> graphics_;
+        std::vector<std::shared_ptr<GraphicHolder>> graphicsToInitialize_;
         std::vector<std::shared_ptr<Text>> texts_;
         std::shared_ptr<Shader> spriteShader_;
         std::shared_ptr<Shader> textShader_;
@@ -28,6 +30,9 @@ namespace Internal {
         bool pixelPerfect_;
         std::unique_ptr<FBO> fbo_;
         Screen *screen_;
+        std::mutex graphicsToInitMutex_;
+
+        void eraseGraphicFromList(std::vector<std::shared_ptr<GraphicHolder>> &graphics, const std::shared_ptr<GraphicHolder> &graphic);
     public:
         ~GraphicsEngine();
 

@@ -172,6 +172,17 @@ namespace Internal {
 
     void GraphicsEngine::draw(const std::shared_ptr<Camera> &cam)
     {
+        {
+            std::unique_lock<std::mutex> lock(graphicsToInitMutex_);
+
+            for (auto graphic : graphicsToInitialize_)
+            {
+                graphic->initializeGl();
+                graphics_.push_back(graphic);
+            }
+            graphicsToInitialize_.clear();
+        }
+
         if(fbo_)
             fbo_->bind();
 
@@ -242,28 +253,39 @@ namespace Internal {
     }
 
     void GraphicsEngine::registerGraphic(const std::shared_ptr<GraphicHolder> &graphic) {
-        graphics_.push_back(graphic);
+        std::unique_lock<std::mutex> lock(graphicsToInitMutex_);
+        graphicsToInitialize_.push_back(graphic);
         graphic->setEngine(this);
     }
 
     void GraphicsEngine::unregisterGraphic(const std::shared_ptr<GraphicHolder> &graphic) {
-        if(graphics_.empty())
-            return;
+        std::unique_lock<std::mutex> lock(graphicsToInitMutex_);
+        eraseGraphicFromList(graphicsToInitialize_, graphic);
+        eraseGraphicFromList(graphics_, graphic);
 
-        auto it = std::find(graphics_.begin(), graphics_.end(), graphic);
-        if (it != graphics_.end()) {
-            (*it)->setEngine(nullptr);
-            graphics_.erase(it);
-        }
     }
 
-    void GraphicsEngine::registerText(const std::shared_ptr<Text> &textGraphic) {
+void GraphicsEngine::eraseGraphicFromList(std::vector<std::shared_ptr<GraphicHolder>> &graphics, const std::shared_ptr<GraphicHolder> &graphic)
+{
+    if(graphics.empty())
+        return;
+
+    auto it = std::find(graphics.begin(), graphics.end(), graphic);
+    if (it != graphics.end()) {
+        (*it)->setEngine(nullptr);
+        graphics.erase(it);
+    }
+}
+
+void GraphicsEngine::registerText(const std::shared_ptr<Text> &textGraphic) {
+        std::unique_lock<std::mutex> lock(graphicsToInitMutex_);
         texts_.push_back(textGraphic);
         textGraphic->setEngine(this);
     }
 
 
     void GraphicsEngine::unregisterText(const std::shared_ptr<Text> &textGraphic) {
+        std::unique_lock<std::mutex> lock(graphicsToInitMutex_);
         if(texts_.empty())
             return;
 

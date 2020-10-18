@@ -16,6 +16,8 @@ namespace Internal {
     public:
         virtual ~Graphic(){};
 
+        virtual void initializeGl() = 0;
+
         virtual void draw(const std::shared_ptr<Shader> &shader) const = 0;
 
         virtual int getWidth() const = 0;
