@@ -43,12 +43,7 @@ namespace Internal {
         for(auto i=0; i < length; i++){
             gameObjects_[i]->Update(elapsedTime);
         }
-
-        // process all the objects destroyed in this frame
-        gameObjects_.erase(std::remove_if(gameObjects_.begin(), gameObjects_.end(),
-                                          [](const std::shared_ptr<GameObject>& go) {
-                return go->isDestroyed();
-            }), gameObjects_.end());
+        removeDestroyedObjects();
     }
 
     void Scene::loadFile(geGame *game) {
@@ -136,6 +131,15 @@ geDataRef Scene::saveCurrentState() const
     data->setString("name", name_);
     data->yamlNode()["prototypes"] = prototypes;
     return data;
+}
+
+void Scene::removeDestroyedObjects()
+{
+    // process all the objects destroyed in this frame
+    gameObjects_.erase(std::remove_if(gameObjects_.begin(), gameObjects_.end(),
+                                      [](const std::shared_ptr<GameObject>& go) {
+                                          return go->isDestroyed();
+                                      }), gameObjects_.end());
 }
 
 }

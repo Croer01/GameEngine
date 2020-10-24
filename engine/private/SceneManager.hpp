@@ -45,6 +45,7 @@ namespace Internal {
         void bindGame(geGame *game);
         void unbindGame();
         geDataRef saveCurrentSceneState() const;
+        void removeDestroyedObjects();
     };
 }
 }

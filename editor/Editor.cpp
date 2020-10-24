@@ -316,20 +316,21 @@ void Editor::renderSceneInspector()
     {
         PrototypeReferenceRef newObject = std::make_shared<PrototypeReference>();
         std::stringstream ss;
-        ss << "Object" << sceneData_->objects_.size();
+        ss << "Object" << sceneData_->objectsSize();
         newObject->name_ = ss.str();
-        newObject->prototype_ = projectFileDataProvider_.getObjectData(currentFile)->name_;
-        sceneData_->objects_.push_back(newObject);
+        const ObjectDataRef &ptr = projectFileDataProvider_.getObjectData(currentFile);
+        newObject->prototype_ = ptr->name_;
+        sceneData_->addObject(newObject);
         dirty = true;
     }
 
     ImGui::Separator();
 
     auto objectToDeleteId = -1;
-    for (auto i = 0; i < sceneData_->objects_.size(); i++)
+    for (auto i = 0; i < sceneData_->objectsSize(); i++)
     {
         bool deleteObject = false;
-        if(renderSceneObjectNode(sceneData_->objects_[i], std::to_string(i), deleteObject))
+        if(renderSceneObjectNode(sceneData_->getObject(i), std::to_string(i), deleteObject))
         {
             dirty = true;
         }
@@ -340,7 +341,7 @@ void Editor::renderSceneInspector()
 
     if(objectToDeleteId != -1)
     {
-        sceneData_->objects_.erase(sceneData_->objects_.begin() + objectToDeleteId);
+        sceneData_->deleteObject(objectToDeleteId);
     }
 
     ImGui::End();

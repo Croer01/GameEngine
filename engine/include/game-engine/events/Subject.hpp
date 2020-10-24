@@ -20,11 +20,6 @@ namespace GameEngine {
     public:
         Subject() = default;
 
-        // disallow copying and assigning
-        Subject(const Subject &) = delete;
-
-        Subject &operator=(const Subject &) = delete;
-
         virtual ~Subject() {
             observers_.clear();
         }

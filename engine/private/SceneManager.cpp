@@ -89,7 +89,14 @@ namespace Internal {
 
 geDataRef SceneManager::saveCurrentSceneState() const
 {
+    assert(currentScene_);
     return currentScene_->saveCurrentState();
+}
+
+void SceneManager::removeDestroyedObjects()
+{
+    assert(currentScene_);
+    currentScene_->removeDestroyedObjects();
 }
 }
 }

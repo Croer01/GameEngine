@@ -12,18 +12,18 @@ class GameEditorComponent : public GameEngine::geComponentInstantiable<GameEdito
 {
     bool drag_;
     GameEngine::Vec2D lastMousePos_;
-    PrototypeReferenceRef data_;
+    PrototypeReference *data_;
 public:
     virtual GameEngine::PropertySetBase *getProperties() const;
     virtual void init();
     virtual void Update(float elapsedTime);
-    void linkObject(const PrototypeReferenceRef &data);
+    void linkObject(PrototypeReference *data);
     virtual void
     onEvent(const GameEngine::Subject<GameEngine::GameObjectEvent> &target, const GameEngine::GameObjectEvent &event,
             void *args);
 };
 
-class GameEditor : public GameEngine::Internal::Game
+class GameEditor : public GameEngine::Internal::Game, public GameEngine::Observer<SceneDataEvent>
 {
     std::vector<std::weak_ptr<GameEditorComponent>> components_;
     SceneDataRef sceneData_;
@@ -31,6 +31,7 @@ class GameEditor : public GameEngine::Internal::Game
     void addEditorComponent(const GameEngine::geGameObjectRef &object);
     void linkSceneDataWithCurrentScene();
 public:
+    virtual ~GameEditor();
     explicit GameEditor(const std::shared_ptr<GameEngine::Internal::Environment> &environment);
     GameEngine::geGameObjectRef createObject(const std::string &name) override;
     GameEngine::geGameObjectRef createFromPrototype(const std::string &prototype) override;
@@ -41,8 +42,7 @@ public:
 
     void setDirty(bool value);
     bool isDirty() const;
-
-    virtual ~GameEditor(){};
+    virtual void onEvent(const GameEngine::Subject<SceneDataEvent> &target, const SceneDataEvent &event, void *args);
 };
 
 

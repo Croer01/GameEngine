@@ -24,3 +24,37 @@ PrototypeReference::PrototypeReference()
 ColorData::ColorData() :
     rgb({1.f, 1.f, 1.f})
 {}
+
+void SceneData::addObject(const PrototypeReferenceRef &object)
+{
+    objects_.push_back(object);
+    notify(SceneDataEvent::ObjectAdded, object.get());
+}
+
+size_t SceneData::objectsSize() const
+{
+    return objects_.size();
+}
+
+PrototypeReferenceRef SceneData::getObject(int index) const
+{
+    assert(0 <= index && index <= objects_.size() - 1);
+    return objects_[index];
+}
+
+void SceneData::deleteObject(int index)
+{
+    auto object = *(objects_.begin() + index);
+    objects_.erase(objects_.begin() + index);
+    notify(SceneDataEvent::ObjectDeleted, object.get());
+}
+
+SceneData::const_iterator SceneData::getObjectsBegin() const
+{
+    return objects_.begin();
+}
+
+SceneData::const_iterator SceneData::getObjectsEnd() const
+{
+    return objects_.end();
+}

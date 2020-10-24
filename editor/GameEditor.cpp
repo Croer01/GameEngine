@@ -68,6 +68,8 @@ void GameEditor::update()
         if(auto c = component.lock())
             c->Update(elapsedTime);
     }
+
+    environment_->sceneManager()->removeDestroyedObjects();
 }
 
 void GameEditor::changeScene(const std::string &name)
@@ -84,11 +86,11 @@ void GameEditor::linkSceneDataWithCurrentScene()
         {
             assert(sceneData_);
             std::string name = comp->gameObject()->name();
-            auto it = std::find_if(sceneData_->objects_.begin(), sceneData_->objects_.end(),
+            auto it = std::find_if(sceneData_->getObjectsBegin(), sceneData_->getObjectsEnd(),
                                    [name](auto object) { return object->name_ == name; });
-            if(it != sceneData_->objects_.end())
+            if(it != sceneData_->getObjectsEnd())
             {
-                comp->linkObject(*it);
+                comp->linkObject(it->get());
             }
         }
     }
@@ -96,6 +98,7 @@ void GameEditor::linkSceneDataWithCurrentScene()
 void GameEditor::linkSceneFromEditor(const SceneDataRef &scene)
 {
     sceneData_ = scene;
+    sceneData_->registerObserver(this);
 }
 
 void GameEditor::init()
@@ -112,6 +115,41 @@ void GameEditor::setDirty(bool value)
 bool GameEditor::isDirty() const
 {
     return dirty_;
+}
+
+GameEditor::~GameEditor()
+{
+    if(sceneData_)
+        sceneData_->unregisterObserver(this);
+}
+
+void GameEditor::onEvent(const GameEngine::Subject<SceneDataEvent> &target, const SceneDataEvent &event, void *args)
+{
+    if(event == SceneDataEvent::ObjectAdded)
+    {
+        auto prototypeRef = static_cast<PrototypeReference*>(args);
+        const GameEngine::geGameObjectRef &object = createFromPrototype(prototypeRef->prototype_);
+        object->name(prototypeRef->name_);
+        object->position(GameEngine::Vec2D(prototypeRef->position_.xy[0],prototypeRef->position_.xy[1]));
+        object->scale(GameEngine::Vec2D(prototypeRef->scale_.xy[0],prototypeRef->scale_.xy[1]));
+        object->rotation(prototypeRef->rotation_);
+
+        if(environment_->sceneManager()->isSceneLoaded())
+        {
+            environment_->sceneManager()->addObjectIntoCurrentScene(std::dynamic_pointer_cast<GameEngine::Internal::GameObject>(object));
+            if(auto comp = object->getComponent<GameEditorComponent>().lock())
+            {
+                comp->linkObject(prototypeRef);
+            }
+        }
+    }
+    else if(event == SceneDataEvent::ObjectDeleted)
+    {
+        auto prototypeRef = static_cast<PrototypeReference*>(args);
+        const GameEngine::geGameObjectRef &object = findObjectByNameInCurrentScene(prototypeRef->name_);
+        assert(object);
+        object->destroy();
+    }
 }
 
 GameEngine::PropertySetBase *GameEditorComponent::getProperties() const
@@ -155,7 +193,7 @@ void GameEditorComponent::init()
     gameObject()->registerObserver(this);
 }
 
-void GameEditorComponent::linkObject(const PrototypeReferenceRef &data)
+void GameEditorComponent::linkObject(PrototypeReference *data)
 {
     data_ = data;
 }

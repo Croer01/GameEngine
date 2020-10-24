@@ -42,6 +42,8 @@ namespace Internal {
         std::shared_ptr<GameEngine::geCamera> cam() const;
 
         geDataRef saveCurrentState() const;
+
+        void removeDestroyedObjects();
     };
 }
 }

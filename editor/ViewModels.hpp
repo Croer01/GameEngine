@@ -13,6 +13,7 @@
 #include <yaml-cpp/yaml.h>
 #include <game-engine/api.hpp>
 #include <boost/filesystem/path.hpp>
+#include <game-engine/events/Subject.hpp>
 #include "GameComponentsProvider.hpp"
 #include "DataFile.h"
 
@@ -202,14 +203,32 @@ public:
     float rotation_;
 };
 
+enum class SceneDataEvent
+{
+    ObjectAdded,
+    ObjectDeleted
+};
+
 class SceneData;
 typedef std::shared_ptr<SceneData> SceneDataRef;
-class SceneData
+class SceneData : public GameEngine::Subject<SceneDataEvent>
 {
-public:
-    std::string name_;
     std::vector<PrototypeReferenceRef> objects_;
+
+public:
+    typedef std::vector<PrototypeReferenceRef>::const_iterator const_iterator;
+
+    virtual ~SceneData(){}
+    std::string name_;
     std::string filePath_;
+    void addObject(const PrototypeReferenceRef &object);
+    size_t objectsSize() const;
+    PrototypeReferenceRef getObject(int index) const;
+    void deleteObject(int index);
+
+    const_iterator getObjectsBegin() const;
+    const_iterator getObjectsEnd() const;
+
 };
 
 class PhysicsCategory;
@@ -554,8 +573,10 @@ struct convert<SceneData> {
         node["name"] = rhs.name_;
         Node objectsNode;
 
-        for(const PrototypeReferenceRef &object : rhs.objects_){
-            objectsNode.push_back(*object.get());
+
+        for(auto i = 0; i < rhs.objectsSize(); i++)
+        {
+            objectsNode.push_back(*rhs.getObject(i).get());
         }
 
         if(objectsNode.size())
@@ -568,10 +589,11 @@ struct convert<SceneData> {
         rhs.name_ = node["name"].as<std::string>();
         const Node &objectsNode = node["prototypes"];
         if(objectsNode)
+
         for(auto i = 0; i < objectsNode.size();i++)
         {
             auto object = objectsNode[i].as<PrototypeReference>();
-            rhs.objects_.push_back(std::make_shared<PrototypeReference>(object));
+            rhs.addObject(std::make_shared<PrototypeReference>(object));
         }
         // TODO: load objects
         return true;
