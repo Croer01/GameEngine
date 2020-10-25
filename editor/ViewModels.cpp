@@ -21,6 +21,39 @@ PrototypeReference::PrototypeReference()
     rotation_ = 0;
 }
 
+Vector2DData PrototypeReference::getPosition() const
+{
+    return position_;
+}
+
+void PrototypeReference::setPosition(const Vector2DData &position)
+{
+    position_ = position;
+    notify(PrototypeReferenceEvent::PositionChanged);
+}
+
+Vector2DData PrototypeReference::getScale() const
+{
+    return scale_;
+}
+
+void PrototypeReference::setScale(const Vector2DData &scale)
+{
+    scale_ = scale;
+    notify(PrototypeReferenceEvent::ScaleChanged);
+}
+
+float PrototypeReference::getRotation() const
+{
+    return rotation_;
+}
+
+void PrototypeReference::setRotation(float rotation)
+{
+    rotation_ = rotation;
+    notify(PrototypeReferenceEvent::RotationChanged);
+}
+
 ColorData::ColorData() :
     rgb({1.f, 1.f, 1.f})
 {}

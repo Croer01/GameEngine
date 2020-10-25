@@ -8,18 +8,24 @@
 #include "../engine/private/Game.hpp"
 #include "ViewModels.hpp"
 
-class GameEditorComponent : public GameEngine::geComponentInstantiable<GameEditorComponent>, public GameEngine::Observer<GameEngine::GameObjectEvent>
+class GameEditorComponent : public GameEngine::geComponentInstantiable<GameEditorComponent>,
+                            public GameEngine::Observer<GameEngine::GameObjectEvent>,
+                            public GameEngine::Observer<PrototypeReferenceEvent>
 {
     bool drag_;
     GameEngine::Vec2D lastMousePos_;
     PrototypeReference *data_;
 public:
+    virtual ~GameEditorComponent();
     virtual GameEngine::PropertySetBase *getProperties() const;
     virtual void init();
     virtual void Update(float elapsedTime);
     void linkObject(PrototypeReference *data);
     virtual void
     onEvent(const GameEngine::Subject<GameEngine::GameObjectEvent> &target, const GameEngine::GameObjectEvent &event,
+            void *args);
+    virtual void
+    onEvent(const GameEngine::Subject<PrototypeReferenceEvent> &target, const PrototypeReferenceEvent &event,
             void *args);
 };
 

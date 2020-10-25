@@ -130,9 +130,11 @@ void GameEditor::onEvent(const GameEngine::Subject<SceneDataEvent> &target, cons
         auto prototypeRef = static_cast<PrototypeReference*>(args);
         const GameEngine::geGameObjectRef &object = createFromPrototype(prototypeRef->prototype_);
         object->name(prototypeRef->name_);
-        object->position(GameEngine::Vec2D(prototypeRef->position_.xy[0],prototypeRef->position_.xy[1]));
-        object->scale(GameEngine::Vec2D(prototypeRef->scale_.xy[0],prototypeRef->scale_.xy[1]));
-        object->rotation(prototypeRef->rotation_);
+        Vector2DData position = prototypeRef->getPosition();
+        object->position(GameEngine::Vec2D(position.xy[0],position.xy[1]));
+        Vector2DData scale = prototypeRef->getScale();
+        object->scale(GameEngine::Vec2D(scale.xy[0],scale.xy[1]));
+        object->rotation(prototypeRef->getRotation());
 
         if(environment_->sceneManager()->isSceneLoaded())
         {
@@ -195,7 +197,10 @@ void GameEditorComponent::init()
 
 void GameEditorComponent::linkObject(PrototypeReference *data)
 {
+    if(data_)
+        data_->unregisterObserver(this);
     data_ = data;
+    data_->registerObserver(this);
 }
 
 void GameEditorComponent::onEvent(const GameEngine::Subject<GameEngine::GameObjectEvent> &target,
@@ -206,15 +211,23 @@ void GameEditorComponent::onEvent(const GameEngine::Subject<GameEngine::GameObje
         switch(event)
         {
             case GameEngine::GameObjectEvent::PositionChanged:
-                data_->position_.xy[0] = gameObject()->position().x;
-                data_->position_.xy[1] = gameObject()->position().y;
+            {
+                Vector2DData position;
+                position.xy[0] = gameObject()->position().x;
+                position.xy[1] = gameObject()->position().y;
+                data_->setPosition(position);
+            }
                 break;
             case GameEngine::GameObjectEvent::RotationChanged:
-                data_->rotation_ = gameObject()->rotation();
+                data_->setRotation(gameObject()->rotation());
                 break;
             case GameEngine::GameObjectEvent::ScaleChanged:
-                data_->scale_.xy[0] = gameObject()->scale().x;
-                data_->scale_.xy[1] = gameObject()->scale().y;
+            {
+                Vector2DData scale;
+                scale.xy[0] = gameObject()->scale().x;
+                scale.xy[1] = gameObject()->scale().y;
+                data_->setScale(scale);
+            }
                 break;
             case GameEngine::GameObjectEvent::ActiveChanged:
                 break;
@@ -224,5 +237,37 @@ void GameEditorComponent::onEvent(const GameEngine::Subject<GameEngine::GameObje
 
         auto gameEditor = dynamic_cast<GameEditor*>(gameObject()->game());
         gameEditor->setDirty(true);
+    }
+}
+
+GameEditorComponent::~GameEditorComponent()
+{
+    if(data_)
+        data_->unregisterObserver(this);
+}
+
+void GameEditorComponent::onEvent(const GameEngine::Subject<PrototypeReferenceEvent> &target,
+                                  const PrototypeReferenceEvent &event, void *args)
+{
+    assert(data_);
+    switch(event)
+    {
+        case PrototypeReferenceEvent::PositionChanged:
+        {
+            const Vector2DData &dataPos = data_->getPosition();
+            GameEngine::Vec2D position(dataPos.xy[0], dataPos.xy[1]);
+            gameObject()->position(position);
+        }
+            break;
+        case PrototypeReferenceEvent::RotationChanged:
+            gameObject()->rotation(data_->getRotation());
+            break;
+        case PrototypeReferenceEvent::ScaleChanged:
+        {
+            const Vector2DData &dataScale = data_->getScale();
+            GameEngine::Vec2D scale(dataScale.xy[0], dataScale.xy[1]);
+            gameObject()->scale(scale);
+        }
+            break;
     }
 }

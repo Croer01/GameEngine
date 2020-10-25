@@ -190,17 +190,30 @@ public:
     std::vector<ComponentDataRef> components_;
 };
 
+enum class PrototypeReferenceEvent
+{
+    PositionChanged,
+    RotationChanged,
+    ScaleChanged
+};
+
 class PrototypeReference;
 typedef std::shared_ptr<PrototypeReference> PrototypeReferenceRef;
-class PrototypeReference
+class PrototypeReference : public GameEngine::Subject<PrototypeReferenceEvent>
 {
-public:
-    PrototypeReference();
-    std::string name_;
-    std::string prototype_;
     Vector2DData position_;
     Vector2DData scale_;
     float rotation_;
+public:
+    std::string name_;
+    std::string prototype_;
+    PrototypeReference();
+    Vector2DData getPosition() const;
+    void setPosition(const Vector2DData &position);
+    Vector2DData getScale() const;
+    void setScale(const Vector2DData &scale);
+    float getRotation() const;
+    void setRotation(float rotation);
 };
 
 enum class SceneDataEvent
@@ -527,9 +540,9 @@ struct convert<PrototypeReference> {
         Node node;
         node["prototype"] = rhs.prototype_;
         node["name"] = rhs.name_;
-        node["position"] = rhs.position_;
-        node["rotation"] = rhs.rotation_;
-        node["scale"] = rhs.scale_;
+        node["position"] = rhs.getPosition();
+        node["rotation"] = rhs.getRotation();
+        node["scale"] = rhs.getScale();
 
         return node;
     }
@@ -537,12 +550,12 @@ struct convert<PrototypeReference> {
     static bool decode(const Node &node, PrototypeReference &rhs) {
         rhs.prototype_ = node["prototype"].as<std::string>();
         rhs.name_ = node["name"].as<std::string>("");
-        rhs.position_ = node["position"].as<Vector2DData>(Vector2DData());
-        rhs.rotation_ = node["rotation"].as<float>(0.f);
+        rhs.setPosition(node["position"].as<Vector2DData>(Vector2DData()));
+        rhs.setRotation(node["rotation"].as<float>(0.f));
         Vector2DData scale;
         scale.xy[0] = 1;
         scale.xy[1] = 1;
-        rhs.scale_ = node["scale"].as<Vector2DData>(scale);
+        rhs.setScale(node["scale"].as<Vector2DData>(scale));
 
         return true;
     }

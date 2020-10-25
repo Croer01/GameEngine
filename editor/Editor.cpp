@@ -123,12 +123,24 @@ bool Editor::renderSceneObjectNode(const PrototypeReferenceRef &object, const st
 
         if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            if(ImGui::DragFloat2("position", object->position_.xy.data(),.1f))
+            Vector2DData position = object->getPosition();
+            if(ImGui::DragFloat2("position", position.xy.data(), .1f))
+            {
+                object->setPosition(position);
                 edited = true;
-            if(ImGui::DragFloat2("size", object->scale_.xy.data(), .1f, 1.f, std::numeric_limits<float>::max()))
+            }
+            Vector2DData scale = object->getScale();
+            if(ImGui::DragFloat2("size", scale.xy.data(), .1f, 1.f, std::numeric_limits<float>::max()))
+            {
+                object->setScale(scale);
                 edited = true;
-            if(ImGui::DragFloat("rotation", &object->rotation_,.1f))
+            }
+            float rotation = object->getRotation();
+            if(ImGui::DragFloat("rotation", &rotation,.1f))
+            {
+                object->setRotation(rotation);
                 edited = true;
+            }
         }
 
         ImGui::TreePop();
