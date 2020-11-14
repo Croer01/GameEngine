@@ -19,6 +19,7 @@ namespace GameEngine {
     public:
         virtual ~ComponentBuilder() = default;
 
+        virtual geComponentRef Create() = 0;
         virtual geComponentRef Create(const geData &data) = 0;
         virtual std::shared_ptr<PropertySetBase> createProperties() = 0;
     };
@@ -26,6 +27,13 @@ namespace GameEngine {
     template<typename ComponentType>
     class ComponentTBuilder : public ComponentBuilder {
     public:
+        virtual geComponentRef Create() {
+            const std::shared_ptr<ComponentType> &instance = std::make_shared<ComponentType>();
+            PropertySetBase* properties = instance->getProperties();
+            properties->resetValuesToDefault(instance);
+            return instance;
+        };
+
         virtual geComponentRef Create(const geData &data) {
             const std::shared_ptr<ComponentType> &instance = std::make_shared<ComponentType>();
             instance->copyProperties<ComponentType>(data);

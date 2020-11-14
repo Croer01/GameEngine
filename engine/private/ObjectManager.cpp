@@ -12,6 +12,14 @@ namespace Internal {
         componentFactory_.AddBuilder(idType, builder);
     }
 
+    geComponentRef ObjectManager::createComponent(const std::string &idType) {
+        try {
+            return componentFactory_.Create(idType);
+        }
+        catch (const std::exception &e) {
+            throw std::runtime_error("error instantiating component " + idType + ". cause: " + e.what());
+        }
+    }
     geComponentRef ObjectManager::createComponent(const std::string &idType, const YAML::Node &data) {
         try {
             return componentFactory_.Create(idType, Data(data));

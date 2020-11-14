@@ -25,6 +25,7 @@ namespace Internal {
 
         void registerComponentBuilder(const std::string &idType, ComponentBuilder *builder);
 
+        geComponentRef createComponent(const std::string &idType);
         geComponentRef createComponent(const std::string &idType, const YAML::Node &data);
         std::shared_ptr<PropertySetBase> createProperties(const std::string &idType);
 

@@ -36,6 +36,15 @@ namespace Internal {
             builders_.erase(type);
         };
 
+        std::shared_ptr<ReturnType> Create(const IdType &type) {
+            auto it = builders_.find(type);
+
+            if (it == builders_.end())
+                throw std::runtime_error("builder doesn't exist");
+
+            return it->second->Create();
+        };
+
         std::shared_ptr<ReturnType> Create(const IdType &type, const Data &data) {
             auto it = builders_.find(type);
 

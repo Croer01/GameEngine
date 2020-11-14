@@ -63,6 +63,8 @@ namespace GameEngine {
             return totalSize;
         }
 
+        virtual void resetValuesToDefault(const std::shared_ptr<void> &target) const = 0;
+
         virtual void copy(const std::shared_ptr<const void> &original, const std::shared_ptr<void> &target) const = 0;
         virtual void copy(const geData &data, const std::shared_ptr<void> &target) const = 0;
     };
@@ -84,7 +86,18 @@ namespace GameEngine {
             properties_.emplace_back(dynamic_cast<PropertyBase *>(std::move(property)));
         };
 
+        virtual void resetValuesToDefault(const std::shared_ptr<void> &target) const
+        {
+            const std::shared_ptr<Class> &sharedPtr = std::static_pointer_cast<Class>(target);
 
+            if(parent_)
+                parent_->resetValuesToDefault(target);
+
+            for( int i = 0; i < properties_.size(); i++) {
+                const std::shared_ptr<PropertyTBase<Class>> property = std::dynamic_pointer_cast<PropertyTBase<Class>>(properties_[i]);
+                property->resetValueToDefault(sharedPtr);
+            }
+        }
 
         virtual void copy(const std::shared_ptr<const void> &original, const std::shared_ptr<void> &target) const
         {
