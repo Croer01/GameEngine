@@ -14,6 +14,4 @@ namespace GameEngine {
     geGameObject *geComponent::gameObject() const {
         return gameObject_;
     }
-
-    PropertySetBase *geComponent::instantiateProperties() { return nullptr;}
 }

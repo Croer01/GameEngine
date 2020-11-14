@@ -22,7 +22,6 @@ namespace GameEngine {
         GameEngine::geGameObject *gameObject_;
     protected:
         virtual void onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) {};
-        virtual PropertySetBase *instantiateProperties();
         virtual geComponentRef instantiate() const = 0;
     public:
         virtual ~geComponent(){};
