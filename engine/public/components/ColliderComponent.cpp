@@ -154,9 +154,8 @@ void ColliderComponent::onEvent(const Subject<Internal::ColliderEvent> &target, 
     Vec2D ColliderComponent::convertWorldToPhysicsPos(const Vec2D &worldPos) const {
         Vec2D result = worldPos + offset_ - offsetFromRender_;
 
-        float xOffset = size_.x / 2.f;
-        float yOffset = size_.y / 2.f;
-        result += Vec2D(xOffset, yOffset);
+        Vec2D scale = gameObject()? gameObject()->scale() : Vec2D(1.f, 1.f);
+        result += (size_ * scale) / 2.f;
 
         return result;
     }
@@ -164,11 +163,8 @@ void ColliderComponent::onEvent(const Subject<Internal::ColliderEvent> &target, 
     Vec2D ColliderComponent::convertPhysicsToWorldPos(const Vec2D &physicsPos) const {
         Vec2D result = physicsPos - offset_ + offsetFromRender_;
 
-
-        float xOffset = size_.x/2.f;
-        float yOffset = size_.y/2.f;
-        result -= Vec2D(xOffset, yOffset);
-
+        Vec2D scale = gameObject()? gameObject()->scale() : Vec2D(1.f, 1.f);
+        result -= (size_ * scale) / 2.f;
 
         return result;
     }
