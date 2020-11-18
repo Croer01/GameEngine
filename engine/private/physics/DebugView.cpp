@@ -108,6 +108,7 @@ void DebugView::DrawCircleInternal(const b2Vec2 &center, float32 radius, const b
                 cam_->getViewMatrix();
         transform = glm::scale(transform , glm::vec3(PhysicsEngine::getScalePixelsToMeter(), PhysicsEngine::getScalePixelsToMeter(), 1));
         shader_->bind();
+        shader_->setElementMode(GL_LINE_LOOP);
         shader_->setUniform("transform", transform);
     }
 
@@ -142,7 +143,6 @@ void DebugView::DrawCircleInternal(const b2Vec2 &center, float32 radius, const b
         }
         )EOF");
         shader_->build();
-        shader_->setElementMode(GL_LINE_LOOP);
         CheckGlError();
     }
 

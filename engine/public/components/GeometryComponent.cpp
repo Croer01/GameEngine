@@ -17,10 +17,6 @@ namespace GameEngine {
         //TODO: implement Layers or improve how to register sprites
         updateGraphicRef();
         // the preInit ensure that the graphic is already created at this point
-        visible(visible_);
-        anchor(anchor_);
-        color(color_);
-        graphic_->setModelTransform(gameObject()->position(), gameObject()->rotation(), gameObject()->scale());
         gameObject()->registerObserver(this);
     }
 
@@ -38,6 +34,11 @@ namespace GameEngine {
             graphicLoaded_ = std::make_shared<Internal::GraphicGeometry>(path_);
             graphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
             graphicsEngine_->registerGraphic(graphic_);
+            visible(visible_);
+            anchor(anchor_);
+            color(color_);
+            fill(fill_);
+            graphic_->setModelTransform(gameObject()->position(), gameObject()->rotation(), gameObject()->scale());
         }
     }
 
@@ -87,6 +88,7 @@ namespace GameEngine {
 
     void GeometryComponent::path(const std::vector<Vec2D> &pathArray) {
         path_ = pathArray;
+        updateGraphicRef();
     }
 
     std::vector<Vec2D> GeometryComponent::path() const {
@@ -166,6 +168,13 @@ PropertySetBase *GeometryComponent::getProperties() const
             &GeometryComponent::color,
             &GeometryComponent::color,
             geColor(1.f)));
+
+    properties->add(new Property<GeometryComponent, bool>(
+        "fill",
+        &GeometryComponent::fill,
+        &GeometryComponent::fill,
+        true));
+
     return properties;
 
 }
@@ -180,6 +189,16 @@ void GeometryComponent::color(const geColor &value)
 geColor GeometryComponent::color() const
 {
     return color_;
+}
+
+void GeometryComponent::fill(const bool &value) {
+    fill_ = value;
+    if(graphic_)
+        graphicLoaded_->drawFillGeometry(value);
+}
+
+bool GeometryComponent::fill() const {
+    return fill_;
 }
 }
 

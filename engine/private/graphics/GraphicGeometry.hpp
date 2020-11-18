@@ -19,6 +19,7 @@ namespace GameEngine {
             int width_;
             int height_;
             GLuint textureID_;
+            bool fillGeometry_;
 
             void generateMesh();
         public:
@@ -30,6 +31,7 @@ namespace GameEngine {
             int getWidth() const override;
 
             int getHeight() const override;
+            void drawFillGeometry(bool fill);
         };
     }
 }

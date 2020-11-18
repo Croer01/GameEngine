@@ -19,6 +19,7 @@ namespace GameEngine {
             });
             width_ = std::ceil(std::abs((*minMaxX.first).x) + std::abs((*minMaxX.second).x));
             height_ = std::ceil(std::abs((*minMaxY.first).y) + std::abs((*minMaxY.second).y));
+            fillGeometry_ = true;
         }
 
     void GraphicGeometry::initializeGl()
@@ -64,7 +65,15 @@ namespace GameEngine {
         void GraphicGeometry::draw(const std::shared_ptr<Shader> &shader) const {
             glBindTexture(GL_TEXTURE_2D, textureID_);
             mesh_->draw(shader);
-            shader->draw();
+            if(!fillGeometry_)
+            {
+                shader->setElementMode(GL_LINE_LOOP);
+                shader->draw();
+                shader->setElementMode(GL_TRIANGLES);
+            }
+            else
+                shader->draw();
+
             CheckGlError();
         }
 
@@ -78,6 +87,11 @@ namespace GameEngine {
 
         GraphicGeometry::~GraphicGeometry() {
             glDeleteTextures(1, &textureID_);
+        }
+
+        void GraphicGeometry::drawFillGeometry(bool fill)
+        {
+            fillGeometry_ = fill;
         }
     }
 }

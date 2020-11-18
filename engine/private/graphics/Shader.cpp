@@ -173,6 +173,7 @@ template<>
         glUseProgram(programId_);
         glBindTexture(GL_TEXTURE_2D, dummyTextureID_);
         setUniform("Color", glm::vec4(1, 1, 1, 1));
+        mode_ = GL_TRIANGLES;
         CheckGlError();
     }
 
@@ -196,7 +197,7 @@ template<>
 
         CheckGlError();
         //set indices
-        if (attributes.count(Attributes::Indices)) {
+        if (attributes.count(Attributes::Indices) && mode_ == GL_TRIANGLES) {
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, attributes.at(Attributes::Indices));
             CheckGlError();
 
@@ -253,5 +254,10 @@ template<>
     void Shader::setElementMode(GLenum mode) {
         mode_ = mode;
     }
+
+GLenum Shader::getElementMode() const
+{
+    return mode_;
+}
 }
 }

@@ -43,6 +43,7 @@ namespace Internal {
         void setFragmentShader(const char *fragmentShader) { fragmentShaderSource_ = fragmentShader; };
 
         void setElementMode(GLenum mode);
+        GLenum getElementMode() const;
 
         void setAttribute(Shader::Attributes attribute, GLuint glPointer);
 

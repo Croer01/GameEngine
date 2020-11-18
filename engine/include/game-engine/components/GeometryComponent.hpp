@@ -13,13 +13,14 @@
 
 namespace GameEngine {
     class PUBLICAPI GeometryComponent : public geComponentInstantiable<GeometryComponent>, public Observer<GameObjectEvent> {
-        std::shared_ptr<Internal::Graphic> graphicLoaded_;
+        std::shared_ptr<Internal::GraphicGeometry> graphicLoaded_;
         std::shared_ptr<Internal::GraphicHolder> graphic_;
         Internal::GraphicsEngine *graphicsEngine_;
         std::vector<Vec2D> path_;
         std::string anchor_;
         geColor color_;
         bool visible_;
+        bool fill_;
         void updateGraphicRef();
 
     protected:
@@ -42,6 +43,10 @@ namespace GameEngine {
         void visible(const bool &visible);
 
         bool visible() const;
+
+        void fill(const bool &value);
+
+        bool fill() const;
 
         void path (const std::vector<Vec2D> &pathArray);
         std::vector<Vec2D> path () const;
