@@ -36,19 +36,19 @@ namespace {
         physicsEngine_ = dynamic_cast<Internal::Game*>(gameObject()->game())->physicsEngine();
         if(auto sprite = gameObject()->getComponent<SpriteComponent>().lock()) {
             size_ = GameEngine::Vec2D(sprite->getWidth(), sprite->getHeight());
-            glm::vec2 offset = Internal::parseGraphicPositionToVec2D(Internal::parseStringToGraphicAnchor(sprite->anchor()));
+            glm::vec2 offset = Internal::parseGraphicAnchorToVec2D(Internal::parseStringToGraphicAnchor(sprite->anchor()));
             offsetFromRender_ = Vec2D(offset.x, offset.y) * size_;
         }
 
         if(auto spriteAnimated = gameObject()->getComponent<SpriteAnimatedComponent>().lock()){
             size_ = GameEngine::Vec2D(spriteAnimated->getWidth(), spriteAnimated->getHeight());
-            glm::vec2 offset = Internal::parseGraphicPositionToVec2D(Internal::parseStringToGraphicAnchor(spriteAnimated->anchor()));
+            glm::vec2 offset = Internal::parseGraphicAnchorToVec2D(Internal::parseStringToGraphicAnchor(spriteAnimated->anchor()));
             offsetFromRender_ = Vec2D(offset.x, offset.y) * size_;
         }
 
         if(auto geometry = gameObject()->getComponent<GeometryComponent>().lock()){
             size_ = GameEngine::Vec2D(geometry->getWidth(), geometry->getHeight());
-            glm::vec2 offset = Internal::parseGraphicPositionToVec2D(Internal::parseStringToGraphicAnchor(geometry->anchor()));
+            glm::vec2 offset = Internal::parseGraphicAnchorToVec2D(Internal::parseStringToGraphicAnchor(geometry->anchor()));
             offsetFromRender_ = Vec2D(offset.x, offset.y) * size_;
         }
 

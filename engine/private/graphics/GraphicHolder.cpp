@@ -97,7 +97,7 @@ namespace Internal {
     }
 
     void GraphicHolder::setAnchor(GameEngine::Internal::GraphicAnchor anchor) {
-        anchor_ = parseGraphicPositionToVec2D(anchor);
+        anchor_ = parseGraphicAnchorToVec2D(anchor);
     }
 
 void GraphicHolder::setTintColor(geColor tint)
@@ -152,7 +152,7 @@ GraphicAnchor parseStringToGraphicAnchor(const std::string &anchorName) {
         return graphicAnchor;
     }
 
-    glm::vec2 parseGraphicPositionToVec2D(GameEngine::Internal::GraphicAnchor anchor) {
+    glm::vec2 parseGraphicAnchorToVec2D(GameEngine::Internal::GraphicAnchor anchor) {
         glm::vec2 position;
         switch (anchor){
             case GameEngine::Internal::GraphicAnchor::TOP_LEFT:

@@ -29,7 +29,7 @@ namespace Internal {
 
     GraphicAnchor parseStringToGraphicAnchor(const std::string &anchorName);
 
-    glm::vec2 parseGraphicPositionToVec2D(GameEngine::Internal::GraphicAnchor anchor);
+    glm::vec2 parseGraphicAnchorToVec2D(GameEngine::Internal::GraphicAnchor anchor);
 
     class GraphicHolder {
         bool active_;
