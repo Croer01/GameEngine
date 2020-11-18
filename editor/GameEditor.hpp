@@ -31,11 +31,14 @@ public:
 
 class GameEditor : public GameEngine::Internal::Game, public GameEngine::Observer<SceneDataEvent>
 {
+    GameEditorComponent *selectedObject_;
+    std::shared_ptr<GameEngine::Internal::GameObject> targetObject_;
     std::vector<std::weak_ptr<GameEditorComponent>> components_;
     SceneDataRef sceneData_;
     bool dirty_;
     void addEditorComponent(const GameEngine::geGameObjectRef &object);
     void linkSceneDataWithCurrentScene();
+    void createTargetSelectedObject();
 public:
     virtual ~GameEditor();
     explicit GameEditor(const std::shared_ptr<GameEngine::Internal::Environment> &environment);
@@ -49,6 +52,7 @@ public:
     void setDirty(bool value);
     bool isDirty() const;
     virtual void onEvent(const GameEngine::Subject<SceneDataEvent> &target, const SceneDataEvent &event, void *args);
+    void setSelected(GameEditorComponent *selectedObject);
 };
 
 

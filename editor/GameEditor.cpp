@@ -3,10 +3,16 @@
 //
 
 #include <iostream>
+#include <game-engine/components/GeometryComponent.hpp>
+#include <game-engine/components/SpriteComponent.hpp>
+#include <game-engine/components/SpriteAnimatedComponent.hpp>
 #include "GameEditor.hpp"
+
+using namespace GameEngine;
 
 GameEditor::GameEditor(const std::shared_ptr<GameEngine::Internal::Environment> &environment) : Game(environment)
 {
+    selectedObject_ = nullptr;
     dirty_ = false;
     environment->registerComponent("GameEditorComponent", new GameEngine::ComponentTBuilder<GameEditorComponent>());
 }
@@ -14,7 +20,6 @@ GameEditor::GameEditor(const std::shared_ptr<GameEngine::Internal::Environment> 
 GameEngine::geGameObjectRef GameEditor::createFromPrototype(const std::string &prototype)
 {
     const GameEngine::geGameObjectRef &obj = Game::createFromPrototype(prototype);
-    auto editorComponent = std::make_shared<GameEditorComponent>();
     addEditorComponent(obj);
     return obj;
 }
@@ -62,6 +67,12 @@ void GameEditor::update()
         elapsedTime = 1.f / 60.f;
 #endif
 
+    if(selectedObject_)
+        targetObject_->position(selectedObject_->gameObject()->position());
+
+    if(targetObject_)
+        targetObject_->Update(elapsedTime);
+
     // This is the unique components we want to update in the editor
     for (const auto& component : components_)
     {
@@ -105,6 +116,7 @@ void GameEditor::init()
 {
     Game::init();
     linkSceneDataWithCurrentScene();
+    createTargetSelectedObject();
 }
 
 void GameEditor::setDirty(bool value)
@@ -154,6 +166,55 @@ void GameEditor::onEvent(const GameEngine::Subject<SceneDataEvent> &target, cons
     }
 }
 
+void GameEditor::setSelected(GameEditorComponent *selectedObject)
+{
+    selectedObject_ = selectedObject;
+    targetObject_->position(selectedObject_->gameObject()->position());
+    targetObject_->active(true);
+    // default size will have the selection rectangle if the object doesn't have a graphic component
+    Vec2D size = Vec2D(10.f, 10.f);
+
+    if(auto sprite = selectedObject_->gameObject()->getComponent<SpriteComponent>().lock()) {
+        size = GameEngine::Vec2D(sprite->getWidth(), sprite->getHeight());
+    }
+    else if(auto spriteAnimated = selectedObject_->gameObject()->getComponent<SpriteAnimatedComponent>().lock()){
+        size = GameEngine::Vec2D(spriteAnimated->getWidth(), spriteAnimated->getHeight());
+    }
+    else if(auto geometry = selectedObject_->gameObject()->getComponent<GeometryComponent>().lock()){
+        size = GameEngine::Vec2D(geometry->getWidth(), geometry->getHeight());
+    }
+
+    std::vector<Vec2D> path;
+    path.emplace_back(0.f,0.f);
+    path.emplace_back(size.x,0.f);
+    path.emplace_back(size.x,size.y);
+    path.emplace_back(0.f,size.y);
+    targetObject_->getComponent<GeometryComponent>().lock()->path(path);
+}
+
+void GameEditor::createTargetSelectedObject()
+{
+    auto object = Game::createObject("TargetSelected");
+    targetObject_ = std::dynamic_pointer_cast<GameEngine::Internal::GameObject>(object);
+
+    auto component =  objectManager()->createComponent("GeometryComponent");
+    auto geomComponent =  std::dynamic_pointer_cast<GameEngine::GeometryComponent>(component);
+    std::vector<Vec2D> path;
+    path.emplace_back(0.f,0.f);
+    path.emplace_back(100.f,0.f);
+    path.emplace_back(100.f,100.f);
+    path.emplace_back(0.f,100.f);
+    geomComponent->path(path);
+    geomComponent->fill(false);
+    geomComponent->anchor("MIDDLE_CENTER");
+    geomComponent->color(geColor(0.f,1.f,0.f));
+
+    targetObject_->addComponent(component);
+
+    targetObject_->preInit();
+    targetObject_->Init();
+}
+
 GameEngine::PropertySetBase *GameEditorComponent::getProperties() const
 {
     return new GameEngine::PropertySet<GameEditorComponent>();
@@ -178,6 +239,8 @@ void GameEditorComponent::Update(float elapsedTime)
         if(input->isMouseButtonDown(GameEngine::MouseButton::LEFT))
         {
             drag_ = true;
+            auto gameEditor = dynamic_cast<GameEditor*>(gameObject()->game());
+            gameEditor->setSelected(this);
         }
     }
 
