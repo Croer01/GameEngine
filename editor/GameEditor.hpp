@@ -12,8 +12,6 @@ class GameEditorComponent : public GameEngine::geComponentInstantiable<GameEdito
                             public GameEngine::Observer<GameEngine::GameObjectEvent>,
                             public GameEngine::Observer<PrototypeReferenceEvent>
 {
-    bool drag_;
-    GameEngine::Vec2D lastMousePos_;
     PrototypeReference *data_;
 public:
     virtual ~GameEditorComponent();
@@ -31,6 +29,8 @@ public:
 
 class GameEditor : public GameEngine::Internal::Game, public GameEngine::Observer<SceneDataEvent>
 {
+    bool drag_;
+    GameEngine::Vec2D lastMousePos_;
     GameEditorComponent *selectedObject_;
     std::shared_ptr<GameEngine::Internal::GameObject> targetObject_;
     std::vector<std::weak_ptr<GameEditorComponent>> components_;
@@ -39,6 +39,7 @@ class GameEditor : public GameEngine::Internal::Game, public GameEngine::Observe
     void addEditorComponent(const GameEngine::geGameObjectRef &object);
     void linkSceneDataWithCurrentScene();
     void createTargetSelectedObject();
+    void moveSelectedObject();
 public:
     virtual ~GameEditor();
     explicit GameEditor(const std::shared_ptr<GameEngine::Internal::Environment> &environment);

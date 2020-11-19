@@ -68,10 +68,14 @@ void GameEditor::update()
 #endif
 
     if(selectedObject_)
+    {
+        moveSelectedObject();
         targetObject_->position(selectedObject_->gameObject()->position());
+    }
 
     if(targetObject_)
         targetObject_->Update(elapsedTime);
+
 
     // This is the unique components we want to update in the editor
     for (const auto& component : components_)
@@ -117,6 +121,7 @@ void GameEditor::init()
     Game::init();
     linkSceneDataWithCurrentScene();
     createTargetSelectedObject();
+    drag_ = false;
 }
 
 void GameEditor::setDirty(bool value)
@@ -215,6 +220,32 @@ void GameEditor::createTargetSelectedObject()
     targetObject_->Init();
 }
 
+void GameEditor::moveSelectedObject()
+{
+    geGameObject *gameObject =  selectedObject_->gameObject();
+    const GameEngine::Vec2D &mousePosition = input()->getMousePosition();
+    GameEngine::Vec2D mouseDistance = gameObject->position() - mousePosition;
+
+    if(drag_)
+    {
+        gameObject->position(gameObject->position() + mousePosition - lastMousePos_);
+    }
+    else if(std::abs(mouseDistance.sqrMagnitude()) <= 50 * 50)
+    {
+        if(input()->isMouseButtonDown(GameEngine::MouseButton::LEFT))
+        {
+            drag_ = true;
+        }
+    }
+
+    if(input()->isMouseButtonUp(GameEngine::MouseButton::LEFT))
+    {
+        drag_ = false;
+    }
+
+    lastMousePos_ = mousePosition;
+}
+
 GameEngine::PropertySetBase *GameEditorComponent::getProperties() const
 {
     return new GameEngine::PropertySet<GameEditorComponent>();
@@ -228,33 +259,18 @@ void GameEditorComponent::Update(float elapsedTime)
 
     GameEngine::Vec2D mouseDistance = gameObject()->position() - mousePosition;
 
-    //std::cout << gameObject()->name() << " " << mouseDistance.magnitude() << std::endl;
-
-    if(drag_)
-    {
-       gameObject()->position(gameObject()->position() + mousePosition - lastMousePos_);
-    }
-    else if(std::abs(mouseDistance.sqrMagnitude()) <= 50 * 50)
+    if(std::abs(mouseDistance.sqrMagnitude()) <= 50 * 50)
     {
         if(input->isMouseButtonDown(GameEngine::MouseButton::LEFT))
         {
-            drag_ = true;
             auto gameEditor = dynamic_cast<GameEditor*>(gameObject()->game());
             gameEditor->setSelected(this);
         }
     }
-
-    if(input->isMouseButtonUp(GameEngine::MouseButton::LEFT))
-    {
-        drag_ = false;
-    }
-
-    lastMousePos_ = mousePosition;
 }
 
 void GameEditorComponent::init()
 {
-    drag_ = false;
     gameObject()->registerObserver(this);
 }
 
