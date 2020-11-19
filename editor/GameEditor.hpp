@@ -13,12 +13,16 @@ class GameEditorComponent : public GameEngine::geComponentInstantiable<GameEdito
                             public GameEngine::Observer<PrototypeReferenceEvent>
 {
     PrototypeReference *data_;
+    GameEngine::Vec2D size_;
+    GameEngine::Vec2D offsetFromRender_;
 public:
     virtual ~GameEditorComponent();
     virtual GameEngine::PropertySetBase *getProperties() const;
     virtual void init();
     virtual void Update(float elapsedTime);
     void linkObject(PrototypeReference *data);
+    bool isPointInside(GameEngine::Vec2D point);
+    GameEngine::Vec2D getScaledSize() const;
     virtual void
     onEvent(const GameEngine::Subject<GameEngine::GameObjectEvent> &target, const GameEngine::GameObjectEvent &event,
             void *args);

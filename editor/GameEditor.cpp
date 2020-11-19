@@ -71,6 +71,14 @@ void GameEditor::update()
     {
         moveSelectedObject();
         targetObject_->position(selectedObject_->gameObject()->position());
+
+        Vec2D size = selectedObject_->getScaledSize();
+        std::vector<Vec2D> path;
+        path.emplace_back(0.f,0.f);
+        path.emplace_back(size.x,0.f);
+        path.emplace_back(size.x,size.y);
+        path.emplace_back(0.f,size.y);
+        targetObject_->getComponent<GeometryComponent>().lock()->path(path);
     }
 
     if(targetObject_)
@@ -176,24 +184,22 @@ void GameEditor::setSelected(GameEditorComponent *selectedObject)
     selectedObject_ = selectedObject;
     targetObject_->active(true);
     // default size will have the selection rectangle if the object doesn't have a graphic component
-    Vec2D size = Vec2D(10.f, 10.f);
     std::string anchor = "TOP_LEFT";
 
-    if(auto sprite = selectedObject_->gameObject()->getComponent<SpriteComponent>().lock()) {
-        size = GameEngine::Vec2D(sprite->getWidth(), sprite->getHeight());
+    if(auto sprite = selectedObject_->gameObject()->getComponent<SpriteComponent>().lock())
+    {
         anchor = sprite->anchor();
     }
-    else if(auto spriteAnimated = selectedObject_->gameObject()->getComponent<SpriteAnimatedComponent>().lock()){
-        size = GameEngine::Vec2D(spriteAnimated->getWidth(), spriteAnimated->getHeight());
+    else if(auto spriteAnimated = selectedObject_->gameObject()->getComponent<SpriteAnimatedComponent>().lock())
+    {
         anchor = spriteAnimated->anchor();
     }
-    else if(auto geometry = selectedObject_->gameObject()->getComponent<GeometryComponent>().lock()){
-        size = GameEngine::Vec2D(geometry->getWidth(), geometry->getHeight());
+    else if(auto geometry = selectedObject_->gameObject()->getComponent<GeometryComponent>().lock())
+    {
         anchor = geometry->anchor();
     }
 
-    size *= selectedObject_->gameObject()->scale();
-
+    Vec2D size = selectedObject_->getScaledSize();
     std::vector<Vec2D> path;
     path.emplace_back(0.f,0.f);
     path.emplace_back(size.x,0.f);
@@ -225,6 +231,7 @@ void GameEditor::createTargetSelectedObject()
 
     targetObject_->preInit();
     targetObject_->Init();
+    targetObject_->active(false);
 }
 
 void GameEditor::moveSelectedObject()
@@ -237,7 +244,7 @@ void GameEditor::moveSelectedObject()
     {
         gameObject->position(gameObject->position() + mousePosition - lastMousePos_);
     }
-    else if(std::abs(mouseDistance.sqrMagnitude()) <= 50 * 50)
+    else if(selectedObject_->isPointInside(mousePosition))
     {
         if(input()->isMouseButtonDown(GameEngine::MouseButton::LEFT))
         {
@@ -262,13 +269,11 @@ void GameEditorComponent::Update(float elapsedTime)
 {
     GameEngine::InputManager *input = gameObject()->game()->input();
 
-    const GameEngine::Vec2D &mousePosition = input->getMousePosition();
-
-    GameEngine::Vec2D mouseDistance = gameObject()->position() - mousePosition;
-
-    if(std::abs(mouseDistance.sqrMagnitude()) <= 50 * 50)
+    if(input->isMouseButtonDown(GameEngine::MouseButton::LEFT))
     {
-        if(input->isMouseButtonDown(GameEngine::MouseButton::LEFT))
+        const GameEngine::Vec2D &mousePosition = input->getMousePosition();
+
+        if(isPointInside(mousePosition))
         {
             auto gameEditor = dynamic_cast<GameEditor*>(gameObject()->game());
             gameEditor->setSelected(this);
@@ -278,6 +283,30 @@ void GameEditorComponent::Update(float elapsedTime)
 
 void GameEditorComponent::init()
 {
+    if(auto sprite = gameObject()->getComponent<SpriteComponent>().lock())
+    {
+        size_ = GameEngine::Vec2D(sprite->getWidth(), sprite->getHeight());
+        glm::vec2 offset = Internal::parseGraphicAnchorToVec2D(Internal::parseStringToGraphicAnchor(sprite->anchor()));
+        offsetFromRender_ = Vec2D(offset.x, offset.y) * size_;
+    }
+    else if(auto spriteAnimated = gameObject()->getComponent<SpriteAnimatedComponent>().lock())
+    {
+        size_ = GameEngine::Vec2D(spriteAnimated->getWidth(), spriteAnimated->getHeight());
+        glm::vec2 offset = Internal::parseGraphicAnchorToVec2D(Internal::parseStringToGraphicAnchor(spriteAnimated->anchor()));
+        offsetFromRender_ = Vec2D(offset.x, offset.y) * size_;
+    }
+    else if(auto geometry = gameObject()->getComponent<GeometryComponent>().lock())
+    {
+        size_ = GameEngine::Vec2D(geometry->getWidth(), geometry->getHeight());
+        glm::vec2 offset = Internal::parseGraphicAnchorToVec2D(Internal::parseStringToGraphicAnchor(geometry->anchor()));
+        offsetFromRender_ = Vec2D(offset.x, offset.y) * size_;
+    }
+    else
+    {
+        // default size will have the selection rectangle if the object doesn't have a graphic component
+        size_ = Vec2D(10.f, 10.f);
+    }
+
     gameObject()->registerObserver(this);
 }
 
@@ -356,4 +385,18 @@ void GameEditorComponent::onEvent(const GameEngine::Subject<PrototypeReferenceEv
         }
             break;
     }
+}
+
+bool GameEditorComponent::isPointInside(GameEngine::Vec2D point)
+{
+    const GameEngine::Vec2D position = gameObject()->position() - offsetFromRender_;
+    const GameEngine::Vec2D scale = getScaledSize();
+
+    return position.x <= point.x && point.x <= position.x + scale.x &&
+        position.y <= point.y && point.y <= position.y + scale.y;
+}
+
+GameEngine::Vec2D GameEditorComponent::getScaledSize() const
+{
+    return size_ * gameObject()->scale();
 }
