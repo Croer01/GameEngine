@@ -174,20 +174,25 @@ void GameEditor::onEvent(const GameEngine::Subject<SceneDataEvent> &target, cons
 void GameEditor::setSelected(GameEditorComponent *selectedObject)
 {
     selectedObject_ = selectedObject;
-    targetObject_->position(selectedObject_->gameObject()->position());
     targetObject_->active(true);
     // default size will have the selection rectangle if the object doesn't have a graphic component
     Vec2D size = Vec2D(10.f, 10.f);
+    std::string anchor = "TOP_LEFT";
 
     if(auto sprite = selectedObject_->gameObject()->getComponent<SpriteComponent>().lock()) {
         size = GameEngine::Vec2D(sprite->getWidth(), sprite->getHeight());
+        anchor = sprite->anchor();
     }
     else if(auto spriteAnimated = selectedObject_->gameObject()->getComponent<SpriteAnimatedComponent>().lock()){
         size = GameEngine::Vec2D(spriteAnimated->getWidth(), spriteAnimated->getHeight());
+        anchor = spriteAnimated->anchor();
     }
     else if(auto geometry = selectedObject_->gameObject()->getComponent<GeometryComponent>().lock()){
         size = GameEngine::Vec2D(geometry->getWidth(), geometry->getHeight());
+        anchor = geometry->anchor();
     }
+
+    size *= selectedObject_->gameObject()->scale();
 
     std::vector<Vec2D> path;
     path.emplace_back(0.f,0.f);
@@ -195,6 +200,8 @@ void GameEditor::setSelected(GameEditorComponent *selectedObject)
     path.emplace_back(size.x,size.y);
     path.emplace_back(0.f,size.y);
     targetObject_->getComponent<GeometryComponent>().lock()->path(path);
+    targetObject_->getComponent<GeometryComponent>().lock()->anchor(anchor);
+    targetObject_->position(selectedObject_->gameObject()->position());
 }
 
 void GameEditor::createTargetSelectedObject()
