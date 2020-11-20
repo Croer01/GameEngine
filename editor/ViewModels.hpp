@@ -219,7 +219,8 @@ public:
 enum class SceneDataEvent
 {
     ObjectAdded,
-    ObjectDeleted
+    ObjectDeleted,
+    ObjectSelected
 };
 
 class SceneData;
@@ -227,6 +228,7 @@ typedef std::shared_ptr<SceneData> SceneDataRef;
 class SceneData : public GameEngine::Subject<SceneDataEvent>
 {
     std::vector<PrototypeReferenceRef> objects_;
+    PrototypeReferenceRef selected_;
 
 public:
     typedef std::vector<PrototypeReferenceRef>::const_iterator const_iterator;
@@ -238,7 +240,8 @@ public:
     size_t objectsSize() const;
     PrototypeReferenceRef getObject(int index) const;
     void deleteObject(int index);
-
+    void selectObject(const PrototypeReferenceRef &object);
+    PrototypeReferenceRef getSelectedObject() const;
     const_iterator getObjectsBegin() const;
     const_iterator getObjectsEnd() const;
 

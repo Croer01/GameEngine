@@ -113,7 +113,7 @@ void GameEditor::linkSceneDataWithCurrentScene()
                                    [name](auto object) { return object->name_ == name; });
             if(it != sceneData_->getObjectsEnd())
             {
-                comp->linkObject(it->get());
+                comp->linkObject(*it);
             }
         }
     }
@@ -152,7 +152,7 @@ void GameEditor::onEvent(const GameEngine::Subject<SceneDataEvent> &target, cons
 {
     if(event == SceneDataEvent::ObjectAdded)
     {
-        auto prototypeRef = static_cast<PrototypeReference*>(args);
+        auto prototypeRef = *static_cast<PrototypeReferenceRef *>(args);
         const GameEngine::geGameObjectRef &object = createFromPrototype(prototypeRef->prototype_);
         object->name(prototypeRef->name_);
         Vector2DData position = prototypeRef->getPosition();
@@ -177,11 +177,25 @@ void GameEditor::onEvent(const GameEngine::Subject<SceneDataEvent> &target, cons
         assert(object);
         object->destroy();
     }
+    else if(event == SceneDataEvent::ObjectSelected)
+    {
+        auto prototypeRef = static_cast<PrototypeReference*>(args);
+        const GameEngine::geGameObjectRef &object = findObjectByNameInCurrentScene(prototypeRef->name_);
+        assert(object);
+        selectedObject_ = object->getComponent<GameEditorComponent>().lock().get();
+        updateSelected();
+    }
 }
 
-void GameEditor::setSelected(GameEditorComponent *selectedObject)
+void GameEditor::setSelected(const PrototypeReferenceRef &data)
 {
-    selectedObject_ = selectedObject;
+    assert(sceneData_);
+    sceneData_->selectObject(data);
+}
+
+void GameEditor::updateSelected()
+{
+    auto lock = std::unique_lock<std::mutex>(getRendererMutex());
     targetObject_->active(true);
     // default size will have the selection rectangle if the object doesn't have a graphic component
     std::string anchor = "TOP_LEFT";
@@ -276,7 +290,7 @@ void GameEditorComponent::Update(float elapsedTime)
         if(isPointInside(mousePosition))
         {
             auto gameEditor = dynamic_cast<GameEditor*>(gameObject()->game());
-            gameEditor->setSelected(this);
+            gameEditor->setSelected(data_.lock());
         }
     }
 }
@@ -310,18 +324,18 @@ void GameEditorComponent::init()
     gameObject()->registerObserver(this);
 }
 
-void GameEditorComponent::linkObject(PrototypeReference *data)
+void GameEditorComponent::linkObject(const PrototypeReferenceRef &data)
 {
-    if(data_)
-        data_->unregisterObserver(this);
+    if(auto data = data_.lock())
+        data->unregisterObserver(this);
     data_ = data;
-    data_->registerObserver(this);
+    data_.lock()->registerObserver(this);
 }
 
 void GameEditorComponent::onEvent(const GameEngine::Subject<GameEngine::GameObjectEvent> &target,
                                   const GameEngine::GameObjectEvent &event, void *args)
 {
-    if(data_)
+    if(auto data = data_.lock())
     {
         switch(event)
         {
@@ -330,18 +344,18 @@ void GameEditorComponent::onEvent(const GameEngine::Subject<GameEngine::GameObje
                 Vector2DData position;
                 position.xy[0] = gameObject()->position().x;
                 position.xy[1] = gameObject()->position().y;
-                data_->setPosition(position);
+                data->setPosition(position);
             }
                 break;
             case GameEngine::GameObjectEvent::RotationChanged:
-                data_->setRotation(gameObject()->rotation());
+                data->setRotation(gameObject()->rotation());
                 break;
             case GameEngine::GameObjectEvent::ScaleChanged:
             {
                 Vector2DData scale;
                 scale.xy[0] = gameObject()->scale().x;
                 scale.xy[1] = gameObject()->scale().y;
-                data_->setScale(scale);
+                data->setScale(scale);
             }
                 break;
             case GameEngine::GameObjectEvent::ActiveChanged:
@@ -357,33 +371,37 @@ void GameEditorComponent::onEvent(const GameEngine::Subject<GameEngine::GameObje
 
 GameEditorComponent::~GameEditorComponent()
 {
-    if(data_)
-        data_->unregisterObserver(this);
+    if(auto data = data_.lock())
+        data->unregisterObserver(this);
 }
 
 void GameEditorComponent::onEvent(const GameEngine::Subject<PrototypeReferenceEvent> &target,
                                   const PrototypeReferenceEvent &event, void *args)
 {
-    assert(data_);
-    switch(event)
+    assert(!data_.expired());
+
+    if(auto data = data_.lock())
     {
-        case PrototypeReferenceEvent::PositionChanged:
+        switch (event)
         {
-            const Vector2DData &dataPos = data_->getPosition();
-            GameEngine::Vec2D position(dataPos.xy[0], dataPos.xy[1]);
-            gameObject()->position(position);
+            case PrototypeReferenceEvent::PositionChanged:
+            {
+                const Vector2DData &dataPos = data->getPosition();
+                GameEngine::Vec2D position(dataPos.xy[0], dataPos.xy[1]);
+                gameObject()->position(position);
+            }
+                break;
+            case PrototypeReferenceEvent::RotationChanged:
+                gameObject()->rotation(data->getRotation());
+                break;
+            case PrototypeReferenceEvent::ScaleChanged:
+            {
+                const Vector2DData &dataScale = data->getScale();
+                GameEngine::Vec2D scale(dataScale.xy[0], dataScale.xy[1]);
+                gameObject()->scale(scale);
+            }
+                break;
         }
-            break;
-        case PrototypeReferenceEvent::RotationChanged:
-            gameObject()->rotation(data_->getRotation());
-            break;
-        case PrototypeReferenceEvent::ScaleChanged:
-        {
-            const Vector2DData &dataScale = data_->getScale();
-            GameEngine::Vec2D scale(dataScale.xy[0], dataScale.xy[1]);
-            gameObject()->scale(scale);
-        }
-            break;
     }
 }
 

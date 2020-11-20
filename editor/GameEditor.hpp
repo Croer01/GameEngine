@@ -12,7 +12,7 @@ class GameEditorComponent : public GameEngine::geComponentInstantiable<GameEdito
                             public GameEngine::Observer<GameEngine::GameObjectEvent>,
                             public GameEngine::Observer<PrototypeReferenceEvent>
 {
-    PrototypeReference *data_;
+    std::weak_ptr<PrototypeReference> data_;
     GameEngine::Vec2D size_;
     GameEngine::Vec2D offsetFromRender_;
 public:
@@ -20,7 +20,7 @@ public:
     virtual GameEngine::PropertySetBase *getProperties() const;
     virtual void init();
     virtual void Update(float elapsedTime);
-    void linkObject(PrototypeReference *data);
+    void linkObject(const PrototypeReferenceRef &data);
     bool isPointInside(GameEngine::Vec2D point);
     GameEngine::Vec2D getScaledSize() const;
     virtual void
@@ -57,7 +57,8 @@ public:
     void setDirty(bool value);
     bool isDirty() const;
     virtual void onEvent(const GameEngine::Subject<SceneDataEvent> &target, const SceneDataEvent &event, void *args);
-    void setSelected(GameEditorComponent *selectedObject);
+    void setSelected(const PrototypeReferenceRef &data);
+    void updateSelected();
 };
 
 

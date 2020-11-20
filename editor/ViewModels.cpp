@@ -61,7 +61,8 @@ ColorData::ColorData() :
 void SceneData::addObject(const PrototypeReferenceRef &object)
 {
     objects_.push_back(object);
-    notify(SceneDataEvent::ObjectAdded, object.get());
+    PrototypeReferenceRef *ref = &const_cast<PrototypeReferenceRef&>(object);
+    notify(SceneDataEvent::ObjectAdded, ref);
 }
 
 size_t SceneData::objectsSize() const
@@ -90,4 +91,15 @@ SceneData::const_iterator SceneData::getObjectsBegin() const
 SceneData::const_iterator SceneData::getObjectsEnd() const
 {
     return objects_.end();
+}
+
+void SceneData::selectObject(const PrototypeReferenceRef &object)
+{
+    notify(SceneDataEvent::ObjectSelected, object.get());
+    selected_ = object;
+}
+
+PrototypeReferenceRef SceneData::getSelectedObject() const
+{
+    return selected_;
 }

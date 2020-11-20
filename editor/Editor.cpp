@@ -102,7 +102,15 @@ bool Editor::renderSceneObjectNode(const PrototypeReferenceRef &object, const st
     bool edited = false;
 
     ImGui::PushID(("ObjectNode" + id).c_str());
-    bool showTreeContent = ImGui::TreeNodeEx(id.c_str(), ImGuiTreeNodeFlags_OpenOnArrow, "%s", object->name_.c_str());
+    ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
+    if(sceneData_->getSelectedObject() == object)
+        flags |= ImGuiTreeNodeFlags_Selected;
+
+    bool showTreeContent = ImGui::TreeNodeEx(id.c_str(), flags, "%s", object->name_.c_str());
+    if(ImGui::IsItemClicked())
+    {
+        sceneData_->selectObject(object);
+    }
     ImGui::SameLine(ImGui::GetWindowContentRegionWidth() - 3);
 
     if(ImGui::Button("X"))
