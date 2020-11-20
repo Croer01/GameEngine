@@ -117,6 +117,10 @@ void GameEditor::linkSceneDataWithCurrentScene()
             }
         }
     }
+
+    PrototypeReferenceRef selection = sceneData_->getSelectedObject();
+    if(selection)
+        setSelected(selection);
 }
 void GameEditor::linkSceneFromEditor(const SceneDataRef &scene)
 {
@@ -127,8 +131,8 @@ void GameEditor::linkSceneFromEditor(const SceneDataRef &scene)
 void GameEditor::init()
 {
     Game::init();
-    linkSceneDataWithCurrentScene();
     createTargetSelectedObject();
+    linkSceneDataWithCurrentScene();
     drag_ = false;
 }
 
