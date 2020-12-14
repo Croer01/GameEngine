@@ -9,7 +9,7 @@
 #include <memory>
 #include <future>
 #include <SDL2/SDL_video.h>
-#include <game-engine/geGame.hpp>
+#include <game-engine/Game.hpp>
 #include "ViewModels.hpp"
 #include "CreateProjectEditor.hpp"
 #include "GameComponentsProvider.hpp"
@@ -47,7 +47,7 @@ class Editor
     GameComponentsProvider gameComponentsProvider_;
     ProjectFileDataProvider projectFileDataProvider_;
     std::future<int> gameThread_;
-    GameEngine::geGameRef game_;
+    GameEngine::GameRef game_;
 
     void renderMainMenu();
     bool renderSceneObjectNode(const PrototypeReferenceRef &object, const std::string &id, bool &deleteObject);
@@ -79,7 +79,7 @@ public:
     void makeCurrentContext();
     void releaseCurrentContext();
     void shutdown();
-    GameEngine::geGameRef game() const;
+    GameEngine::GameRef game() const;
     void starGame(bool update);
     void reloadGameStaticScene();
 };

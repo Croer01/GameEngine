@@ -27,6 +27,7 @@ typedef std::shared_ptr<Game> GameRef;
 
 class Game
 {
+protected:
     bool running_;
     std::mutex renderMutex_;
 
@@ -50,15 +51,15 @@ public:
     const Game &context() const;
 
     // geGame implementation
-    void init();
-    void update();
-    void render();
+    virtual void init();
+    virtual void update();
+    virtual void render();
     unsigned int getRenderer() const;
     std::mutex &getRendererMutex();
     bool isRunning() const;
     void shutdown();
-    geGameObjectRef createObject(const std::string &name);
-    geGameObjectRef createFromPrototype(const std::string &prototype);
+    virtual geGameObjectRef createObject(const std::string &name);
+    virtual geGameObjectRef createFromPrototype(const std::string &prototype);
     geGameObjectRef findObjectByNameInCurrentScene(const std::string &gameObjectName);
     std::weak_ptr<geCamera> cameraOfCurrentScene() const;
     geDataRef saveCurrentSceneState() const;

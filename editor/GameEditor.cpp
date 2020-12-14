@@ -98,7 +98,7 @@ void GameEditor::update()
 void GameEditor::changeScene(const std::string &name)
 {
     components_.clear();
-    Game::changeScene(name);
+    environment_->sceneManager()->changeScene(name);
 }
 
 void GameEditor::linkSceneDataWithCurrentScene()

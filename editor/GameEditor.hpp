@@ -5,7 +5,7 @@
 #ifndef DANGEROUSROBOTSINTHEDESERT_GAMEEDITOR_HPP
 #define DANGEROUSROBOTSINTHEDESERT_GAMEEDITOR_HPP
 
-#include "../engine/private/Game.hpp"
+#include "game-engine/Game.hpp"
 #include "ViewModels.hpp"
 
 class GameEditorComponent : public GameEngine::geComponentInstantiable<GameEditorComponent>,
@@ -31,7 +31,7 @@ public:
             void *args);
 };
 
-class GameEditor : public GameEngine::Internal::Game, public GameEngine::Observer<SceneDataEvent>
+class GameEditor : public GameEngine::Game, public GameEngine::Observer<SceneDataEvent>
 {
     bool drag_;
     GameEngine::Vec2D lastMousePos_;

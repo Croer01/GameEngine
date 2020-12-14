@@ -16,7 +16,6 @@
 #include <boost/filesystem/operations.hpp>
 #include <iostream>
 #include <game-engine/geEnvironment.hpp>
-#include <game-engine/geGame.hpp>
 
 namespace fs = boost::filesystem;
 using namespace std::chrono_literals;
@@ -1373,7 +1372,7 @@ void Editor::renderSceneViewer()
     if(!sceneData_)
         return;
 
-    if(gameThread_.wait_for(0ms) == std::future_status::ready)
+    if(gameThread_.valid() && gameThread_.wait_for(0ms) == std::future_status::ready)
     {
         if(gameThread_.get() != 0)
         {
@@ -1468,7 +1467,7 @@ void Editor::starGame(bool update)
             env->firstScene(sceneData_->name_);
 
             if(update)
-                game_ = GameEngine::geGame::createInstance(env);
+                game_ = GameEngine::Game::createInstance(env);
             else
             {
                 auto envInternal = std::dynamic_pointer_cast<GameEngine::Internal::Environment>(env);
@@ -1529,7 +1528,7 @@ void Editor::shutdown()
     SDL_GL_DeleteContext(gameGlContext_);
 }
 
-GameEngine::geGameRef Editor::game() const
+GameEngine::GameRef Editor::game() const
 {
     return game_;
 }
