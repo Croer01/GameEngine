@@ -2,7 +2,6 @@
 // Created by adria on 22/04/2019.
 //
 
-#include <SDL2/SDL_image.h>
 #include "GraphicSprite.hpp"
 #include "../utils.hpp"
 

@@ -4,7 +4,7 @@
 
 #include <game-engine/components/AudioComponent.hpp>
 #include "../private/audio/AudioEngine.hpp"
-#include "../../private/Game.hpp"
+#include "game-engine/Game.hpp"
 
 namespace GameEngine {
     void AudioComponent::init() {
@@ -88,7 +88,7 @@ void AudioComponent::loadSource()
 {
     if(gameObject() != nullptr)
     {
-        auto game = dynamic_cast<Internal::Game*>(gameObject()->game());
+        auto game = dynamic_cast<Game*>(gameObject()->game());
         if(game)
             source_ = game->audioEngine()->getAudio(filePath_);
     }

@@ -4,7 +4,7 @@
 
 #include "SceneManager.hpp"
 #include "ObjectManager.hpp"
-#include "Game.hpp"
+#include "game-engine/Game.hpp"
 
 namespace GameEngine {
 namespace Internal {
@@ -77,7 +77,7 @@ namespace Internal {
         return cam;
     }
 
-    void SceneManager::bindGame(geGame *game)
+    void SceneManager::bindGame(Game *game)
     {
         game_ = game;
     }

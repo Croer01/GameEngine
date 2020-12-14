@@ -9,11 +9,15 @@
 #include "Factory.hpp"
 #include <game-engine/geComponent.hpp>
 #include <game-engine/Builder.hpp>
-#include "GameObject.hpp"
 #include <memory>
 
 namespace GameEngine {
+
+class Game;
+
 namespace Internal {
+
+    class GameObject;
 
     class ObjectManager
     {

@@ -6,13 +6,13 @@
 #include "../private/graphics/GraphicsEngine.hpp"
 #include "../../private/GameObject.hpp"
 #include "../../private/graphics/GraphicSprite.hpp"
-#include "../../private/Game.hpp"
+#include "game-engine/Game.hpp"
 
 namespace GameEngine {
 
     void SpriteAnimatedComponent::preInit()
     {
-        graphicsEngine_ = dynamic_cast<Internal::Game*>(gameObject()->game())->graphicsEngine();
+        graphicsEngine_ = gameObject()->game()->graphicsEngine();
 
         //TODO: implement Layers or improve how to register sprites
         updateGraphicRef();

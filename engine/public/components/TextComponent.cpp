@@ -5,12 +5,12 @@
 #include <game-engine/components/TextComponent.hpp>
 #include "../private/graphics/GraphicsEngine.hpp"
 #include "../../private/GameObject.hpp"
-#include "../../private/Game.hpp"
+#include "game-engine/Game.hpp"
 
 namespace GameEngine {
     void TextComponent::preInit()
     {
-        graphicsEngine_ = dynamic_cast<Internal::Game*>(gameObject()->game())->graphicsEngine();
+        graphicsEngine_ = gameObject()->game()->graphicsEngine();
     }
 
     void TextComponent::init() {
@@ -93,7 +93,7 @@ namespace GameEngine {
     }
 
     void TextComponent::updateTextRef() {
-        Internal::Game *game = dynamic_cast<Internal::Game*>(gameObject()->game());
+        Game *game = gameObject()->game();
         if(game == nullptr)
             return;
 

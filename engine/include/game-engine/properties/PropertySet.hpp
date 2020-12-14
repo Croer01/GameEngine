@@ -9,6 +9,7 @@
 #include <game-engine/properties/Property.hpp>
 #include <vector>
 #include <memory>
+#include <game-engine/geData.hpp>
 
 namespace GameEngine {
 

@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 #include "../private/GameObject.hpp"
-#include <game-engine/geGame.hpp>
+#include <game-engine/Game.hpp>
 #include <game-engine/geGameObject.hpp>
 #include <game-engine/components/SpriteComponent.hpp>
 
@@ -47,7 +47,7 @@ public:
 
 TEST(GameObject, createObject)
 {
-    geGameRef game = geGame::createInstance(geEnvironment::createInstance());
+    GameRef game = Game::createInstance(geEnvironment::createInstance());
 
     geGameObjectRef go = game->createObject("test1");
 
@@ -58,7 +58,7 @@ TEST(GameObject, changeName)
 {
     const std::string &oldName = "old name";
     const std::string &newName = "new name";
-    geGameRef game = geGame::createInstance(geEnvironment::createInstance());
+    GameRef game = Game::createInstance(geEnvironment::createInstance());
     geGameObjectRef go = game->createObject(oldName);
 
     ASSERT_EQ(go->name(), oldName);
@@ -69,7 +69,7 @@ TEST(GameObject, changeName)
 
 TEST(GameObject, positionChangedByParent)
 {
-    geGameRef game = geGame::createInstance(geEnvironment::createInstance());
+    GameRef game = Game::createInstance(geEnvironment::createInstance());
     geGameObjectRef parent = game->createObject("parent");
     geGameObjectRef child = game->createObject("child");
     const Vec2D &parentPos = Vec2D(5,5);
@@ -92,7 +92,7 @@ TEST(GameObject, positionChangedByParent)
 
 TEST(GameObject, rotationChangedByParent)
 {
-    geGameRef game = geGame::createInstance(geEnvironment::createInstance());
+    GameRef game = Game::createInstance(geEnvironment::createInstance());
     geGameObjectRef parent = game->createObject("parent");
     geGameObjectRef child = game->createObject("child");
     float parentRot = 5;
@@ -115,7 +115,7 @@ TEST(GameObject, rotationChangedByParent)
 
 TEST(GameObject, scaleChangedByParent)
 {
-    geGameRef game = geGame::createInstance(geEnvironment::createInstance());
+    GameRef game = Game::createInstance(geEnvironment::createInstance());
     geGameObjectRef parent = game->createObject("parent");
     geGameObjectRef child = game->createObject("child");
     const Vec2D &parentScale = Vec2D(5,5);
@@ -142,7 +142,7 @@ TEST(GameObject, loadGameObject)
     geEnvironmentRef environment = geEnvironment::createInstance();
     environment->addPrototype(prototype, "goLoadTest.yaml");
 
-    geGameRef game = geGame::createInstance(environment);
+    GameRef game = Game::createInstance(environment);
 
     geGameObjectRef gameObject = game->createFromPrototype(prototype);
     ASSERT_EQ(gameObject->name(), "loadedFromFile");
@@ -151,7 +151,7 @@ TEST(GameObject, loadGameObject)
 
 TEST(GameObject, addChildDuringInitialization)
 {
-    geGameRef game = geGame::createInstance(geEnvironment::createInstance());
+    GameRef game = Game::createInstance(geEnvironment::createInstance());
     geGameObjectRef go = game->createObject("test");
     auto component = std::make_shared<AddOnInitializeComponent>();
     go->addComponent(component);
@@ -173,7 +173,7 @@ TEST(SpriteComponent, load)
     geEnvironmentRef environment = geEnvironment::createInstance();
     environment->addPrototype(prototype, "spriteComponentLoadTest.yaml");
 
-    geGameRef game = geGame::createInstance(environment);
+    GameRef game = Game::createInstance(environment);
 
     geGameObjectRef gameObject = game->createFromPrototype(prototype);
     const std::weak_ptr<SpriteComponent> &component = gameObject->getComponent<SpriteComponent>();

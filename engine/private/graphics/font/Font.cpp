@@ -232,7 +232,7 @@ std::shared_ptr<Text> Font::createText(const std::string &text) {
             };
             //FREE_TYPE: Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
             x += (ch.Advance
-                    >> 6); // Bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
+                    >> 6); // Bitshift by 6 to get value in pixels (2^6 = 64 (divide initialAmount of 1/64th pixels by 64 to get initialAmount of pixels))
 
             textDef.characters.emplace_back(false, quadVertices,ch.TextureID);
         }

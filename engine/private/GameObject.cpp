@@ -7,7 +7,7 @@
 #include "GameObject.hpp"
 #include "yamlConverters.hpp"
 #include "ObjectManager.hpp"
-#include "Game.hpp"
+#include "game-engine/Game.hpp"
 #include <game-engine/geComponent.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -329,9 +329,9 @@ void GameObject::parent(const geGameObjectRef &goParent) {
             glm::scale(glm::mat4(1),glm::vec3(scale_.x, scale_.y, 1.f));
     }
 
-    geGame *GameObject::game() const
+    Game *GameObject::game() const
     {
-        return dynamic_cast<geGame*>(game_);
+        return dynamic_cast<Game*>(game_);
     }
 
     bool GameObject::isDestroyed() const {

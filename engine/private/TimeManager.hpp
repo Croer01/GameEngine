@@ -7,10 +7,12 @@
 
 
 #include <memory>
-#include <game-engine/components/ui/UITextComponent.hpp>
 #include "GameObject.hpp"
 
 namespace GameEngine {
+
+class UITextComponent;
+
 namespace Internal {
 
 class TimeManager

@@ -3,6 +3,7 @@
 //
 
 #include "ObjectManager.hpp"
+#include "GameObject.hpp"
 #include <exception>
 #include <memory>
 

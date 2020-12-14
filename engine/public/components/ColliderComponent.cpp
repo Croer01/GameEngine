@@ -7,7 +7,7 @@
 #include <iostream>
 #include "../private/physics/PhysicsEngine.hpp"
 #include "../../private/GameObject.hpp"
-#include "../../private/Game.hpp"
+#include "game-engine/Game.hpp"
 
 namespace GameEngine {
 namespace {
@@ -33,7 +33,7 @@ namespace {
 }
 
     void ColliderComponent::init() {
-        physicsEngine_ = dynamic_cast<Internal::Game*>(gameObject()->game())->physicsEngine();
+        physicsEngine_ = gameObject()->game()->physicsEngine();
         if(auto sprite = gameObject()->getComponent<SpriteComponent>().lock()) {
             size_ = GameEngine::Vec2D(sprite->getWidth(), sprite->getHeight());
             glm::vec2 offset = Internal::parseGraphicAnchorToVec2D(Internal::parseStringToGraphicAnchor(sprite->anchor()));

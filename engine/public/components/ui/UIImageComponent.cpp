@@ -4,7 +4,7 @@
 
 #include "game-engine/components/ui/UIImageComponent.hpp"
 #include "../../../private/graphics/GraphicSprite.hpp"
-#include "../../../private/Game.hpp"
+#include "game-engine/Game.hpp"
 
 namespace GameEngine {
 void UIImageComponent::init() {

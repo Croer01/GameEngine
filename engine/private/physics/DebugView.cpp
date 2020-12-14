@@ -4,7 +4,7 @@
 
 #include "DebugView.hpp"
 #include "PhysicsEngine.hpp"
-#include "../Game.hpp"
+#include "game-engine/Game.hpp"
 #include "../utils.hpp"
 
 #include <GL\glew.h>

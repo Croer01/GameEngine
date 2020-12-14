@@ -6,6 +6,7 @@
 #define GAMEENGINE_SPAWNERCOMPONENT_HPP
 
 #include <game-engine/geComponent.hpp>
+#include <game-engine/geGameObject.hpp>
 
 namespace GameEngine
 {

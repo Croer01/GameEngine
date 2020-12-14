@@ -3,6 +3,7 @@
 //
 
 #include <game-engine/geComponent.hpp>
+#include <game-engine/geGameObject.hpp>
 
 namespace GameEngine {
     void geComponent::gameObject(GameEngine::geGameObject *gameObject) {

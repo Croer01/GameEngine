@@ -5,7 +5,7 @@
 #include "game-engine/components/ParticlesPropertiesComponent.hpp"
 
 #include <memory>
-#include "../../private/Game.hpp"
+#include "game-engine/Game.hpp"
 
 # define M_PI 3.14159265358979323846f  /* pi */
 
@@ -121,7 +121,7 @@ PropertySetBase *ParticlesPropertiesComponent::getProperties() const
 
 void ParticlesPropertiesComponent::preInit()
 {
-    graphicsEngine_ = dynamic_cast<Internal::Game *>(gameObject()->game())->graphicsEngine();
+    graphicsEngine_ = gameObject()->game()->graphicsEngine();
     particleSprite_ = std::make_shared<Internal::GraphicSprite>(imageSource_);
 }
 

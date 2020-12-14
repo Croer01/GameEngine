@@ -5,6 +5,7 @@
 #ifndef ZOMBIEWAVE_GRAPHICSPRITE_HPP
 #define ZOMBIEWAVE_GRAPHICSPRITE_HPP
 
+#include <SDL_image.h>
 #include "MeshData.hpp"
 #include "Graphic.hpp"
 

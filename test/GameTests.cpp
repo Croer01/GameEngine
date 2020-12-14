@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 #include "../private/Screen.hpp"
-#include <game-engine/geGame.hpp>
+#include <game-engine/Game.hpp>
 #include <thread>
 #include <chrono>
 #include <game-engine/components/AudioComponent.hpp>
@@ -10,7 +10,7 @@ using namespace GameEngine;
 
 TEST(Game, start)
 {
-    geGameRef game = geGame::createInstance(geEnvironment::createInstance());
+    GameRef game = Game::createInstance(geEnvironment::createInstance());
 
     std::thread t([&](){
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
@@ -39,7 +39,7 @@ TEST(Game, renderSprite)
 
     environment->addPrototype(prototype, "spriteComponentLoadTest.yaml");
 
-    geGameRef game = geGame::createInstance(environment);
+    GameRef game = Game::createInstance(environment);
 
     EXPECT_NO_THROW(
     game->init();
@@ -72,7 +72,7 @@ TEST(Game, playSound)
     environment->firstScene("testScene");
     environment->addPrototype(prototype, "audioComponentLoadTest.yaml");
 
-    geGameRef game = geGame::createInstance(environment);
+    GameRef game = Game::createInstance(environment);
 
     EXPECT_NO_THROW(
         game->init();
@@ -100,7 +100,7 @@ TEST(Game, playSound)
 
 TEST(Game, titleChange)
 {
-    geGameRef game = geGame::createInstance(geEnvironment::createInstance());
+    GameRef game = Game::createInstance(geEnvironment::createInstance());
     std::thread t([&](){
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
         const std::string &originalTitle = game->screen()->title();

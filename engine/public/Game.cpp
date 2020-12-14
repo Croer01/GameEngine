@@ -2,16 +2,21 @@
 // Created by adria on 22/09/2018.
 //
 
-#include "Game.hpp"
+#include "game-engine/Game.hpp"
 #include <iostream>
-#include "utils.hpp"
-#include "Scene.hpp"
+#include "../private/utils.hpp"
 #include <SDL2/SDL.h>
-#include <GL/glew.h>
 #include <memory>
 
+using namespace GameEngine::Internal;
+
 namespace GameEngine {
-namespace Internal {
+    GameRef Game::createInstance(const geEnvironmentRef &env)
+    {
+        auto envInternal = std::dynamic_pointer_cast<Internal::Environment>(env);
+        auto game = std::shared_ptr<Game>(new Game(envInternal));
+        return game;
+    }
 
     Game::Game(const std::shared_ptr<Environment> &environment)
     {
@@ -181,8 +186,8 @@ void Game::initPhysics(const std::string &configFilePath) {
         running_ = false;
     }
 
-    const geGame &Game::context() const {
-        return (const geGame &) *this;
+    const Game &Game::context() const {
+        return (const Game &) *this;
     }
 
     geGameObjectRef Game::createObject(const std::string &name)
@@ -209,11 +214,6 @@ void Game::initPhysics(const std::string &configFilePath) {
     {
         const std::shared_ptr<GameObject> &object = environment_->sceneManager()->findObjectByName(gameObjectName);
         return std::dynamic_pointer_cast<geGameObject>(object);
-    }
-
-    void Game::changeScene(const std::string &name)
-    {
-        environment_->sceneManager()->changeScene(name);
     }
 
     std::weak_ptr<geCamera> Game::cameraOfCurrentScene() const
@@ -283,7 +283,7 @@ void Game::init()
     environment_->sceneManager()->bindGame(this);
     if(!environment_->firstScene().empty())
     {
-        changeScene(environment_->firstScene());
+        environment_->sceneManager()->changeScene(environment_->firstScene());
         environment_->sceneManager()->changeSceneInSafeMode();
     }
 }
@@ -293,5 +293,4 @@ geDataRef Game::saveCurrentSceneState() const
     return environment_->sceneManager()->saveCurrentSceneState();
 }
 
-}
 }

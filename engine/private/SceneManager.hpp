@@ -11,16 +11,17 @@
 #include "Scene.hpp"
 
 namespace GameEngine {
-namespace Internal {
 
-    class Game;
+class Game;
+
+namespace Internal {
 
     class SceneManager {
         std::unordered_map<std::string, std::shared_ptr<Scene>> scenes_;
         std::shared_ptr<Scene> currentScene_;
         std::string currentSceneName_;
         std::string sceneNameToChange_;
-        geGame *game_;
+        Game *game_;
     public:
         void update(float elapsedTime);
 
@@ -42,7 +43,7 @@ namespace Internal {
 
         std::shared_ptr<Camera> getCameraOfCurrentScene() const;
 
-        void bindGame(geGame *game);
+        void bindGame(Game *game);
         void unbindGame();
         geDataRef saveCurrentSceneState() const;
         void removeDestroyedObjects();

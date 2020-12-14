@@ -9,7 +9,7 @@
 #include "game-engine/components/ui/UIButtonComponent.hpp"
 #include "../../../private/graphics/font/FontManager.hpp"
 #include "../../../private/graphics/GraphicsEngine.hpp"
-#include "../../../private/Game.hpp"
+#include "game-engine/Game.hpp"
 
 namespace GameEngine {
 UIButtonComponent::UIButtonComponent()

@@ -38,7 +38,7 @@ include_directories(${Boost_INCLUDE_DIRS})
 
 # public stuff
 set(ENGINE_SOURCES
-        engine/public/geGame.cpp
+        engine/public/Game.cpp
         engine/public/geComponent.cpp
         engine/public/geEnvironment.cpp
         engine/public/InputManager.cpp
@@ -65,7 +65,6 @@ set(ENGINE_SOURCES
 
 # private stuff
 set(ENGINE_PRIVATE_SOURCES
-        engine/private/Game.cpp
         engine/private/GameObject.cpp
         engine/private/ObjectManager.cpp
         engine/private/SceneManager.cpp

@@ -3,6 +3,7 @@
 //
 
 #include <game-engine/components/SpawnerComponent.hpp>
+#include <game-engine/Game.hpp>
 
 namespace GameEngine {
 void SpawnerComponent::init()

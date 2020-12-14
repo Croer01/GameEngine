@@ -8,6 +8,7 @@
 #include <vector>
 #include <game-engine/api.hpp>
 #include <game-engine/geComponent.hpp>
+#include <game-engine/geGameObject.hpp>
 #include "../../../private/graphics/GraphicGeometry.hpp"
 #include "../../../private/graphics/GraphicHolder.hpp"
 

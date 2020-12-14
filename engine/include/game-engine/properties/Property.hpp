@@ -8,6 +8,7 @@
 #include <game-engine/api.hpp>
 #include <string>
 #include <vector>
+#include <memory>
 #include <stdexcept>
 #include <game-engine/FileType.h>
 

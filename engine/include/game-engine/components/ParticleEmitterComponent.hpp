@@ -7,6 +7,7 @@
 
 
 #include <game-engine/geComponent.hpp>
+#include <game-engine/geGameObject.hpp>
 #include <GL/glew.h>
 #include <list>
 #include <iostream>

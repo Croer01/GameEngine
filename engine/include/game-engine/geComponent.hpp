@@ -6,16 +6,17 @@
 #define SPACEINVADERS_GECOMPONENT_HPP
 
 #include <game-engine/api.hpp>
-#include <game-engine/geGameObject.hpp>
 #include <game-engine/properties/PropertySet.hpp>
 #include <game-engine/properties/PropertiesHolder.hpp>
 #include <memory>
+#include <game-engine/geGameObject.hpp>
 
 #define COMPONENT(x) //the #x component has been registered
 
 namespace GameEngine {
 
     class geComponent;
+
     typedef std::shared_ptr<geComponent> geComponentRef;
 
     class PUBLICAPI geComponent {

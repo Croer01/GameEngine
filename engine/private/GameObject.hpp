@@ -13,13 +13,11 @@
 #include <glm/mat4x4.hpp>
 #include <yaml-cpp/yaml.h>
 #include <game-engine/geGameObject.hpp>
-#include <game-engine/api.hpp>
 #include <game-engine/geComponent.hpp>
 
 namespace GameEngine {
 namespace Internal {
 
-    class Game;
     class ObjectManager;
 
     class GameObject : public geGameObject, private Observer<GameObjectEvent>, public std::enable_shared_from_this<GameObject> {
@@ -92,7 +90,7 @@ namespace Internal {
         std::string name() const override;
         void name(const std::string &name) override;
 
-        virtual geGame *game() const;
+        virtual Game *game() const;
         void game(Game *value);
 
         virtual bool isDestroyed() const;

@@ -14,9 +14,10 @@
 #include <game-engine/geData.hpp>
 
 namespace GameEngine {
-namespace Internal {
 
-    class Game;
+class Game;
+
+namespace Internal {
 
     class Scene {
         std::string filePath_;
@@ -24,12 +25,12 @@ namespace Internal {
         std::vector<std::shared_ptr<GameObject>> gameObjects_;
         std::shared_ptr<Camera> cam_;
 
-        void loadFile(geGame *game);
+        void loadFile(Game *game);
 
     public:
         explicit Scene(const std::string &filePath);
 
-        void init(geGame *game);
+        void init(Game *game);
 
         void update(float elapsedTime);
 

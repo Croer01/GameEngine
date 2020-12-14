@@ -6,6 +6,7 @@
 #define SPACEINVADERS_GESCREEN_HPP
 
 #include <game-engine/api.hpp>
+#include <string>
 
 namespace GameEngine {
     class PUBLICAPI geScreen {

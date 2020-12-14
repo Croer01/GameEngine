@@ -7,6 +7,7 @@
 
 
 #include <game-engine/components/ui/UITextComponent.hpp>
+#include <game-engine/InputManager.hpp>
 #include "../../../../private/graphics/GraphicHolder.hpp"
 
 namespace GameEngine {

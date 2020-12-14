@@ -9,13 +9,13 @@
 #include <memory>
 #include <vector>
 #include <string>
-#include <game-engine/geGame.hpp>
 #include <game-engine/events/Subject.hpp>
 
 namespace GameEngine {
 
     class geComponent;
     class UIControlComponent;
+    class Game;
 
 enum class GameObjectEvent{
         TransformChanged,
@@ -24,8 +24,8 @@ enum class GameObjectEvent{
         ScaleChanged,
         ActiveChanged
     };
-    class geGameObject;
 
+    class geGameObject;
     typedef std::shared_ptr<geGameObject> geGameObjectRef;
 
     class PUBLICAPI geGameObject : public Subject<GameObjectEvent> {
@@ -55,7 +55,7 @@ enum class GameObjectEvent{
 
         virtual geGameObjectRef findChildByName(const std::string &name) = 0;
 
-        virtual geGame *game() const = 0;
+        virtual Game *game() const = 0;
 
         virtual bool isDestroyed() const = 0;
         virtual void destroy() = 0;

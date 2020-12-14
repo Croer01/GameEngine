@@ -2,12 +2,10 @@
 // Created by adria on 23/09/2019.
 //
 
-#include <game-engine/InputManager.hpp>
 #include <game-engine/components/ui/UITextInputComponent.hpp>
 #include <utf8.h>
 #include "../../../private/graphics/GraphicGeometry.hpp"
-#include "../../../private/graphics/GraphicsEngine.hpp"
-#include "../../../private/Game.hpp"
+#include "game-engine/Game.hpp"
 
 namespace GameEngine {
 

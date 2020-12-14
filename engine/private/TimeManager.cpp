@@ -4,6 +4,8 @@
 
 #include <SDL2/SDL_timer.h>
 #include "TimeManager.hpp"
+#include <game-engine/components/ui/UITextComponent.hpp>
+
 namespace GameEngine {
 namespace Internal {
 

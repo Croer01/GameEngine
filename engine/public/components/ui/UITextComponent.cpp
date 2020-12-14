@@ -5,7 +5,7 @@
 #include "game-engine/components/ui/UITextComponent.hpp"
 #include "../../../private/graphics/font/FontManager.hpp"
 #include "../../../private/graphics/GraphicsEngine.hpp"
-#include "../../../private/Game.hpp"
+#include "game-engine/Game.hpp"
 
 namespace GameEngine
 {
@@ -80,7 +80,7 @@ void UITextComponent::UpdateTextGraphic()
     if(graphicText_)
         graphicsEngine()->unregisterText(graphicText_);
 
-    auto game = dynamic_cast<Internal::Game*>(gameObject()->game());
+    Game *game = gameObject()->game();
     if(!font_.empty())
         graphicText_ = game->fontManager()->getFont(font_, fontSize_)->createText(text_);
     else

@@ -9,7 +9,7 @@
 #include "Scene.hpp"
 #include "yamlConverters.hpp"
 #include "ObjectManager.hpp"
-#include "Game.hpp"
+#include "game-engine/Game.hpp"
 #include "WritableData.hpp"
 
 namespace GameEngine {
@@ -18,7 +18,7 @@ namespace Internal {
     Scene::Scene(const std::string &filePath) : filePath_(filePath) {
     }
 
-    void Scene::init(geGame *game) {
+    void Scene::init(Game *game) {
         cam_.reset(new Camera());
         gameObjects_.clear();
         loadFile(game);
@@ -46,7 +46,7 @@ namespace Internal {
         removeDestroyedObjects();
     }
 
-    void Scene::loadFile(geGame *game) {
+    void Scene::loadFile(Game *game) {
         try {
             YAML::Node sceneConfig = YAML::LoadFile(filePath_);
 

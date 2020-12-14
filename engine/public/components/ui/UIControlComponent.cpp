@@ -4,13 +4,13 @@
 
 #include <game-engine/InputManager.hpp>
 #include "game-engine/components/ui/UIControlComponent.hpp"
-#include "../../../private/Game.hpp"
+#include "game-engine/Game.hpp"
 
 namespace GameEngine {
 
 void UIControlComponent::preInit()
 {
-    graphicsEngine_ = dynamic_cast<Internal::Game*>(gameObject()->game())->graphicsEngine();
+    graphicsEngine_ = gameObject()->game()->graphicsEngine();
 }
 
 void UIControlComponent::screenPos(const Vec2D &pos)
