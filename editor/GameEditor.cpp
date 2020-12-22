@@ -179,6 +179,11 @@ void GameEditor::onEvent(const GameEngine::Subject<SceneDataEvent> &target, cons
         auto prototypeRef = static_cast<PrototypeReference*>(args);
         const GameEngine::geGameObjectRef &object = findObjectByNameInCurrentScene(prototypeRef->name_);
         assert(object);
+        if(selectedObject_ != nullptr && selectedObject_->gameObject() == object.get())
+        {
+            selectedObject_ = nullptr;
+            targetObject_->active(false);
+        }
         object->destroy();
     }
     else if(event == SceneDataEvent::ObjectSelected)
