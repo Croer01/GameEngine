@@ -20,7 +20,7 @@ namespace GameEngine {
         height_ = surface_->h;
     }
 
-    void GraphicSprite::initializeGl()
+    void GraphicSprite::internalInitializeGl()
     {
         glGenTextures(1, &textureID_);
         glBindTexture(GL_TEXTURE_2D, textureID_);

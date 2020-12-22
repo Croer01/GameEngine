@@ -18,12 +18,13 @@ namespace GameEngine {
             std::unique_ptr<MeshData> mesh_;
             std::unique_ptr<SDL_Surface> surface_;
 
+        protected:
+            virtual void internalInitializeGl();
+
         public:
             explicit GraphicSprite(const std::string &filename);
 
             virtual ~GraphicSprite();
-
-            virtual void initializeGl();
 
             virtual void draw(const std::shared_ptr<Shader> &shader) const;
 

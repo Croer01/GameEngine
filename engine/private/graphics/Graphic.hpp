@@ -13,10 +13,23 @@
 namespace GameEngine {
 namespace Internal {
     class Graphic {
+        bool initialized_;
+    protected:
+        virtual void internalInitializeGl() = 0;
     public:
-        virtual ~Graphic(){};
+        Graphic() : initialized_(false)
+        {}
 
-        virtual void initializeGl() = 0;
+        virtual ~Graphic() {};
+
+        void initializeGl()
+        {
+            if(initialized_)
+                return;
+
+            internalInitializeGl();
+            initialized_ = true;
+        }
 
         virtual void draw(const std::shared_ptr<Shader> &shader) const = 0;
 

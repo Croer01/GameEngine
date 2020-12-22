@@ -22,7 +22,7 @@ namespace GameEngine {
             fillGeometry_ = true;
         }
 
-    void GraphicGeometry::initializeGl()
+    void GraphicGeometry::internalInitializeGl()
     {
         generateMesh();
         GLubyte white[4] = {255, 255, 255, 255};
