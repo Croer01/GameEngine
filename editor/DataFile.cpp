@@ -11,8 +11,8 @@ DataFile::DataFile():
 {
 }
 
-DataFile::DataFile(boost::filesystem::path filePath) :
-        filePath_(std::move(filePath))
+DataFile::DataFile(const boost::filesystem::path &filePath) :
+        filePath_(filePath)
 {
     if (filePath_.extension() == ".prototype")
         type_ = DataFileType::Prototype;

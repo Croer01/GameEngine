@@ -36,7 +36,7 @@ Editor::Editor(SDL_Window *window, SDL_GLContext glContext) :
     ImGui::GetStyle().FrameRounding = 3.f;
 
     createProjectEditor_= std::make_shared<CreateProjectEditor>([=] (const ProjectDataRef &projectData) { setProject(projectData); });
-    createPrototypeDialog_ = std::make_shared<CreatePrototypeDialog>([=] (const std::string &prototypeName) { createPrototype(prototypeName); });
+    createPrototypeDialog_ = std::make_shared<CreatePrototypeDialog>([=] (const boost::filesystem::path &prototypePath) { createPrototype(prototypePath); });
     createSceneDialog_ = std::make_shared<CreateSceneDialog>([=] (const std::string &sceneName) { createScene(sceneName); });
     deleteFileDialog_ = std::make_shared<DeleteFileDialog>([=] (const boost::filesystem::path &filePath){ deleteFile(filePath); });
     saveAllDialog_ = std::make_shared<SaveAllDialog>([=](const fs::path &result){
@@ -76,7 +76,7 @@ void Editor::render()
         ImGui::End();
 
         renderSceneInspector();
-        renderPrototypeList();
+        renderDataDirectoryExplorer();
         renderPrototypeInspector();
         renderCentralRegion();
 
@@ -217,7 +217,23 @@ void Editor::renderPrototypeListInternal(const DataDirectoryRef &dir)
     for(const auto &subdir : dir->getFolders())
     {
         ImGui::PushID(subdir->name().c_str());
-        if(ImGui::TreeNode(subdir->name().c_str()))
+        bool opened = ImGui::TreeNode(subdir->name().c_str());
+
+        float prototypeLabelWidth = ImGui::CalcTextSize("Prototype").x;
+        ImGui::SameLine(ImGui::GetWindowContentRegionWidth() - prototypeLabelWidth);
+        if(ImGui::Button("Prototype"))
+        {
+            createPrototypeDialog_->open(subdir->getDirectoryPath(), "NewPrototype");
+        }
+
+        float sceneLabelWidth = ImGui::CalcTextSize("Scene").x;
+        ImGui::SameLine(ImGui::GetWindowContentRegionWidth() - prototypeLabelWidth - sceneLabelWidth - 8);
+        if(ImGui::Button("Scene"))
+        {
+            createSceneDialog_->open("NewScene");
+        }
+
+        if(opened)
         {
             renderPrototypeListInternal(subdir);
             ImGui::TreePop();
@@ -227,7 +243,7 @@ void Editor::renderPrototypeListInternal(const DataDirectoryRef &dir)
     ImGui::PopID();
 }
 
-void Editor::renderPrototypeList()
+void Editor::renderDataDirectoryExplorer()
 {
     ImVec2 size = ImGui::GetIO().DisplaySize;
     size.x *= 0.25f;
@@ -235,16 +251,8 @@ void Editor::renderPrototypeList()
     size.y /= 2.f;
     ImGui::SetNextWindowPos(ImVec2(0,size.y + 20));
     ImGui::SetNextWindowSize(size);
-    ImGui::Begin("Prototypes",0,ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+    ImGui::Begin("Data Explorer",0,ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
 
-    if(ImGui::Button("Create..."))
-    {
-        const std::string &defaultValue =
-                "Prototype" + std::to_string(projectDirectory_->getFiles().size());
-        createPrototypeDialog_->open(defaultValue);
-    }
-
-    ImGui::Separator();
     ImGuiTreeNodeFlags PrototypesNodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_AllowItemOverlap;
 
     renderPrototypeListInternal(projectDirectory_->getTree());
@@ -252,13 +260,11 @@ void Editor::renderPrototypeList()
     ImGui::End();
 }
 
-void Editor::createPrototype(const std::string &prototypeName)
+void Editor::createPrototype(const boost::filesystem::path &prototypeFilepath)
 {
     fs::path prototypePath(this->project_->dataPath_);
 
-    std::stringstream ss;
-    ss << prototypeName << ".prototype";
-    prototypePath.append(ss.str());
+    prototypePath /= prototypeFilepath;
 
     ObjectData newPrototype;
     newPrototype.name_ = prototypePath.stem().string();

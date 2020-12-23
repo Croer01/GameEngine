@@ -16,13 +16,14 @@ typedef std::shared_ptr<DataDirectory> DataDirectoryRef;
 
 class DataDirectory
 {
-    std::string name_;
+    boost::filesystem::path directoryPath_;
     std::vector<DataDirectoryRef> folders_;
     std::vector<DataFileRef> files_;
     DataDirectory *getDirectory(const boost::filesystem::path &directory);
 
 public:
-    explicit DataDirectory(const std::string &name);
+    explicit DataDirectory(const boost::filesystem::path &directoryPath);
+    const boost::filesystem::path &getDirectoryPath() const;
     std::string name() const;
     void addFile(const DataFileRef &file);
     void addFolder(const DataDirectoryRef &folder);

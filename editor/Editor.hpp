@@ -53,7 +53,7 @@ class Editor
     bool renderSceneObjectNode(const PrototypeReferenceRef &object, const std::string &id, bool &deleteObject);
     void renderSceneInspector();
     void renderSceneViewer();
-    void renderPrototypeList();
+    void renderDataDirectoryExplorer();
     void renderPrototypeListInternal(const DataDirectoryRef &dir);
     void renderPrototypeInspector();
     bool renderObjectNode(const ObjectDataRef &object);
@@ -64,7 +64,7 @@ class Editor
     bool renderFileSelector(const std::string &label, const std::string &currentFile, DataFileType typeSupported, DataFile *result);
 
     void setProject(const std::shared_ptr<ProjectData> &project);
-    void createPrototype(const std::string &prototypeName);
+    void createPrototype(const boost::filesystem::path &prototypeFilepath);
     void createScene(const std::string &sceneName);
     void deleteFile(const boost::filesystem::path &filePath);
     void loadScene(const std::string &sceneFilePath);

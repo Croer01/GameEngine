@@ -7,15 +7,15 @@
 
 namespace fs = boost::filesystem;
 
-DataDirectory::DataDirectory(const std::string &name) :
-    name_(name)
+DataDirectory::DataDirectory(const boost::filesystem::path &directoryPath) :
+    directoryPath_(directoryPath)
 {
-
 }
 
 std::string DataDirectory::name() const
 {
-    return name_;
+    // filename in this case is the last directory, based on boost::filesystem docs
+    return directoryPath_.filename().string();
 }
 
 std::vector<DataDirectoryRef> DataDirectory::getFolders() const
@@ -51,12 +51,14 @@ DataDirectory *DataDirectory::getDirectory(const boost::filesystem::path &filePa
             target = (*it).get();
         }
     }
+
     return target;
 }
 
 void DataDirectory::addFolder(const DataDirectoryRef &folder)
 {
-    folders_.push_back(folder);
+    DataDirectory *target = getDirectory(folder->getDirectoryPath());
+    target->folders_.push_back(folder);
 }
 
 void DataDirectory::removeFile(const boost::filesystem::path &filePath)
@@ -69,4 +71,9 @@ void DataDirectory::removeFile(const boost::filesystem::path &filePath)
     });
     assert(it != target->files_.end());
     target->files_.erase(it);
+}
+
+const boost::filesystem::path &DataDirectory::getDirectoryPath() const
+{
+    return directoryPath_;
 }

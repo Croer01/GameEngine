@@ -9,17 +9,31 @@
 
 namespace fs = boost::filesystem;
 
-CreatePrototypeDialog::CreatePrototypeDialog(const BaseDialog<std::string>::ConfirmCallback &callback) :
+CreatePrototypeDialog::CreatePrototypeDialog(const BaseDialog<boost::filesystem::path>::ConfirmCallback &callback) :
 BaseDialog(callback)
 {
 }
 
 void CreatePrototypeDialog::renderContent()
 {
-    ImGui::InputText("Prototype name", &data_);
+    if(ImGui::InputText("Prototype name", &name_))
+        updateData();
 }
 
 bool CreatePrototypeDialog::canConfirm()
 {
-    return fs::portable_file_name(data_);
+    return fs::portable_file_name(name_) && !fs::exists(data_);
+}
+
+void CreatePrototypeDialog::open(const boost::filesystem::path &basePath, const std::string &defaultName)
+{
+    basePath_ = basePath;
+    BaseDialog::open(defaultName);
+    name_ = defaultName;
+    updateData();
+}
+
+void CreatePrototypeDialog::updateData()
+{
+    data_= basePath_ / (name_ + ".prototype");
 }

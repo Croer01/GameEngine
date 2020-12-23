@@ -33,11 +33,11 @@ ProjectDirectory::ProjectDirectory(const ProjectDataRef &project)
     // List the data files
     // TODO: observe directory to update list if some file is created/deleted
     // probably  Implement in a separate thread
-    directory_ = std::make_shared<DataDirectory>("/");
-    recursiveDataFilesRegister(project->dataPath_, directory_);
+    root_ = std::make_shared<DataDirectory>(project->dataPath_);
+    recursiveDataFilesRegister(project->dataPath_);
 }
 
-void ProjectDirectory::recursiveDataFilesRegister(const boost::filesystem::path &directoryPath, const DataDirectoryRef &directory)
+void ProjectDirectory::recursiveDataFilesRegister(const boost::filesystem::path &directoryPath)
 {
     if(fs::exists(directoryPath) && fs::is_directory(directoryPath))
     {
@@ -50,14 +50,14 @@ void ProjectDirectory::recursiveDataFilesRegister(const boost::filesystem::path 
                 files_.emplace_back(itr->path());
                 // Make file path relative to the data directory to work with the other Editor components
                 // TODO: Should Editor unify all the path to be relative to the project directory instead of data?
-                directory_->addFile(std::make_shared<DataFile>(fs::relative(itr->path(), project_->dataPath_)));
+                root_->addFile(std::make_shared<DataFile>(fs::relative(itr->path(), project_->dataPath_)));
             }
             else
             {
                 // filename in this case is the last directory (based on boost::filesystem docs)
-                auto dir = std::make_shared<DataDirectory>(itr->path().filename().string());
-                directory->addFolder(dir);
-                recursiveDataFilesRegister(itr->path(), dir);
+                auto dir = std::make_shared<DataDirectory>(fs::relative(itr->path(), project_->dataPath_));
+                root_->addFolder(dir);
+                recursiveDataFilesRegister(itr->path());
             }
         }
     }
@@ -83,13 +83,13 @@ std::vector<DataFile> ProjectDirectory::getEditedFiles() const
 
 void ProjectDirectory::addFile(const boost::filesystem::path &filePath)
 {
-    directory_->addFile(std::make_shared<DataFile>(fs::relative(filePath, project_->dataPath_)));
+    root_->addFile(std::make_shared<DataFile>(fs::relative(filePath, project_->dataPath_)));
     files_.emplace_back(filePath);
 }
 
 void ProjectDirectory::removeFile(const boost::filesystem::path &filePath)
 {
-    directory_->removeFile(fs::relative(filePath, project_->dataPath_));
+    root_->removeFile(fs::relative(filePath, project_->dataPath_));
     //TODO: check if the file to delete is edited?
     auto it = std::remove_if( files_.begin(),
                               files_.end(),
@@ -101,5 +101,5 @@ void ProjectDirectory::removeFile(const boost::filesystem::path &filePath)
 
 DataDirectoryRef ProjectDirectory::getTree() const
 {
-    return directory_;
+    return root_;
 }

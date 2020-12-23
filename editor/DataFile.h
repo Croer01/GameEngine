@@ -24,7 +24,7 @@ class DataFile
 
 public:
     DataFile();
-    explicit DataFile(boost::filesystem::path filePath);
+    explicit DataFile(const boost::filesystem::path &filePath);
 
     DataFileType getType() const;
 

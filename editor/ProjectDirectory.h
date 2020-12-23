@@ -14,11 +14,11 @@ class ProjectDirectory
 {
     // TODO: refactor this as a tree structure
     std::vector<DataFile> files_;
-    DataDirectoryRef directory_;
+    DataDirectoryRef root_;
     ProjectDataRef project_;
     std::vector<DataFile> editedFiles_;
 
-    void recursiveDataFilesRegister(const boost::filesystem::path &directoryPath, const DataDirectoryRef &directory);
+    void recursiveDataFilesRegister(const boost::filesystem::path &directoryPath);
 public:
     explicit ProjectDirectory(const ProjectDataRef &project);
     void markEdited(const DataFile &fileEdited);
