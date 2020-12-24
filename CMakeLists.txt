@@ -171,7 +171,6 @@ add_executable(GameEngineEditor
         editor/ProjectDirectory.cpp
         editor/DataFile.cpp
         editor/dialogs/ErrorDialog.cpp
-        editor/dialogs/CreateSceneDialog.cpp
         editor/DataDirectory.cpp
         editor/GameEditor.cpp)
 

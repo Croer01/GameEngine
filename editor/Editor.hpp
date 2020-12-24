@@ -18,7 +18,6 @@
 #include "dialogs/DeleteFileDialog.h"
 #include "dialogs/SaveAllDialog.h"
 #include "dialogs/ErrorDialog.h"
-#include "dialogs/CreateSceneDialog.h"
 
 class Editor
 {
@@ -40,7 +39,6 @@ class Editor
     std::shared_ptr<ProjectData> project_;
     std::shared_ptr<CreateProjectEditor> createProjectEditor_;
     std::shared_ptr<CreateDataFileDialog> createDataFileDialog_;
-    std::shared_ptr<CreateSceneDialog> createSceneDialog_;
     std::shared_ptr<DeleteFileDialog> deleteFileDialog_;
     std::shared_ptr<SaveAllDialog> saveAllDialog_;
     std::shared_ptr<ErrorDialog> errorDialog_;
@@ -65,7 +63,7 @@ class Editor
 
     void setProject(const std::shared_ptr<ProjectData> &project);
     void createPrototype(const boost::filesystem::path &prototypeFilepath);
-    void createScene(const std::string &sceneName);
+    void createScene(const boost::filesystem::path &sceneFilepath);
     void deleteFile(const boost::filesystem::path &filePath);
     void loadScene(const std::string &sceneFilePath);
     void updateWindowTitle();

@@ -37,8 +37,12 @@ Editor::Editor(SDL_Window *window, SDL_GLContext glContext) :
     ImGui::GetStyle().FrameRounding = 3.f;
 
     createProjectEditor_= std::make_shared<CreateProjectEditor>([=] (const ProjectDataRef &projectData) { setProject(projectData); });
-    createDataFileDialog_ = std::make_shared<CreateDataFileDialog>([=] (const boost::filesystem::path &prototypePath) { createPrototype(prototypePath); });
-    createSceneDialog_ = std::make_shared<CreateSceneDialog>([=] (const std::string &sceneName) { createScene(sceneName); });
+    createDataFileDialog_ = std::make_shared<CreateDataFileDialog>([=] (const boost::filesystem::path &prototypePath) {
+        if(fs::extension(prototypePath) == ".prototype")
+            createPrototype(prototypePath);
+        else if(fs::extension(prototypePath) == ".scene")
+            createScene(prototypePath);
+    });
     deleteFileDialog_ = std::make_shared<DeleteFileDialog>([=] (const boost::filesystem::path &filePath){ deleteFile(filePath); });
     saveAllDialog_ = std::make_shared<SaveAllDialog>([=](const fs::path &result){
         saveProject();
@@ -61,7 +65,6 @@ void Editor::render()
 
     createProjectEditor_->Render();
     createDataFileDialog_->Render();
-    createSceneDialog_->Render();
     deleteFileDialog_->Render();
     saveAllDialog_->Render();
     errorDialog_->Render();
@@ -272,13 +275,11 @@ void Editor::createPrototype(const boost::filesystem::path &prototypeFilepath)
     projectDirectory_->addFile(prototypePath);
 }
 
-void Editor::createScene(const std::string &sceneName)
+void Editor::createScene(const boost::filesystem::path &sceneFilepath)
 {
     fs::path scenePath(this->project_->dataPath_);
 
-    std::stringstream ss;
-    ss << sceneName << ".scene";
-    scenePath.append(ss.str());
+    scenePath /= sceneFilepath;
 
     SceneData newScene;
     newScene.name_ = scenePath.stem().string();
@@ -292,9 +293,7 @@ void Editor::createScene(const std::string &sceneName)
     projectDirectory_->addFile(scenePath);
 
     // Load created scene
-    sceneData_ = projectFileDataProvider_.getSceneData(DataFile(scenePath));
-    objectSelected_.reset();
-    updateWindowTitle();
+    loadScene(scenePath.string());
 }
 
 void Editor::renderSceneInspector()
@@ -1039,12 +1038,13 @@ void Editor::renderMainMenu()
                 sceneName += "[Empty]";
 
             ImGui::MenuItem(sceneName.c_str(), NULL, false, false);
-            if (ImGui::MenuItem("Create...", NULL, false, (bool)sceneData_))
-            {
-                const std::string &defaultValue =
-                    "Scene" + std::to_string(projectDirectory_->getFiles().size());
-                createSceneDialog_->open(defaultValue);
-            }
+            // TODO: review this menu entry. Do I need this?
+            // if (ImGui::MenuItem("Create...", NULL, false, (bool)sceneData_))
+            // {
+            //     const std::string &defaultValue =
+            //         "Scene" + std::to_string(projectDirectory_->getFiles().size());
+            //     createSceneDialog_->open(defaultValue);
+            // }
 
             if (ImGui::MenuItem("Load...", NULL, false, (bool)sceneData_))
             {
