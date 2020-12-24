@@ -14,7 +14,7 @@
 #include "CreateProjectEditor.hpp"
 #include "GameComponentsProvider.hpp"
 #include "ProjectFileDataProvider.h"
-#include "dialogs/CreatePrototypeDialog.h"
+#include "dialogs/CreateDataFileDialog.h"
 #include "dialogs/DeleteFileDialog.h"
 #include "dialogs/SaveAllDialog.h"
 #include "dialogs/ErrorDialog.h"
@@ -39,7 +39,7 @@ class Editor
     std::unique_ptr<TargetObject> objectSelected_;
     std::shared_ptr<ProjectData> project_;
     std::shared_ptr<CreateProjectEditor> createProjectEditor_;
-    std::shared_ptr<CreatePrototypeDialog> createPrototypeDialog_;
+    std::shared_ptr<CreateDataFileDialog> createDataFileDialog_;
     std::shared_ptr<CreateSceneDialog> createSceneDialog_;
     std::shared_ptr<DeleteFileDialog> deleteFileDialog_;
     std::shared_ptr<SaveAllDialog> saveAllDialog_;

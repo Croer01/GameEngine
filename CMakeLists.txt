@@ -165,7 +165,7 @@ add_executable(GameEngineEditor
         editor/CreateProjectEditor.cpp
         editor/GameComponentsProvider.cpp
         editor/ProjectFileDataProvider.cpp
-        editor/dialogs/CreatePrototypeDialog.cpp
+        editor/dialogs/CreateDataFileDialog.cpp
         editor/dialogs/DeleteFileDialog.cpp
         editor/dialogs/SaveAllDialog.cpp
         editor/ProjectDirectory.cpp

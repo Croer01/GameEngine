@@ -5,6 +5,7 @@
 #include <imgui.h>
 #include <chrono>
 #include "imgui_backend/imgui_stdlib.h"
+#include <memory>
 #include <sstream>
 #include "Editor.hpp"
 #include "../../componentsRegistered.hpp"
@@ -36,7 +37,7 @@ Editor::Editor(SDL_Window *window, SDL_GLContext glContext) :
     ImGui::GetStyle().FrameRounding = 3.f;
 
     createProjectEditor_= std::make_shared<CreateProjectEditor>([=] (const ProjectDataRef &projectData) { setProject(projectData); });
-    createPrototypeDialog_ = std::make_shared<CreatePrototypeDialog>([=] (const boost::filesystem::path &prototypePath) { createPrototype(prototypePath); });
+    createDataFileDialog_ = std::make_shared<CreateDataFileDialog>([=] (const boost::filesystem::path &prototypePath) { createPrototype(prototypePath); });
     createSceneDialog_ = std::make_shared<CreateSceneDialog>([=] (const std::string &sceneName) { createScene(sceneName); });
     deleteFileDialog_ = std::make_shared<DeleteFileDialog>([=] (const boost::filesystem::path &filePath){ deleteFile(filePath); });
     saveAllDialog_ = std::make_shared<SaveAllDialog>([=](const fs::path &result){
@@ -59,7 +60,7 @@ void Editor::render()
     renderMainMenu();
 
     createProjectEditor_->Render();
-    createPrototypeDialog_->Render();
+    createDataFileDialog_->Render();
     createSceneDialog_->Render();
     deleteFileDialog_->Render();
     saveAllDialog_->Render();
@@ -219,18 +220,11 @@ void Editor::renderPrototypeListInternal(const DataDirectoryRef &dir)
         ImGui::PushID(subdir->name().c_str());
         bool opened = ImGui::TreeNode(subdir->name().c_str());
 
-        float prototypeLabelWidth = ImGui::CalcTextSize("Prototype").x;
-        ImGui::SameLine(ImGui::GetWindowContentRegionWidth() - prototypeLabelWidth);
-        if(ImGui::Button("Prototype"))
+        float labelWidth = ImGui::CalcTextSize("Create...").x;
+        ImGui::SameLine(ImGui::GetWindowContentRegionWidth() - labelWidth);
+        if(ImGui::Button("Create..."))
         {
-            createPrototypeDialog_->open(subdir->getDirectoryPath(), "NewPrototype");
-        }
-
-        float sceneLabelWidth = ImGui::CalcTextSize("Scene").x;
-        ImGui::SameLine(ImGui::GetWindowContentRegionWidth() - prototypeLabelWidth - sceneLabelWidth - 8);
-        if(ImGui::Button("Scene"))
-        {
-            createSceneDialog_->open("NewScene");
+            createDataFileDialog_->open(subdir->getDirectoryPath(), "NewPrototype");
         }
 
         if(opened)
@@ -1280,8 +1274,8 @@ void Editor::setProject(const std::shared_ptr<ProjectData> &project)
         loadScene(project_->currentScenePath_);
     }
 
-    projectDirectory_.reset(new ProjectDirectory(project_));
-
+    projectDirectory_ = std::make_unique<ProjectDirectory>(project_);
+    createDataFileDialog_->setDataPath(project_->dataPath_);
     updateWindowTitle();
 }
 
