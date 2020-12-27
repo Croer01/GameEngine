@@ -24,6 +24,7 @@ namespace Internal {
         std::string name_;
         std::vector<std::shared_ptr<GameObject>> gameObjects_;
         std::shared_ptr<Camera> cam_;
+        bool initialized_;
 
         void loadFile(Game *game);
 

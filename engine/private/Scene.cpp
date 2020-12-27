@@ -15,7 +15,7 @@
 namespace GameEngine {
 namespace Internal {
 
-    Scene::Scene(const std::string &filePath) : filePath_(filePath) {
+    Scene::Scene(const std::string &filePath) : filePath_(filePath), initialized_(false) {
     }
 
     void Scene::init(Game *game) {
@@ -32,6 +32,7 @@ namespace Internal {
         for (auto i = 0; i < size; i++) {
             gameObjects_[i]->Init();
         }
+        initialized_ = true;
     }
 
     void Scene::update(float elapsedTime) {
@@ -74,6 +75,7 @@ namespace Internal {
 
                 std::cout << "object created " << prototype["prototype"].as<std::string>() << std::endl;
             }
+
         } catch (const std::exception &e) {
             throw std::runtime_error("Can't load '" + filePath_ + "'. cause: " + e.what());
         }
@@ -84,12 +86,16 @@ namespace Internal {
             gameobject->destroy();
         }
         gameObjects_.clear();
+        initialized_ = false;
     }
 
     void Scene::addGameObject(const std::shared_ptr<GameObject> &gameObject) {
         gameObjects_.push_back(gameObject);
-        gameObject->preInit();
-        gameObject->Init();
+        if(initialized_)
+        {
+            gameObject->preInit();
+            gameObject->Init();
+        }
     }
 
 
