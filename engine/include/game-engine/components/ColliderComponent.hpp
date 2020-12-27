@@ -33,7 +33,8 @@ class PUBLICAPI ColliderComponent : public geComponentInstantiable<ColliderCompo
         bool isSensor_;
         float gravityScale_;
         float mass_;
-        // this flag is to ensure the position of the collider is set to the gameObject if the type is changed.
+        bool fixedRotation_;
+        // This flag is to ensure the position of the collider is set to the gameObject if the type is changed.
         // For example, if change from Dynamic to Static we need to ensure the position of the collider is correctly set after change to static
         bool typeChanged_;
 
@@ -80,6 +81,8 @@ class PUBLICAPI ColliderComponent : public geComponentInstantiable<ColliderCompo
         void gravityScale(const float &value);
         float mass() const;
         void mass(const float &value);
+        bool fixedRotation() const;
+        void fixedRotation(const bool &value);
 protected:
     void onEvent(const Subject<Internal::ColliderEvent> &target, const Internal::ColliderEvent &event, void *args) override;
 

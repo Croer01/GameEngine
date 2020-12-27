@@ -237,6 +237,7 @@ void ColliderComponent::onEvent(const Subject<Internal::ColliderEvent> &target, 
         collider_->setSensor(isSensor_);
         collider_->setGravityScale(gravityScale_);
         collider_->setMass(mass_);
+        collider_->setFixedRotation(fixedRotation_);
         collider_->setComponent(std::dynamic_pointer_cast<ColliderComponent>(shared_from_this()));
 
         physicsEngine_->registerCollider(collider_);
@@ -306,6 +307,12 @@ PropertySetBase *ColliderComponent::getProperties() const
         &ColliderComponent::mass,
         1.f,
         false));
+    properties->add(new Property<ColliderComponent, bool>(
+        "fixedRotation",
+        &ColliderComponent::fixedRotation,
+        &ColliderComponent::fixedRotation,
+        true,
+        false));
 
     return properties;
 }
@@ -343,6 +350,17 @@ void ColliderComponent::mass(const float &value)
     mass_ = value;
     if(collider_)
         collider_->setMass(mass_);
+}
+
+bool ColliderComponent::fixedRotation() const
+{
+    return fixedRotation_;
+}
+void ColliderComponent::fixedRotation(const bool &value)
+{
+    fixedRotation_ = value;
+    if(collider_)
+        collider_->setFixedRotation(fixedRotation_);
 }
 
 void ColliderComponent::updateColliderSize()

@@ -6,6 +6,7 @@
 #include <iostream>
 #include "Collider.hpp"
 #include "PhysicsEngine.hpp"
+
 namespace GameEngine {
 namespace Internal {
     namespace {
@@ -17,7 +18,7 @@ namespace Internal {
     b2BodyDef *Collider::getBodyDef() const {
         b2BodyDef *bodyDef = new b2BodyDef();
         bodyDef->userData = (void *) this;
-        bodyDef->fixedRotation = true;
+        bodyDef->fixedRotation = fixedRotation_.get();
         bodyDef->gravityScale = gravityScale_;
         // this is to avoid sensor colliders won't detect collisions if they are statics or they don't move
         if(isSensor_)
@@ -188,6 +189,11 @@ void Collider::updateInSafeMode() {
             massData.mass = mass_.get();
             body_->SetMassData(&massData);
         }
+
+        if(fixedRotation_.update())
+        {
+            body_->SetFixedRotation(fixedRotation_.get());
+        }
     }
 
     std::string Collider::getCategory() const {
@@ -226,6 +232,16 @@ void Collider::setMass(float value)
 float Collider::getMass() const
 {
     return mass_.hasChanges()? mass_.get() : body_->GetMass();
+}
+
+void Collider::setFixedRotation(bool value)
+{
+    fixedRotation_ = value;
+}
+
+bool Collider::getFixedRotation() const
+{
+    return fixedRotation_.get();
 }
 }
 }

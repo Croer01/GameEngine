@@ -43,6 +43,7 @@ namespace Internal {
        DelayedSetter<bool> active_;
        DelayedSetter<ColliderTypes> colliderType_;
        DelayedSetter<float> mass_;
+       DelayedSetter<bool> fixedRotation_;
 
 
         std::unique_ptr<b2Body, std::function<void(b2Body *)>> body_;
@@ -89,6 +90,9 @@ namespace Internal {
 
         void setMass(float value);
         float getMass() const;
+
+        void setFixedRotation(bool value);
+        bool getFixedRotation() const;
 
         void setSize(float extendX, float extendY);
 
