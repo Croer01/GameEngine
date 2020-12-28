@@ -61,7 +61,7 @@ set(ENGINE_SOURCES
         engine/public/components/ParticlesPropertiesComponent.cpp
         engine/public/components/SpawnerComponent.cpp
         engine/public/Range.cpp
-        )
+        engine/public/components/CarColliderComponent.cpp)
 
 # private stuff
 set(ENGINE_PRIVATE_SOURCES
