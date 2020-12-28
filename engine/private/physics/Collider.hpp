@@ -97,6 +97,7 @@ namespace Internal {
         void setSize(float extendX, float extendY);
 
         void setRotation(float radians);
+        float getRotation() const;
 
         void doBeginCollision(Collider *other);
         void doBeginSensor(Collider *other);

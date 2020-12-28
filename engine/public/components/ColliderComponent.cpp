@@ -5,7 +5,6 @@
 #include <game-engine/components/ColliderComponent.hpp>
 #include <game-engine/components/GeometryComponent.hpp>
 #include <iostream>
-#include "../private/physics/PhysicsEngine.hpp"
 #include "../../private/GameObject.hpp"
 #include "game-engine/Game.hpp"
 
@@ -71,9 +70,14 @@ namespace {
         if(typeChanged_ || collider_->getType() == Internal::Collider::ColliderTypes::Dynamic)
         {
             Vec2D position = collider_->getPosition();
+            float rotation = collider_->getRotation();
             if(auto parent = gameObject()->parent().lock())
+            {
                 position -= parent->position();
+                rotation -= parent->rotation();
+            }
             gameObject()->position(convertPhysicsToWorldPos(position));
+            gameObject()->rotation(rotation);
             typeChanged_ = false;
         }
     }

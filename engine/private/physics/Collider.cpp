@@ -86,7 +86,15 @@ namespace Internal {
         rotation_ = radians;
     }
 
-    void Collider::doBeginCollision(Collider *other) {
+    float Collider::getRotation() const
+    {
+        float rotation = body_->GetAngle();
+        if(rotation_.hasChanges())
+            rotation = rotation_.get();
+        return rotation;
+    }
+
+void Collider::doBeginCollision(Collider *other) {
         notify(ColliderEvent::BeginCollider, (void *) other);
     }
 
