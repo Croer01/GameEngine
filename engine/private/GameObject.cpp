@@ -310,11 +310,15 @@ void GameObject::parent(const geGameObjectRef &goParent) {
     }
 
     void GameObject::onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) {
+        // Recompute the local transform to apply correctly the changes from parent
+        if(event == GameObjectEvent::TransformChanged)
+            computeTransform();
+
         //Used as a proxy for events raised from parent and affect directly to the children objects
         notify(event);
     }
 
-    GameEngine::geGameObjectRef GameObject::findChildByName(const std::string &name) {
+GameEngine::geGameObjectRef GameObject::findChildByName(const std::string &name) {
         for(std::shared_ptr<GameObject> child : children_){
             if(child->name_ == name)
                 return child;

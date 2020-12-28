@@ -2,13 +2,14 @@
 // Created by adria on 27/10/2018.
 //
 
-#ifndef SPACEINVADERS_GRAPHICHOLDER_HPP
-#define SPACEINVADERS_GRAPHICHOLDER_HPP
+#ifndef GAMEENGINE_GRAPHICHOLDER_HPP
+#define GAMEENGINE_GRAPHICHOLDER_HPP
 
 
 #include <memory>
 #include <game-engine/api.hpp>
 #include "Graphic.hpp"
+#include <game-engine/geGameObject.hpp>
 
 namespace GameEngine {
 namespace Internal {
@@ -49,6 +50,7 @@ namespace Internal {
 
         void draw(const std::shared_ptr<Shader> &shader);
 
+        void setModelTransform(geGameObject *gameObject);
         void setModelTransform(const Vec2D &position, float rotation, const Vec2D &scale);
 
         void setGraphic(const std::shared_ptr<Graphic> &graphic);
@@ -79,4 +81,4 @@ namespace Internal {
 }
 }
 
-#endif //SPACEINVADERS_GRAPHICHOLDER_HPP
+#endif //GAMEENGINE_GRAPHICHOLDER_HPP

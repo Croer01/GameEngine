@@ -23,7 +23,7 @@ namespace GameEngine {
         timeAcumulator_ = 0;
         animationOffsetFrame_ = 0;
         animationFramesLength_ = getFramesNum();
-        graphic_->setModelTransform(gameObject()->position(), gameObject()->rotation(), gameObject()->scale());
+        graphic_->setModelTransform(gameObject());
         gameObject()->registerObserver(this);
     }
 
@@ -37,7 +37,7 @@ namespace GameEngine {
 
     void SpriteAnimatedComponent::onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) {
         if(event == GameObjectEvent::TransformChanged){
-            graphic_->setModelTransform(gameObject()->position(), gameObject()->rotation(), gameObject()->scale());
+            graphic_->setModelTransform(gameObject());
         }
         else if(event == GameObjectEvent::ActiveChanged){
             graphic_->setActive(gameObject()->active() && visible_);
@@ -147,7 +147,7 @@ void SpriteAnimatedComponent::setFrame(int frame) {
             oldGameObject->unregisterObserver(this);
 
         if(newGameObject && graphic_){
-            graphic_->setModelTransform(newGameObject->position(), newGameObject->rotation(), newGameObject->scale());
+            graphic_->setModelTransform(newGameObject);
 
             newGameObject->registerObserver(this);
         }

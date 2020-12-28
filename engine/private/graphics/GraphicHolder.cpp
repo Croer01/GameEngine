@@ -4,6 +4,7 @@
 
 #include "GraphicsEngine.hpp"
 #include "GraphicHolder.hpp"
+#include "../GameObject.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
 
@@ -32,28 +33,43 @@ namespace Internal {
     }
 
     void
-    GraphicHolder::setModelTransform(const Vec2D &position, float rotation, const Vec2D &scale) {
-        glm::vec3 desiredPosition = glm::vec3(position.x,position.y,0.f);
+    GraphicHolder::setModelTransform(geGameObject *gameObject) {
+        auto object = dynamic_cast<Internal::GameObject*>(gameObject);
+
         glm::mat4 scaleTransform;
-        if(cellSize_.x == -1 && cellSize_.y == -1)
+        if (cellSize_.x == -1 && cellSize_.y == -1)
             scaleTransform = glm::scale(glm::mat4(1), glm::vec3(graphic_->getWidth(), graphic_->getHeight(), 1.f));
         else
             scaleTransform = glm::scale(glm::mat4(1), glm::vec3(cellSize_.x, cellSize_.y, 1.f));
 
-        if (engine_ != nullptr && engine_->isPixelPerfect())
-            desiredPosition = glm::round(desiredPosition);
+        glm::mat4 anchorTransform = glm::translate(glm::mat4(1), glm::vec3(anchor_.x, anchor_.y, 0.f));
 
-        glm::mat4 anchorTransform = glm::translate(glm::mat4(1), glm::vec3(anchor_.x * scale.x, anchor_.y * scale.y, 0.f));
-
-        //remember the order of matrix multiplication is from right to left
-        modelTransform_ = glm::translate(glm::mat4(1), desiredPosition) *
-                anchorTransform *
-                glm::mat4_cast(glm::quat(glm::vec3(0,0,rotation))) *
-                scaleTransform *
-                glm::inverse(anchorTransform);
-
-        modelTransform_ = glm::scale(modelTransform_, glm::vec3(scale.x, scale.y, 1.f));
+        modelTransform_ = object->getTransform() * anchorTransform * scaleTransform * glm::inverse(anchorTransform);
     }
+
+void GraphicHolder::setModelTransform(const Vec2D &position, float rotation, const Vec2D &scale)
+{
+    glm::vec3 desiredPosition = glm::vec3(position.x, position.y, 0.f);
+    glm::mat4 scaleTransform;
+    if (cellSize_.x == -1 && cellSize_.y == -1)
+        scaleTransform = glm::scale(glm::mat4(1), glm::vec3(graphic_->getWidth(), graphic_->getHeight(), 1.f));
+    else
+        scaleTransform = glm::scale(glm::mat4(1), glm::vec3(cellSize_.x, cellSize_.y, 1.f));
+
+    if (engine_ != nullptr && engine_->isPixelPerfect())
+        desiredPosition = glm::round(desiredPosition);
+
+    glm::mat4 anchorTransform = glm::translate(glm::mat4(1), glm::vec3(anchor_.x * scale.x, anchor_.y * scale.y, 0.f));
+
+    //remember the order of matrix multiplication is from right to left
+    modelTransform_ = glm::translate(glm::mat4(1), desiredPosition) *
+                      anchorTransform *
+                      glm::mat4_cast(glm::quat(glm::vec3(0, 0, rotation))) *
+                      scaleTransform *
+                      glm::inverse(anchorTransform);
+
+    modelTransform_ = glm::scale(modelTransform_, glm::vec3(scale.x, scale.y, 1.f));
+}
 
     void GraphicHolder::setGraphic(const std::shared_ptr<Graphic> &graphic) {
         graphic_ = graphic;
