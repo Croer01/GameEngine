@@ -97,7 +97,36 @@ void DebugView::DrawCircleInternal(const b2Vec2 &center, float32 radius, const b
         shader_->draw();
     }
 
-    void DebugView::DrawSegment(const b2Vec2 &p1, const b2Vec2 &p2, const b2Color &color) {}
+    void DebugView::DrawSegment(const b2Vec2 &p1, const b2Vec2 &p2, const b2Color &color)
+    {
+        beginDraw();
+
+        //The order of the vertices are flipped to from "n" to "u" way to deal with the inverted y axis
+        //VBO data
+        std::vector<float> verticesUVs;
+
+        //vertex(3) | uv(2)
+        verticesUVs.push_back(p1.x);
+        verticesUVs.push_back(p1.y);
+        verticesUVs.push_back(0.f);
+        verticesUVs.push_back(0.f);
+        verticesUVs.push_back(0.f);
+
+        //vertex(3) | uv(2)
+        verticesUVs.push_back(p2.x);
+        verticesUVs.push_back(p2.y);
+        verticesUVs.push_back(0.f);
+        verticesUVs.push_back(0.f);
+        verticesUVs.push_back(0.f);
+
+        MeshData mesh(verticesUVs, std::vector<unsigned int> ());
+        shader_->setElementMode(GL_LINE_LOOP);
+        shader_->setUniform("Color", glm::vec4(color.r, color.g, color.b, color.a));
+        mesh.draw(shader_);
+        shader_->draw();
+
+        endDraw();
+    }
 
     void DebugView::DrawTransform(const b2Transform &xf) {}
 
@@ -114,6 +143,7 @@ void DebugView::DrawCircleInternal(const b2Vec2 &center, float32 radius, const b
 
 
     void DebugView::endDraw() {
+        shader_->setElementMode(GL_TRIANGLES);
         shader_->unbind();
     }
 

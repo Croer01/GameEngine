@@ -24,7 +24,7 @@ void PhysicsEngine::init(float timeStep, Screen *screen) {
 
         debugView_.reset(new DebugView(screen));
         world_->SetDebugDraw(debugView_.get());
-        debugView_->SetFlags(b2Draw::e_shapeBit);
+        debugView_->SetFlags(b2Draw::e_shapeBit | b2Draw::e_jointBit);
     }
 #endif
 
