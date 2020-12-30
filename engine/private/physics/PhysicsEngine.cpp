@@ -175,5 +175,19 @@ void PhysicsEngine::drawDebug(const std::shared_ptr<Camera> &cam) {
         }
         colliders_.clear();
     }
+
+b2Joint *PhysicsEngine::createRevoluteJoin(b2Body *bodyA, b2Body *bodyB, float xBodyA, float yBodyA)
+{
+    b2RevoluteJointDef jointDef;
+    jointDef.bodyA = bodyA;
+    jointDef.enableLimit = true;
+    jointDef.lowerAngle = 0;//with both these at zero...
+    jointDef.upperAngle = 0;//...the joint will not move
+    jointDef.localAnchorB.SetZero();//joint anchor in tire is always center
+
+    jointDef.bodyB = bodyB;
+    jointDef.localAnchorA.Set(xBodyA, yBodyA);
+    return world_->CreateJoint( &jointDef );
+}
 }
 }

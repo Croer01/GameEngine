@@ -61,6 +61,7 @@ public:
         void registerCollider(const std::shared_ptr<Collider> &collider);
 
         void unregisterCollider(const std::shared_ptr<Collider> &collider);
+        b2Joint *createRevoluteJoin(b2Body *bodyA, b2Body *bodyB, float xBodyA, float yBodyA);
     };
 }
 }

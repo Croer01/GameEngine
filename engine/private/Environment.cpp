@@ -15,6 +15,7 @@
 #include <game-engine/components/ParticleEmitterComponent.hpp>
 #include <game-engine/components/SpawnerComponent.hpp>
 #include "Environment.hpp"
+#include "../public/components/CarColliderComponent.hpp"
 
 namespace fs = boost::filesystem;
 
@@ -36,6 +37,7 @@ Environment::Environment() : configurationPath_("conf"), dataPath_("data")
     objectManager_->registerComponentBuilder("ParticleEmitterComponent", new ComponentTBuilder<ParticleEmitterComponent>());
     objectManager_->registerComponentBuilder("ParticlesPropertiesComponent", new ComponentTBuilder<ParticlesPropertiesComponent>());
     objectManager_->registerComponentBuilder("SpawnerComponent", new ComponentTBuilder<SpawnerComponent>());
+    objectManager_->registerComponentBuilder("CarColliderComponent", new ComponentTBuilder<CarColliderComponent>());
 
     //GUI Components
     objectManager_->registerComponentBuilder("UIButtonComponent", new ComponentTBuilder<UIButtonComponent>());
