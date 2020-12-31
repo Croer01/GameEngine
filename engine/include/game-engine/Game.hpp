@@ -63,7 +63,6 @@ public:
     geGameObjectRef findObjectByNameInCurrentScene(const std::string &gameObjectName);
     std::weak_ptr<geCamera> cameraOfCurrentScene() const;
     geDataRef saveCurrentSceneState() const;
-    std::vector<Game *> findObjectWithComponent();
     geScreen *screen() const;
     geAudio *audio() const;
     InputManager *input() const;
