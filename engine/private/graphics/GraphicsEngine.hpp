@@ -38,7 +38,7 @@ namespace Internal {
 
         GraphicsEngine(Screen *screen, bool embedded);
 
-        void draw(const std::shared_ptr<Camera> &cam);
+        void draw(Camera *cam);
 
         void registerGraphic(const std::shared_ptr<GraphicHolder> &graphic);
 

@@ -134,10 +134,10 @@ void PhysicsEngine::EndContact(b2Contact *contact)
 }
 
 #ifdef DEBUG
-void PhysicsEngine::drawDebug(const std::shared_ptr<Camera> &cam) {
+void PhysicsEngine::drawDebug(Camera *cam) {
     debugView_->setCamera(cam);
-        world_->DrawDebugData();
-    }
+    world_->DrawDebugData();
+}
 #endif
 
     void PhysicsEngine::createCategories(const std::vector<std::string> &categories) {

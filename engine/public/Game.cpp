@@ -158,7 +158,7 @@ void Game::initPhysics(const std::string &configFilePath) {
             CheckGlError();
         }
 
-        const std::shared_ptr<Camera> &cam = environment_->sceneManager()->getCameraOfCurrentScene();
+        auto cam = dynamic_cast<Camera*>(environment_->sceneManager()->getCameraOfCurrentScene());
         graphicsEngine_->draw(cam);
 #ifdef DEBUG
         if(graphicsEngine_->getFbo() != nullptr)
@@ -216,7 +216,7 @@ void Game::initPhysics(const std::string &configFilePath) {
         return std::dynamic_pointer_cast<geGameObject>(object);
     }
 
-    std::weak_ptr<geCamera> Game::cameraOfCurrentScene() const
+    geCamera* Game::cameraOfCurrentScene() const
     {
         return environment_->sceneManager()->getCameraOfCurrentScene();
     }

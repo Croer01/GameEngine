@@ -23,7 +23,7 @@ namespace Internal {
         std::string filePath_;
         std::string name_;
         std::vector<std::shared_ptr<GameObject>> gameObjects_;
-        std::shared_ptr<Camera> cam_;
+        std::unique_ptr<Camera> cam_;
         bool initialized_;
 
         void loadFile(Game *game);
@@ -41,7 +41,7 @@ namespace Internal {
 
         void shutDown();
 
-        std::shared_ptr<GameEngine::geCamera> cam() const;
+        GameEngine::geCamera *cam() const;
 
         geDataRef saveCurrentState() const;
 

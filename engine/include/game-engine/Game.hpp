@@ -61,7 +61,7 @@ public:
     virtual geGameObjectRef createObject(const std::string &name);
     virtual geGameObjectRef createFromPrototype(const std::string &prototype);
     geGameObjectRef findObjectByNameInCurrentScene(const std::string &gameObjectName);
-    std::weak_ptr<geCamera> cameraOfCurrentScene() const;
+    geCamera *cameraOfCurrentScene() const;
     geDataRef saveCurrentSceneState() const;
     geScreen *screen() const;
     geAudio *audio() const;

@@ -56,7 +56,7 @@ public:
         void update(float elapsedTime);
 
 #ifdef DEBUG
-        void drawDebug(const std::shared_ptr<Camera> &cam);
+        void drawDebug(Camera *cam);
 #endif
         void registerCollider(const std::shared_ptr<Collider> &collider);
 

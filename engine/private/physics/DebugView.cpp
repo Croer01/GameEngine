@@ -176,7 +176,7 @@ void DebugView::DrawCircleInternal(const b2Vec2 &center, float32 radius, const b
         CheckGlError();
     }
 
-    void DebugView::setCamera(const std::shared_ptr<Camera> &cam) {
+    void DebugView::setCamera(Camera *cam) {
         cam_ = cam;
     }
 }

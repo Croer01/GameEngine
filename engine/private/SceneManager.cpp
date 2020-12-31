@@ -68,11 +68,11 @@ namespace Internal {
         return (bool)currentScene_;
     }
 
-    std::shared_ptr<Camera> SceneManager::getCameraOfCurrentScene() const {
-        std::shared_ptr<Camera> cam;
+    geCamera *SceneManager::getCameraOfCurrentScene() const {
+        geCamera *cam = nullptr;
 
         if(currentScene_)
-            cam = std::dynamic_pointer_cast<Camera>(currentScene_->cam());
+            cam = currentScene_->cam();
 
         return cam;
     }

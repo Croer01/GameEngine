@@ -3,6 +3,7 @@
 //
 
 #include <yaml-cpp/yaml.h>
+#include <memory>
 #include <sstream>
 #include <algorithm>
 #include <iostream>
@@ -19,7 +20,7 @@ namespace Internal {
     }
 
     void Scene::init(Game *game) {
-        cam_.reset(new Camera());
+        cam_ = std::make_unique<Camera>(game);
         gameObjects_.clear();
         loadFile(game);
 
@@ -113,8 +114,8 @@ namespace Internal {
         return found;
     }
 
-    std::shared_ptr<GameEngine::geCamera> Scene::cam() const {
-        return cam_;
+    GameEngine::geCamera *Scene::cam() const {
+        return cam_.get();
     }
 
 geDataRef Scene::saveCurrentState() const

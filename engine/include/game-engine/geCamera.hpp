@@ -13,6 +13,7 @@ namespace GameEngine {
         virtual ~geCamera(){};
         virtual GameEngine::Vec2D position() const = 0;
         virtual void position(const GameEngine::Vec2D &pos) = 0;
+        virtual void centerCameraToPosition(const GameEngine::Vec2D &pos) = 0;
         virtual Vec2D worldToScreen(const GameEngine::Vec2D &posWorld) = 0;
         virtual Vec2D ScreenToWorld(const GameEngine::Vec2D &posScreen) = 0;
     };

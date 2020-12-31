@@ -14,7 +14,7 @@ namespace GameEngine {
 namespace Internal {
     class DebugView : public b2Draw {
         std::shared_ptr<Shader> shader_;
-        std::shared_ptr<Camera> cam_;
+        Camera *cam_;
         Screen *screen_;
 
         // common instructions required before draw something
@@ -41,7 +41,7 @@ namespace Internal {
 
         void DrawPoint(const b2Vec2 &p, float32 size, const b2Color &color) override;
 
-        void setCamera(const std::shared_ptr<Camera> &cam);
+        void setCamera(Camera *cam);
     };
 }
 }

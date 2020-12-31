@@ -4,6 +4,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 #include "Camera.hpp"
+#include <game-engine/Game.hpp>
 
 namespace GameEngine {
 namespace Internal {
@@ -11,7 +12,9 @@ namespace Internal {
         return viewMatrix_;
     }
 
-    Camera::Camera() {
+    Camera::Camera(Game *game)
+    {
+        game_ = game;
         calculateMatrix();
     }
 
@@ -24,7 +27,14 @@ namespace Internal {
         calculateMatrix();
     }
 
-    void Camera::calculateMatrix() {
+    void Camera::centerCameraToPosition(const GameEngine::Vec2D &pos) {
+        assert(game_ != nullptr);
+        auto screenOffset = Vec2D(game_->screen()->virtualWidth() / 2.f, game_->screen()->virtualHeight() / 2.f);
+        position_ = pos - screenOffset;
+        calculateMatrix();
+    }
+
+void Camera::calculateMatrix() {
         viewMatrix_ = glm::translate(glm::mat4(1), glm::vec3(-position_.x, -position_.y,0.f));
     }
 

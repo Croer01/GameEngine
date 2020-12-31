@@ -170,7 +170,7 @@ namespace Internal {
             fbo_ = std::make_unique<FBO>(screen->virtualWidth(), screen->virtualHeight());
     }
 
-    void GraphicsEngine::draw(const std::shared_ptr<Camera> &cam)
+    void GraphicsEngine::draw(Camera *cam)
     {
         {
             std::unique_lock<std::mutex> lock(graphicsToInitMutex_);

@@ -2,8 +2,8 @@
 // Created by adria on 01/10/2018.
 //
 
-#ifndef SPACEINVADERS_SCENEMANAGER_HPP
-#define SPACEINVADERS_SCENEMANAGER_HPP
+#ifndef GAMEENGINE_SCENEMANAGER_HPP
+#define GAMEENGINE_SCENEMANAGER_HPP
 
 
 #include <memory>
@@ -41,7 +41,7 @@ namespace Internal {
 
         bool isSceneLoaded() const;
 
-        std::shared_ptr<Camera> getCameraOfCurrentScene() const;
+        geCamera *getCameraOfCurrentScene() const;
 
         void bindGame(Game *game);
         void unbindGame();
@@ -50,4 +50,4 @@ namespace Internal {
     };
 }
 }
-#endif //SPACEINVADERS_SCENEMANAGER_HPP
+#endif //GAMEENGINE_SCENEMANAGER_HPP
