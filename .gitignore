@@ -40,3 +40,6 @@ cmake-build-*/
 
 # remove generated files from engine
 componentsRegistered.hpp
+
+# Conan package manager
+build/
