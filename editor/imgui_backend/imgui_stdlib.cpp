@@ -69,7 +69,7 @@ bool ImGui::InputTextMultiline(const char* label, std::string* str, const ImVec2
 void ImGui::VerticalText(const char *text)
 {
     ImFont *font = GetFont();
-    const ImFont::Glyph *glyph;
+    const ImFontGlyph *glyph;
     char c;
     ImGuiContext& g = *GetCurrentContext();
     const ImGuiStyle& style = GetStyle();

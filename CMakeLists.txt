@@ -11,30 +11,12 @@ add_compile_options("$<$<CONFIG:DEBUG>:-DDEBUG>")
 # See https://blog.kitware.com/create-dlls-on-windows-without-declspec-using-new-cmake-export-all-feature/
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
-# dependencies
-# All the dependencies are managed by vcpkg
-
-#SDL2_image
-find_path(SDL2_IMAGE_INCLUDE SDL2/SDL_image.h)
-find_library(SDL2_IMAGE_LIBRARY SDL2_image)
-
-find_path(UTF8_CPP_INCLUDE utf8/core.h)
-
-find_package(SDL2 CONFIG REQUIRED)
-find_package(GLEW REQUIRED)
-find_package(glm CONFIG REQUIRED)
-find_package(OpenGL REQUIRED)
-find_package(OpenAL CONFIG REQUIRED)
-find_package(yaml-cpp CONFIG REQUIRED)
-find_package(unofficial-box2d CONFIG REQUIRED)
-find_package(Freetype REQUIRED)
-find_package(LibSndFile CONFIG REQUIRED)
-find_package(Boost 1.68.0 REQUIRED COMPONENTS filesystem)
-find_package(ZLIB REQUIRED)
-include_directories(${OPENGL_INCLUDE_DIRS})
-include_directories(${SDL2_INCLUDE_DIR} ${SDL2_IMAGE_INCLUDE} ${GLEW_INCLUDE_DIR} ${glm_INCLUDE_DIR} ${UTF8_CPP_INCLUDE})
-include_directories(${SDL2_ROOT}/include)
-include_directories(${Boost_INCLUDE_DIRS})
+if(EXISTS ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+    include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+    conan_basic_setup(TARGETS)
+else()
+    message(WARNING "The file conanbuildinfo.cmake doesn't exist, you have to run conan install first")
+endif()
 
 # public stuff
 set(ENGINE_SOURCES
@@ -113,18 +95,19 @@ target_include_directories(GameEngine PUBLIC
         )
 
 target_link_libraries(GameEngine PUBLIC
-        SDL2::SDL2
-        ${SDL2_IMAGE_LIBRARY}
-        yaml-cpp
-        GLEW::GLEW
-        glm
-        ${OPENGL_LIBRARIES}
-        unofficial::box2d::Box2D
-        Freetype::Freetype
-        OpenAL::OpenAL
-        sndfile-shared
-        Boost::filesystem
-        ZLIB::ZLIB)
+        CONAN_PKG::sdl2
+        CONAN_PKG::sdl2_image
+        CONAN_PKG::yaml-cpp
+        CONAN_PKG::glew
+        CONAN_PKG::glm
+        CONAN_PKG::opengl
+        CONAN_PKG::box2d
+        CONAN_PKG::freetype
+        CONAN_PKG::openal
+        CONAN_PKG::libsndfile
+        CONAN_PKG::boost
+        CONAN_PKG::utfcpp
+        CONAN_PKG::zlib)
 
 install(TARGETS GameEngine EXPORT GameEngineTargets
         LIBRARY DESTINATION lib
@@ -141,13 +124,6 @@ add_subdirectory(test)
 if (NOT COMMAND configure_game_directories)
     add_subdirectory(tools)
 endif ()
-
-# Dependencies for the Editor's UI
-find_package(imgui CONFIG REQUIRED)
-find_package(yaml-cpp CONFIG REQUIRED)
-find_path(TINYFILEDIALOGS_INCLUDE tinyfiledialogs.h)
-find_library(TINYFILEDIALOGS_LIBRARY tinyfiledialogs)
-include_directories(${TINYFILEDIALOGS_INCLUDE})
 
 # This is a workaround to avoid issues related with the generated file
 set_source_files_properties(
@@ -176,12 +152,16 @@ add_executable(GameEngineEditor
 
 target_compile_definitions(GameEngineEditor PUBLIC -DIMGUI_IMPL_OPENGL_LOADER_GLEW)
 
+if(MSVC)
+    target_compile_options(GameEngineEditor PUBLIC /bigobj)
+endif ()
+
 target_link_libraries(GameEngineEditor PRIVATE GameEngine
-        imgui::imgui
-        SDL2::SDL2
-        SDL2::SDL2main
-        GLEW::GLEW
-        Boost::filesystem
-        yaml-cpp
-        ${OPENGL_LIBRARIES}
-        ${TINYFILEDIALOGS_LIBRARY})
+        CONAN_PKG::imgui
+        CONAN_PKG::sdl2
+        CONAN_PKG::glew
+        CONAN_PKG::boost
+        CONAN_PKG::yaml-cpp
+        CONAN_PKG::opengl
+        CONAN_PKG::tinyfiledialogs
+        )

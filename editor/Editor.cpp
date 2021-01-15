@@ -69,11 +69,13 @@ void Editor::render()
     saveAllDialog_->Render();
     errorDialog_->Render();
 
+    ImGuiIO& io = ImGui::GetIO();
+    // Set windows position centered with the display. Code based on the old method ImGui::SetNextWindowPosCenter()
+    ImGui::SetNextWindowPos(ImVec2(io.DisplaySize.x * 0.5f, io.DisplaySize.y * 0.5f), 0, ImVec2(0.5f, 0.5f));
+
     if(project_)
     {
         bool prevDirty = project_->dirty_ || projectDirectory_->hasEditedFiles();
-
-        ImGui::SetNextWindowPosCenter();
         ImGui::Begin("no dirty");
         if(ImGui::Button("no dirty"))
             project_->dirty_ = false;
@@ -89,7 +91,6 @@ void Editor::render()
     }
     else
     {
-        ImGui::SetNextWindowPosCenter();
         ImGui::Begin("Welcome");
         if(ImGui::Button("Create Project..."))
             createProjectEditor_->open();

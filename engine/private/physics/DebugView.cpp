@@ -130,8 +130,6 @@ void DebugView::DrawCircleInternal(const b2Vec2 &center, float32 radius, const b
 
     void DebugView::DrawTransform(const b2Transform &xf) {}
 
-    void DebugView::DrawPoint(const b2Vec2 &p, float32 size, const b2Color &color) {}
-
     void DebugView::beginDraw() {
         glm::mat4 transform = glm::ortho<float>(0.0f, static_cast<float>(screen_->virtualWidth()), static_cast<float>(screen_->virtualHeight()), 0.f, 0.f, 1.f) *
                 cam_->getViewMatrix();
