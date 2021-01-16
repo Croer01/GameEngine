@@ -43,3 +43,4 @@ componentsRegistered.hpp
 
 # Conan package manager
 build/
+conan-env/
