@@ -2,10 +2,13 @@ from conans import ConanFile, CMake, tools
 
 
 class GameEngineConan(ConanFile):
+    name = "game-engine"
+    version = "0.0.1"
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False], "fPIC": [True, False]}
     generators = "cmake"
     build_requires = "cmake/3.19.3"
+    exports_sources = "engine*", "editor*", "test*", "tools*", "CMakeLists.txt"
     requires = [
             "boost/1.69.0",
             "box2d/2.3.1",
@@ -59,9 +62,9 @@ class GameEngineConan(ConanFile):
             "boost:without_wave": True,
             }
 
- #   def imports(self):
- #       self.copy("*.dll", dst="bin", src="bin") # From bin to bin
- #       self.copy("*.dylib*", dst="bin", src="lib") # From lib to bin
+    def imports(self):
+        self.copy("*.dll", dst="bin", src="bin") # From bin to bin
+        self.copy("*.dylib*", dst="bin", src="lib") # From lib to bin
 
 
     def config_options(self):
@@ -74,14 +77,11 @@ class GameEngineConan(ConanFile):
         cmake.build()
         cmake.test()
 
-#    def package(self):
-#        self.copy("*.h", dst="include", src="hello")
-#        self.copy("*hello.lib", dst="lib", keep_path=False)
-#        self.copy("*.dll", dst="bin", keep_path=False)
-#        self.copy("*.so", dst="lib", keep_path=False)
-#        self.copy("*.dylib", dst="lib", keep_path=False)
-#        self.copy("*.a", dst="lib", keep_path=False)
-#
-#    def package_info(self):
-#        self.cpp_info.libs = ["hello"]
+    def package(self):
+        self.copy("*.h", dst="include", src="engine/include")
+        self.copy("*.lib", dst="lib", keep_path=False)
+        self.copy("*.dll", dst="bin", keep_path=False)
+        self.copy("*.so", dst="lib", keep_path=False)
+        self.copy("*.dylib", dst="lib", keep_path=False)
+        self.copy("*.a", dst="lib", keep_path=False)
 
