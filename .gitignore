@@ -38,9 +38,6 @@
 cmake-build-*/
 .idea/
 
-# remove generated files from engine
-componentsRegistered.hpp
-
 # Conan package manager
 build/
 conan-env/

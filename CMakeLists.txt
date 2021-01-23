@@ -125,13 +125,7 @@ if (NOT COMMAND configure_game_directories)
     add_subdirectory(tools)
 endif ()
 
-# This is a workaround to avoid issues related with the generated file
-set_source_files_properties(
-        ${GAME_EDITOR_GAME_SOURCES}
-        PROPERTIES GENERATED TRUE
-)
 add_executable(GameEngineEditor
-        ${GAME_EDITOR_GAME_SOURCES}
         editor/imgui_backend/imgui_impl_opengl3.cpp
         editor/imgui_backend/imgui_impl_sdl.cpp
         editor/imgui_backend/imgui_stdlib.cpp

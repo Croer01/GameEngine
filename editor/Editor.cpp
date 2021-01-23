@@ -8,7 +8,6 @@
 #include <memory>
 #include <sstream>
 #include "Editor.hpp"
-#include "../../componentsRegistered.hpp"
 #include "GameEditor.hpp"
 #include <functional>
 #include <boost/filesystem/path.hpp>
@@ -1462,7 +1461,6 @@ void Editor::starGame(bool update)
             });
             env->configurationPath(project_->folderPath_ + "/conf");
 
-            RegisterComponents(env);
             env->addResourcesFromPath(project_->dataPath_.string());
 
             env->firstScene(sceneData_->name_);

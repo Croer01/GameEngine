@@ -6,9 +6,6 @@
 #include "GameComponentsProvider.hpp"
 #include "ViewModels.hpp"
 
-// Provisional include
-#include "../../componentsRegistered.hpp"
-
 using namespace GameEngine;
 
 void GameComponentsProvider::updateNames()
@@ -160,5 +157,5 @@ GameComponentsProvider::GameComponentsProvider()
     //Register components created from the game
     //TODO: improve the way to do this (maybe a macro or "if define"?)
     env_ = GameEngine::geEnvironment::createInstance();
-    RegisterComponents(env_);
+    //RegisterComponents(env_);
 }
