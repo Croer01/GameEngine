@@ -7,7 +7,7 @@
 
 #include <game-engine/Command.hpp>
 #include "UITextComponent.hpp"
-#include "../../../../private/graphics/GraphicHolder.hpp"
+#include <game-engine/internal/graphics/GraphicHolder.hpp>
 
 namespace GameEngine {
 class PUBLICAPI UIButtonComponent : public UITextComponent

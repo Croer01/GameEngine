@@ -4,7 +4,7 @@
 
 #include "GraphicsEngine.hpp"
 #include "GraphicHolder.hpp"
-#include "../GameObject.hpp"
+#include <game-engine/internal/GameObject.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
 

@@ -6,7 +6,7 @@
 #include <chrono>
 #include <stdexcept>
 #include "AudioBuffer.hpp"
-#include "../utils.hpp"
+#include <game-engine/internal/utils.hpp>
 
 namespace GameEngine {
 namespace Internal {

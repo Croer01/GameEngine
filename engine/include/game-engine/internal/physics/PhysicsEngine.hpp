@@ -12,8 +12,8 @@
 #include "Collider.hpp"
 #ifdef DEBUG
 #include "DebugView.hpp"
-#include "../graphics/Camera.hpp"
-#include "../Screen.hpp"
+#include <game-engine/internal/graphics/Camera.hpp>
+#include <game-engine/internal/Screen.hpp>
 #endif
 namespace GameEngine {
 namespace Internal {

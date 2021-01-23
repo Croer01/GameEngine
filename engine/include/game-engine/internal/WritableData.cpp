@@ -3,7 +3,7 @@
 //
 
 #include "WritableData.hpp"
-#include "../private/yamlConverters.hpp"
+#include "yamlConverters.hpp"
 
 GameEngine::Internal::WritableData::WritableData() : Data(YAML::Node())
 {

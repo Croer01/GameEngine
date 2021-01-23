@@ -4,7 +4,7 @@
 
 #include <GL/glew.h>
 #include "MeshData.hpp"
-#include "../utils.hpp"
+#include <game-engine/internal/utils.hpp>
 
 namespace GameEngine {
     namespace Internal {

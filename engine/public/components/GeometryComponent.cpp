@@ -3,7 +3,7 @@
 //
 
 #include <game-engine/components/GeometryComponent.hpp>
-#include "../../private/graphics/GraphicsEngine.hpp"
+#include <game-engine/internal/graphics/GraphicsEngine.hpp>
 #include "game-engine/Game.hpp"
 
 namespace GameEngine {

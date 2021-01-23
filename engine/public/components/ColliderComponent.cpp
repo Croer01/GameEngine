@@ -5,7 +5,7 @@
 #include <game-engine/components/ColliderComponent.hpp>
 #include <game-engine/components/GeometryComponent.hpp>
 #include <iostream>
-#include "../../private/GameObject.hpp"
+#include <game-engine/internal/GameObject.hpp>
 #include "game-engine/Game.hpp"
 
 namespace GameEngine {

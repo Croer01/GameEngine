@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "../private/Screen.hpp"
+#include <game-engine/internal/Screen.hpp>
 #include <game-engine/Game.hpp>
 #include <thread>
 #include <chrono>

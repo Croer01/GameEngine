@@ -4,7 +4,7 @@
 
 #include <algorithm>
 #include "GraphicGeometry.hpp"
-#include "../utils.hpp"
+#include <game-engine/internal/utils.hpp>
 
 namespace GameEngine {
     namespace Internal {

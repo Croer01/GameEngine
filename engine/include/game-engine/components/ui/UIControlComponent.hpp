@@ -7,7 +7,7 @@
 
 
 #include <game-engine/geComponent.hpp>
-#include "../../../../private/graphics/GraphicsEngine.hpp"
+#include <game-engine/internal/graphics/GraphicsEngine.hpp>
 
 namespace GameEngine {
     class PUBLICAPI UIControlComponent : public geComponentInstantiable<UIControlComponent>

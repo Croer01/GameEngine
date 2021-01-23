@@ -6,9 +6,9 @@
 #define SPACEINVADERS_DEBUGVIEW_HPP
 
 #include <Box2D\Box2D.h>
-#include "../graphics/Shader.h"
-#include "../graphics/Camera.hpp"
-#include "../Screen.hpp"
+#include <game-engine/internal/graphics/Shader.h>
+#include <game-engine/internal/graphics/Camera.hpp>
+#include <game-engine/internal/Screen.hpp>
 
 namespace GameEngine {
 namespace Internal {

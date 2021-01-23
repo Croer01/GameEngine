@@ -9,8 +9,8 @@
 #include <game-engine/api.hpp>
 #include <game-engine/geComponent.hpp>
 #include <game-engine/geGameObject.hpp>
-#include "../../../private/graphics/GraphicGeometry.hpp"
-#include "../../../private/graphics/GraphicHolder.hpp"
+#include <game-engine/internal/graphics/GraphicGeometry.hpp>
+#include <game-engine/internal/graphics/GraphicHolder.hpp>
 
 namespace GameEngine {
     class PUBLICAPI GeometryComponent : public geComponentInstantiable<GeometryComponent>, public Observer<GameObjectEvent> {

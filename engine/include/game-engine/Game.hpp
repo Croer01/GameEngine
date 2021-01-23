@@ -7,15 +7,15 @@
 
 
 #include <memory>
-#include "../../private/Screen.hpp"
-#include "../../private/ObjectManager.hpp"
-#include "../../private/graphics/GraphicsEngine.hpp"
-#include "../../private/audio/AudioEngine.hpp"
-#include "../../private/physics/PhysicsEngine.hpp"
-#include "../../private/SceneManager.hpp"
-#include "../../private/Environment.hpp"
-#include "../../private/graphics/font/FontManager.hpp"
-#include "../../private/TimeManager.hpp"
+#include <game-engine/internal/Screen.hpp>
+#include <game-engine/internal/ObjectManager.hpp>
+#include <game-engine/internal/graphics/GraphicsEngine.hpp>
+#include <game-engine/internal/audio/AudioEngine.hpp>
+#include <game-engine/internal/physics/PhysicsEngine.hpp>
+#include <game-engine/internal/SceneManager.hpp>
+#include <game-engine/internal/Environment.hpp>
+#include <game-engine/internal/graphics/font/FontManager.hpp>
+#include <game-engine/internal/TimeManager.hpp>
 #include <string>
 #include <game-engine/InputManager.hpp>
 #include <mutex>

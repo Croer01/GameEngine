@@ -4,10 +4,10 @@
 
 #include <exception>
 #include <string>
-#include <gl/glew.h>
+#include <GL/glew.h>
 #include <iostream>
 #include <SDL2/SDL_error.h>
-#include <Al/al.h>
+#include <AL/al.h>
 #include <sstream>
 #include "utils.hpp"
 namespace GameEngine {

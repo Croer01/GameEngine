@@ -3,7 +3,7 @@
 //
 
 #include <game-engine/InputManager.hpp>
-#include "../private/KeyCodeMap.hpp"
+#include <game-engine/internal/KeyCodeMap.hpp>
 #include <iostream>
 #include <game-engine/geScreen.hpp>
 
@@ -146,7 +146,7 @@ void InputManager::processEvent(SDL_Event event)
     }
 }
 
-//private implementations
+//internal implementations
 
 void InputManager::reset()
 {

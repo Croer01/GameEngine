@@ -3,7 +3,7 @@
 //
 
 #include "game-engine/components/ui/UIImageComponent.hpp"
-#include "../../../private/graphics/GraphicSprite.hpp"
+#include <game-engine/internal/graphics/GraphicSprite.hpp>
 #include "game-engine/Game.hpp"
 
 namespace GameEngine {

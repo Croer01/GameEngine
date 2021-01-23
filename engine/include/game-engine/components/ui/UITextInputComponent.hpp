@@ -8,7 +8,7 @@
 
 #include <game-engine/components/ui/UITextComponent.hpp>
 #include <game-engine/InputManager.hpp>
-#include "../../../../private/graphics/GraphicHolder.hpp"
+#include <game-engine/internal/graphics/GraphicHolder.hpp>
 
 namespace GameEngine {
 class PUBLICAPI UITextInputComponent : public UITextComponent, public Observer<InputTextSubjectEvent>

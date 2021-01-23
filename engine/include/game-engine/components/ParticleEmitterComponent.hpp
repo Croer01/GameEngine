@@ -12,7 +12,7 @@
 #include <list>
 #include <iostream>
 #include <memory>
-#include "../../../private/graphics/Particle.hpp"
+#include <game-engine/internal/graphics/Particle.hpp>
 #include "ParticlesPropertiesComponent.hpp"
 
 namespace GameEngine

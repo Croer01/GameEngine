@@ -12,8 +12,8 @@
 #include <game-engine/geEnvironment.hpp>
 #include "GraphicHolder.hpp"
 #include "Shader.h"
-#include "../Screen.hpp"
-#include "font/Text.hpp"
+#include <game-engine/internal/Screen.hpp>
+#include <game-engine/internal/graphics/font/Text.hpp>
 #include "Camera.hpp"
 #include "MeshData.hpp"
 #include "FBO.hpp"

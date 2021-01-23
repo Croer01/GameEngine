@@ -3,7 +3,7 @@
 //
 
 #include <game-engine/components/AudioComponent.hpp>
-#include "../private/audio/AudioEngine.hpp"
+#include <game-engine/internal/audio/AudioEngine.hpp>
 #include "game-engine/Game.hpp"
 
 namespace GameEngine {

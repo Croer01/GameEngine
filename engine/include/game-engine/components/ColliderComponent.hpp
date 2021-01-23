@@ -7,9 +7,9 @@
 
 #include <game-engine/geComponent.hpp>
 #include <game-engine/components/SpriteComponent.hpp>
-#include "../private/physics/Collider.hpp"
+#include <game-engine/internal/physics/Collider.hpp>
 #include "SpriteAnimatedComponent.hpp"
-#include "../../../private/physics/PhysicsEngine.hpp"
+#include <game-engine/internal/physics/PhysicsEngine.hpp>
 
 namespace GameEngine {
     class ColliderComponent;

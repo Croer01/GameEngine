@@ -4,7 +4,7 @@
 
 #include <game-engine/components/ui/UITextInputComponent.hpp>
 #include <utf8.h>
-#include "../../../private/graphics/GraphicGeometry.hpp"
+#include <game-engine/internal/graphics/GraphicGeometry.hpp>
 #include "game-engine/Game.hpp"
 
 namespace GameEngine {

@@ -6,7 +6,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "Shader.h"
-#include "../utils.hpp"
+#include <game-engine/internal/utils.hpp>
 namespace GameEngine {
 namespace Internal {
     template<typename T>

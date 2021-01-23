@@ -6,7 +6,7 @@
 #include <array>
 #include <utf8.h>
 #include "Font.hpp"
-#include "../../utils.hpp"
+#include <game-engine/internal/utils.hpp>
 #include "Text.hpp"
 #include <zlib.h>
 #include "ProggyClean.hpp"

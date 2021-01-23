@@ -4,7 +4,7 @@
 
 #include "game-engine/Game.hpp"
 #include <iostream>
-#include "../private/utils.hpp"
+#include <game-engine/internal/utils.hpp>
 #include <SDL2/SDL.h>
 #include <memory>
 

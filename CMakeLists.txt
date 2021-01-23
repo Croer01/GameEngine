@@ -45,41 +45,41 @@ set(ENGINE_SOURCES
         engine/public/Range.cpp
         engine/public/components/CarColliderComponent.cpp)
 
-# private stuff
+# internal stuff
 set(ENGINE_PRIVATE_SOURCES
-        engine/private/GameObject.cpp
-        engine/private/ObjectManager.cpp
-        engine/private/SceneManager.cpp
-        engine/private/Scene.cpp
-        engine/private/utils.cpp
-        engine/private/graphics/GraphicsEngine.cpp
-        engine/private/graphics/Shader.cpp
-        engine/private/graphics/GraphicHolder.cpp
-        engine/private/Screen.cpp
-        engine/private/physics/PhysicsEngine.cpp
-        engine/private/physics/Collider.cpp
-        engine/private/physics/DebugView.cpp
-        engine/private/graphics/font/Font.cpp
-        engine/private/graphics/font/Text.cpp
-        engine/private/graphics/font/FontManager.cpp
-        engine/private/audio/AudioEngine.cpp
-        engine/private/audio/AudioSource.cpp
-        engine/private/audio/AudioBuffer.cpp
-        engine/private/Data.cpp
-        engine/private/graphics/Camera.cpp
-        engine/private/graphics/MeshData.cpp
-        engine/private/graphics/GraphicSprite.cpp
-        engine/private/graphics/GraphicGeometry.cpp
-        engine/private/Environment.cpp
-        engine/private/graphics/FBO.cpp
-        engine/private/TimeManager.cpp
-        engine/private/pathfinding/AStarPathfinding.cpp
-        engine/private/pathfinding/Cell.cpp
-        engine/private/pathfinding/Agent.cpp
-        engine/private/pathfinding/Path.cpp
-        engine/private/graphics/Particle.cpp
+        engine/include/game-engine/internal/GameObject.cpp
+        engine/include/game-engine/internal/ObjectManager.cpp
+        engine/include/game-engine/internal/SceneManager.cpp
+        engine/include/game-engine/internal/Scene.cpp
+        engine/include/game-engine/internal/utils.cpp
+        engine/include/game-engine/internal/graphics/GraphicsEngine.cpp
+        engine/include/game-engine/internal/graphics/Shader.cpp
+        engine/include/game-engine/internal/graphics/GraphicHolder.cpp
+        engine/include/game-engine/internal/Screen.cpp
+        engine/include/game-engine/internal/physics/PhysicsEngine.cpp
+        engine/include/game-engine/internal/physics/Collider.cpp
+        engine/include/game-engine/internal/physics/DebugView.cpp
+        engine/include/game-engine/internal/graphics/font/Font.cpp
+        engine/include/game-engine/internal/graphics/font/Text.cpp
+        engine/include/game-engine/internal/graphics/font/FontManager.cpp
+        engine/include/game-engine/internal/audio/AudioEngine.cpp
+        engine/include/game-engine/internal/audio/AudioSource.cpp
+        engine/include/game-engine/internal/audio/AudioBuffer.cpp
+        engine/include/game-engine/internal/Data.cpp
+        engine/include/game-engine/internal/graphics/Camera.cpp
+        engine/include/game-engine/internal/graphics/MeshData.cpp
+        engine/include/game-engine/internal/graphics/GraphicSprite.cpp
+        engine/include/game-engine/internal/graphics/GraphicGeometry.cpp
+        engine/include/game-engine/internal/Environment.cpp
+        engine/include/game-engine/internal/graphics/FBO.cpp
+        engine/include/game-engine/internal/TimeManager.cpp
+        engine/include/game-engine/internal/pathfinding/AStarPathfinding.cpp
+        engine/include/game-engine/internal/pathfinding/Cell.cpp
+        engine/include/game-engine/internal/pathfinding/Agent.cpp
+        engine/include/game-engine/internal/pathfinding/Path.cpp
+        engine/include/game-engine/internal/graphics/Particle.cpp
         engine/include/game-engine/FiniteStateMachine.hpp
-        engine/private/WritableData.cpp)
+        engine/include/game-engine/internal/WritableData.cpp)
 
 add_library(GameEngine ${ENGINE_SOURCES} ${ENGINE_PRIVATE_SOURCES})
 

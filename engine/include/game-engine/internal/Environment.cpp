@@ -15,7 +15,7 @@
 #include <game-engine/components/ParticleEmitterComponent.hpp>
 #include <game-engine/components/SpawnerComponent.hpp>
 #include "Environment.hpp"
-#include "../public/components/CarColliderComponent.hpp"
+#include "../../../public/components/CarColliderComponent.hpp"
 
 namespace fs = boost::filesystem;
 

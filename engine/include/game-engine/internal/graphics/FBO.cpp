@@ -5,7 +5,7 @@
 #include <GL/glew.h>
 #include <stdexcept>
 #include "FBO.hpp"
-#include "../utils.hpp"
+#include <game-engine/internal/utils.hpp>
 
 namespace GameEngine{
 namespace Internal{

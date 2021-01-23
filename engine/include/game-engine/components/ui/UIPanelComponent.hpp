@@ -6,7 +6,7 @@
 #define GAMEDEVWARS_UIPANELCOMPONENT_HPP
 
 #include "UIControlComponent.hpp"
-#include "../../../../private/graphics/GraphicHolder.hpp"
+#include <game-engine/internal/graphics/GraphicHolder.hpp>
 
 namespace GameEngine {
     class UIPanelComponent : public UIControlComponent

@@ -12,7 +12,7 @@
 #include <glm/vec3.hpp>
 #include <game-engine/api.hpp>
 #include <game-engine/events/Subject.hpp>
-#include "../DelayedSetter.hpp"
+#include <game-engine/internal/DelayedSetter.hpp>
 
 namespace GameEngine {
     class ColliderComponent;

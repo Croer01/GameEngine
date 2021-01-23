@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
-#include "../private/pathfinding/AStarPathfinding.hpp"
+#include <game-engine/internal/pathfinding/AStarPathfinding.hpp>
 
 using namespace GameEngine;
 using namespace GameEngine::Internal;

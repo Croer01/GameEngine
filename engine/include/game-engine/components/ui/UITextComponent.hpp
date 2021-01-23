@@ -7,7 +7,7 @@
 
 
 #include "UIControlComponent.hpp"
-#include "../../../../private/graphics/font/Text.hpp"
+#include <game-engine/internal/graphics/font/Text.hpp>
 
 namespace GameEngine {
 class PUBLICAPI UITextComponent : public UIControlComponent

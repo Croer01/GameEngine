@@ -4,8 +4,8 @@
 
 
 #include <game-engine/components/ui/UIPanelComponent.hpp>
-#include "../../../private/graphics/GraphicGeometry.hpp"
-#include "../../../private/graphics/GraphicsEngine.hpp"
+#include <game-engine/internal/graphics/GraphicGeometry.hpp>
+#include <game-engine/internal/graphics/GraphicsEngine.hpp>
 #include "game-engine/Game.hpp"
 
 namespace GameEngine

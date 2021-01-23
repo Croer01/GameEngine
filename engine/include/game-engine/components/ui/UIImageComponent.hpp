@@ -6,7 +6,7 @@
 #define GAMEDEVWARS_UIIMAGECOMPONENT_HPP
 
 #include <game-engine/components/ui/UIControlComponent.hpp>
-#include "../../../../private/graphics/GraphicHolder.hpp"
+#include <game-engine/internal/graphics/GraphicHolder.hpp>
 
 namespace GameEngine
 {

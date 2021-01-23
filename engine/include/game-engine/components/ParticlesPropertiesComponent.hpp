@@ -8,8 +8,8 @@
 #include <game-engine/geComponent.hpp>
 #include <game-engine/Range.hpp>
 #include <game-engine/Random.hpp>
-#include "../../../private/graphics/Particle.hpp"
-#include "../../../private/graphics/GraphicSprite.hpp"
+#include <game-engine/internal/graphics/Particle.hpp>
+#include <game-engine/internal/graphics/GraphicSprite.hpp>
 
 namespace GameEngine
 {

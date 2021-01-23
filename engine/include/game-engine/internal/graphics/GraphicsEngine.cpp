@@ -7,8 +7,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include "GraphicsEngine.hpp"
-#include "../utils.hpp"
-#include "font/FontManager.hpp"
+#include <game-engine/internal/utils.hpp>
+#include <game-engine/internal/graphics/font/FontManager.hpp>
 
 namespace GameEngine {
 namespace Internal {

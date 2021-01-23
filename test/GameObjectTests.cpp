@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "../private/GameObject.hpp"
+#include <game-engine/internal/GameObject.hpp>
 #include <game-engine/Game.hpp>
 #include <game-engine/geGameObject.hpp>
 #include <game-engine/components/SpriteComponent.hpp>

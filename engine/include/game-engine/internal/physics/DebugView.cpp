@@ -5,7 +5,7 @@
 #include "DebugView.hpp"
 #include "PhysicsEngine.hpp"
 #include "game-engine/Game.hpp"
-#include "../utils.hpp"
+#include <game-engine/internal/utils.hpp>
 
 #include <GL\glew.h>
 #include <glm/gtc/matrix_transform.hpp>

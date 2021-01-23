@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "../private/Data.hpp"
+#include <game-engine/internal/Data.hpp>
 #include <game-engine/properties/PropertySet.hpp>
 #include <game-engine/properties/Property.hpp>
 #include <game-engine/properties/PropertiesHolder.hpp>

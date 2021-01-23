@@ -9,8 +9,8 @@
 #include <game-engine/geComponent.hpp>
 #include <game-engine/geGameObject.hpp>
 #include <game-engine/events/Subject.hpp>
-#include "../private/graphics/Graphic.hpp"
-#include "../private/graphics/GraphicHolder.hpp"
+#include <game-engine/internal/graphics/Graphic.hpp>
+#include <game-engine/internal/graphics/GraphicHolder.hpp>
 
 namespace GameEngine {
     class PUBLICAPI SpriteAnimatedComponent : public geComponentInstantiable<SpriteAnimatedComponent>, public Observer<GameObjectEvent> {

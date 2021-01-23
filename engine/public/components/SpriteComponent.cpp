@@ -3,9 +3,9 @@
 //
 
 #include <game-engine/components/SpriteComponent.hpp>
-#include "../private/graphics/GraphicsEngine.hpp"
-#include "../private/GameObject.hpp"
-#include "../../private/graphics/GraphicSprite.hpp"
+#include <game-engine/internal/graphics/GraphicsEngine.hpp>
+#include <game-engine/internal/GameObject.hpp>
+#include <game-engine/internal/graphics/GraphicSprite.hpp>
 #include "game-engine/Game.hpp"
 
 namespace GameEngine {

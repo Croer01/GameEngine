@@ -7,8 +7,8 @@
 #include <game-engine/components/TextComponent.hpp>
 #include <game-engine/components/GeometryComponent.hpp>
 #include "game-engine/components/ui/UIButtonComponent.hpp"
-#include "../../../private/graphics/font/FontManager.hpp"
-#include "../../../private/graphics/GraphicsEngine.hpp"
+#include <game-engine/internal/graphics/font/FontManager.hpp>
+#include <game-engine/internal/graphics/GraphicsEngine.hpp>
 #include "game-engine/Game.hpp"
 
 namespace GameEngine {

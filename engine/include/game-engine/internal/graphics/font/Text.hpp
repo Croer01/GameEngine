@@ -11,7 +11,7 @@
 #include <array>
 #include <game-engine/api.hpp>
 #include "Font.hpp"
-#include "../Shader.h"
+#include <game-engine/internal/graphics/Shader.h>
 
 namespace GameEngine {
 namespace Internal {

@@ -10,7 +10,7 @@
 #include <vector>
 #include <memory>
 #include "GameObject.hpp"
-#include "graphics/Camera.hpp"
+#include <game-engine/internal/graphics/Camera.hpp>
 #include <game-engine/geData.hpp>
 
 namespace GameEngine {

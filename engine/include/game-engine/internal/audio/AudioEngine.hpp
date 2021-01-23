@@ -7,8 +7,8 @@
 
 
 #include "AudioSource.hpp"
-#include <Al/al.h>
-#include <Al/alc.h>
+#include <AL/al.h>
+#include <AL/alc.h>
 #include <memory>
 #include <map>
 #include <game-engine/geAudio.hpp>

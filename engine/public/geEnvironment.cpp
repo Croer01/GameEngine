@@ -3,7 +3,7 @@
 //
 
 #include <game-engine/geEnvironment.hpp>
-#include "../private/Environment.hpp"
+#include <game-engine/internal/Environment.hpp>
 
 namespace GameEngine
 {

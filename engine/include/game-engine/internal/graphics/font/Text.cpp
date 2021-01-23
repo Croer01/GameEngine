@@ -5,8 +5,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include "Text.hpp"
-#include "../../utils.hpp"
-#include "../GraphicsEngine.hpp"
+#include <game-engine/internal/utils.hpp>
+#include <game-engine/internal/graphics/GraphicsEngine.hpp>
 namespace GameEngine {
 namespace Internal {
     Text::Text(const std::shared_ptr<Font> &font, const TextDef &textDef) :

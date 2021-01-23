@@ -3,7 +3,7 @@
 //
 
 #include "AudioSource.hpp"
-#include "../utils.hpp"
+#include <game-engine/internal/utils.hpp>
 #include "AudioEngine.hpp"
 #include <exception>
 #include <chrono>

@@ -2,11 +2,11 @@
 // Created by adria on 26/03/2019.
 //
 
-#include "../private/Data.hpp"
+#include <game-engine/internal/Data.hpp>
 #include <game-engine/geIO.hpp>
 #include <yaml-cpp/yaml.h>
 #include <fstream>
-#include <../private/yamlConverters.hpp>
+#include <game-engine/internal/yamlConverters.hpp>
 
 namespace GameEngine {
 

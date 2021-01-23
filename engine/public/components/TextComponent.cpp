@@ -3,8 +3,8 @@
 //
 
 #include <game-engine/components/TextComponent.hpp>
-#include "../private/graphics/GraphicsEngine.hpp"
-#include "../../private/GameObject.hpp"
+#include <game-engine/internal/graphics/GraphicsEngine.hpp>
+#include <game-engine/internal/GameObject.hpp>
 #include "game-engine/Game.hpp"
 
 namespace GameEngine {

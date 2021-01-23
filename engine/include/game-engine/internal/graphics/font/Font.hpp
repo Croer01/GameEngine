@@ -13,7 +13,7 @@
 // FreeType
 #include <ft2build.h>
 #include <memory>
-#include FT_FREETYPE_H
+#include FT_FREETYPE_H"freetype2/freetype/freetype.h"
 namespace GameEngine {
 namespace Internal {
     struct TextDef;
