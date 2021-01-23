@@ -10,7 +10,7 @@
 #include <vector>
 #include <memory>
 #include <stdexcept>
-#include <game-engine/FileType.h>
+#include <game-engine/FileType.hpp>
 
 namespace GameEngine {
 

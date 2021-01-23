@@ -2,8 +2,8 @@
 // Created by adria on 07/02/2020.
 //
 
-#ifndef GAMEDEVWARS_FILETYPE_H
-#define GAMEDEVWARS_FILETYPE_H
+#ifndef GAMEENGINE_FILETYPE_HPP
+#define GAMEENGINE_FILETYPE_HPP
 
 
 #include <game-engine/api.hpp>
@@ -19,4 +19,4 @@ namespace GameEngine {
     };
 }
 
-#endif //GAMEDEVWARS_FILETYPE_H
+#endif //GAMEENGINE_FILETYPE_HPP
