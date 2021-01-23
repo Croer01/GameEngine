@@ -84,4 +84,6 @@ class GameEngineConan(ConanFile):
         self.copy("*.so", dst="lib", keep_path=False)
         self.copy("*.dylib", dst="lib", keep_path=False)
         self.copy("*.a", dst="lib", keep_path=False)
+        self.copy("CMakeLists.txt", dst="tools", src="tools")
+        self.copy("*.py", dst="tools", src="tools")
 

@@ -1,7 +1,7 @@
 # Collection of tools/utilities to use on games created using this engine
 
 include(FindPythonInterp)
-set(TOOLS_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR} CACHE INTERNAL "")
+set(TOOLS_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR} CACHE INTERNAL "")
 
 #! configure_game_directories : this function configure game folders
 #
