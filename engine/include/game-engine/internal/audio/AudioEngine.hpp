@@ -6,7 +6,7 @@
 #define SPACEINVADERS_AUDIOENGINE_HPP
 
 
-#include "AudioSource.hpp"
+#include <game-engine/internal/audio/AudioSource.hpp>
 #include <AL/al.h>
 #include <AL/alc.h>
 #include <memory>

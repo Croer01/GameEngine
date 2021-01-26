@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include "FileType.hpp"
+#include <game-engine/FileType.hpp>
 
 namespace GameEngine {
     class geData;

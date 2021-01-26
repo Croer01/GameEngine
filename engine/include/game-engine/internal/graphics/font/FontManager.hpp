@@ -8,7 +8,7 @@
 
 #include <memory>
 #include <vector>
-#include "Font.hpp"
+#include <game-engine/internal/graphics/font/Font.hpp>
 // FreeType
 #include <ft2build.h>
 #include FT_FREETYPE_H

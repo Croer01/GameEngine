@@ -8,7 +8,7 @@
 
 #include <memory>
 #include <unordered_map>
-#include "Scene.hpp"
+#include <game-engine/internal/Scene.hpp>
 
 namespace GameEngine {
 

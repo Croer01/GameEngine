@@ -13,7 +13,7 @@
 #include <iostream>
 #include <memory>
 #include <game-engine/internal/graphics/Particle.hpp>
-#include "ParticlesPropertiesComponent.hpp"
+#include <game-engine/components/ParticlesPropertiesComponent.hpp>
 
 namespace GameEngine
 {

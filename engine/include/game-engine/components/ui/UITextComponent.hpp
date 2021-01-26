@@ -6,7 +6,7 @@
 #define GAMEENGINEEDITOR_UITEXTCOMPONENT_HPP
 
 
-#include "UIControlComponent.hpp"
+#include <game-engine/components/ui/UIControlComponent.hpp>
 #include <game-engine/internal/graphics/font/Text.hpp>
 
 namespace GameEngine {

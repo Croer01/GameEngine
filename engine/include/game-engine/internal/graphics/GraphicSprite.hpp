@@ -6,8 +6,8 @@
 #define ZOMBIEWAVE_GRAPHICSPRITE_HPP
 
 #include <SDL_image.h>
-#include "MeshData.hpp"
-#include "Graphic.hpp"
+#include <game-engine/internal/graphics/MeshData.hpp>
+#include <game-engine/internal/graphics/Graphic.hpp>
 
 namespace GameEngine {
     namespace Internal {

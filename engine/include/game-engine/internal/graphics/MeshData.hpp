@@ -6,7 +6,7 @@
 #define ZOMBIEWAVE_MESHDATA_HPP
 
 #include <vector>
-#include "Shader.h"
+#include <game-engine/internal/graphics/Shader.hpp>
 
 namespace GameEngine {
     namespace Internal {

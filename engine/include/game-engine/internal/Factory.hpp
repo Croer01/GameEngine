@@ -7,7 +7,7 @@
 
 #include <unordered_map>
 #include <memory>
-#include "Data.hpp"
+#include <game-engine/internal/Data.hpp>
 #include <game-engine/properties/PropertySet.hpp>
 
 namespace GameEngine {

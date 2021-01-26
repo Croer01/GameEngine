@@ -8,9 +8,9 @@
 
 #include <vector>
 #include <game-engine/api.hpp>
-#include "Cell.hpp"
-#include "Agent.hpp"
-#include "Path.hpp"
+#include <game-engine/internal/pathfinding/Cell.hpp>
+#include <game-engine/internal/pathfinding/Agent.hpp>
+#include <game-engine/internal/pathfinding/Path.hpp>
 
 namespace GameEngine {
 namespace Internal {

@@ -6,7 +6,7 @@
 #define SPACEINVADERS_DEBUGVIEW_HPP
 
 #include <Box2D\Box2D.h>
-#include <game-engine/internal/graphics/Shader.h>
+#include <game-engine/internal/graphics/Shader.hpp>
 #include <game-engine/internal/graphics/Camera.hpp>
 #include <game-engine/internal/Screen.hpp>
 

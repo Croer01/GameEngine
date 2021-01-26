@@ -6,7 +6,7 @@
 #define GAMEENGINE_OBJECTMANAGER_HPP
 
 
-#include "Factory.hpp"
+#include <game-engine/internal/Factory.hpp>
 #include <game-engine/geComponent.hpp>
 #include <game-engine/Builder.hpp>
 #include <memory>

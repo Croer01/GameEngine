@@ -12,7 +12,7 @@
 #include <sndfile.h>
 #include <thread>
 #include <atomic>
-#include "AudioBuffer.hpp"
+#include <game-engine/internal/audio/AudioBuffer.hpp>
 
 namespace GameEngine {
 namespace Internal {

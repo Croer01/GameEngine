@@ -9,7 +9,7 @@
 #include <vector>
 #include <memory>
 #include <glm/glm.hpp>
-#include "Shader.h"
+#include <game-engine/internal/graphics/Shader.hpp>
 namespace GameEngine {
 namespace Internal {
     class Graphic {

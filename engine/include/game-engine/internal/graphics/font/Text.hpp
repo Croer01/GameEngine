@@ -10,8 +10,8 @@
 #include <vector>
 #include <array>
 #include <game-engine/api.hpp>
-#include "Font.hpp"
-#include <game-engine/internal/graphics/Shader.h>
+#include <game-engine/internal/graphics/font/Font.hpp>
+#include <game-engine/internal/graphics/Shader.hpp>
 
 namespace GameEngine {
 namespace Internal {

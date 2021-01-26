@@ -6,7 +6,7 @@
 #define GAMEENGINE_GEIO_HPP
 
 #include <game-engine/api.hpp>
-#include "geData.hpp"
+#include <game-engine/geData.hpp>
 
 namespace GameEngine {
     class PUBLICAPI geIO {

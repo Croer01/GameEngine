@@ -8,7 +8,7 @@
 
 #include <game-engine/api.hpp>
 #include <vector>
-#include "Cell.hpp"
+#include <game-engine/internal/pathfinding/Cell.hpp>
 
 namespace GameEngine {
 namespace Internal {

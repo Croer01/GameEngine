@@ -8,7 +8,7 @@
 #include <game-engine/geComponent.hpp>
 #include <game-engine/components/SpriteComponent.hpp>
 #include <game-engine/internal/physics/Collider.hpp>
-#include "SpriteAnimatedComponent.hpp"
+#include <game-engine/components/SpriteAnimatedComponent.hpp>
 #include <game-engine/internal/physics/PhysicsEngine.hpp>
 
 namespace GameEngine {

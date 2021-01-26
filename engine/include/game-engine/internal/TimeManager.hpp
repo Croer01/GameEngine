@@ -7,7 +7,7 @@
 
 
 #include <memory>
-#include "GameObject.hpp"
+#include <game-engine/internal/GameObject.hpp>
 
 namespace GameEngine {
 

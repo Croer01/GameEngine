@@ -10,13 +10,13 @@
 #include <memory>
 #include <mutex>
 #include <game-engine/geEnvironment.hpp>
-#include "GraphicHolder.hpp"
-#include "Shader.h"
+#include <game-engine/internal/graphics/GraphicHolder.hpp>
+#include <game-engine/internal/graphics/Shader.hpp>
 #include <game-engine/internal/Screen.hpp>
 #include <game-engine/internal/graphics/font/Text.hpp>
-#include "Camera.hpp"
-#include "MeshData.hpp"
-#include "FBO.hpp"
+#include <game-engine/internal/graphics/Camera.hpp>
+#include <game-engine/internal/graphics/MeshData.hpp>
+#include <game-engine/internal/graphics/FBO.hpp>
 
 namespace GameEngine {
 namespace Internal {

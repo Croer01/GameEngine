@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include "GameObject.hpp"
+#include <game-engine/internal/GameObject.hpp>
 #include <game-engine/internal/graphics/Camera.hpp>
 #include <game-engine/geData.hpp>
 

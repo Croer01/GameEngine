@@ -9,9 +9,9 @@
 #include <memory>
 #include <Box2D/Box2D.h>
 #include <unordered_map>
-#include "Collider.hpp"
+#include <game-engine/internal/physics/Collider.hpp>
 #ifdef DEBUG
-#include "DebugView.hpp"
+#include <game-engine/internal/physics/DebugView.hpp>
 #include <game-engine/internal/graphics/Camera.hpp>
 #include <game-engine/internal/Screen.hpp>
 #endif

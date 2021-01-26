@@ -6,7 +6,7 @@
 #define GAMEENGINEEDITOR_UIBUTTONCOMPONENT_HPP
 
 #include <game-engine/Command.hpp>
-#include "UITextComponent.hpp"
+#include <game-engine/components/ui/UITextComponent.hpp>
 #include <game-engine/internal/graphics/GraphicHolder.hpp>
 
 namespace GameEngine {

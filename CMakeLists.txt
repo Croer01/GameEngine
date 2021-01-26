@@ -20,74 +20,68 @@ endif()
 
 # public stuff
 set(ENGINE_SOURCES
-        engine/public/Game.cpp
-        engine/public/geComponent.cpp
-        engine/public/geEnvironment.cpp
-        engine/public/InputManager.cpp
-        engine/public/components/SpriteComponent.cpp
-        engine/public/components/SpriteAnimatedComponent.cpp
-        engine/public/components/ColliderComponent.cpp
-        engine/public/components/TextComponent.cpp
-        engine/public/components/AudioComponent.cpp
-        engine/public/components/GeometryComponent.cpp
-        engine/public/components/ui/UIControlComponent.cpp
-        engine/public/components/ui/UIButtonComponent.cpp
-        engine/public/components/ui/UITextComponent.cpp
-        engine/public/components/ui/UITextInputComponent.cpp
-        engine/public/components/ui/UIPanelComponent.cpp
-        engine/public/components/ui/UIImageComponent.cpp
-        engine/public/Random.cpp
-        engine/public/geAudio.cpp
-        engine/public/geIO.cpp
-        engine/public/components/ParticleEmitterComponent.cpp
-        engine/public/components/ParticlesPropertiesComponent.cpp
-        engine/public/components/SpawnerComponent.cpp
-        engine/public/Range.cpp
-        engine/public/components/CarColliderComponent.cpp)
+        engine/Game.cpp
+        engine/geComponent.cpp
+        engine/geEnvironment.cpp
+        engine/InputManager.cpp
+        engine/components/SpriteComponent.cpp
+        engine/components/SpriteAnimatedComponent.cpp
+        engine/components/ColliderComponent.cpp
+        engine/components/TextComponent.cpp
+        engine/components/AudioComponent.cpp
+        engine/components/GeometryComponent.cpp
+        engine/components/ui/UIControlComponent.cpp
+        engine/components/ui/UIButtonComponent.cpp
+        engine/components/ui/UITextComponent.cpp
+        engine/components/ui/UITextInputComponent.cpp
+        engine/components/ui/UIPanelComponent.cpp
+        engine/components/ui/UIImageComponent.cpp
+        engine/Random.cpp
+        engine/geAudio.cpp
+        engine/geIO.cpp
+        engine/components/ParticleEmitterComponent.cpp
+        engine/components/ParticlesPropertiesComponent.cpp
+        engine/components/SpawnerComponent.cpp
+        engine/Range.cpp
+        engine/components/CarColliderComponent.cpp)
 
 # internal stuff
 set(ENGINE_PRIVATE_SOURCES
-        engine/include/game-engine/internal/GameObject.cpp
-        engine/include/game-engine/internal/ObjectManager.cpp
-        engine/include/game-engine/internal/SceneManager.cpp
-        engine/include/game-engine/internal/Scene.cpp
-        engine/include/game-engine/internal/utils.cpp
-        engine/include/game-engine/internal/graphics/GraphicsEngine.cpp
-        engine/include/game-engine/internal/graphics/Shader.cpp
-        engine/include/game-engine/internal/graphics/GraphicHolder.cpp
-        engine/include/game-engine/internal/Screen.cpp
-        engine/include/game-engine/internal/physics/PhysicsEngine.cpp
-        engine/include/game-engine/internal/physics/Collider.cpp
-        engine/include/game-engine/internal/physics/DebugView.cpp
-        engine/include/game-engine/internal/graphics/font/Font.cpp
-        engine/include/game-engine/internal/graphics/font/Text.cpp
-        engine/include/game-engine/internal/graphics/font/FontManager.cpp
-        engine/include/game-engine/internal/audio/AudioEngine.cpp
-        engine/include/game-engine/internal/audio/AudioSource.cpp
-        engine/include/game-engine/internal/audio/AudioBuffer.cpp
-        engine/include/game-engine/internal/Data.cpp
-        engine/include/game-engine/internal/graphics/Camera.cpp
-        engine/include/game-engine/internal/graphics/MeshData.cpp
-        engine/include/game-engine/internal/graphics/GraphicSprite.cpp
-        engine/include/game-engine/internal/graphics/GraphicGeometry.cpp
-        engine/include/game-engine/internal/Environment.cpp
-        engine/include/game-engine/internal/graphics/FBO.cpp
-        engine/include/game-engine/internal/TimeManager.cpp
-        engine/include/game-engine/internal/pathfinding/AStarPathfinding.cpp
-        engine/include/game-engine/internal/pathfinding/Cell.cpp
-        engine/include/game-engine/internal/pathfinding/Agent.cpp
-        engine/include/game-engine/internal/pathfinding/Path.cpp
-        engine/include/game-engine/internal/graphics/Particle.cpp
-        engine/include/game-engine/FiniteStateMachine.hpp
-        engine/include/game-engine/internal/WritableData.cpp)
+        engine/internal/GameObject.cpp
+        engine/internal/ObjectManager.cpp
+        engine/internal/SceneManager.cpp
+        engine/internal/Scene.cpp
+        engine/internal/utils.cpp
+        engine/internal/graphics/GraphicsEngine.cpp
+        engine/internal/graphics/Shader.cpp
+        engine/internal/graphics/GraphicHolder.cpp
+        engine/internal/Screen.cpp
+        engine/internal/physics/PhysicsEngine.cpp
+        engine/internal/physics/Collider.cpp
+        engine/internal/physics/DebugView.cpp
+        engine/internal/graphics/font/Font.cpp
+        engine/internal/graphics/font/Text.cpp
+        engine/internal/graphics/font/FontManager.cpp
+        engine/internal/audio/AudioEngine.cpp
+        engine/internal/audio/AudioSource.cpp
+        engine/internal/audio/AudioBuffer.cpp
+        engine/internal/Data.cpp
+        engine/internal/graphics/Camera.cpp
+        engine/internal/graphics/MeshData.cpp
+        engine/internal/graphics/GraphicSprite.cpp
+        engine/internal/graphics/GraphicGeometry.cpp
+        engine/internal/Environment.cpp
+        engine/internal/graphics/FBO.cpp
+        engine/internal/TimeManager.cpp
+        engine/internal/pathfinding/AStarPathfinding.cpp
+        engine/internal/pathfinding/Cell.cpp
+        engine/internal/pathfinding/Agent.cpp
+        engine/internal/pathfinding/Path.cpp
+        engine/internal/graphics/Particle.cpp
+        engine/internal/WritableData.cpp)
 
 add_library(GameEngine ${ENGINE_SOURCES} ${ENGINE_PRIVATE_SOURCES})
 
-include(GenerateExportHeader)
-generate_export_header(GameEngine)
-set_target_properties(GameEngine PROPERTIES
-        VERSION 0.0.1
-        )
 
 target_include_directories(GameEngine PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/engine/include>
@@ -109,22 +103,10 @@ target_link_libraries(GameEngine PUBLIC
         CONAN_PKG::utfcpp
         CONAN_PKG::zlib)
 
-install(TARGETS GameEngine EXPORT GameEngineTargets
-        LIBRARY DESTINATION lib
-        ARCHIVE DESTINATION lib
-        RUNTIME DESTINATION bin
-        INCLUDES DESTINATION include
-        )
-
 enable_testing()
 add_subdirectory(test)
 
 ### Editor
-# check if tools is already added
-if (NOT COMMAND configure_game_directories)
-    add_subdirectory(tools)
-endif ()
-
 add_executable(GameEngineEditor
         editor/imgui_backend/imgui_impl_opengl3.cpp
         editor/imgui_backend/imgui_impl_sdl.cpp

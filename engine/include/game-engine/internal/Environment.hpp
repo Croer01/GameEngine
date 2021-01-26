@@ -7,8 +7,8 @@
 
 #include <game-engine/geEnvironment.hpp>
 #include <boost/filesystem.hpp>
-#include "ObjectManager.hpp"
-#include "SceneManager.hpp"
+#include <game-engine/internal/ObjectManager.hpp>
+#include <game-engine/internal/SceneManager.hpp>
 
 namespace GameEngine
 {

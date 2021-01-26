@@ -5,7 +5,7 @@
 #ifndef GAMEENGINE_WRITABLEDATA_HPP
 #define GAMEENGINE_WRITABLEDATA_HPP
 
-#include "Data.hpp"
+#include <game-engine/internal/Data.hpp>
 #include <yaml-cpp/yaml.h>
 
 namespace GameEngine{

@@ -8,7 +8,7 @@
 
 #include <memory>
 #include <game-engine/api.hpp>
-#include "Graphic.hpp"
+#include <game-engine/internal/graphics/Graphic.hpp>
 #include <game-engine/geGameObject.hpp>
 
 namespace GameEngine {

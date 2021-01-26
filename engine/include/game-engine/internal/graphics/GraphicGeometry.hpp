@@ -8,8 +8,8 @@
 #include <vector>
 #include <game-engine/api.hpp>
 #include <memory>
-#include "MeshData.hpp"
-#include "Graphic.hpp"
+#include <game-engine/internal/graphics/MeshData.hpp>
+#include <game-engine/internal/graphics/Graphic.hpp>
 
 namespace GameEngine {
     namespace Internal {

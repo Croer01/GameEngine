@@ -6,7 +6,7 @@
 #define GAMEENGINE_PARTICLE_HPP
 
 #include <game-engine/Range.hpp>
-#include "GraphicHolder.hpp"
+#include <game-engine/internal/graphics/GraphicHolder.hpp>
 
 namespace GameEngine{
 namespace Internal{

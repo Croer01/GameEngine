@@ -5,7 +5,7 @@
 #ifndef GAMEDEVWARS_UIPANELCOMPONENT_HPP
 #define GAMEDEVWARS_UIPANELCOMPONENT_HPP
 
-#include "UIControlComponent.hpp"
+#include <game-engine/components/ui/UIControlComponent.hpp>
 #include <game-engine/internal/graphics/GraphicHolder.hpp>
 
 namespace GameEngine {
