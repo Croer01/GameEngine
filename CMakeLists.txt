@@ -141,3 +141,26 @@ target_link_libraries(GameEngineEditor PRIVATE GameEngine
         CONAN_PKG::opengl
         CONAN_PKG::tinyfiledialogs
         )
+
+### Editor V2
+add_executable(GameEngineEditorV2
+        editorV2/imgui_backend/imgui_impl_opengl3.cpp
+        editorV2/imgui_backend/imgui_impl_sdl.cpp
+        editorV2/imgui_backend/imgui_stdlib.cpp
+        editorV2/editorMain.cpp
+        editorV2/FileExplorer.cpp
+        editorV2/DataDirectory.cpp
+        editorV2/DataFile.cpp
+        )
+
+target_compile_definitions(GameEngineEditorV2 PUBLIC -DIMGUI_IMPL_OPENGL_LOADER_GLEW)
+
+target_link_libraries(GameEngineEditorV2 PRIVATE GameEngine
+        CONAN_PKG::imgui
+        CONAN_PKG::sdl2
+        CONAN_PKG::glew
+        CONAN_PKG::boost
+        CONAN_PKG::yaml-cpp
+        CONAN_PKG::opengl
+        CONAN_PKG::tinyfiledialogs
+        )
