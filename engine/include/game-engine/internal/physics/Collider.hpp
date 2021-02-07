@@ -26,7 +26,7 @@ namespace Internal {
         EndSensor
     };
 
-    class Collider : public Subject<ColliderEvent> {
+    class Collider : public Subject<ColliderEvent, Internal::Collider *> {
     public:
         enum class ColliderShapes {
             Box,

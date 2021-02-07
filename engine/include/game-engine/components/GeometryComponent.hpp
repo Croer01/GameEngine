@@ -58,7 +58,7 @@ namespace GameEngine {
         void color(const geColor &value);
         geColor color() const;
 
-        void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
+        void onEvent(const Subject<GameObjectEvent> &target, GameObjectEvent event) override;
     };
 }
 

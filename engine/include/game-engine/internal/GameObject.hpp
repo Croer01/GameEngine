@@ -97,7 +97,7 @@ namespace Internal {
         virtual void destroy();
 
     private:
-        void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
+        void onEvent(const Subject<GameObjectEvent> &target, GameObjectEvent args) override;
 
         void computeTransform();
     };

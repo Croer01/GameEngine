@@ -254,7 +254,7 @@ PropertySetBase *CarColliderComponent::getProperties() const
     return properties;
 }
 
-void CarColliderComponent::onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args)
+void CarColliderComponent::onEvent(const Subject<GameObjectEvent> &target, GameObjectEvent event)
 {
     // this is temporal code for test
     auto collider = tires_[0];

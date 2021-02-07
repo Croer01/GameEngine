@@ -25,7 +25,7 @@ enum class InputTextSubjectEvent
 
 class InputTextSubject;
 typedef std::shared_ptr<InputTextSubject> InputTextSubjectRef;
-class InputTextSubject : public Subject<InputTextSubjectEvent>
+class InputTextSubject : public Subject<InputTextSubjectEvent, const char *>
 {
 
 };

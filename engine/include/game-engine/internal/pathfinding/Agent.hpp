@@ -20,7 +20,7 @@ enum class AgentEvents{
 class Agent;
 typedef std::shared_ptr<Agent> AgentRef;
 
-class Agent : public Subject<AgentEvents>
+class Agent : public Subject<AgentEvents, const Vec2D &>
 {
     Vec2D position_;
 public:

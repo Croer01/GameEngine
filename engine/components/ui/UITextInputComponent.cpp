@@ -40,8 +40,7 @@ void UITextInputComponent::init()
     updateBottomLineGeometry();
 }
 
-void UITextInputComponent::onEvent(const Subject<InputTextSubjectEvent> &target, const InputTextSubjectEvent &event,
-                                   void *args)
+void UITextInputComponent::onEvent(const Subject<InputTextSubjectEvent, const char *> &target, InputTextSubjectEvent event, const char *textInput)
 {
     if(event == InputTextSubjectEvent::INPUT)
     {
@@ -54,7 +53,7 @@ void UITextInputComponent::onEvent(const Subject<InputTextSubjectEvent> &target,
             utf8::next(it, tmpText.end());
             i++;
         }
-        tmpText.insert(it - tmpText.begin(), std::string(static_cast<char *>(args)));
+        tmpText.insert(it - tmpText.begin(), std::string(textInput));
         text(tmpText);
         moveCursor(1);
     }

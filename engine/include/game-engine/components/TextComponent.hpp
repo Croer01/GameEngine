@@ -30,7 +30,7 @@ class PUBLICAPI TextComponent : public geComponentInstantiable<TextComponent>, p
         void preInit() override;
         void init() override;
 
-        void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
+        void onEvent(const Subject<GameObjectEvent> &target, GameObjectEvent event) override;
 
         //Text public API
         int fontSize() const;

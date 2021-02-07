@@ -11,7 +11,7 @@
 #include <game-engine/internal/graphics/GraphicHolder.hpp>
 
 namespace GameEngine {
-class PUBLICAPI UITextInputComponent : public UITextComponent, public Observer<InputTextSubjectEvent>
+class PUBLICAPI UITextInputComponent : public UITextComponent, public Observer<InputTextSubjectEvent, const char*>
 {
     const float BLINK_TIME_SECONDS = 0.5;
     float cursorBlinkCounter_;
@@ -41,7 +41,7 @@ public:
 
     void Update(float elapsedTime) override;
     void init() override;
-    void onEvent(const Subject<InputTextSubjectEvent> &target, const InputTextSubjectEvent &event, void *args) override;
+    void onEvent(const Subject<InputTextSubjectEvent, const char *> &target, InputTextSubjectEvent event, const char *text) override;
 
     void background(const geColor &color);
     geColor background() const;

@@ -86,12 +86,12 @@ void InputManager::processEvent(SDL_Event event)
                 if(event.key.keysym.sym == SDLK_RETURN)
                 {
                     std::string NewLine = "\n";
-                    inputSubject_->notify(InputTextSubjectEvent::INPUT, (void *)NewLine.c_str());
+                    inputSubject_->notify(InputTextSubjectEvent::INPUT, NewLine.c_str());
                 }
 
                 if(event.key.keysym.sym == SDLK_BACKSPACE)
                 {
-                    inputSubject_->notify(InputTextSubjectEvent::ERASE);
+                    inputSubject_->notify(InputTextSubjectEvent::ERASE, nullptr);
                 }
             }
 
@@ -138,7 +138,7 @@ void InputManager::processEvent(SDL_Event event)
         case SDL_TEXTINPUT:
             if(inputSubject_)
             {
-                inputSubject_->notify(InputTextSubjectEvent::INPUT, &event.text.text);
+                inputSubject_->notify(InputTextSubjectEvent::INPUT, event.text.text);
             }
             break;
         default:

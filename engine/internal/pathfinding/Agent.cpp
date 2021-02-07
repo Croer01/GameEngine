@@ -10,7 +10,7 @@ if(position_ != position)
 {
     Vec2D prevPosition = position_;
     position_ = position;
-    notify(AgentEvents::MOVING, &prevPosition);
+    notify(AgentEvents::MOVING, prevPosition);
 }
 }
 

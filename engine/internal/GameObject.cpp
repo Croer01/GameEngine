@@ -309,7 +309,7 @@ void GameObject::parent(const geGameObjectRef &goParent) {
         }
     }
 
-    void GameObject::onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) {
+    void GameObject::onEvent(const Subject<GameObjectEvent> &target, GameObjectEvent event) {
         // Recompute the local transform to apply correctly the changes from parent
         if(event == GameObjectEvent::TransformChanged)
             computeTransform();

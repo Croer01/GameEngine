@@ -70,7 +70,7 @@ namespace GameEngine {
 
         int getFramesNum() const;
 
-        void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
+        void onEvent(const Subject<GameObjectEvent> &target, GameObjectEvent event) override;
 
         void filepath(const std::string &path);
         std::string filepath() const;

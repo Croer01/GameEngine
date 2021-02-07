@@ -98,7 +98,7 @@ namespace {
         onSensorExitCallback_ = callback;
     }
 
-void ColliderComponent::onEvent(const Subject<Internal::ColliderEvent> &target, const Internal::ColliderEvent &event, void *args) {
+void ColliderComponent::onEvent(const Subject<Internal::ColliderEvent, Internal::Collider*> &target, Internal::ColliderEvent event, Internal::Collider *args) {
         auto *collider = static_cast<Internal::Collider *>(args);
         if(auto component = collider->getComponent().lock())
         {
@@ -113,7 +113,7 @@ void ColliderComponent::onEvent(const Subject<Internal::ColliderEvent> &target, 
         }
     }
 
-    void ColliderComponent::onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) {
+    void ColliderComponent::onEvent(const Subject<GameObjectEvent> &target, GameObjectEvent event) {
         if(event == GameObjectEvent::PositionChanged){
             collider_->setPosition(convertWorldToPhysicsPos(gameObject()->position()));
         }

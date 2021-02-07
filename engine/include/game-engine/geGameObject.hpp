@@ -96,8 +96,7 @@ enum class GameObjectEvent{
         }
     protected:
         std::vector<std::shared_ptr<geComponent>> components_;
-    private:
-    virtual void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) = 0;
+
     };
 
 }

@@ -16,7 +16,7 @@ namespace GameEngine {
 namespace Internal {
 
 // The implementation of the algorithm is based on https://www.redblobgames.com/pathfinding/a-star/introduction.html
-class AStarPathfinding : public Observer<AgentEvents>
+class AStarPathfinding : public Observer<AgentEvents, const Vec2D &>
 {
     int width_;
     int height_;
@@ -32,7 +32,7 @@ public:
     void setModifier(const Vec2D &minPos, const Vec2D &maxPos, int modifierValue);
     void addAgent(const AgentRef &agent);
     Path findPath(const Vec2D &initialPos, const Vec2D &targetPos);
-    virtual void onEvent(const Subject<AgentEvents> &target, const AgentEvents &event, void *args);
+    void onEvent(const Subject<AgentEvents, const Vec2D &> &target, AgentEvents event, const Vec2D &prevPos) override;
 };
 
 }

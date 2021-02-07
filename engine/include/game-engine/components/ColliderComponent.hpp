@@ -16,7 +16,8 @@ namespace GameEngine {
 
     typedef std::function<void(ColliderComponent *)> OnColliderEventCallback;
 
-class PUBLICAPI ColliderComponent : public geComponentInstantiable<ColliderComponent>, public Observer<Internal::ColliderEvent>, public Observer<GameObjectEvent> {
+class PUBLICAPI ColliderComponent : public geComponentInstantiable<ColliderComponent>,
+    public Observer<Internal::ColliderEvent, Internal::Collider *>, public Observer<GameObjectEvent> {
         std::shared_ptr<Internal::Collider> collider_;
         Internal::PhysicsEngine *physicsEngine_;
         OnColliderEventCallback onColliderEnterCallback_;
@@ -84,11 +85,11 @@ class PUBLICAPI ColliderComponent : public geComponentInstantiable<ColliderCompo
         bool fixedRotation() const;
         void fixedRotation(const bool &value);
 protected:
-    void onEvent(const Subject<Internal::ColliderEvent> &target, const Internal::ColliderEvent &event, void *args) override;
+    void onEvent(const Subject<Internal::ColliderEvent, Internal::Collider*> &target, Internal::ColliderEvent event, Internal::Collider *other) override;
 
-        void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
+    void onEvent(const Subject<GameObjectEvent> &target, GameObjectEvent event) override;
 
-        void onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) override;
+    void onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) override;
     };
 }
 

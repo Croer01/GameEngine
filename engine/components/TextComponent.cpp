@@ -22,7 +22,7 @@ namespace GameEngine {
         gameObject()->registerObserver(this);
     }
 
-    void TextComponent::onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) {
+    void TextComponent::onEvent(const Subject<GameObjectEvent> &target, GameObjectEvent event) {
         if (event == GameObjectEvent::TransformChanged) {
             updateTextTransform();
         } else if (event == GameObjectEvent::ActiveChanged) {

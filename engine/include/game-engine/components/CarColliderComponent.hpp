@@ -34,7 +34,7 @@ public:
     virtual void init();
     virtual void Update(float elapsedTime);
     virtual PropertySetBase *getProperties() const;
-    virtual void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args);
+    void onEvent(const Subject<GameObjectEvent> &target, GameObjectEvent event) override;
 
     float getMaxForwardSpeed() const;
     void setMaxForwardSpeed(const float &maxForwardSpeed);

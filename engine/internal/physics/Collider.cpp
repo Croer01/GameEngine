@@ -95,19 +95,19 @@ namespace Internal {
     }
 
 void Collider::doBeginCollision(Collider *other) {
-        notify(ColliderEvent::BeginCollider, (void *) other);
+        notify(ColliderEvent::BeginCollider, other);
     }
 
     void Collider::doBeginSensor(Collider *other) {
-        notify(ColliderEvent::BeginSensor, (void *) other);
+        notify(ColliderEvent::BeginSensor, other);
     }
 
     void Collider::doEndCollision(Collider *other) {
-        notify(ColliderEvent::EndCollider, (void *) other);
+        notify(ColliderEvent::EndCollider, other);
     }
 
     void Collider::doEndSensor(Collider *other) {
-        notify(ColliderEvent::EndSensor, (void *) other);
+        notify(ColliderEvent::EndSensor, other);
     }
 
     void Collider::setComponent(const std::shared_ptr<ColliderComponent> &component) {
