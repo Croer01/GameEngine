@@ -83,8 +83,8 @@ namespace GameEngine {
         virtual ~PropertySet(){
         }
 
-        void add(PropertyTBase<Class> *property) {
-            properties_.emplace_back(dynamic_cast<PropertyBase *>(std::move(property)));
+        void add(PropertyBase *property) {
+            properties_.emplace_back(property);
         };
 
         virtual void resetValuesToDefault(const std::shared_ptr<void> &target) const
@@ -94,8 +94,7 @@ namespace GameEngine {
             if(parent_)
                 parent_->resetValuesToDefault(target);
 
-            for( int i = 0; i < properties_.size(); i++) {
-                const std::shared_ptr<PropertyTBase<Class>> property = std::dynamic_pointer_cast<PropertyTBase<Class>>(properties_[i]);
+            for( auto property : properties_) {
                 property->resetValueToDefault(sharedPtr);
             }
         }
@@ -116,9 +115,73 @@ namespace GameEngine {
             if(parent_)
                 parent_->copy(original, target);
 
-            for( int i = 0; i < properties_.size(); i++) {
-                const std::shared_ptr<PropertyTBase<Class>> property = std::dynamic_pointer_cast<PropertyTBase<Class>>(properties_[i]);
-                property->copy(original, target);
+            for( auto property : properties_)
+            {
+                switch (property->type()){
+                    case PropertyTypes::INT:
+                    {
+                        auto propertyInt = std::dynamic_pointer_cast<Property<Class,int>>(property);
+                        propertyInt->copy(original, target);
+                    }
+                        break;
+                    case PropertyTypes::FLOAT:
+                    {
+                        auto propertyFloat = std::dynamic_pointer_cast<Property<Class,float>>(property);
+                        propertyFloat->copy(original, target);
+                    }
+                        break;
+                    case PropertyTypes::STRING:
+                    {
+                        auto propertyString = std::dynamic_pointer_cast<Property<Class,std::string>>(property);
+                        propertyString->copy(original, target);
+                    }
+                        break;
+                    case PropertyTypes::VEC2D:
+                    {
+                        auto propertyVec2d = std::dynamic_pointer_cast<Property<Class,Vec2D>>(property);
+                        propertyVec2d->copy(original, target);
+                    }
+                        break;
+                    case PropertyTypes::BOOL:
+                    {
+                        auto propertyBool = std::dynamic_pointer_cast<Property<Class, bool>>(property);
+                        propertyBool->copy(original, target);
+                    }
+                        break;
+                    case PropertyTypes::ARRAY_STRING:
+                    {
+                        auto propertyArray = std::dynamic_pointer_cast<Property<Class, std::vector<std::string>>>(property);
+                        propertyArray->copy(original, target);
+                    }
+                        break;
+                    case PropertyTypes::ARRAY_VEC2D:
+                    {
+                        auto propertyArray = std::dynamic_pointer_cast<Property<Class, std::vector<Vec2D>>>(property);
+                        propertyArray->copy(original, target);
+                    }
+                        break;
+                    case PropertyTypes::COLOR:
+                    {
+                        auto propertyColor = std::dynamic_pointer_cast<Property<Class, geColor>>(property);
+                        propertyColor->copy(original, target);
+                    }
+                        break;
+                    case PropertyTypes::FILEPATH:
+                    {
+                        auto propertyFilepath = std::dynamic_pointer_cast<PropertyFilePath<Class>>(property);
+                        propertyFilepath->copy(original, target);
+                    }
+                        break;
+                    case PropertyTypes::ENUM:
+                    {
+                        auto propertyEnum = std::dynamic_pointer_cast<PropertyEnum<Class>>(property);
+                        propertyEnum->copy(original, target);
+                    }
+                        break;
+                    case PropertyTypes::UNKNOWN:
+                        throw std::runtime_error("the property " + property->name() + " has unknown type");
+                        break;
+                }
             }
         };
 
@@ -136,8 +199,7 @@ namespace GameEngine {
                         throw std::logic_error("property " + property->name() + " is required but it isn't defined");
                     else
                     {
-                        if(auto propertyClass = std::dynamic_pointer_cast<PropertyTBase<Class>>(property))
-                            propertyClass->resetValueToDefault(target);
+                        property->resetValueToDefault(target);
                     }
                     continue;
                 }
