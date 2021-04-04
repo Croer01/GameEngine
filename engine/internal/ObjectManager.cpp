@@ -62,7 +62,7 @@ std::vector<std::string> ObjectManager::getComponentIds() const
     return componentFactory_.getIds();
 }
 
-std::shared_ptr<PropertySetBase> ObjectManager::createProperties(const std::string &idType)
+ComponentDataRef ObjectManager::createProperties(const std::string &idType)
 {
     return componentFactory_.createProperties(idType);
 }

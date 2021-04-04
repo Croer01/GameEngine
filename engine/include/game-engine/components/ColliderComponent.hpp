@@ -10,14 +10,40 @@
 #include <game-engine/internal/physics/Collider.hpp>
 #include <game-engine/components/SpriteAnimatedComponent.hpp>
 #include <game-engine/internal/physics/PhysicsEngine.hpp>
+#include <game-engine/components/ComponentData.hpp>
 
 namespace GameEngine {
+class ColliderComponentData : public ComponentData
+{
+public:
+   ColliderComponentData()
+   {
+       createProperty<Vec2D>("extends",Vec2D());
+       createProperty<Vec2D>("offset",Vec2D());
+       createPropertyEnum("colliderShape","Box",{
+           "Box",
+           "Circle"
+       });
+       createPropertyEnum("colliderType","Static",{
+           "Static",
+           "Dynamic",
+           "Kinematic"
+       });
+       createProperty<std::string>("category","");
+       createProperty<bool>("isSensor",false);
+       createProperty<float>("gravityScale",1.f);
+       createProperty<float>("mass",1.f);
+       createProperty<bool>("fixedRotation", true);
+   }
+};
+
     class ColliderComponent;
 
     typedef std::function<void(ColliderComponent *)> OnColliderEventCallback;
 
-class PUBLICAPI ColliderComponent : public geComponentInstantiable<ColliderComponent>,
-    public Observer<Internal::ColliderEvent, Internal::Collider *>, public Observer<GameObjectEvent> {
+class PUBLICAPI ColliderComponent : public geComponentInstantiable<ColliderComponent, ColliderComponentData>,
+    public Observer<Internal::ColliderEvent, Internal::Collider *>, public Observer<GameObjectEvent>,
+public std::enable_shared_from_this<ColliderComponent>{
         std::shared_ptr<Internal::Collider> collider_;
         Internal::PhysicsEngine *physicsEngine_;
         OnColliderEventCallback onColliderEnterCallback_;
@@ -26,15 +52,6 @@ class PUBLICAPI ColliderComponent : public geComponentInstantiable<ColliderCompo
         OnColliderEventCallback onSensorExitCallback_;
         Vec2D size_;
         Vec2D offsetFromRender_;
-        Vec2D extends_;
-        Vec2D offset_;
-        std::string colliderShape_;
-        std::string colliderType_;
-        std::string colliderCategory_;
-        bool isSensor_;
-        float gravityScale_;
-        float mass_;
-        bool fixedRotation_;
         // This flag is to ensure the position of the collider is set to the gameObject if the type is changed.
         // For example, if change from Dynamic to Static we need to ensure the position of the collider is correctly set after change to static
         bool typeChanged_;
@@ -64,26 +81,6 @@ class PUBLICAPI ColliderComponent : public geComponentInstantiable<ColliderCompo
 
         void applyForce(const Vec2D &force);
 
-    PropertySetBase *getProperties() const override;
-
-    Vec2D extends() const;
-        void extends(const Vec2D &extends);
-        Vec2D offset() const;
-        void offset(const Vec2D &offsetValue);
-        std::string shape() const;
-        void shape(const std::string &colliderShape);
-        std::string type() const;
-        void type(const std::string &colliderType);
-        std::string category() const;
-        void category(const std::string &colliderCategory);
-        bool isSensor() const;
-        void isSensor(const bool &value);
-        float gravityScale() const;
-        void gravityScale(const float &value);
-        float mass() const;
-        void mass(const float &value);
-        bool fixedRotation() const;
-        void fixedRotation(const bool &value);
 protected:
     void onEvent(const Subject<Internal::ColliderEvent, Internal::Collider*> &target, Internal::ColliderEvent event, Internal::Collider *other) override;
 

@@ -10,13 +10,23 @@
 #include <game-engine/internal/graphics/font/Text.hpp>
 
 namespace GameEngine {
+
+class UITextComponentData : public UIControlComponentData
+{
+public:
+    UITextComponentData() :
+        UIControlComponentData()
+    {
+        createProperty<std::string>("text", "", true);
+        createProperty<std::string>("font", "", true);
+        createProperty<int>("fontSize", 0);
+        createProperty<geColor>("foregroundColor", geColor(0.f));
+    }
+};
+
 class PUBLICAPI UITextComponent : public UIControlComponent
 {
     std::shared_ptr<Internal::Text> graphicText_;
-    std::string text_;
-    std::string font_;
-    geColor foregroundColor_;
-    int fontSize_;
 
     void UpdateTextGraphic();
 protected:
@@ -29,24 +39,11 @@ protected:
 
 public:
     virtual ~UITextComponent();
-
-    PropertySetBase *getProperties() const override;
+    ComponentDataRef instantiateData() const override;
 
     void init() override;
 
     // UI Text properties
-    int fontSize() const;
-    void fontSize(const int &size);
-
-    std::string font() const;
-    void font(const std::string &fontName);
-
-    void text(const std::string &value);
-    std::string text() const;
-
-    void foregroundColor(const geColor &value);
-    geColor foregroundColor() const;
-
     Vec2D getTextSize() const;
 };
 }

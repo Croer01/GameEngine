@@ -11,20 +11,41 @@
 #include <game-engine/events/Subject.hpp>
 #include <game-engine/internal/graphics/Graphic.hpp>
 #include <game-engine/internal/graphics/GraphicHolder.hpp>
+#include <game-engine/components/ComponentData.hpp>
 
 namespace GameEngine {
-    class PUBLICAPI SpriteAnimatedComponent : public geComponentInstantiable<SpriteAnimatedComponent>, public Observer<GameObjectEvent> {
+class SpriteAnimatedComponentData : public ComponentData
+{
+public:
+    SpriteAnimatedComponentData()
+    {
+        createPropertyFilePath("filePath", "", FileType::IMAGE, true);
+        createProperty<geColor>("tint", geColor(1.f));
+        createProperty<int>("rows", 1);
+        createProperty<int>("columns", 1);
+        createProperty<float>("framesPerSecond", 1.f);
+        createProperty<bool>("visible", true);
+        createProperty<bool>("playOnInit", true);
+        createPropertyEnum("anchor", "TOP_LEFT", {
+            "TOP_LEFT",
+            "TOP_CENTER",
+            "TOP_RIGHT",
+            "MIDDLE_LEFT",
+            "MIDDLE_CENTER",
+            "MIDDLE_RIGHT",
+            "BOTTOM_LEFT",
+            "BOTTOM_CENTER",
+            "BOTTOM_RIGHT"
+        });
+    }
+};
+    class PUBLICAPI SpriteAnimatedComponent : public geComponentInstantiable<SpriteAnimatedComponent, SpriteAnimatedComponentData>,
+        public Observer<GameObjectEvent> {
         std::shared_ptr<Internal::Graphic> graphicLoaded_;
         std::shared_ptr<Internal::GraphicHolder> graphic_;
         Internal::GraphicsEngine *graphicsEngine_;
 
-        int columns_ = 1;
-        int rows_ = 1;
-        bool visible_;
         bool playing_;
-        std::string filePath_;
-        geColor color_;
-        std::string anchor_;
         // animation variables
         float timePerFrame_;
         float timeAcumulator_;
@@ -34,15 +55,17 @@ namespace GameEngine {
 
         void resetAnimation();
         void updateGraphicRef();
+        void updateVisible();
+        void updateTint();
+        void updateAnchor();
+        void updateGrid();
 
     protected:
         void
         onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) override;
 
     public:
-        ~SpriteAnimatedComponent();
-
-        PropertySetBase *getProperties() const override;
+        virtual ~SpriteAnimatedComponent();
 
         virtual void preInit();
 
@@ -51,10 +74,6 @@ namespace GameEngine {
         int getWidth() const;
 
         int getHeight() const;
-
-        void setVisible(const bool &visible);
-
-        bool isVisible() const;
 
         void play();
 
@@ -71,27 +90,6 @@ namespace GameEngine {
         int getFramesNum() const;
 
         void onEvent(const Subject<GameObjectEvent> &target, GameObjectEvent event) override;
-
-        void filepath(const std::string &path);
-        std::string filepath() const;
-
-        void rows(const int &numRows);
-        int rows() const;
-
-        void columns(const int &numColumns);
-        int columns() const;
-
-        void color(const geColor &value);
-        geColor color() const;
-
-        float framesPerSecond() const;
-        void framesPerSecond(const float &frames);
-
-        bool playOnInit() const;
-        void playOnInit(const bool &play);
-
-        void anchor(const std::string &anchor);
-        std::string anchor() const;
     };
 }
 

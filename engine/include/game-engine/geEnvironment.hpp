@@ -6,6 +6,7 @@
 #define SPACEINVADERS_GEENVIRONMENT_HPP
 
 #include <game-engine/api.hpp>
+#include <game-engine/components/ComponentData.hpp>
 #include <game-engine/Builder.hpp>
 #include <string>
 #include <vector>
@@ -25,7 +26,7 @@ public:
     virtual ~geEnvironment() = 0;
     static geEnvironmentRef createInstance();
     virtual void registerComponent(const std::string &idType, ComponentBuilder *builder) = 0;
-    virtual std::shared_ptr<PropertySetBase> getProperties(const std::string &id) const = 0;
+    virtual ComponentDataRef getProperties(const std::string &id) const = 0;
     virtual std::vector<std::string> getRegisteredPropertiesIds() const = 0;
     virtual void configurationPath(const std::string &config) = 0;
     virtual std::string configurationPath() const = 0;

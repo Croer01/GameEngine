@@ -99,7 +99,7 @@ std::vector<std::string> Environment::getRegisteredPropertiesIds() const
     return objectManager_->getComponentIds();
 }
 
-std::shared_ptr<PropertySetBase> Environment::getProperties(const std::string &id) const
+ComponentDataRef Environment::getProperties(const std::string &id) const
 {
     return objectManager_->createProperties(id);
 }

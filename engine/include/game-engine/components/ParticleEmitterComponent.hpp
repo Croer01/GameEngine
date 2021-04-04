@@ -14,19 +14,27 @@
 #include <memory>
 #include <game-engine/internal/graphics/Particle.hpp>
 #include <game-engine/components/ParticlesPropertiesComponent.hpp>
+#include <game-engine/components/ComponentData.hpp>
 
 namespace GameEngine
 {
-
-class ParticleEmitterComponent : public geComponentInstantiable<ParticleEmitterComponent>
+class ParticleEmitterComponentData : public ComponentData
 {
-    // the origin is the position of the owner object
-    int maxParticles_;
-    float spawnFrequency_;
-    float timeLife_;
-    // If this is true, the emitter never stop by timeLife
-    bool infinite_;
-    bool emitOnInit_;
+public:
+    ParticleEmitterComponentData()
+    {
+        createProperty<int>("maxParticles", 0);
+        createProperty<float>("spawnFrequency", 1);
+        createProperty<float>("timeLife", 1);
+        // If "infinite" is true, the emitter never stop by timeLife
+        createProperty<bool>("infinite", false);
+        createProperty<bool>("emitOnInit", false);
+    }
+};
+
+class ParticleEmitterComponent : public geComponentInstantiable<ParticleEmitterComponent, ParticleEmitterComponentData>
+{
+    // the origin of the particle emitter is the position of the owner object
 
     // internally variables to do all work
     std::weak_ptr<ParticlesPropertiesComponent> particleProperties_;
@@ -45,18 +53,6 @@ public:
     bool isEmitting() const;
     virtual void Update(float elapsedTime);
     virtual void init();
-    virtual PropertySetBase *getProperties() const;
-
-    int maxParticles() const;
-    void maxParticles(const int &value);
-    float spawnFrequency() const;
-    void spawnFrequency(const float &value);
-    float timeLife() const;
-    void timeLife(const float &value);
-    bool infinite() const;
-    void infinite(const bool &value);
-    bool emitOnInit() const;
-    void emitOnInit(const bool &value);
 };
 
 }

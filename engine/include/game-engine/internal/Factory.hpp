@@ -8,7 +8,7 @@
 #include <unordered_map>
 #include <memory>
 #include <game-engine/internal/Data.hpp>
-#include <game-engine/properties/PropertySet.hpp>
+#include <game-engine/components/ComponentData.hpp>
 
 namespace GameEngine {
 namespace Internal {
@@ -63,7 +63,7 @@ namespace Internal {
             return ids;
         }
 
-        std::shared_ptr<PropertySetBase> createProperties(const IdType &type)
+        ComponentDataRef createProperties(const IdType &type)
         {
             auto it = builders_.find(type);
 

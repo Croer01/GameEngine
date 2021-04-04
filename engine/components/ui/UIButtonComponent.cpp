@@ -25,7 +25,11 @@ void UIButtonComponent::changeColor(bool isHover)
 {
     createBackgroundGraphic();
     if(backgroundGraphic_)
-        backgroundGraphic_->setTintColor(isHover ? hoverBackground_ : background_);
+    {
+        geColor background = getPropertyValue<geColor>("background");
+        geColor hoverBackground = getPropertyValue<geColor>("hoverBackground");
+        backgroundGraphic_->setTintColor(isHover ? hoverBackground : background);
+    }
 }
 
 void UIButtonComponent::setCommand(const CommandRef &command)
@@ -47,11 +51,7 @@ geComponentRef UIButtonComponent::instantiate() const
 geComponentRef UIButtonComponent::clone() const
 {
     geComponentRef cloned = instantiate();
-    auto compCloned = std::dynamic_pointer_cast<UIButtonComponent>(cloned);
-    auto other = shared_from_this();
-    auto thisRef = std::dynamic_pointer_cast<const UIButtonComponent>(other);
-    compCloned->copyProperties<UIButtonComponent>(thisRef);
-
+    cloned->setData(getData()->template clone<UIButtonComponentData>());
     return cloned;
 }
 
@@ -71,7 +71,7 @@ void UIButtonComponent::createBackgroundGraphic()
     backgroundGraphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
     backgroundGraphic_->setModelTransform(calculateVirtualScreenPos(), 0.f, calculateVirtualScreenSize());
     graphicsEngine()->registerGraphic(backgroundGraphic_);
-    backgroundGraphic_->setActive(visible());
+    backgroundGraphic_->setActive(getPropertyValue<bool>("visible"));
 
     // move the text position to center inside the button
     Vec2D textMargins = calculateVirtualScreenSize() - getTextSize();
@@ -86,26 +86,6 @@ void UIButtonComponent::createBackgroundGraphic()
         textMargins.y = 0;
 
     setTextModelTransform(calculateVirtualScreenPos() + textMargins, 0.f, Vec2D(1, 1));
-}
-
-void UIButtonComponent::background(const geColor &color)
-{
-    background_ = color;
-}
-
-geColor UIButtonComponent::background() const
-{
-    return background_;
-}
-
-void UIButtonComponent::hoverBackground(const geColor &color)
-{
-    hoverBackground_ = color;
-}
-
-geColor UIButtonComponent::hoverBackground() const
-{
-    return hoverBackground_;
 }
 
 void UIButtonComponent::onClick()
@@ -126,33 +106,15 @@ void UIButtonComponent::onHoverOut()
     changeColor(false);
 }
 
-PropertySetBase *UIButtonComponent::getProperties() const
-{
-    PropertySetBase *base = UITextComponent::getProperties();
-    auto *properties = new PropertySet<UIButtonComponent>(base);
-
-    properties->add(new Property<UIButtonComponent, geColor>(
-            "background",
-            &UIButtonComponent::background,
-            &UIButtonComponent::background,
-            geColor(1.f)
-    ));
-
-    properties->add(new Property<UIButtonComponent, geColor>(
-            "hoverBackground",
-            &UIButtonComponent::hoverBackground,
-            &UIButtonComponent::hoverBackground,
-            geColor(.8f)
-    ));
-
-    return properties;
-
-}
-
 void UIButtonComponent::onVisibleChanged()
 {
     UITextComponent::onVisibleChanged();
     if(backgroundGraphic_)
-        backgroundGraphic_->setActive(visible());
+        backgroundGraphic_->setActive(getPropertyValue<bool>("visible"));
+}
+
+ComponentDataRef UIButtonComponent::instantiateData() const
+{
+    return std::make_shared<UIButtonComponentData>();
 }
 }

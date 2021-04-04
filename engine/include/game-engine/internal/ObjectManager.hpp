@@ -31,7 +31,7 @@ namespace Internal {
 
         geComponentRef createComponent(const std::string &idType);
         geComponentRef createComponent(const std::string &idType, const YAML::Node &data);
-        std::shared_ptr<PropertySetBase> createProperties(const std::string &idType);
+        ComponentDataRef createProperties(const std::string &idType);
 
         void registerPrototype(const std::string &objectType, const std::string &filename);
 

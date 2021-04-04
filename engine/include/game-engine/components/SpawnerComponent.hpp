@@ -6,11 +6,23 @@
 #define GAMEENGINE_SPAWNERCOMPONENT_HPP
 
 #include <game-engine/geComponent.hpp>
+#include <game-engine/components/ComponentData.hpp>
 #include <game-engine/geGameObject.hpp>
 
 namespace GameEngine
 {
-class SpawnerComponent : public geComponentInstantiable<SpawnerComponent>
+
+class SpawnerComponentData : public ComponentData
+{
+public:
+    SpawnerComponentData()
+    {
+        createProperty<std::string>("targetName", "", true);
+        createProperty<int>("startSize", 0, true);
+    }
+};
+
+class SpawnerComponent : public geComponentInstantiable<SpawnerComponent,SpawnerComponentData>
 {
     std::vector<geGameObjectRef> pool_;
     std::string targetName_;
@@ -18,15 +30,7 @@ class SpawnerComponent : public geComponentInstantiable<SpawnerComponent>
 public:
     void init() override;
 
-    std::string targetName() const;
-    void targetName(const std::string &name);
-
-    int startSize() const;
-    void startSize(const int &size);
-
     geGameObjectRef getNext() const;
-
-    virtual PropertySetBase *getProperties() const;
 };
 }
 

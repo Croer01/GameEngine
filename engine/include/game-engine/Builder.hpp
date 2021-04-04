@@ -8,7 +8,7 @@
 
 #include <game-engine/geData.hpp>
 #include <memory>
-#include <game-engine/properties/PropertySet.hpp>
+#include <game-engine/components/ComponentData.hpp>
 
 namespace GameEngine {
 
@@ -21,7 +21,7 @@ namespace GameEngine {
 
         virtual geComponentRef Create() = 0;
         virtual geComponentRef Create(const geData &data) = 0;
-        virtual std::shared_ptr<PropertySetBase> createProperties() = 0;
+        virtual ComponentDataRef createProperties() = 0;
     };
 
     template<typename ComponentType>
@@ -29,22 +29,23 @@ namespace GameEngine {
     public:
         virtual geComponentRef Create() {
             const std::shared_ptr<ComponentType> &instance = std::make_shared<ComponentType>();
-            PropertySetBase* properties = instance->getProperties();
-            properties->resetValuesToDefault(instance);
+            ComponentDataRef compData = instance->instantiateData();
+            instance->setData(compData);
             return instance;
         };
 
         virtual geComponentRef Create(const geData &data) {
             const std::shared_ptr<ComponentType> &instance = std::make_shared<ComponentType>();
-            instance->copyProperties<ComponentType>(data);
+            ComponentDataRef compData = instance->instantiateData();
+            compData->fill(data);
+            instance->setData(compData);
             return instance;
         };
 
-        virtual std::shared_ptr<PropertySetBase> createProperties()
+        virtual ComponentDataRef createProperties()
         {
             const std::shared_ptr<ComponentType> &instance = std::make_shared<ComponentType>();
-            PropertySetBase* properties = instance->getProperties();
-            return std::shared_ptr<PropertySetBase>(properties);
+            return instance->instantiateData();
         };
     };
 }

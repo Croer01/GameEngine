@@ -211,49 +211,6 @@ void CarColliderComponent::applyForceToTire(b2Body *body, int direction) const
         body->ApplyForce(force * currentForwardNormal, body->GetWorldCenter(), true);
 }
 
-PropertySetBase *CarColliderComponent::getProperties() const
-{
-    auto properties = new PropertySet<CarColliderComponent>();
-
-    properties->add(new Property<CarColliderComponent, Vec2D>(
-        "carSize",
-        &CarColliderComponent::getCarSize,
-        &CarColliderComponent::setCarSize,
-        Vec2D(1.f,1.f)));
-
-    properties->add(new Property<CarColliderComponent, Vec2D>(
-        "tiresOffset",
-        &CarColliderComponent::getTiresOffset,
-        &CarColliderComponent::setTiresOffset,
-        Vec2D(1.f,1.f)));
-
-    properties->add(new Property<CarColliderComponent, Vec2D>(
-        "tiresSize",
-        &CarColliderComponent::getTiresSize,
-        &CarColliderComponent::setTiresSize,
-        Vec2D(1.f,1.f)));
-
-    properties->add(new Property<CarColliderComponent, float>(
-        "maxForwardSpeed",
-        &CarColliderComponent::getMaxForwardSpeed,
-        &CarColliderComponent::setMaxForwardSpeed,
-        200.f));
-
-    properties->add(new Property<CarColliderComponent, float>(
-        "maxBackwardSpeed",
-        &CarColliderComponent::getMaxBackwardSpeed,
-        &CarColliderComponent::setMaxBackwardSpeed,
-        -40.f));
-
-    properties->add(new Property<CarColliderComponent, float>(
-        "maxDriveForce",
-        &CarColliderComponent::getMaxDriveForce,
-        &CarColliderComponent::setMaxDriveForce,
-        500.f));
-
-    return properties;
-}
-
 void CarColliderComponent::onEvent(const Subject<GameObjectEvent> &target, GameObjectEvent event)
 {
     // this is temporal code for test
@@ -271,66 +228,6 @@ void CarColliderComponent::onEvent(const Subject<GameObjectEvent> &target, GameO
     else if(event == GameObjectEvent::ActiveChanged){
         collider->setActive(gameObject()->active());
     }
-}
-
-float CarColliderComponent::getMaxForwardSpeed() const
-{
-    return maxForwardSpeed_;
-}
-
-void CarColliderComponent::setMaxForwardSpeed(const float &maxForwardSpeed)
-{
-    maxForwardSpeed_ = maxForwardSpeed;
-}
-
-float CarColliderComponent::getMaxBackwardSpeed() const
-{
-    return maxBackwardSpeed_;
-}
-
-void CarColliderComponent::setMaxBackwardSpeed(const float &maxBackwardSpeed)
-{
-    maxBackwardSpeed_ = maxBackwardSpeed;
-}
-
-float CarColliderComponent::getMaxDriveForce() const
-{
-    return maxDriveForce_;
-}
-
-void CarColliderComponent::setMaxDriveForce(const float &maxDriveForce)
-{
-    maxDriveForce_ = maxDriveForce;
-}
-
-Vec2D CarColliderComponent::getCarSize() const
-{
-    return carSize_;
-}
-
-void CarColliderComponent::setCarSize(const Vec2D &carSize)
-{
-    carSize_ = carSize;
-}
-
-Vec2D CarColliderComponent::getTiresOffset() const
-{
-    return tiresOffset_;
-}
-
-void CarColliderComponent::setTiresOffset(const Vec2D &tiresOffset)
-{
-    tiresOffset_ = tiresOffset;
-}
-
-Vec2D CarColliderComponent::getTiresSize() const
-{
-    return tiresSize_;
-}
-
-void CarColliderComponent::setTiresSize(const Vec2D &tiresSize)
-{
-    tiresSize_ = tiresSize;
 }
 
 }

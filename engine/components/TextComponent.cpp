@@ -14,6 +14,10 @@ namespace GameEngine {
     }
 
     void TextComponent::init() {
+        setPropertyObserver<std::string>("font", [this](){ updateFont(); });
+        setPropertyObserver<int>("fontSize", [this](){ updateFontSize(); });
+        setPropertyObserver<std::string>("text", [this](){ updateText(); });
+
         visible_ = true;
 
         updateTextRef();
@@ -29,37 +33,27 @@ namespace GameEngine {
             textGraphic_->setActive(gameObject()->active() && visible_);
         }
     }
-    void TextComponent::font(const std::string &fontName) {
-        textParams_.fontName = fontName;
+    void TextComponent::updateFont() {
+        textParams_.fontName = getPropertyValue<std::string>("font");
 
         if(textGraphic_)
             updateTextRef();
     }
 
-    std::string TextComponent::font() const {
-        return textParams_.fontName;
-    }
-
-    void TextComponent::fontSize(const int &size) {
+    void TextComponent::updateFontSize() {
+        int size = getPropertyValue<int>("fontSize");
         if(size < 0)
-            throw std::invalid_argument("fontsize must be greater than 0. current value is " + std::to_string(size));
+            throw std::invalid_argument("font size must be greater than 0. current value is " + std::to_string(size));
         textParams_.fontSize = size;
         if(textGraphic_)
             updateTextRef();
     }
 
-    int TextComponent::fontSize() const {
-        return textParams_.fontSize;
-    }
-    void TextComponent::text(const std::string &text) {
-        textParams_.text = text;
+    void TextComponent::updateText() {
+        textParams_.text = getPropertyValue<std::string>("text");
 
         if(textGraphic_ )
             textGraphic_->setText(textParams_.text);
-    }
-
-    std::string TextComponent::text() const {
-        return textParams_.text;
     }
 
     TextComponent::~TextComponent() {
@@ -107,31 +101,4 @@ namespace GameEngine {
         }
         graphicsEngine_->registerText(textGraphic_);
     }
-
-PropertySetBase *TextComponent::getProperties() const
-{
-    auto *properties = new PropertySet<TextComponent>();
-
-    properties->add(new Property<TextComponent, std::string>(
-            "font",
-            &TextComponent::font,
-            &TextComponent::font,
-            "",
-            true));
-
-    properties->add(new Property<TextComponent, int>(
-            "fontSize",
-            &TextComponent::fontSize,
-            &TextComponent::fontSize,
-            0));
-
-    properties->add(new Property<TextComponent, std::string>(
-            "text",
-            &TextComponent::text,
-            &TextComponent::text,
-            ""));
-
-    return properties;
-
-}
 }

@@ -17,11 +17,7 @@ geComponentRef UITextInputComponent::instantiate() const
 geComponentRef UITextInputComponent::clone() const
 {
     geComponentRef cloned = instantiate();
-    auto compCloned = std::dynamic_pointer_cast<UITextInputComponent>(cloned);
-    auto other = shared_from_this();
-    auto thisRef = std::dynamic_pointer_cast<const UITextInputComponent>(other);
-    compCloned->copyProperties<UITextInputComponent>(thisRef);
-
+    cloned->setData(getData()->template clone<UITextInputComponentData>());
     return cloned;
 }
 
@@ -45,7 +41,7 @@ void UITextInputComponent::onEvent(const Subject<InputTextSubjectEvent, const ch
     if(event == InputTextSubjectEvent::INPUT)
     {
         // calculate the Unicode length to set the new char
-        std::string tmpText = text();
+        std::string tmpText = getPropertyValue<std::string>("text");
         auto it = tmpText.begin();
         int i = 0;
         while(i < cursorPos_)
@@ -54,13 +50,13 @@ void UITextInputComponent::onEvent(const Subject<InputTextSubjectEvent, const ch
             i++;
         }
         tmpText.insert(it - tmpText.begin(), std::string(textInput));
-        text(tmpText);
+        setPropertyValue<std::string>("text", tmpText);
         moveCursor(1);
     }
     else if(event == InputTextSubjectEvent::ERASE && cursorPos_ > 0)
     {
         // calculate the Unicode length to erase the char in the cursor position
-        std::string tmpText = text();
+        std::string tmpText = getPropertyValue<std::string>("text");
         auto it = tmpText.begin();
         int i = 0;
         while(i < cursorPos_ - 1)
@@ -72,7 +68,7 @@ void UITextInputComponent::onEvent(const Subject<InputTextSubjectEvent, const ch
         // calculate the Unicode size of the char to remove from the cursor position
         auto itEnd = it;
         utf8::next(itEnd,tmpText.end());
-        text(tmpText.erase(it - tmpText.begin(), itEnd - it));
+        setPropertyValue<std::string>("text", tmpText.erase(it - tmpText.begin(), itEnd - it));
         moveCursor(-1);
     }
     // always update the bottom line
@@ -130,7 +126,8 @@ void UITextInputComponent::moveCursor(int movement)
     cursorPixelPos = getGraphicText()->getPixelPosFromTextIndex(cursorPos_ - 1);
     cursorPixelPos.x += getGraphicText()->getPixelSizeFromTextIndex(cursorPos_ - 1).x;
 
-    graphicCursor_->setModelTransform(calculateVirtualScreenPos() + cursorPixelPos, 0.f, Vec2D(1,fontSize()));
+    int fontSize = getPropertyValue<int>("fontSize");
+    graphicCursor_->setModelTransform(calculateVirtualScreenPos() + cursorPixelPos, 0.f, Vec2D(1, fontSize));
 }
 
 void UITextInputComponent::createBottomLineGeometry()
@@ -149,7 +146,7 @@ void UITextInputComponent::createBottomLineGeometry()
     graphicBottomLine_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
     graphicBottomLine_->setModelTransform(Vec2D(0,0), 0.f, Vec2D(1,1));
     graphicsEngine()->registerGraphic(graphicBottomLine_);
-    graphicBottomLine_->setActive(visible());
+    graphicBottomLine_->setActive(getPropertyValue<bool>("visible"));
 }
 
 void UITextInputComponent::updateBottomLineGeometry()
@@ -172,9 +169,10 @@ void UITextInputComponent::createCursorGeometry()
 
     auto graphicLoaded_ = std::make_shared<Internal::GraphicGeometry>(path);
     graphicCursor_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
-    graphicCursor_->setModelTransform(Vec2D(0,0), 0.f, Vec2D(1,fontSize()));
+    int fontSize = getPropertyValue<int>("fontSize");
+    graphicCursor_->setModelTransform(Vec2D(0,0), 0.f, Vec2D(1,fontSize));
     graphicsEngine()->registerGraphic(graphicCursor_);
-    graphicCursor_->setActive(visible());
+    graphicCursor_->setActive(getPropertyValue<bool>("visible"));
 }
 
 UITextInputComponent::~UITextInputComponent()
@@ -187,7 +185,7 @@ UITextInputComponent::~UITextInputComponent()
 
 void UITextInputComponent::onFocusChanged()
 {
-    if(!visible())
+    if(!getPropertyValue<bool>("visible"))
         return;
 
     if(isFocused())
@@ -223,42 +221,24 @@ void UITextInputComponent::createBackgroundGraphic()
     backgroundGraphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
     backgroundGraphic_->setModelTransform(calculateVirtualScreenPos(), 0.f, calculateVirtualScreenSize());
     graphicsEngine()->registerGraphic(backgroundGraphic_);
-    backgroundGraphic_->setActive(visible());
-}
-
-void UITextInputComponent::background(const geColor &color)
-{
-    background_ = color;
-}
-
-geColor UITextInputComponent::background() const
-{
-    return background_;
-}
-
-PropertySetBase *UITextInputComponent::getProperties() const
-{
-    PropertySetBase *base = UITextComponent::getProperties();
-    auto *properties = new PropertySet<UITextInputComponent>(base);
-
-    properties->add(new Property<UITextInputComponent, geColor>(
-            "background",
-            &UITextInputComponent::background,
-            &UITextInputComponent::background,
-            geColor(1.f)
-    ));
-
-    return properties;
+    backgroundGraphic_->setActive(getPropertyValue<bool>("visible"));
 }
 
 void UITextInputComponent::onVisibleChanged()
 {
     UITextComponent::onVisibleChanged();
+    bool visible = getPropertyValue<bool>("visible");
+
     if(graphicBottomLine_)
-        graphicBottomLine_->setActive(visible());
+        graphicBottomLine_->setActive(visible);
     if(graphicCursor_)
-        graphicCursor_->setActive(visible());
+        graphicCursor_->setActive(visible);
     if(backgroundGraphic_)
-        backgroundGraphic_->setActive(visible());
+        backgroundGraphic_->setActive(visible);
+}
+
+ComponentDataRef UITextInputComponent::instantiateData() const
+{
+    return std::make_shared<UITextInputComponentData>();
 }
 }

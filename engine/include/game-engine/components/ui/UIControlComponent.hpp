@@ -2,22 +2,31 @@
 // Created by adria on 11/09/2019.
 //
 
-#ifndef GAMEENGINEEDITOR_UICONTROLCOMPONENT_HPP
-#define GAMEENGINEEDITOR_UICONTROLCOMPONENT_HPP
+#ifndef GAMEENGINE_UICONTROLCOMPONENT_HPP
+#define GAMEENGINE_UICONTROLCOMPONENT_HPP
 
 
 #include <game-engine/geComponent.hpp>
 #include <game-engine/internal/graphics/GraphicsEngine.hpp>
 
 namespace GameEngine {
-    class PUBLICAPI UIControlComponent : public geComponentInstantiable<UIControlComponent>
+
+class UIControlComponentData : public ComponentData
+{
+public:
+    UIControlComponentData()
     {
-        std::string id_;
-        Vec2D screenPos_;
-        Vec2D screenSize_;
+        createProperty<std::string>("id", "", true);
+        createProperty<Vec2D>("screenPos", Vec2D(), true);
+        createProperty<Vec2D>("screenSize", Vec2D(), true);
+        createProperty<bool>("visible", true);
+    }
+};
+
+    class PUBLICAPI UIControlComponent : public geComponentInstantiable<UIControlComponent, UIControlComponentData>
+    {
         bool hover_;
         bool focused_;
-        bool visible_;
         Internal::GraphicsEngine *graphicsEngine_;
 
     protected:
@@ -32,24 +41,12 @@ namespace GameEngine {
         Vec2D calculateVirtualScreenSize() const;
     public:
         virtual ~UIControlComponent() = default;
-        PropertySetBase *getProperties() const override;
 
         virtual void preInit();
         void Update(float elapsedTime) override;
-        void screenPos(const Vec2D &pos);
-        Vec2D screenPos() const;
-
-        void screenSize(const Vec2D &size);
-        Vec2D screenSize() const;
-
-        void id(const std::string &value);
-        std::string id() const;
-
-        bool visible() const;
-        void visible(const bool &value);
 
         bool isFocused() const;
     };
 }
 
-#endif //GAMEENGINEEDITOR_UICONTROLCOMPONENT_HPP
+#endif //GAMEENGINE_UICONTROLCOMPONENT_HPP

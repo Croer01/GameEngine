@@ -29,7 +29,7 @@ public:
     Environment();
     virtual ~Environment(){};
     virtual void registerComponent(const std::string &idType, ComponentBuilder *builder);
-    virtual std::shared_ptr<PropertySetBase> getProperties(const std::string &id) const;
+    virtual ComponentDataRef getProperties(const std::string &id) const;
     virtual std::vector<std::string> getRegisteredPropertiesIds() const;
     virtual void configurationPath(const std::string &config);
     virtual void dataPath(const std::string &data);

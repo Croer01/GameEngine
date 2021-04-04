@@ -10,16 +10,27 @@
 #include <game-engine/internal/graphics/GraphicHolder.hpp>
 
 namespace GameEngine {
+
+class UIButtonComponentData : public UITextComponentData
+{
+public:
+    UIButtonComponentData():
+        UITextComponentData()
+    {
+        createProperty<geColor>("background", geColor(1.f));
+        createProperty<geColor>("hoverBackground", geColor(.8f));
+    }
+};
+
 class PUBLICAPI UIButtonComponent : public UITextComponent
 {
     CommandRef command_;
     std::shared_ptr<Internal::GraphicHolder> backgroundGraphic_;
-    geColor background_;
-    geColor hoverBackground_;
 
     void changeColor(bool isHover);
 protected:
     geComponentRef instantiate() const override;
+protected:
     virtual geComponentRef clone() const;
     void createBackgroundGraphic();
     void onClick() override;
@@ -31,16 +42,10 @@ protected:
 public:
     UIButtonComponent();
     virtual ~UIButtonComponent();
-    PropertySetBase *getProperties() const override;
+    ComponentDataRef instantiateData() const override;
 
     void init() override;
     void setCommand(const CommandRef &command);
-
-    void background(const geColor &color);
-    geColor background() const;
-
-    void hoverBackground(const geColor &color);
-    geColor hoverBackground() const;
 };
 }
 
