@@ -1,79 +1,98 @@
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 #include <game-engine/internal/Data.hpp>
-#include <game-engine/properties/PropertySet.hpp>
-#include <game-engine/properties/Property.hpp>
-#include <game-engine/properties/PropertiesHolder.hpp>
-#include <thread>
-#include <chrono>
+#include <game-engine/components/ComponentData.hpp>
+#include <game-engine/geComponent.hpp>
 #include <game-engine/geIO.hpp>
 
-class TestData : public GameEngine::PropertiesHolder{
-    int privateIntValue_;
+using namespace GameEngine;
+
+class TestData : public GameEngine::ComponentData {
 public:
-    GameEngine::PropertySetBase *getProperties() const override
+    TestData()
     {
-        auto properties = new GameEngine::PropertySet<TestData>();
-        properties->add(new GameEngine::Property<TestData, int>(
-                "value",
-                &TestData::getPrivate,
-                &TestData::setPrivate,
-                0)
-        );
-
-        return properties;
+        createProperty<int>("value",0);
     }
-
-    int getPrivate() const { return privateIntValue_; };
-    void setPrivate(const int &value){ privateIntValue_ = value; };
 };
 
 class TestDataChild : public TestData{
+public:
+    TestDataChild() : TestData()
+    {
+        createProperty<int>("childValue", 1);
+    }
+};
+
+class TestComponent : public GameEngine::geComponentInstantiable<TestComponent, TestData>
+{
 };
 
 TEST(Properties, setValueFromPropertySetter)
 {
     int defaultValue = -1;
     int newValue = 10;
-    TestData instance;
-    instance.setPrivate(defaultValue);
-    GameEngine::Property<TestData, int> property("value", &TestData::getPrivate, &TestData::setPrivate,0);
-    EXPECT_EQ(instance.getPrivate(), property.get(&instance));
-    property.set(&instance, newValue);
-    EXPECT_EQ(instance.getPrivate(), newValue);
-    EXPECT_EQ(instance.getPrivate(), property.get(&instance));
+    auto component = std::make_shared<TestComponent>();
+    const ComponentDataRef &instance = component->instantiateData();
+    Property<int> *property = instance->getProperty<int>("value");
+    component->setData(instance);
+    // check set value from component to path
+    component->setPropertyValue<int>("value", defaultValue);
+    EXPECT_EQ(component->getPropertyValue<int>("value"), property->get());
+
+    // check set value from property directly and component get the new value
+    property->set(newValue);
+    EXPECT_EQ(component->getPropertyValue<int>("value"), newValue);
+    EXPECT_EQ(component->getPropertyValue<int>("value"), property->get());
 }
 
-TEST(Properties, getValueFromPropertyGetterAndEdited)
+TEST(Properties, copyProperties)
 {
-    int defaultValue = -1;
-    int newValue = 10;
-    TestData instance;
-    instance.setPrivate(defaultValue);
-    GameEngine::Property<TestData, int> property("value", &TestData::getPrivate, &TestData::setPrivate,0);
-    EXPECT_EQ(instance.getPrivate(), property.get(&instance));
-    property.set(&instance, newValue);
-    EXPECT_EQ(property.get(&instance), newValue);
-    EXPECT_EQ(instance.getPrivate(), property.get(&instance));
+    TestDataChild testDataChild;
+
+    // Check has own property and the inherited from TestData
+    EXPECT_EQ(testDataChild.getProperty<int>("value")->get(), 0);
+    EXPECT_EQ(testDataChild.getProperty<int>("childValue")->get(), 1);
+
+    // Change the default values and clone to check all properties are set correctly
+    testDataChild.getProperty<int>("value")->set(10);
+    testDataChild.getProperty<int>("childValue")->set(11);
+    auto clone = std::dynamic_pointer_cast<TestDataChild>(testDataChild.clone<TestDataChild>());
+    EXPECT_EQ(testDataChild.getProperty<int>("value")->get(), clone->getProperty<int>("value")->get());
+    EXPECT_EQ(testDataChild.getProperty<int>("childValue")->get(), clone->getProperty<int>("childValue")->get());
 }
 
-TEST(Properties, copyPropertyTree)
+TEST(Properties, CallObserverOnValueChange)
 {
-    const std::shared_ptr<const TestDataChild> &instance = std::make_shared<TestDataChild>();
+    TestDataChild testDataChild;
 
-    // create the original data structure
-    auto instancePropSet = dynamic_cast<GameEngine::PropertySet<TestData>*>(instance->getProperties());
+    int callCounter = 0;
+    Property<int> *prop = testDataChild.getProperty<int>("childValue");
+    prop->registerObserver([&callCounter](){
+       callCounter++; 
+    });
 
-    auto &instanceProp = dynamic_cast<GameEngine::Property<TestData, int>&>(instancePropSet->get(0));
+    prop->set(1);
+    EXPECT_EQ(callCounter, 1);
+    prop->set(0);
+    EXPECT_EQ(callCounter, 2);
+    prop->set(1);
+    EXPECT_EQ(callCounter, 3);
+}
 
-    EXPECT_EQ(instance->getPrivate(), instanceProp.get(instance.get()));
+TEST(Properties, throwExcpetionUsingWrongGetters)
+{
+    TestDataChild testDataChild;
 
-    // prepare copy with the same struct but different targets
-    std::shared_ptr<TestDataChild> instanceCopy(new TestDataChild());
+    EXPECT_NO_THROW(
+        testDataChild.getProperty<int>("childValue");
+    );
 
-    // Do the copy and check all works fine
-    instancePropSet->copyByType(instance, instanceCopy);
+    EXPECT_ANY_THROW(
+        testDataChild.getEnumProperty("childValue");
+    );
 
-    EXPECT_EQ(instanceCopy->getPrivate(), instanceProp.get(instanceCopy.get()));
+    EXPECT_ANY_THROW(
+        testDataChild.getFilePathProperty("childValue");
+    );
 }
 
 TEST(Data, writeValuesIntoData)

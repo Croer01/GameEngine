@@ -6,7 +6,7 @@
 
 using namespace GameEngine;
 
-class InitializeCheckComponent : public geComponentInstantiable<InitializeCheckComponent>
+class InitializeCheckComponent : public geComponentInstantiable<InitializeCheckComponent, ComponentData>
 {
     bool initialized_;
 
@@ -23,25 +23,14 @@ public:
     {
         return initialized_;
     }
-
-    PropertySetBase *getProperties() const override
-    {
-        return nullptr;
-    }
 };
 
-class AddOnInitializeComponent : public geComponentInstantiable<AddOnInitializeComponent>
+class AddOnInitializeComponent : public geComponentInstantiable<AddOnInitializeComponent, ComponentData>
 {
     void init() override
     {
         auto component = std::make_shared<InitializeCheckComponent>();
         gameObject()->addComponent(component);
-    }
-
-public:
-    PropertySetBase *getProperties() const override
-    {
-        return nullptr;
     }
 };
 
@@ -179,5 +168,5 @@ TEST(SpriteComponent, load)
     const std::weak_ptr<SpriteComponent> &component = gameObject->getComponent<SpriteComponent>();
     ASSERT_EQ(gameObject->name(), "loadedFromFile");
     ASSERT_TRUE(component.lock());
-    ASSERT_EQ(component.lock()->filepath(),"data/1x1white.png");
+    ASSERT_EQ(component.lock()->getFilePathPropertyValue("filePath"),"data/1x1white.png");
 }

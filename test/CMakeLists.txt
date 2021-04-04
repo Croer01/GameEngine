@@ -21,6 +21,14 @@ CreateTestTarget(Pathfinding PathfindingTests.cpp)
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} -C $<CONFIGURATION>
         DEPENDS ${TEST_NAMES})
 
-add_custom_target(copyTestData
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/data ${CMAKE_CURRENT_BINARY_DIR}/data
-)
+
+# Conan modify some output paths. Copy the resources in the same directory as the binaries
+if(NOT ARGUMENTS_NO_OUTPUT_DIRS)
+    add_custom_target(copyTestData
+            COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/data ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/data
+            )
+else()
+    add_custom_target(copyTestData
+            COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/data ${CMAKE_CURRENT_BINARY_DIR}/data
+            )
+endif()
