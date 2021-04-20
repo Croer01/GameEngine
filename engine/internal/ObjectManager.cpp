@@ -31,6 +31,10 @@ namespace Internal {
     }
 
     void ObjectManager::registerPrototype(const std::string &objectType, const std::string &filename) {
+        static std::string extension = ".prototype";
+        if(filename.substr(filename.length() - extension.length()) != extension)
+            throw std::invalid_argument("filename must have " + extension + " extension");
+
         auto it = prototypes_.find(objectType);
 
         if (it != prototypes_.end())
