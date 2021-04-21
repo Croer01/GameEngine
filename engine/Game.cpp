@@ -117,6 +117,12 @@ void Game::initPhysics(const std::string &configFilePath) {
 
     void Game::update()
     {
+        SDL_Event event;
+        while (SDL_PollEvent(&event))
+        {
+            inputManager_->addEvent(event);
+        }
+
         assert(initialized_);
         screen_->update();
 
