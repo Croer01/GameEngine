@@ -65,8 +65,8 @@ namespace Internal {
 
         std::shared_ptr<GameObject> Clone(Game *game) const;
 
-        void parent(const geGameObjectRef &parent) override;
-        virtual std::weak_ptr<geGameObject> parent() const;
+        void parent(geGameObject *parent) override;
+        virtual geGameObject *parent() const;
 
         virtual Vec2D localPosition() const;
         Vec2D position() const override;

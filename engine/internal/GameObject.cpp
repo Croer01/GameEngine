@@ -109,35 +109,37 @@ namespace Internal {
         if(it != children_.end())
             return;
 
-        child->parent(shared_from_this());
+        child->parent(this);
         children_.push_back(child);
     }
 
-void GameObject::removeChild(const std::shared_ptr<GameObject>& child) {
-    auto it = std::find(children_.begin(),children_.end(),child);
-    if(it != children_.end())
-    {
-        unregisterObserver(it->get());
-        children_.erase(it);
+    void GameObject::removeChild(const std::shared_ptr<GameObject>& child) {
+        auto it = std::find(children_.begin(),children_.end(),child);
+        if(it != children_.end())
+        {
+            unregisterObserver(it->get());
+            children_.erase(it);
+        }
     }
-}
-
-void GameObject::parent(const geGameObjectRef &goParent) {
+    
+    void GameObject::parent(geGameObject *goParent) {
         if(auto parent = parent_.lock())
             parent->removeChild(shared_from_this());
         parent_.reset();
         //goParent could be null
         if(goParent) {
-            parent_ = std::dynamic_pointer_cast<GameObject>(goParent);
+            auto gameObjectParent = dynamic_cast<GameObject*>(goParent);
+            parent_ = gameObjectParent->weak_from_this();
             parent_.lock()->registerObserver(this);
         }
         notify(GameObjectEvent::TransformChanged);
         notify(GameObjectEvent::ActiveChanged);
     }
 
-    std::weak_ptr<geGameObject> GameObject::parent() const
+    geGameObject *GameObject::parent() const
     {
-        return parent_;
+        auto parent = parent_.lock();
+        return parent ? parent.get() : nullptr;
     }
 
     GameObject::~GameObject(){

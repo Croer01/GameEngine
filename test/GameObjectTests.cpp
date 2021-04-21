@@ -69,7 +69,7 @@ TEST(GameObject, positionChangedByParent)
     ASSERT_EQ(parent->position(), parentPos);
     ASSERT_EQ(child->position(), childPos);
 
-    child->parent(parent);
+    child->parent(parent.get());
     ASSERT_EQ(parent->position(), parentPos);
     ASSERT_EQ(child->position(), parentPos + childPos);
 
@@ -92,7 +92,7 @@ TEST(GameObject, rotationChangedByParent)
     ASSERT_EQ(parent->rotation(), parentRot);
     ASSERT_EQ(child->rotation(), childRot);
 
-    child->parent(parent);
+    child->parent(parent.get());
     ASSERT_EQ(parent->rotation(), parentRot);
     ASSERT_EQ(child->rotation(), parentRot + childRot);
 
@@ -115,7 +115,7 @@ TEST(GameObject, scaleChangedByParent)
     ASSERT_EQ(parent->scale(), parentScale);
     ASSERT_EQ(child->scale(), childScale);
 
-    child->parent(parent);
+    child->parent(parent.get());
     ASSERT_EQ(parent->scale(), parentScale);
     ASSERT_EQ(child->scale(), parentScale * childScale);
 

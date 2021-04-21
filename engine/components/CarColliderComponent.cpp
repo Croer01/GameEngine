@@ -171,7 +171,7 @@ void CarColliderComponent::Update(float elapsedTime)
     // Update GameObject
     Vec2D position = carCollider_->getPosition();
     float rotation = carCollider_->getRotation();
-    if(auto parent = gameObject()->parent().lock())
+    if(auto parent = gameObject()->parent())
     {
         position -= parent->position();
         rotation -= parent->rotation();

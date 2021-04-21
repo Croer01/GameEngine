@@ -9,6 +9,7 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include <stdexcept>
 #include <game-engine/events/Subject.hpp>
 
 namespace GameEngine {
@@ -48,8 +49,8 @@ enum class GameObjectEvent{
         virtual bool active() const = 0;
         virtual void active(bool isActive) = 0;
 
-        virtual void parent(const geGameObjectRef &gameObject) = 0;
-        virtual std::weak_ptr<geGameObject> parent() const = 0;
+        virtual void parent(geGameObject *gameObject) = 0;
+        virtual geGameObject *parent() const = 0;
 
         virtual void addComponent(const std::shared_ptr<geComponent> &component) = 0;
 
@@ -98,6 +99,5 @@ enum class GameObjectEvent{
         std::vector<std::shared_ptr<geComponent>> components_;
 
     };
-
 }
 #endif //SPACEINVADERS_GEGAMEOBJECT_HPP

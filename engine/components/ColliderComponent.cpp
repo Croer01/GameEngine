@@ -107,7 +107,7 @@ namespace {
         {
             Vec2D position = collider_->getPosition();
             float rotation = collider_->getRotation();
-            if(auto parent = gameObject()->parent().lock())
+            if(auto parent = gameObject()->parent())
             {
                 position -= parent->position();
                 rotation -= parent->rotation();
