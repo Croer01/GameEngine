@@ -24,14 +24,26 @@ namespace Internal {
         gameObjects_.clear();
         loadFile(game);
 
-        auto size = gameObjects_.size();
-
-        for (auto i = 0; i < size; i++) {
-            gameObjects_[i]->preInit();
+        int index = 0;
+        // Doing loop this way because some objects can be added by GameObjects preInit calls
+        while(index < gameObjects_.size())
+        {
+            gameObjects_[index]->preInit();
+            index++;
         }
 
-        for (auto i = 0; i < size; i++) {
-            gameObjects_[i]->Init();
+        //Get the current size to know the new objects added by GameObjects Init calls.
+        // Moreover, these new objects required to preinitialize before initialize.
+        int preinitLastIndex = gameObjects_.size() - 1;
+        index = 0;
+        // Doing loop this way because some objects can be added by GameObjects preInit calls
+        while(index < gameObjects_.size())
+        {
+            if(index > preinitLastIndex)
+                gameObjects_[index]->preInit();
+
+            gameObjects_[index]->Init();
+            index++;
         }
         initialized_ = true;
     }
