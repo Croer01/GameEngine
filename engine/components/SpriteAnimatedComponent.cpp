@@ -16,10 +16,7 @@ namespace GameEngine {
         setPropertyObserver<geColor>("tint", [this](){ updateTint(); });
         setPropertyObserver<int>("rows", [this](){ updateGrid(); });
         setPropertyObserver<int>("columns", [this](){ updateGrid(); });
-        setPropertyObserver<float>("framesPerSecond", [this](){
-            float frames = getPropertyValue<float>("framesPerSecond");
-            timePerFrame_ = 1.f / frames;
-        });
+        setPropertyObserver<float>("framesPerSecond", [this](){ updateTimePerSecond(); });
         setPropertyObserver<bool>("visible", [this](){ updateVisible(); });
         setEnumPropertyObserver("anchor", [this](){ updateAnchor(); });
 
@@ -31,6 +28,8 @@ namespace GameEngine {
         updateVisible();
         updateAnchor();
         updateTint();
+        updateGrid();
+        updateTimePerSecond();
         timeAcumulator_ = 0;
         animationOffsetFrame_ = 0;
         animationFramesLength_ = getFramesNum();
@@ -224,6 +223,12 @@ void SpriteAnimatedComponent::updateAnchor() {
         GameEngine::Internal::GraphicAnchor graphicAnchor = Internal::parseStringToGraphicAnchor(anchor);
         graphic_->setAnchor(graphicAnchor);
     }
+}
+
+void SpriteAnimatedComponent::updateTimePerSecond()
+{
+    float frames = getPropertyValue<float>("framesPerSecond");
+    timePerFrame_ = 1.f / frames;
 }
 
 }

@@ -59,6 +59,7 @@ public:
         void updateTint();
         void updateAnchor();
         void updateGrid();
+        void updateTimePerSecond();
 
     protected:
         void
