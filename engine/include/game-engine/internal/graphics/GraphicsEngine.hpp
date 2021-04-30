@@ -20,7 +20,7 @@
 
 namespace GameEngine {
 namespace Internal {
-    class GraphicsEngine {
+    class GraphicsEngine : public Observer<int, int> {
         std::vector<std::shared_ptr<GraphicHolder>> graphics_;
         std::vector<std::shared_ptr<GraphicHolder>> graphicsToInitialize_;
         std::vector<std::shared_ptr<Text>> texts_;
@@ -51,6 +51,8 @@ namespace Internal {
         bool isPixelPerfect() const;
 
         FBO *getFbo() const;
+
+        virtual void onEvent(const Subject<int, int> &target, int width, int height);
     };
 }
 }

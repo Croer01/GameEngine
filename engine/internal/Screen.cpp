@@ -22,6 +22,7 @@ namespace Internal {
 
             target->windowWidth(event->window.data1);
             target->windowHeight(event->window.data2);
+            target->notify(target->virtualWidth(), target->virtualHeight());
         }
         return 0;
     }
@@ -92,16 +93,25 @@ namespace Internal {
     }
 
     void Screen::windowWidth(int value) {
-        deviceWidth_ = value;
-        recalculateWindow();
+        if(deviceWidth_ != value)
+        {
+            deviceWidth_ = value;
+            recalculateWindow();
+            SDL_SetWindowSize(mainWindow_.get(), deviceWidth_, deviceHeight_);
+        }
     }
     int Screen::windowHeight() const {
         return deviceHeight_;
     }
 
     void Screen::windowHeight(int value) {
-        deviceHeight_ = value;
-        recalculateWindow();
+        if(deviceHeight_ != value)
+        {
+            deviceHeight_ = value;
+            recalculateWindow();
+            recalculateWindow();
+            SDL_SetWindowSize(mainWindow_.get(), deviceWidth_, deviceHeight_);
+        }
     }
 
     geColor Screen::backgroundColor() const {
@@ -117,8 +127,12 @@ namespace Internal {
         return virtualWidth_;
     }
     void Screen::virtualWidth(int value) {
-        virtualWidth_ = value;
-        recalculateWindow();
+        if(virtualWidth_ != value)
+        {
+            virtualWidth_ = value;
+            recalculateWindow();
+            notify(virtualWidth_, virtualHeight_);
+        }
     }
 
     int Screen::virtualHeight() const {
@@ -126,8 +140,12 @@ namespace Internal {
     }
 
     void Screen::virtualHeight(int value) {
-        virtualHeight_ = value;
-        recalculateWindow();
+        if(virtualHeight_ != value)
+        {
+            virtualHeight_ = value;
+            recalculateWindow();
+            notify(virtualWidth_, virtualHeight_);
+        }
     }
 
     bool Screen::pixelPerfect() const {

@@ -168,6 +168,8 @@ namespace Internal {
         pixelPerfect_ = screen_->pixelPerfect();
         if(embedded)
             fbo_ = std::make_unique<FBO>(screen->virtualWidth(), screen->virtualHeight());
+
+        screen_->registerObserver(this);
     }
 
     void GraphicsEngine::draw(Camera *cam)
@@ -303,6 +305,11 @@ void GraphicsEngine::registerText(const std::shared_ptr<Text> &textGraphic) {
 FBO *GraphicsEngine::getFbo() const
 {
     return fbo_.get();
+}
+
+void GraphicsEngine::onEvent(const Subject<int, int> &target, int width, int height)
+{
+    projMatrix_ = glm::ortho(0.0f, (float)width, (float)height, 0.0f, 0.f, 1.f);
 }
 
 }

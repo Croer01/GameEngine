@@ -12,12 +12,13 @@
 #include <SDL2/SDL_events.h>
 #include <memory>
 #include <game-engine/internal/DelayedSetter.hpp>
+#include <game-engine/events/Subject.hpp>
 
 namespace GameEngine {
 namespace Internal {
     int resizingEventWatcher(void* data, SDL_Event* event);
 
-    class Screen : public geScreen {
+    class Screen : public geScreen, public Subject<int, int>{
         //The size of the window or screen if window is fullscreen
         int deviceWidth_;
         int deviceHeight_;
