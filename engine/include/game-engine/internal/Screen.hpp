@@ -27,10 +27,10 @@ namespace Internal {
         int virtualHeight_;
 
         Vec2D windowRelativePos_;
-        int calculatedX_;
-        int calculatedY_;
-        int calculatedWidth_;
-        int calculatedHeight_;
+        DelayedSetter<int> calculatedX_;
+        DelayedSetter<int> calculatedY_;
+        DelayedSetter<int> calculatedWidth_;
+        DelayedSetter<int> calculatedHeight_;
 
         DelayedSetter<std::string> title_;
         geColor background_;
@@ -60,8 +60,6 @@ namespace Internal {
         virtual void pixelPerfect(bool value);
         virtual bool resizable() const;
         virtual void resizable(bool value);
-        virtual void setWindowRelativePosition(int x, int y);
-        virtual Vec2D getWindowRelativePosition();
         virtual Vec2D transformWindowToScreen(const Vec2D &position);
 
         int calculatedX() const;

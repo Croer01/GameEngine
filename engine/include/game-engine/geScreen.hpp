@@ -36,8 +36,6 @@ namespace GameEngine {
         virtual bool resizable() const = 0;
         virtual void resizable(bool value) = 0;
 
-        virtual void setWindowRelativePosition(int x, int y) = 0;
-        virtual Vec2D getWindowRelativePosition() = 0;
         virtual Vec2D transformWindowToScreen(const Vec2D &position) = 0;
     };
 }

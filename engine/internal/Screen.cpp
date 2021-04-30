@@ -55,6 +55,11 @@ namespace Internal {
             virtualHeight_ = DEFAULT_WINDOW_SIZE;
         }
         recalculateWindow();
+        // Ensure the values set in the constructor are updated before use in the initialization methods
+        calculatedX_.update();
+        calculatedY_.update();
+        calculatedWidth_.update();
+        calculatedHeight_.update();
 
         if(screenConfig["backgroundColor"]){
             YAML::Node backgroundColor = screenConfig["backgroundColor"];
@@ -134,19 +139,19 @@ namespace Internal {
     }
 
     int Screen::calculatedX() const {
-        return calculatedX_;
+        return calculatedX_.get();
     }
 
     int Screen::calculatedY() const {
-        return calculatedY_;
+        return calculatedY_.get();
     }
 
     int Screen::calculatedWidth() const {
-        return calculatedWidth_;
+        return calculatedWidth_.get();
     }
 
     int Screen::calculatedHeight() const {
-        return calculatedHeight_;
+        return calculatedHeight_.get();
     }
 
     void Screen::recalculateWindow() {
@@ -154,23 +159,25 @@ namespace Internal {
         float targetAspectRatio = (float) virtualWidth_ / virtualHeight_;
 
         // figure out the largest area that fits in this resolution at the desired aspect ratio
-        calculatedWidth_ = deviceWidth_;
-        calculatedHeight_ = std::lround(calculatedWidth_ / targetAspectRatio + 0.5f);
+        int calculatedWidth = deviceWidth_;
+        int calculatedHeight = std::lround(calculatedWidth / targetAspectRatio + 0.5f);
 
-        if (calculatedHeight_ > deviceHeight_) {
+        if (calculatedHeight > deviceHeight_) {
             //It doesn't fit our height, we must switch to pillarbox then
-            calculatedHeight_ = deviceHeight_;
-            calculatedWidth_ = std::lround(calculatedHeight_ * targetAspectRatio + 0.5f);
+            calculatedHeight = deviceHeight_;
+            calculatedWidth = std::lround(calculatedHeight * targetAspectRatio + 0.5f);
         }
 
         // set up the new viewport centered in the backbuffer
-        calculatedX_ = (deviceWidth_ / 2) - (calculatedWidth_ / 2);
-        calculatedY_ = (deviceHeight_ / 2) - (calculatedHeight_ / 2);
+        calculatedX_ = (deviceWidth_ / 2) - (calculatedWidth / 2);
+        calculatedY_ = (deviceHeight_ / 2) - (calculatedHeight / 2);
+        calculatedWidth_ = calculatedWidth;
+        calculatedHeight_ = calculatedHeight;
     }
 
     void Screen::initGlAttributes()
     {
-        glViewport(calculatedX_, calculatedY_, calculatedWidth_, calculatedHeight_);
+        glViewport(calculatedX_.get(), calculatedY_.get(), calculatedWidth_.get(), calculatedHeight_.get());
 
         // Decide GL+GLSL versions
 #if __APPLE__
@@ -264,31 +271,24 @@ namespace Internal {
 
 void Screen::update()
 {
+    if(calculatedX_.update() || calculatedY_.update() || calculatedHeight_.update() || calculatedWidth_.update())
+        glViewport(calculatedX_.get(), calculatedY_.get(), calculatedWidth_.get(), calculatedHeight_.get());
+
     if(mainWindow_ && title_.update())
         SDL_SetWindowTitle(mainWindow_.get(), title_.get().c_str());
 }
 
-void Screen::setWindowRelativePosition(int x, int y)
-{
-    windowRelativePos_ = Vec2D(x, y);
-}
-
-Vec2D Screen::getWindowRelativePosition()
-{
-    Vec2D screenPos(calculatedX_, calculatedY_);
-    return windowRelativePos_;
-}
-
 Vec2D Screen::transformWindowToScreen(const Vec2D &position)
 {
-    Vec2D windowRelativePosition = getWindowRelativePosition();
-    float xScale = (float)virtualWidth_ / deviceWidth_;
-    float yScale = (float)virtualHeight_ / deviceHeight_;
+    Vec2D scale = Vec2D((float)virtualWidth_ / calculatedWidth_.get(),
+                        (float)virtualHeight_ / calculatedHeight_.get()
+                        );
+    Vec2D normCalcPoint = Vec2D(
+        (position.x - calculatedX_.get()) * scale.x,
+        (position.y - calculatedY_.get()) * scale.y
+    );
 
-    Vec2D screenPosition;
-    screenPosition.x = (position.x - windowRelativePosition.x) * xScale;
-    screenPosition.y = (position.y - windowRelativePosition.y) * yScale;
-    return screenPosition;
+    return normCalcPoint;
 }
 
 }
