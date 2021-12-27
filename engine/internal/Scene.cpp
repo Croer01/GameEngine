@@ -16,7 +16,7 @@
 namespace GameEngine {
 namespace Internal {
 
-    Scene::Scene(const std::string &filePath) : filePath_(filePath), initialized_(false) {
+    Scene::Scene(const std::string &filePath) : filePath_(filePath), preInitialized_(false), initialized_(false) {
     }
 
     void Scene::init(Game *game) {
@@ -31,17 +31,12 @@ namespace Internal {
             gameObjects_[index]->preInit();
             index++;
         }
+        preInitialized_ = true;
 
-        //Get the current size to know the new objects added by GameObjects Init calls.
-        // Moreover, these new objects required to preinitialize before initialize.
-        int preinitLastIndex = gameObjects_.size() - 1;
         index = 0;
-        // Doing loop this way because some objects can be added by GameObjects preInit calls
+        // Doing loop this way because some objects can be added by GameObjects Init calls
         while(index < gameObjects_.size())
         {
-            if(index > preinitLastIndex)
-                gameObjects_[index]->preInit();
-
             gameObjects_[index]->Init();
             index++;
         }
@@ -95,20 +90,17 @@ namespace Internal {
     }
 
     void Scene::shutDown() {
-        for (auto &gameobject : gameObjects_) {
-            gameobject->destroy();
-        }
         gameObjects_.clear();
         initialized_ = false;
     }
 
     void Scene::addGameObject(const std::shared_ptr<GameObject> &gameObject) {
         gameObjects_.push_back(gameObject);
-        if(initialized_)
-        {
+        if(preInitialized_)
             gameObject->preInit();
+
+        if(initialized_)
             gameObject->Init();
-        }
     }
 
 
@@ -157,7 +149,7 @@ void Scene::removeDestroyedObjects()
     // process all the objects destroyed in this frame
     gameObjects_.erase(std::remove_if(gameObjects_.begin(), gameObjects_.end(),
                                       [](const std::shared_ptr<GameObject>& go) {
-                                          return go->isDestroyed();
+                                          return !go;
                                       }), gameObjects_.end());
 }
 

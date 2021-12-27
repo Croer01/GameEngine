@@ -8,7 +8,7 @@ macro(CreateTestTarget name files)
     set(TEST_NAMES ${TEST_NAMES} ${NAME_TARGET})
     add_executable(${NAME_TARGET} ${files})
     target_link_libraries(${NAME_TARGET} CONAN_PKG::gtest GameEngine)
-    add_test(NAME ${name} COMMAND ${NAME_TARGET})
+    add_test(NAME ${name} COMMAND ${NAME_TARGET} --gtest_catch_exceptions=0)
     add_dependencies(${NAME_TARGET} copyTestData)
 endmacro()
 
@@ -18,7 +18,7 @@ CreateTestTarget(Properties PropertiesTests.cpp)
 CreateTestTarget(Math MathTests.cpp)
 CreateTestTarget(Pathfinding PathfindingTests.cpp)
 
-add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} -C $<CONFIGURATION>
+add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} -C $<CONFIGURATION> --verbose
         DEPENDS ${TEST_NAMES})
 
 

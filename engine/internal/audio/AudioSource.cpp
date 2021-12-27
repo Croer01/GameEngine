@@ -23,7 +23,7 @@ namespace Internal {
 
         alGenBuffers(AUDIOSOURCE_BUFFERS, streamBuffers_);
 
-        assert(engine_ != nullptr);
+        assert(engine != nullptr);
         engine_ = engine;
         engine_->registerSource(this);
     }

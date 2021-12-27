@@ -34,7 +34,6 @@ namespace Internal {
         Vec2D scale_;
         std::weak_ptr<GameObject> parent_;
         glm::mat4 transform_;
-        bool destroyed_;
         bool initializating_;
         bool preInitializating_;
         Game *game_;
@@ -92,9 +91,6 @@ namespace Internal {
 
         virtual Game *game() const;
         void game(Game *value);
-
-        virtual bool isDestroyed() const;
-        virtual void destroy();
 
     private:
         void onEvent(const Subject<GameObjectEvent> &target, GameObjectEvent args) override;

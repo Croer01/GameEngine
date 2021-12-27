@@ -27,7 +27,6 @@ namespace Internal {
             position_(0.f, 0.f),
             rotation_(0.f),
             scale_(1.f,1.f),
-            destroyed_(false),
             initializating_(false),
             preInitializating_(false),
             game_(nullptr){
@@ -143,8 +142,6 @@ namespace Internal {
     }
 
     GameObject::~GameObject(){
-        if(!destroyed_)
-            std::cerr << "You are trying to destroy a GameObject that still alive in current Scene" << std::endl;
         for (auto &component : components_) {
             component->gameObject(nullptr);
         }
@@ -338,14 +335,6 @@ GameEngine::geGameObjectRef GameObject::findChildByName(const std::string &name)
     Game *GameObject::game() const
     {
         return dynamic_cast<Game*>(game_);
-    }
-
-    bool GameObject::isDestroyed() const {
-        return destroyed_;
-    }
-
-    void GameObject::destroy() {
-        destroyed_ = true;
     }
 
 void GameObject::game(Game *value)
