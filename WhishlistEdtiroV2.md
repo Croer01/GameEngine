@@ -1,7 +1,7 @@
 #Main Concepts
 
 - The editor is per game, not one instance for multiple games like Unity3D, Godot, Unreal Engine...
-- Develop only what I need now. The first version try to develop possible tools I will use, but I really not needed
+- Develop only what I need now. The first version I tried to develop a lot of tools I will never use
 - Try to reuse the main Game Engine pieces to develop the Editor. Less code, more maintainable 😊
 
 #Whishlist

@@ -71,3 +71,24 @@ boost::filesystem::path DataDirectory::getFullPath() const
 {
     return directoryPath_;
 }
+
+std::vector<DataFileRef> DataDirectory::filterFilesByType(DataFileType fileType) const
+{
+    std::vector<DataFileRef> filteredFiles;
+    internalFilterFilesByType(fileType, filteredFiles);
+    return std::vector<DataFileRef>();
+}
+
+void DataDirectory::internalFilterFilesByType(DataFileType fileType, std::vector<DataFileRef> &filteredFiles) const
+{
+    for(const auto &file : files_)
+    {
+        if(file->getType() == fileType)
+            filteredFiles.push_back(file);
+    }
+
+    for(const auto &subdir : subDirectories_)
+    {
+        subdir->internalFilterFilesByType(fileType, filteredFiles);
+    }
+}

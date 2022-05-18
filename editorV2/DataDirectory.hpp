@@ -20,6 +20,7 @@ class DataDirectory
     std::vector<DataDirectoryRef> subDirectories_;
     std::vector<DataFileRef> files_;
     DataDirectory *getSubDirectory(const boost::filesystem::path &directory);
+    void internalFilterFilesByType(DataFileType fileType, std::vector<DataFileRef> &filteredFiles) const;
 
 public:
     explicit DataDirectory(const boost::filesystem::path &directoryPath);
@@ -28,6 +29,7 @@ public:
     boost::filesystem::path getFullPath() const;
     std::vector<DataDirectoryRef> getFolders() const;
     std::vector<DataFileRef> getFiles() const;
+    std::vector<DataFileRef> filterFilesByType(DataFileType fileType) const;
 };
 
 

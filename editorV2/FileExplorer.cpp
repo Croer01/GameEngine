@@ -2,6 +2,7 @@
 // Created by adria on 28/01/2021.
 //
 
+#include <iostream>
 #include <imgui.h>
 #include <boost/filesystem.hpp>
 #include "FileExplorer.hpp"
@@ -11,6 +12,8 @@ namespace fs = boost::filesystem;
 void FileExplorer::setRoot(const boost::filesystem::path &directory)
 {
     root_ = std::make_shared<DataDirectory>(directory);
+    //TODO: clear prototypes and components from environment
+    env_->dataPath(directory.string());
     recursiveFilesRegister(directory);
 }
 
@@ -39,10 +42,26 @@ void FileExplorer::renderFileListInternal(const DataDirectoryRef &dir)
         if(ImGui::IsItemClicked())
         {
             DataFile &dataFile = *file.get();
+            std::string objectName = file->getFullPath().stem().string();
             switch (file->getType())
             {
                 case DataFileType::Prototype:
-                    // TODO
+                    try {
+                        env_->addPrototype(objectName, fs::relative(file->getFullPath(), root_->getFullPath()).string());
+                    }
+                    catch (...)
+                    {
+                        // Ignore the exception becuase the next steps will check object is really instantiate
+                    }
+                    try {
+                        const GameEngine::geGameObjectRef &gameObject = env_->objectManager()->createGameObject(objectName, nullptr);
+                        notify(FileExplorerEvent::SelectObject, gameObject);
+                    }
+                    catch (...)
+                    {
+                        notify(FileExplorerEvent::SelectObject, nullptr);
+                        std::cerr << "error trying to open prototype file " << file->getFullPath().string() << std::endl;
+                    }
                     break;
                 case DataFileType::Scene:
                     // TODO
@@ -100,4 +119,9 @@ void FileExplorer::recursiveFilesRegister(const boost::filesystem::path &directo
             }
         }
     }
+}
+
+FileExplorer::FileExplorer(const std::shared_ptr<GameEngine::Internal::Environment> &env)
+    : env_(env)
+{
 }

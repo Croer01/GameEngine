@@ -1,13 +1,13 @@
 from conans import ConanFile, CMake, tools
 
 
+# conan export . adria/testing
 class GameEngineConan(ConanFile):
     name = "game-engine"
     version = "0.0.1"
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False], "fPIC": [True, False]}
     generators = "cmake"
-    build_requires = "cmake/3.19.3"
     exports_sources = "engine*", "editor*", "test*", "tools*", "CMakeLists.txt"
     requires = [
             "boost/1.69.0",
@@ -15,7 +15,6 @@ class GameEngineConan(ConanFile):
             "freetype/2.10.1",
             "glew/2.1.0",
             "glm/0.9.9.8",
-            "gtest/1.8.1",
             "imgui/1.74",
             "libsndfile/1.0.29",
             "openal/1.19.1",
@@ -27,7 +26,10 @@ class GameEngineConan(ConanFile):
             "zlib/1.2.11",
             "libpng/1.6.37"
             ]
-
+    build_requires =[
+            "cmake/3.19.3",
+            "gtest/1.8.1",
+    ]
     default_options = {
             "shared": False,
             "fPIC": True,
@@ -60,11 +62,12 @@ class GameEngineConan(ConanFile):
             "boost:without_timer": True,
             "boost:without_type_erasure": True,
             "boost:without_wave": True,
+            "gtest:build_gmock": False
             }
 
     def imports(self):
-        self.copy("*.dll", dst="bin", src="bin") # From bin to bin
-        self.copy("*.dylib*", dst="bin", src="lib") # From lib to bin
+        self.copy("*.dll", dst="bin", src="bin")  # From bin to bin
+        self.copy("*.dylib*", dst="bin", src="lib")  # From lib to bin
 
 
     def config_options(self):
@@ -87,3 +90,5 @@ class GameEngineConan(ConanFile):
         self.copy("CMakeLists.txt", dst="tools", src="tools")
         self.copy("*.py", dst="tools", src="tools")
 
+    def package_info(self):
+        self.cpp_info.libs = ["GameEngine"]

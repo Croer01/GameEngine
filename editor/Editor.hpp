@@ -46,6 +46,7 @@ class Editor
     ProjectFileDataProvider projectFileDataProvider_;
     std::future<int> gameThread_;
     GameEngine::GameRef game_;
+    std::map<std::string, GameEngine::ComponentBuilder *> componentsRegistered_;
 
     void renderMainMenu();
     bool renderSceneObjectNode(const PrototypeReferenceRef &object, const std::string &id, bool &deleteObject);

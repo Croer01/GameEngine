@@ -8,6 +8,7 @@
 #include "imgui_backend/imgui_impl_opengl3.h"
 #include "imgui_backend/imgui_stdlib.h"
 #include "FileExplorer.hpp"
+#include "GameObjectEditor.hpp"
 #include <stdio.h>
 #include <SDL.h>
 #include <GL/glew.h>
@@ -28,6 +29,7 @@
 #include <tinyfiledialogs.h>
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem.hpp>
+#include <game-engine/internal/Environment.hpp>
 
 #elif defined(IMGUI_IMPL_OPENGL_LOADER_GLAD)
 #include <glad/glad.h>  // Initialize with gladLoadGL()
@@ -127,7 +129,10 @@ int main(int, char**)
     bool show_demo_window = false;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-    std::shared_ptr<FileExplorer> fileExplorer_ = std::make_shared<FileExplorer>();
+    std::shared_ptr<GameEngine::Internal::Environment> env_ = std::make_shared<GameEngine::Internal::Environment>();
+    std::shared_ptr<FileExplorer> fileExplorer_ = std::make_shared<FileExplorer>(env_);
+    std::shared_ptr<GameObjectEditor> goEditor_ = std::make_shared<GameObjectEditor>();
+    fileExplorer_->registerObserver(goEditor_.get());
 
     // Main loop
     bool done = false;
@@ -165,10 +170,12 @@ int main(int, char**)
             {
                 boost::filesystem::path fileFolder(projectFile);
                 fileExplorer_->setRoot(fileFolder);
+                goEditor_->setRoot(fileFolder);
             }
         }
 
         fileExplorer_->update();
+        goEditor_->update();
 
         // Rendering
         ImGui::Render();

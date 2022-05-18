@@ -11,6 +11,10 @@ add_compile_options("$<$<CONFIG:DEBUG>:-DDEBUG>")
 # See https://blog.kitware.com/create-dlls-on-windows-without-declspec-using-new-cmake-export-all-feature/
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
+if(MSVC)
+    set(Boost_USE_STATIC_LIBS        ON)
+endif ()
+
 if(EXISTS ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
     include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
     conan_basic_setup(TARGETS)
@@ -82,6 +86,9 @@ set(ENGINE_PRIVATE_SOURCES
 
 add_library(GameEngine ${ENGINE_SOURCES} ${ENGINE_PRIVATE_SOURCES})
 
+if(MSVC)
+    set_target_properties(GameEngine PROPERTIES LINK_FLAGS "/ignore:4099")
+endif ()
 
 target_include_directories(GameEngine PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/engine/include>
@@ -107,40 +114,41 @@ enable_testing()
 add_subdirectory(test)
 
 ### Editor
-add_executable(GameEngineEditor
-        editor/imgui_backend/imgui_impl_opengl3.cpp
-        editor/imgui_backend/imgui_impl_sdl.cpp
-        editor/imgui_backend/imgui_stdlib.cpp
-        editor/editorMain.cpp
-        editor/Editor.cpp
-        editor/ViewModels.cpp
-        editor/CreateProjectEditor.cpp
-        editor/GameComponentsProvider.cpp
-        editor/ProjectFileDataProvider.cpp
-        editor/dialogs/CreateDataFileDialog.cpp
-        editor/dialogs/DeleteFileDialog.cpp
-        editor/dialogs/SaveAllDialog.cpp
-        editor/ProjectDirectory.cpp
-        editor/DataFile.cpp
-        editor/dialogs/ErrorDialog.cpp
-        editor/DataDirectory.cpp
-        editor/GameEditor.cpp)
-
-target_compile_definitions(GameEngineEditor PUBLIC -DIMGUI_IMPL_OPENGL_LOADER_GLEW)
-
-if(MSVC)
-    target_compile_options(GameEngineEditor PUBLIC /bigobj)
-endif ()
-
-target_link_libraries(GameEngineEditor PRIVATE GameEngine
-        CONAN_PKG::imgui
-        CONAN_PKG::sdl2
-        CONAN_PKG::glew
-        CONAN_PKG::boost
-        CONAN_PKG::yaml-cpp
-        CONAN_PKG::opengl
-        CONAN_PKG::tinyfiledialogs
-        )
+#add_executable(GameEngineEditor
+#        editor/imgui_backend/imgui_impl_opengl3.cpp
+#        editor/imgui_backend/imgui_impl_sdl.cpp
+#        editor/imgui_backend/imgui_stdlib.cpp
+#        editor/editorMain.cpp
+#        editor/Editor.cpp
+#        editor/ViewModels.cpp
+#        editor/CreateProjectEditor.cpp
+#        editor/GameComponentsProvider.cpp
+#        editor/ProjectFileDataProvider.cpp
+#        editor/dialogs/CreateDataFileDialog.cpp
+#        editor/dialogs/DeleteFileDialog.cpp
+#        editor/dialogs/SaveAllDialog.cpp
+#        editor/ProjectDirectory.cpp
+#        editor/DataFile.cpp
+#        editor/dialogs/ErrorDialog.cpp
+#        editor/DataDirectory.cpp
+#        editor/GameEditor.cpp)
+#
+#target_compile_definitions(GameEngineEditor PUBLIC -DIMGUI_IMPL_OPENGL_LOADER_GLEW)
+#
+#if(MSVC)
+#    target_compile_options(GameEngineEditor PUBLIC /bigobj)
+#    set_target_properties(GameEngineEditor PROPERTIES LINK_FLAGS "/ignore:4099")
+#endif ()
+#
+#target_link_libraries(GameEngineEditor PRIVATE GameEngine
+#        CONAN_PKG::imgui
+#        CONAN_PKG::sdl2
+#        CONAN_PKG::glew
+#        CONAN_PKG::boost
+#        CONAN_PKG::yaml-cpp
+#        CONAN_PKG::opengl
+#        CONAN_PKG::tinyfiledialogs
+#        )
 
 ### Editor V2
 add_executable(GameEngineEditorV2
@@ -151,9 +159,13 @@ add_executable(GameEngineEditorV2
         editorV2/FileExplorer.cpp
         editorV2/DataDirectory.cpp
         editorV2/DataFile.cpp
-        )
+        editorV2/GameObjectEditor.cpp)
 
 target_compile_definitions(GameEngineEditorV2 PUBLIC -DIMGUI_IMPL_OPENGL_LOADER_GLEW)
+
+if(MSVC)
+    set_target_properties(GameEngineEditorV2 PROPERTIES LINK_FLAGS "/ignore:4099")
+endif ()
 
 target_link_libraries(GameEngineEditorV2 PRIVATE GameEngine
         CONAN_PKG::imgui

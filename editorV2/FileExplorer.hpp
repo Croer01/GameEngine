@@ -7,16 +7,26 @@
 
 
 #include <memory>
+#include <game-engine/internal/Environment.hpp>
 #include "DataDirectory.hpp"
 
-class FileExplorer
+enum class FileExplorerEvent
+{
+    SelectObject
+};
+
+class FileExplorer : public GameEngine::Subject<FileExplorerEvent, const GameEngine::geGameObjectRef &>
 {
     DataDirectoryRef root_;
+    std::shared_ptr<GameEngine::Internal::Environment> env_;
+
     void renderFileListInternal(const DataDirectoryRef &dir);
     void recursiveFilesRegister(const boost::filesystem::path &directoryPath);
 public:
+    explicit FileExplorer(const std::shared_ptr<GameEngine::Internal::Environment> &env);
     void setRoot(const boost::filesystem::path &directory);
     void update();
+
 };
 
 
