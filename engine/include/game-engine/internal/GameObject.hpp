@@ -20,7 +20,7 @@ namespace Internal {
 
     class ObjectManager;
 
-    class GameObject : public geGameObject, private Observer<GameObjectEvent>, public std::enable_shared_from_this<GameObject> {
+    class PUBLICAPI GameObject : public geGameObject, private Observer<GameObjectEvent>, public std::enable_shared_from_this<GameObject> {
         static int ID_GENERATOR;
         int id_;
         bool active_;

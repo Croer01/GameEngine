@@ -11,7 +11,7 @@
 #include <game-engine/KeyCodes.hpp>
 #include <game-engine/events/Subject.hpp>
 #include <memory>
-#include <SDL2/SDL_events.h>
+#include <SDL_events.h>
 
 namespace GameEngine {
 

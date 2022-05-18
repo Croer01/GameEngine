@@ -6,7 +6,7 @@
 #define SPACEINVADERS_AUDIOSOURCE_HPP
 
 
-#include <AL/al.h>
+#include <al.h>
 #include <string>
 #include <memory>
 #include <sndfile.h>

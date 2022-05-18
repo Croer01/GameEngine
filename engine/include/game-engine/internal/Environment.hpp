@@ -6,7 +6,7 @@
 #define GAMEENGINE_ENVIRONMENT_HPP
 
 #include <game-engine/geEnvironment.hpp>
-#include <boost/filesystem.hpp>
+#include <filesystem>
 #include <game-engine/internal/ObjectManager.hpp>
 #include <game-engine/internal/SceneManager.hpp>
 
@@ -24,7 +24,7 @@ class Environment : public geEnvironment
     std::unique_ptr<SceneManager> sceneManager_;
     MakeCurrentContextCallback makeCurrentContextCallback_;
 
-    void recursiveDataFilesRegister(const boost::filesystem::path &directoryPath);
+    void recursiveDataFilesRegister(const std::filesystem::path &directoryPath);
 public:
     Environment();
     virtual ~Environment(){};

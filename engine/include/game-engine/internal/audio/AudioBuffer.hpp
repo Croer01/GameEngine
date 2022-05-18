@@ -6,7 +6,7 @@
 #define SPACEINVADERS_AUDIOBUFFER_HPP
 
 
-#include <AL/al.h>
+#include <al.h>
 #include <sndfile.h>
 #include <string>
 #include <vector>

@@ -5,7 +5,7 @@
 #include <game-engine/Game.hpp>
 #include <iostream>
 #include <game-engine/internal/utils.hpp>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <memory>
 
 using namespace GameEngine::Internal;

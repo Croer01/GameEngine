@@ -2,7 +2,7 @@
 // Created by adria on 18/04/2020.
 //
 
-#include <SDL2/SDL_timer.h>
+#include <SDL_timer.h>
 #include <game-engine/internal/TimeManager.hpp>
 #include <game-engine/components/ui/UITextComponent.hpp>
 

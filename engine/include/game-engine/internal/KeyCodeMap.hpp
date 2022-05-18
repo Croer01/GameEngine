@@ -5,7 +5,7 @@
 #ifndef SPACEINVADERS_KEYCODEMAP_HPP
 #define SPACEINVADERS_KEYCODEMAP_HPP
 
-#include <SDL2/SDL_keycode.h>
+#include <SDL_keycode.h>
 
 namespace GameEngine {
     namespace Internal {

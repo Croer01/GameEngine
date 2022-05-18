@@ -8,15 +8,14 @@
 
 #include <vector>
 #include <game-engine/api.hpp>
-#include <game-engine/internal/pathfinding/Cell.hpp>
-#include <game-engine/internal/pathfinding/Agent.hpp>
-#include <game-engine/internal/pathfinding/Path.hpp>
+#include <game-engine/pathfinding/Cell.hpp>
+#include <game-engine/pathfinding/Agent.hpp>
+#include <game-engine/pathfinding/Path.hpp>
 
 namespace GameEngine {
-namespace Internal {
 
 // The implementation of the algorithm is based on https://www.redblobgames.com/pathfinding/a-star/introduction.html
-class AStarPathfinding : public Observer<AgentEvents, const Vec2D &>
+class PUBLICAPI AStarPathfinding : public Observer<AgentEvents, const Vec2D &>
 {
     int width_;
     int height_;
@@ -34,8 +33,6 @@ public:
     Path findPath(const Vec2D &initialPos, const Vec2D &targetPos);
     void onEvent(const Subject<AgentEvents, const Vec2D &> &target, AgentEvents event, const Vec2D &prevPos) override;
 };
-
-}
 
 }
 #endif //GAMEENGINE_ASTARPATHFINDING_HPP

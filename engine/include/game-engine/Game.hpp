@@ -25,7 +25,7 @@ namespace GameEngine {
 class Game;
 typedef std::shared_ptr<Game> GameRef;
 
-class Game
+class PUBLICAPI Game
 {
 protected:
     bool running_;

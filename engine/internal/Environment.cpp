@@ -17,7 +17,7 @@
 #include <game-engine/internal/Environment.hpp>
 #include <game-engine/components/CarColliderComponent.hpp>
 
-namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 
 namespace GameEngine
 {
@@ -126,11 +126,11 @@ MakeCurrentContextCallback Environment::getMakeCurrentContextCallback() const
 
 void Environment::addResourcesFromPath(const std::string &dataPath)
 {
-    const boost::filesystem::path &directoryPath = fs::path(dataPath);
+    const fs::path &directoryPath = fs::path(dataPath);
     recursiveDataFilesRegister(directoryPath);
 }
 
-void Environment::recursiveDataFilesRegister(const boost::filesystem::path &directoryPath)
+void Environment::recursiveDataFilesRegister(const std::filesystem::path &directoryPath)
 {
     if(fs::exists(directoryPath) && fs::is_directory(directoryPath))
     {

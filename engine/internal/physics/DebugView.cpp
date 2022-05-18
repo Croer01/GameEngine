@@ -39,7 +39,7 @@ namespace Internal {
 // We just need to have these to prevent override errors, they don't actually do anything right now
     void DebugView::DrawPolygon(const b2Vec2 *vertices, int32 vertexCount, const b2Color &color) {}
 
-    void DebugView::DrawCircle(const b2Vec2 &center, float32 radius, const b2Color &color)
+    void DebugView::DrawCircle(const b2Vec2 &center, float radius, const b2Color &color)
     {
         beginDraw();
         DrawCircleInternal(center,radius,color);
@@ -47,7 +47,7 @@ namespace Internal {
     }
 
 
-void DebugView::DrawSolidCircle(const b2Vec2 &center, float32 radius, const b2Vec2 &axis, const b2Color &color) {
+void DebugView::DrawSolidCircle(const b2Vec2 &center, float radius, const b2Vec2 &axis, const b2Color &color) {
     beginDraw();
     DrawCircleInternal(center,radius,color);
 
@@ -74,7 +74,7 @@ void DebugView::DrawSolidCircle(const b2Vec2 &center, float32 radius, const b2Ve
     endDraw();
 }
 
-void DebugView::DrawCircleInternal(const b2Vec2 &center, float32 radius, const b2Color &color)
+void DebugView::DrawCircleInternal(const b2Vec2 &center, float radius, const b2Color &color)
     {
         constexpr int circleSubdivisions = 24;
 
@@ -129,6 +129,8 @@ void DebugView::DrawCircleInternal(const b2Vec2 &center, float32 radius, const b
     }
 
     void DebugView::DrawTransform(const b2Transform &xf) {}
+
+	void DebugView::DrawPoint(const b2Vec2& p, float size, const b2Color& color) {}
 
     void DebugView::beginDraw() {
         glm::mat4 transform = glm::ortho<float>(0.0f, static_cast<float>(screen_->virtualWidth()), static_cast<float>(screen_->virtualHeight()), 0.f, 0.f, 1.f) *

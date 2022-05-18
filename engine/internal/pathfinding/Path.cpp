@@ -2,10 +2,9 @@
 // Created by adria on 22/04/2020.
 //
 
-#include <game-engine/internal/pathfinding/Path.hpp>
+#include <game-engine/pathfinding/Path.hpp>
 
 namespace GameEngine {
-namespace Internal {
 
 Path::Path()
 {
@@ -25,5 +24,4 @@ Path::Path(const CellRef &origin, const CellRef &destination)
     }
 }
 
-}
 }

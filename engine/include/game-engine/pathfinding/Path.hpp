@@ -8,12 +8,11 @@
 
 #include <game-engine/api.hpp>
 #include <vector>
-#include <game-engine/internal/pathfinding/Cell.hpp>
+#include <game-engine/pathfinding/Cell.hpp>
 
 namespace GameEngine {
-namespace Internal {
 
-class Path
+class PUBLICAPI Path
 {
 public:
     std::vector<Vec2D> cells_;
@@ -21,7 +20,6 @@ public:
     Path(const CellRef &origin, const CellRef &destination);
 };
 
-}
 }
 
 

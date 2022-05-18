@@ -9,13 +9,11 @@
 #include <game-engine/api.hpp>
 
 namespace GameEngine {
-namespace Internal {
-
 
 class Cell;
 typedef std::shared_ptr<Cell> CellRef;
 
-class Cell
+class PUBLICAPI Cell
 {
 public:
     Cell(int x, int y);
@@ -33,7 +31,6 @@ public:
     bool blocked;
 };
 
-}
 }
 
 #endif //GAMEENGINE_CELL_HPP

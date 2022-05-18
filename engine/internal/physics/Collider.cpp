@@ -17,7 +17,7 @@ namespace Internal {
 
     b2BodyDef *Collider::getBodyDef() const {
         b2BodyDef *bodyDef = new b2BodyDef();
-        bodyDef->userData = (void *) this;
+        bodyDef->userData.pointer = reinterpret_cast<uintptr_t>(this);
         bodyDef->fixedRotation = fixedRotation_.get();
         bodyDef->gravityScale = gravityScale_;
         // this is to avoid sensor colliders won't detect collisions if they are statics or they don't move
@@ -169,7 +169,7 @@ void Collider::updateInSafeMode() {
             body_->SetTransform(body_->GetPosition(), rotation_.get());
 
         if (active_.update())
-            body_->SetActive(active_.get());
+            body_->SetEnabled(active_.get());
 
         if (colliderType_.update()) {
             if(body_)

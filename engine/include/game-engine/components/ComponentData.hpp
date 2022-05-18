@@ -74,6 +74,16 @@ public:
     virtual ~ComponentData()
     {}
 
+    // Iterator Begin
+    typedef typename std::vector<std::shared_ptr<PropertyBase>>::iterator iterator;
+    typedef typename std::vector<std::shared_ptr<PropertyBase>>::const_iterator const_iterator;
+
+    inline iterator begin() noexcept { return properties_.begin(); }
+    inline const_iterator cbegin() const noexcept { return properties_.cbegin(); }
+    inline iterator end() noexcept { return properties_.end(); }
+    inline const_iterator cend() const noexcept { return properties_.cend(); }
+    // Iterator End
+
     template<typename DataType>
     Property<DataType> *getProperty(const std::string &name)
     {

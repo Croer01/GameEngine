@@ -6,8 +6,8 @@
 #include <string>
 #include <GL/glew.h>
 #include <iostream>
-#include <SDL2/SDL_error.h>
-#include <AL/al.h>
+#include <SDL_error.h>
+#include <al.h>
 #include <sstream>
 #include <game-engine/internal/utils.hpp>
 
