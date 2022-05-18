@@ -73,6 +73,7 @@ public:
     Internal::AudioEngine *audioEngine() const;
     Internal::FontManager *fontManager() const;
     Internal::ObjectManager *objectManager() const;
+    Internal::SceneManager *sceneManager() const;
 };
 }
 

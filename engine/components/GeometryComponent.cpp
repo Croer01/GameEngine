@@ -43,7 +43,7 @@ namespace GameEngine {
             graphicLoaded_.reset();
             graphic_.reset();
         } else {
-            graphicLoaded_ = std::make_shared<Internal::GraphicGeometry>(path);
+            graphicLoaded_ = graphicsEngine_->loadGeometry(path);
             graphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
             graphicsEngine_->registerGraphic(graphic_);
 

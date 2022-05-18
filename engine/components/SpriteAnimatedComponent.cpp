@@ -192,7 +192,7 @@ void SpriteAnimatedComponent::updateGraphicRef() {
     }
     else
     {
-        graphicLoaded_ = std::make_shared<Internal::GraphicSprite>(filePath);
+        graphicLoaded_ = graphicsEngine_->loadSprite(filePath);
         graphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
         graphic_->setGrid(columns, rows);
         resetAnimation();

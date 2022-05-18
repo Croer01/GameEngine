@@ -21,12 +21,6 @@ namespace GameEngine {
 
         //TODO: implement Layers or improve how to register sprites
         updateGraphicRef();
-        // the preInit ensure that the graphic is already created at this point
-        updateTint();
-        updateVisible();
-        updateAnchor();
-        updateDisplacement();
-        graphic_->setModelTransform(gameObject());
         gameObject()->registerObserver(this);
     }
 
@@ -75,9 +69,14 @@ namespace GameEngine {
             graphicLoaded_.reset();
             graphic_.reset();
         } else {
-            graphicLoaded_ = std::make_shared<Internal::GraphicSprite>(filePath);
+            graphicLoaded_ = graphicsEngine_->loadSprite(filePath);
             graphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
             graphicsEngine_->registerGraphic(graphic_);
+            updateTint();
+            updateVisible();
+            updateAnchor();
+            updateDisplacement();
+            graphic_->setModelTransform(gameObject());
         }
     }
 

@@ -44,7 +44,9 @@ class InputManager
     geScreen *screen_;
 
     void reset();
-    void processEvent(SDL_Event event);
+
+    // return true if this event loop must be ignored
+    bool processEvent(SDL_Event event);
 
 public:
     explicit InputManager(geScreen *screen);

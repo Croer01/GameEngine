@@ -58,14 +58,19 @@ void InputManager::update()
     reset();
     for (auto event : events_)
     {
-        processEvent(event);
+        if(processEvent(event))
+        {
+            reset();
+            break;
+        }
     }
 
     events_.clear();
 }
 
-void InputManager::processEvent(SDL_Event event)
+bool InputManager::processEvent(SDL_Event event)
 {
+    bool skipAllEvents = false;
     switch (event.type)
     {
         case SDL_QUIT:
@@ -74,6 +79,8 @@ void InputManager::processEvent(SDL_Event event)
         case SDL_WINDOWEVENT:
             if (event.window.event == SDL_WINDOWEVENT_CLOSE)
                 quit_ = true;
+            else if(event.window.event == SDL_WINDOWEVENT_RESTORED)
+                skipAllEvents = true;
             break;
         case SDL_KEYDOWN:
             if (event.key.repeat == 0)
@@ -97,7 +104,8 @@ void InputManager::processEvent(SDL_Event event)
 
             break;
         case SDL_KEYUP:
-            keyboardState[keyMap[event.key.keysym.sym]] = InputState::UP;
+            if(keyboardState[keyMap[event.key.keysym.sym]] != InputState::NONE)
+                keyboardState[keyMap[event.key.keysym.sym]] = InputState::UP;
             break;
         case SDL_MOUSEBUTTONDOWN:
             switch (event.button.button)
@@ -119,13 +127,16 @@ void InputManager::processEvent(SDL_Event event)
             switch (event.button.button)
             {
                 case SDL_BUTTON_LEFT:
-                    mouseState[MouseButton::LEFT] = InputState::UP;
+                    if(mouseState[MouseButton::LEFT] != InputState::NONE)
+                        mouseState[MouseButton::LEFT] = InputState::UP;
                     break;
                 case SDL_BUTTON_RIGHT:
-                    mouseState[MouseButton::RIGHT] = InputState::UP;
+                    if(mouseState[MouseButton::RIGHT] != InputState::NONE)
+                        mouseState[MouseButton::RIGHT] = InputState::UP;
                     break;
                 case SDL_BUTTON_MIDDLE:
-                    mouseState[MouseButton::MIDDLE] = InputState::UP;
+                    if(mouseState[MouseButton::MIDDLE] != InputState::NONE)
+                        mouseState[MouseButton::MIDDLE] = InputState::UP;
                     break;
                 default:
                     break;
@@ -144,6 +155,8 @@ void InputManager::processEvent(SDL_Event event)
         default:
             break;
     }
+
+    return skipAllEvents;
 }
 
 //internal implementations

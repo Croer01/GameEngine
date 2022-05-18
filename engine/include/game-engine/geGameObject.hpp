@@ -58,8 +58,18 @@ enum class GameObjectEvent{
 
         virtual Game *game() const = 0;
 
-        virtual bool isDestroyed() const = 0;
-        virtual void destroy() = 0;
+        std::vector<std::weak_ptr<geComponent>> getAllComponents() const
+        {
+            std::vector<std::weak_ptr<geComponent>> allComponents;
+            allComponents.reserve(components_.size());
+
+            for(const auto& comp : components_)
+            {
+                allComponents.emplace_back(comp);
+            }
+
+            return allComponents;
+        }
 
         template <typename T>
         std::weak_ptr<T> getUIComponent(const std::string &controlId) const {
@@ -69,7 +79,7 @@ enum class GameObjectEvent{
             for(auto component : components_){
                 if(auto desiredUIComponent = std::dynamic_pointer_cast<UIControlComponent>(component))
                 {
-                    if(controlId == desiredUIComponent->id())
+                    if(controlId == desiredUIComponent->getPropertyValue<std::string>("id"))
                     {
                         if (auto desiredComponent = std::dynamic_pointer_cast<T>(component))
                             return desiredComponent;

@@ -7,10 +7,13 @@
 
 
 #include <vector>
+#include <map>
 #include <memory>
 #include <mutex>
 #include <game-engine/geEnvironment.hpp>
 #include <game-engine/internal/graphics/GraphicHolder.hpp>
+#include <game-engine/internal/graphics/GraphicSprite.hpp>
+#include <game-engine/internal/graphics/GraphicGeometry.hpp>
 #include <game-engine/internal/graphics/Shader.hpp>
 #include <game-engine/internal/Screen.hpp>
 #include <game-engine/internal/graphics/font/Text.hpp>
@@ -21,6 +24,8 @@
 namespace GameEngine {
 namespace Internal {
     class GraphicsEngine : public Observer<int, int> {
+        // This is a cache of loaded graphics: sprites, geometry, etc.
+        std::map<std::string, std::shared_ptr<Graphic>> cache_;
         std::vector<std::shared_ptr<GraphicHolder>> graphics_;
         std::vector<std::shared_ptr<GraphicHolder>> graphicsToInitialize_;
         std::vector<std::shared_ptr<Text>> texts_;
@@ -39,6 +44,10 @@ namespace Internal {
         GraphicsEngine(Screen *screen, bool embedded);
 
         void draw(Camera *cam);
+
+        std::shared_ptr<GraphicSprite> loadSprite(const std::string &filePath);
+
+        std::shared_ptr<GraphicGeometry> loadGeometry(const std::vector<GameEngine::Vec2D> &points);
 
         void registerGraphic(const std::shared_ptr<GraphicHolder> &graphic);
 

@@ -267,6 +267,11 @@ ObjectManager *Game::objectManager() const
     return environment_->objectManager();
 }
 
+SceneManager *Game::sceneManager() const
+{
+    return environment_->sceneManager();
+}
+
 bool Game::isRunning() const
 {
     return running_;

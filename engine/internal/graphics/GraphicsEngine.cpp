@@ -254,6 +254,40 @@ namespace Internal {
         fbo_.reset();
     }
 
+    std::shared_ptr<GraphicSprite> GraphicsEngine::loadSprite(const std::string &filePath)
+    {
+        auto it = cache_.find(filePath);
+        if (it != cache_.end())
+        {
+            return std::dynamic_pointer_cast<GraphicSprite>(it->second);
+        }
+
+        auto sprite = std::make_shared<GraphicSprite>(filePath);
+        cache_[filePath] = sprite;
+        return std::dynamic_pointer_cast<GraphicSprite>(sprite);
+    }
+
+    std::shared_ptr<GraphicGeometry> GraphicsEngine::loadGeometry(const std::vector<GameEngine::Vec2D> &points)
+    {
+        // Create a string from the list of points to generate a "unique id"
+        std::stringstream ss;
+        for( const Vec2D &point : points)
+        {
+            ss << "_" << point.x << "-" << point.y;
+        }
+        const std::string &uid = ss.str();
+
+        auto it = cache_.find(uid);
+        if (it != cache_.end())
+        {
+            return std::dynamic_pointer_cast<GraphicGeometry>(it->second);
+        }
+
+        auto geometry = std::make_shared<GraphicGeometry>(points);
+        cache_[uid] = geometry;
+        return std::dynamic_pointer_cast<GraphicGeometry>(geometry);
+    }
+
     void GraphicsEngine::registerGraphic(const std::shared_ptr<GraphicHolder> &graphic) {
         std::unique_lock<std::mutex> lock(graphicsToInitMutex_);
         graphicsToInitialize_.push_back(graphic);

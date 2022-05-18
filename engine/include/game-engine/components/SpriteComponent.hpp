@@ -24,6 +24,7 @@ public:
         createProperty<geColor>("tint", geColor(1.f));
         createProperty<bool>("visible", true);
         createProperty<Vec2D>("displacement", Vec2D());
+        createProperty<bool>("repeat", false);
         createPropertyEnum("anchor", "TOP_LEFT", {
             "TOP_LEFT",
             "TOP_CENTER",
