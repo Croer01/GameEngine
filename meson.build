@@ -9,7 +9,7 @@ is_debug = get_option('buildtype') == 'debug'
 
 # These arguments are only used to build the shared library
 # not the executables that use the library.
-lib_args = ['-DBUILDING_GAMEENGINE']
+lib_args = ['-DGAMEENGINE_EXPORTS']
 
 if is_windows
   lib_args += ['-DWIN32']

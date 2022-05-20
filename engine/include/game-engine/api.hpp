@@ -5,11 +5,21 @@
 #ifndef SPACEINVADERS_API_HPP
 #define SPACEINVADERS_API_HPP
 
-#ifdef WIN32
-#  define PUBLICAPI __declspec( dllexport )
-#else
-#  define PUBLICAPI
+#ifndef _WIN32
+#  ifdef GAMEENGINE_EXPORTS
+#    define PUBLICAPI __attribute__ ((visibility("default")))
+#  else
+#    define PUBLICAPI
+#  endif
+#else //msvc or gcc win32
+#  ifdef GAMEENGINE_EXPORTS
+#    define PUBLICAPI __declspec(dllexport)
+#  else
+#    define PUBLICAPI __declspec(dllimport)
+#  endif
 #endif
+
+
 
 #include <cmath>
 #include <cassert>
