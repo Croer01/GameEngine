@@ -9,7 +9,7 @@ libsndfile-1.1.0-win64
 openal-soft-openal-soft-1.21.0
 packagecache
 SDL2_image-2.0.5
-SDL2-2.0.12
+SDL2-*
 utfcpp-2.3.5
 yaml-cpp-yaml-cpp-0.6.3
 zlib-1.2.11

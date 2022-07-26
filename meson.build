@@ -1,6 +1,16 @@
 project('GameEngine', 'cpp',
   version : '0.0.1',
-  default_options : ['warning_level=3', 'cpp_std=c++17', 'default_library=shared'])
+  default_options : [
+    'warning_level=3',
+    'cpp_std=c++17',
+    # set here the default_library options because some dependencies (sdl2 my case) ignore it if
+    # this option is set by dependency(...). Workaround from https://github.com/mesonbuild/meson/issues/6728#issuecomment-595749400
+    'box2d:default_library=shared',
+    'openal:default_library=shared',
+    'sdl2_image:default_library=static',
+    'sdl2:default_library=static',
+    'yamlcpp:default_library=static',
+  ])
 
 
 host_system = host_machine.system()
@@ -33,15 +43,15 @@ if is_windows
   libsndfile_env = subproject('libsndfile-win64').get_variable('libsndfile_env')
 endif
 
-box2d_dep = dependency('box2d', version : '2.4.1', default_options: ['default_library=shared'])
+box2d_dep = dependency('box2d', version : '2.4.1')
 freetype2_dep = dependency('freetype2', version : '24.2.18')# aka v2.12.0
 glew_dep = dependency('glew', version : '2.1.0')
 glm_dep = dependency('glm', version : '0.9.9.8')
 libpng_dep = dependency('libpng', version : '1.6.37')
 libjpeg_dep = dependency('libjpeg', version : '2.1.2')
 openal_dep = dependency('openal', version : '1.21.0', default_options: ['default_library=shared'])
-sdl2_image_dep = dependency('sdl2_image', version : '2.0.5')
-sdl2_dep = dependency('sdl2', version : '2.0.12', default_options: ['default_library=static'])
+sdl2_image_dep = dependency('sdl2_image', version : '2.0.5', default_options: ['default_library=static'])
+sdl2_dep = dependency('sdl2', version : '2.0.18', default_options: ['default_library=static'], static: true)
 utfcpp_dep = dependency('utfcpp', version : '2.3.5', fallback : ['utfcpp' , 'utfcpp_dep'])
 yaml_dep = dependency('yamlcpp', version : '0.6.3', default_options: ['default_library=static'])
 zlib_dep = dependency('zlib', version : '1.2.11')
