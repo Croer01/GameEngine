@@ -7,8 +7,10 @@
 
 
 #include <random>
+#include <game-engine/api.hpp>
+
 namespace GameEngine {
-    class Random {
+    class PUBLICAPI Random {
         std::mt19937 generator_;
         std::uniform_real_distribution<float> distributionReal_;
     public:

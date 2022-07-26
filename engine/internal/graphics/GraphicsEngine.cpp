@@ -5,6 +5,7 @@
 #include <GL/glew.h>
 #include <algorithm>
 #include <glm/gtc/matrix_transform.hpp>
+#include <sstream>
 #include <iostream>
 #include <game-engine/internal/graphics/GraphicsEngine.hpp>
 #include <game-engine/internal/utils.hpp>

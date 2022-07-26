@@ -5,6 +5,7 @@
 #ifndef SPACEINVADERS_COLLIDERCOMPONENT_HPP
 #define SPACEINVADERS_COLLIDERCOMPONENT_HPP
 
+#include <game-engine/api.hpp>
 #include <game-engine/geComponent.hpp>
 #include <game-engine/components/SpriteComponent.hpp>
 #include <game-engine/internal/physics/Collider.hpp>
@@ -13,7 +14,7 @@
 #include <game-engine/components/ComponentData.hpp>
 
 namespace GameEngine {
-class ColliderComponentData : public ComponentData
+class PUBLICAPI ColliderComponentData : public ComponentData
 {
 public:
    ColliderComponentData()

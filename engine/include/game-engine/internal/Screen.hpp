@@ -6,6 +6,7 @@
 #define GAMEENGINE_SCREEN_HPP
 
 
+#include <game-engine/api.hpp>
 #include <game-engine/geScreen.hpp>
 #include <string>
 #include <SDL_video.h>

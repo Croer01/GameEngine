@@ -5,12 +5,13 @@
 #ifndef GAMEENGINE_WRITABLEDATA_HPP
 #define GAMEENGINE_WRITABLEDATA_HPP
 
+#include <game-engine/api.hpp>
 #include <game-engine/internal/Data.hpp>
 #include <yaml-cpp/yaml.h>
 
 namespace GameEngine{
 namespace Internal{
-    class WritableData : public Data {
+    class PUBLICAPI WritableData : public Data {
     public:
         WritableData();
         virtual ~WritableData() {};

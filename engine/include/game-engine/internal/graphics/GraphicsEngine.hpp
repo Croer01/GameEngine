@@ -6,6 +6,7 @@
 #define SPACEINVADERS_GRAPHICSENGINE_HPP
 
 
+#include <game-engine/api.hpp>
 #include <vector>
 #include <map>
 #include <memory>
@@ -23,7 +24,7 @@
 
 namespace GameEngine {
 namespace Internal {
-    class GraphicsEngine : public Observer<int, int> {
+    class PUBLICAPI GraphicsEngine : public Observer<int, int> {
         // This is a cache of loaded graphics: sprites, geometry, etc.
         std::map<std::string, std::shared_ptr<Graphic>> cache_;
         std::vector<std::shared_ptr<GraphicHolder>> graphics_;

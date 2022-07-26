@@ -6,6 +6,7 @@
 #define GAMEENGINE_COMPONENTDATA_HPP
 
 
+#include <game-engine/api.hpp>
 #include <vector>
 #include <memory>
 #include <game-engine/geData.hpp>
@@ -15,7 +16,7 @@ namespace GameEngine
 {
 class ComponentData;
 typedef std::shared_ptr<ComponentData> ComponentDataRef;
-class ComponentData
+class PUBLICAPI ComponentData
 {
     std::vector<std::shared_ptr<PropertyBase>> properties_;
 

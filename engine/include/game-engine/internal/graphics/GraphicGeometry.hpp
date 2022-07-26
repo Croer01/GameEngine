@@ -13,7 +13,7 @@
 
 namespace GameEngine {
     namespace Internal {
-        class GraphicGeometry : public Graphic {
+        class PUBLICAPI GraphicGeometry : public Graphic {
             std::vector<Vec2D> points_;
             std::unique_ptr<MeshData> mesh_;
             int width_;

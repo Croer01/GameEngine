@@ -6,10 +6,14 @@
 #define GAMEENGINE_OBJECTMANAGER_HPP
 
 
-#include <game-engine/internal/Factory.hpp>
+#include <game-engine/api.hpp>
 #include <game-engine/geComponent.hpp>
 #include <game-engine/Builder.hpp>
+#include <game-engine/internal/GameObject.hpp>
+#include <game-engine/internal/Factory.hpp>
 #include <memory>
+#include <string>
+#include <unordered_map>
 
 namespace GameEngine {
 
@@ -19,7 +23,7 @@ namespace Internal {
 
     class GameObject;
 
-    class ObjectManager
+    class PUBLICAPI ObjectManager
     {
         Factory<geComponent, ComponentBuilder, std::string> componentFactory_;
         std::unordered_map<std::string, std::unique_ptr<GameObject>> prototypes_;

@@ -5,12 +5,13 @@
 #ifndef SPACEINVADERS_DATA_HPP
 #define SPACEINVADERS_DATA_HPP
 
+#include <game-engine/api.hpp>
 #include <game-engine/geData.hpp>
 #include <yaml-cpp/yaml.h>
 
 namespace GameEngine{
 namespace Internal{
-    class Data : public geData {
+    class PUBLICAPI Data : public geData {
     protected:
         YAML::Node data_;
     public:

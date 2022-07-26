@@ -6,12 +6,13 @@
 #define GAMEENGINE_UICONTROLCOMPONENT_HPP
 
 
+#include <game-engine/api.hpp>
 #include <game-engine/geComponent.hpp>
 #include <game-engine/internal/graphics/GraphicsEngine.hpp>
 
 namespace GameEngine {
 
-class UIControlComponentData : public ComponentData
+class PUBLICAPI UIControlComponentData : public ComponentData
 {
 public:
     UIControlComponentData()

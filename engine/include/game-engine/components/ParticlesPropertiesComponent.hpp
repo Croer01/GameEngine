@@ -5,6 +5,7 @@
 #ifndef GAMEENGINE_PARTICLESPROPERTIESCOMPONENT_HPP
 #define GAMEENGINE_PARTICLESPROPERTIESCOMPONENT_HPP
 
+#include <game-engine/api.hpp>
 #include <game-engine/geComponent.hpp>
 #include <game-engine/Range.hpp>
 #include <game-engine/Random.hpp>
@@ -14,7 +15,7 @@
 
 namespace GameEngine
 {
-class ParticlesPropertiesComponentData : public ComponentData
+class PUBLICAPI ParticlesPropertiesComponentData : public ComponentData
 {
 public:
     ParticlesPropertiesComponentData()
@@ -41,7 +42,7 @@ public:
     }
 };
 
-class ParticlesPropertiesComponent : public geComponentInstantiable<ParticlesPropertiesComponent, ParticlesPropertiesComponentData>
+class PUBLICAPI ParticlesPropertiesComponent : public geComponentInstantiable<ParticlesPropertiesComponent, ParticlesPropertiesComponentData>
 {
     Range rotation_;
     Range lifetime_;

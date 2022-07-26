@@ -5,6 +5,7 @@
 #ifndef GAMEENGINE_SPAWNERCOMPONENT_HPP
 #define GAMEENGINE_SPAWNERCOMPONENT_HPP
 
+#include <game-engine/api.hpp>
 #include <game-engine/geComponent.hpp>
 #include <game-engine/components/ComponentData.hpp>
 #include <game-engine/geGameObject.hpp>
@@ -12,7 +13,7 @@
 namespace GameEngine
 {
 
-class SpawnerComponentData : public ComponentData
+class PUBLICAPI SpawnerComponentData : public ComponentData
 {
 public:
     SpawnerComponentData()
@@ -22,7 +23,7 @@ public:
     }
 };
 
-class SpawnerComponent : public geComponentInstantiable<SpawnerComponent,SpawnerComponentData>
+class PUBLICAPI SpawnerComponent : public geComponentInstantiable<SpawnerComponent,SpawnerComponentData>
 {
     std::vector<geGameObjectRef> pool_;
     std::string targetName_;

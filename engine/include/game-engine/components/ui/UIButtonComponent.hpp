@@ -5,13 +5,14 @@
 #ifndef GAMEENGINEEDITOR_UIBUTTONCOMPONENT_HPP
 #define GAMEENGINEEDITOR_UIBUTTONCOMPONENT_HPP
 
+#include <game-engine/api.hpp>
 #include <game-engine/Command.hpp>
 #include <game-engine/components/ui/UITextComponent.hpp>
 #include <game-engine/internal/graphics/GraphicHolder.hpp>
 
 namespace GameEngine {
 
-class UIButtonComponentData : public UITextComponentData
+class PUBLICAPI UIButtonComponentData : public UITextComponentData
 {
 public:
     UIButtonComponentData():

@@ -5,13 +5,14 @@
 #ifndef ZOMBIEWAVE_GRAPHICSPRITE_HPP
 #define ZOMBIEWAVE_GRAPHICSPRITE_HPP
 
+#include <game-engine/api.hpp>
 #include <SDL_image.h>
 #include <game-engine/internal/graphics/MeshData.hpp>
 #include <game-engine/internal/graphics/Graphic.hpp>
 
 namespace GameEngine {
     namespace Internal {
-        class GraphicSprite : public Graphic {
+        class PUBLICAPI GraphicSprite : public Graphic {
             unsigned int textureID_;
             int width_;
             int height_;

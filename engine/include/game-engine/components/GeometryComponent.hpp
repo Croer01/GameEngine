@@ -14,7 +14,7 @@
 #include <game-engine/components/ComponentData.hpp>
 
 namespace GameEngine {
-class GeometryColliderComponentData : public ComponentData
+class PUBLICAPI GeometryColliderComponentData : public ComponentData
 {
 public:
     GeometryColliderComponentData()

@@ -6,6 +6,7 @@
 #define GAMEENGINE_TIMEMANAGER_HPP
 
 
+#include <game-engine/api.hpp>
 #include <memory>
 #include <game-engine/internal/GameObject.hpp>
 
@@ -15,7 +16,7 @@ class UITextComponent;
 
 namespace Internal {
 
-class TimeManager
+class PUBLICAPI TimeManager
 {
     std::unique_ptr<GameObject> goFpsCounter_;
     std::shared_ptr<UITextComponent> fpsCounter_;

@@ -6,6 +6,7 @@
 #define SPACEINVADERS_AUDIOSOURCE_HPP
 
 
+#include <game-engine/api.hpp>
 #include <al.h>
 #include <string>
 #include <memory>
@@ -20,7 +21,7 @@ namespace Internal {
 
     class AudioEngine;
 
-    class AudioSource {
+    class PUBLICAPI AudioSource {
 
         ALuint sourceId_;
         std::shared_ptr<AudioBuffer> buffer_;

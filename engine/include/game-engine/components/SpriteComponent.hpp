@@ -6,6 +6,7 @@
 #define SPACEINVADERS_SPRITECOMPONENT_HPP
 
 
+#include <game-engine/api.hpp>
 #include <game-engine/geComponent.hpp>
 #include <game-engine/geGameObject.hpp>
 #include <game-engine/events/Observer.hpp>
@@ -15,7 +16,7 @@
 
 namespace GameEngine {
 
-class SpriteComponentData : public ComponentData
+class PUBLICAPI SpriteComponentData : public ComponentData
 {
 public:
     SpriteComponentData()

@@ -10,6 +10,7 @@
 #include <vector>
 #include <memory>
 #include <stdexcept>
+#include <cassert>
 #include <game-engine/FileType.hpp>
 #include <game-engine/events/Subject.hpp>
 
@@ -113,7 +114,7 @@ public:
     virtual void resetValueToDefault() = 0;
 };
 
-class PropertyObserver : public Observer<>
+class PUBLICAPI PropertyObserver : public Observer<>
 {
     std::function<void()> callback_;
     Subject<> *target_;

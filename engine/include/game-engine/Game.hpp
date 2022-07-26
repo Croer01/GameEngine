@@ -6,6 +6,7 @@
 #define GAMEENGINE_GAME_HPP
 
 
+#include <game-engine/api.hpp>
 #include <memory>
 #include <game-engine/internal/Screen.hpp>
 #include <game-engine/internal/ObjectManager.hpp>

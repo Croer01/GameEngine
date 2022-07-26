@@ -6,12 +6,13 @@
 #define GAMEENGINEEDITOR_UITEXTCOMPONENT_HPP
 
 
+#include <game-engine/api.hpp>
 #include <game-engine/components/ui/UIControlComponent.hpp>
 #include <game-engine/internal/graphics/font/Text.hpp>
 
 namespace GameEngine {
 
-class UITextComponentData : public UIControlComponentData
+class PUBLICAPI UITextComponentData : public UIControlComponentData
 {
 public:
     UITextComponentData() :
@@ -24,7 +25,7 @@ public:
     }
 };
 
-class PUBLICAPI UITextComponent : public UIControlComponent
+class PUBLICAPI PUBLICAPI UITextComponent : public UIControlComponent
 {
     std::shared_ptr<Internal::Text> graphicText_;
 

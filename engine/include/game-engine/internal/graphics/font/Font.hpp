@@ -26,7 +26,7 @@ namespace Internal {
         GLuint Advance;
     };
 
-    class Font : public std::enable_shared_from_this<Font> {
+    class PUBLICAPI Font : public std::enable_shared_from_this<Font> {
         std::map<FT_UInt, FontCharacter> characters_;
         int lineSpacing_;
         int pixelHeight_;

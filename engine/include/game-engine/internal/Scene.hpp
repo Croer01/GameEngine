@@ -6,6 +6,7 @@
 #define SPACEINVADERS_SCENE_HPP
 
 
+#include <game-engine/api.hpp>
 #include <string>
 #include <vector>
 #include <memory>
@@ -19,7 +20,7 @@ class Game;
 
 namespace Internal {
 
-    class Scene {
+    class PUBLICAPI Scene {
         std::string filePath_;
         std::string name_;
         std::vector<std::shared_ptr<GameObject>> gameObjects_;

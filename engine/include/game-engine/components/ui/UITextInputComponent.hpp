@@ -6,13 +6,14 @@
 #define GAMEENGINEEDITOR_UITEXTINPUTCOMPONENT_HPP
 
 
+#include <game-engine/api.hpp>
 #include <game-engine/components/ui/UITextComponent.hpp>
 #include <game-engine/InputManager.hpp>
 #include <game-engine/internal/graphics/GraphicHolder.hpp>
 
 namespace GameEngine {
 
-class UITextInputComponentData : public UITextComponentData
+class PUBLICAPI UITextInputComponentData : public UITextComponentData
 {
 public:
     UITextInputComponentData() :

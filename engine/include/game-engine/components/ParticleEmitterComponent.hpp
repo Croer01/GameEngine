@@ -5,7 +5,7 @@
 #ifndef GAMEENGINE_PARTICLEEMITTERCOMPONENT_HPP
 #define GAMEENGINE_PARTICLEEMITTERCOMPONENT_HPP
 
-
+#include <game-engine/api.hpp>
 #include <game-engine/geComponent.hpp>
 #include <game-engine/geGameObject.hpp>
 #include <GL/glew.h>
@@ -18,7 +18,7 @@
 
 namespace GameEngine
 {
-class ParticleEmitterComponentData : public ComponentData
+class PUBLICAPI ParticleEmitterComponentData : public ComponentData
 {
 public:
     ParticleEmitterComponentData()
@@ -32,7 +32,7 @@ public:
     }
 };
 
-class ParticleEmitterComponent : public geComponentInstantiable<ParticleEmitterComponent, ParticleEmitterComponentData>
+class PUBLICAPI ParticleEmitterComponent : public geComponentInstantiable<ParticleEmitterComponent, ParticleEmitterComponentData>
 {
     // the origin of the particle emitter is the position of the owner object
 

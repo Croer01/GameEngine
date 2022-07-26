@@ -6,6 +6,7 @@
 #define SPACEINVADERS_BUILDER_HPP
 
 
+#include <game-engine/api.hpp>
 #include <game-engine/geData.hpp>
 #include <memory>
 #include <game-engine/components/ComponentData.hpp>
@@ -15,7 +16,7 @@ namespace GameEngine {
     class geComponent;
     typedef std::shared_ptr<geComponent> geComponentRef;
 
-    class ComponentBuilder {
+    class PUBLICAPI ComponentBuilder {
     public:
         virtual ~ComponentBuilder() = default;
 
@@ -25,7 +26,7 @@ namespace GameEngine {
     };
 
     template<typename ComponentType>
-    class ComponentTBuilder : public ComponentBuilder {
+    class PUBLICAPI ComponentTBuilder : public ComponentBuilder {
     public:
         virtual geComponentRef Create() {
             const std::shared_ptr<ComponentType> &instance = std::make_shared<ComponentType>();

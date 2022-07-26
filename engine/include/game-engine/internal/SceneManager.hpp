@@ -6,6 +6,7 @@
 #define GAMEENGINE_SCENEMANAGER_HPP
 
 
+#include <game-engine/api.hpp>
 #include <memory>
 #include <unordered_map>
 #include <game-engine/internal/Scene.hpp>
@@ -16,7 +17,7 @@ class Game;
 
 namespace Internal {
 
-    class SceneManager {
+    class PUBLICAPI SceneManager {
         std::unordered_map<std::string, std::shared_ptr<Scene>> scenes_;
         std::shared_ptr<Scene> currentScene_;
         std::string currentSceneName_;

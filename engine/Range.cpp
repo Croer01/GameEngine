@@ -2,6 +2,7 @@
 // Created by adria on 10/05/2020.
 //
 
+#include <cassert>
 #include <game-engine/api.hpp>
 #include <game-engine/Range.hpp>
 

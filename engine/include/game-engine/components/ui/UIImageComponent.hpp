@@ -5,13 +5,14 @@
 #ifndef GAMEDEVWARS_UIIMAGECOMPONENT_HPP
 #define GAMEDEVWARS_UIIMAGECOMPONENT_HPP
 
+#include <game-engine/api.hpp>
 #include <game-engine/components/ui/UIControlComponent.hpp>
 #include <game-engine/internal/graphics/GraphicHolder.hpp>
 
 namespace GameEngine
 {
 
-class UIImageComponentData : public UIControlComponentData
+class PUBLICAPI UIImageComponentData : public UIControlComponentData
 {
 public:
     UIImageComponentData() :
@@ -33,7 +34,7 @@ public:
     }
 };
 
-class UIImageComponent : public UIControlComponent
+class PUBLICAPI UIImageComponent : public UIControlComponent
 {
     std::shared_ptr<Internal::Graphic> graphicLoaded_;
     std::shared_ptr<Internal::GraphicHolder> graphic_;

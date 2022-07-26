@@ -5,6 +5,7 @@
 #ifndef ZOMBIEWAVE_CAMERA_HPP
 #define ZOMBIEWAVE_CAMERA_HPP
 
+#include <game-engine/api.hpp>
 #include <glm/glm.hpp>
 #include <game-engine/geCamera.hpp>
 
@@ -13,7 +14,7 @@ namespace GameEngine {
 class Game;
 
 namespace Internal {
-    class Camera : public geCamera {
+    class PUBLICAPI Camera : public geCamera {
         glm::mat4 viewMatrix_;
         Vec2D position_;
         Game *game_;

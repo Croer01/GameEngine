@@ -3,12 +3,15 @@
 //
 #ifndef GAMEENGINE_OBSERVER_HPP
 #define GAMEENGINE_OBSERVER_HPP
+
+#include <game-engine/api.hpp>
+
 namespace GameEngine {
 template <typename... ArgsT>
 class Subject;
 
 template <typename... ArgsT>
-class Observer
+class PUBLICAPI Observer
 {
 public:
     virtual ~Observer()

@@ -22,7 +22,6 @@
 
 
 #include <cmath>
-#include <cassert>
 
 namespace GameEngine {
 

@@ -5,14 +5,14 @@
 #ifndef SPACEINVADERS_AUDIOCOMPONENT_HPP
 #define SPACEINVADERS_AUDIOCOMPONENT_HPP
 
-
+#include <game-engine/api.hpp>
 #include <game-engine/geComponent.hpp>
 #include <game-engine/internal/audio/AudioSource.hpp>
 #include <game-engine/components/ComponentData.hpp>
 
 namespace GameEngine
 {
-class AudioComponentData : public ComponentData
+class PUBLICAPI AudioComponentData : public ComponentData
 {
 public:
     AudioComponentData()

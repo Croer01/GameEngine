@@ -6,6 +6,7 @@
 #define SPACEINVADERS_AUDIOBUFFER_HPP
 
 
+#include <game-engine/api.hpp>
 #include <al.h>
 #include <sndfile.h>
 #include <string>
@@ -15,7 +16,7 @@
 
 namespace GameEngine {
 namespace Internal {
-    class AudioBuffer {
+    class PUBLICAPI AudioBuffer {
         SF_INFO fileInfo_;
         std::vector<std::vector<ALshort>> chunks_;
         std::thread loadFileThread_;

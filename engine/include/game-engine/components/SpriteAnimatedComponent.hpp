@@ -6,6 +6,7 @@
 #define SPACEINVADERS_SPRITEANIMATEDCOMPONENT_HPP
 
 
+#include <game-engine/api.hpp>
 #include <game-engine/geComponent.hpp>
 #include <game-engine/geGameObject.hpp>
 #include <game-engine/events/Subject.hpp>
@@ -14,7 +15,7 @@
 #include <game-engine/components/ComponentData.hpp>
 
 namespace GameEngine {
-class SpriteAnimatedComponentData : public ComponentData
+class PUBLICAPI SpriteAnimatedComponentData : public ComponentData
 {
 public:
     SpriteAnimatedComponentData()

@@ -5,12 +5,13 @@
 #ifndef GAMEDEVWARS_UIPANELCOMPONENT_HPP
 #define GAMEDEVWARS_UIPANELCOMPONENT_HPP
 
+#include <game-engine/api.hpp>
 #include <game-engine/components/ui/UIControlComponent.hpp>
 #include <game-engine/internal/graphics/GraphicHolder.hpp>
 
 namespace GameEngine {
 
-class UIPanelComponentData : public UIControlComponentData
+class PUBLICAPI UIPanelComponentData : public UIControlComponentData
 {
 public:
     UIPanelComponentData() :
@@ -20,7 +21,7 @@ public:
     }
 };
 
-class UIPanelComponent : public UIControlComponent
+class PUBLICAPI UIPanelComponent : public UIControlComponent
     {
         std::shared_ptr<Internal::GraphicHolder> backgroundGraphic_;
 

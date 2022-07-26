@@ -5,8 +5,9 @@
 #ifndef GAMEENGINE_ENVIRONMENT_HPP
 #define GAMEENGINE_ENVIRONMENT_HPP
 
-#include <game-engine/geEnvironment.hpp>
+#include <game-engine/api.hpp>
 #include <filesystem>
+#include <game-engine/geEnvironment.hpp>
 #include <game-engine/internal/ObjectManager.hpp>
 #include <game-engine/internal/SceneManager.hpp>
 
@@ -15,7 +16,7 @@ namespace GameEngine
 namespace Internal
 {
 
-class Environment : public geEnvironment
+class PUBLICAPI Environment : public geEnvironment
 {
     std::string configurationPath_;
     std::string dataPath_;

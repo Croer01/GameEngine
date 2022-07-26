@@ -9,15 +9,21 @@ is_debug = get_option('buildtype') == 'debug'
 
 # These arguments are only used to build the shared library
 # not the executables that use the library.
-lib_args = ['-DGAMEENGINE_EXPORTS']
+lib_args = []
 
 if is_windows
-  lib_args += ['-DWIN32']
+  lib_args += ['/DGAMEENGINE_EXPORTS']
+  if is_debug
+    lib_args += ['/DDEBUG']
+  endif
+else
+  lib_args += ['-DGAMEENGINE_EXPORTS']
+  if is_debug
+    lib_args += ['-DDEBUG']
+  endif
 endif
 
-if is_debug
-  lib_args += ['-DDEBUG']
-endif
+
 
 libsndfile_dep = ''
 libsndfile_env = environment()

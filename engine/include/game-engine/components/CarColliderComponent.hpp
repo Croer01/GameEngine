@@ -5,6 +5,7 @@
 #ifndef GAMEENGINE_CARCOLLIDERCOMPONENT_HPP
 #define GAMEENGINE_CARCOLLIDERCOMPONENT_HPP
 
+#include <game-engine/api.hpp>
 #include <game-engine/geComponent.hpp>
 #include <game-engine/InputManager.hpp>
 #include <game-engine/internal/physics/Collider.hpp>
@@ -14,7 +15,7 @@
 namespace GameEngine
 {
 
-class CarColliderComponentData : public ComponentData
+class PUBLICAPI CarColliderComponentData : public ComponentData
 {
 public:
     CarColliderComponentData()
@@ -28,7 +29,7 @@ public:
     }
 };
 
-class CarColliderComponent : public geComponentInstantiable<CarColliderComponent, CarColliderComponentData>, public Observer<GameObjectEvent>
+class PUBLICAPI CarColliderComponent : public geComponentInstantiable<CarColliderComponent, CarColliderComponentData>, public Observer<GameObjectEvent>
 {
     Internal::PhysicsEngine *physicsEngine_;
     std::vector<std::shared_ptr<Internal::Collider>> tires_;

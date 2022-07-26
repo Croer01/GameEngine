@@ -6,13 +6,14 @@
 #define SPACEINVADERS_GRAPHIC_HPP
 
 
+#include <game-engine/api.hpp>
 #include <vector>
 #include <memory>
 #include <glm/glm.hpp>
 #include <game-engine/internal/graphics/Shader.hpp>
 namespace GameEngine {
 namespace Internal {
-    class Graphic {
+    class PUBLICAPI Graphic {
         bool initialized_;
     protected:
         virtual void internalInitializeGl() = 0;

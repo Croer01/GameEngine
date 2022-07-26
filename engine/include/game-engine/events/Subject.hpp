@@ -5,6 +5,7 @@
 #ifndef GAMEENGINE_SUBJECT_HPP
 #define GAMEENGINE_SUBJECT_HPP
 
+#include <game-engine/api.hpp>
 #include <utility>
 #include <map>
 #include <vector>
@@ -14,7 +15,7 @@
 
 namespace GameEngine {
     template <typename ...ArgsT>
-    class Subject {
+    class PUBLICAPI Subject {
         typedef Observer<ArgsT...> ObserverType;
 
         std::vector<ObserverType *> observers_;

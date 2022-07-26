@@ -6,6 +6,7 @@
 #define SPACEINVADERS_GAMEOBJECT_HPP
 
 
+#include <game-engine/api.hpp>
 #include <string>
 #include <vector>
 #include <memory>

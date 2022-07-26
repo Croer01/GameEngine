@@ -6,6 +6,7 @@
 #define SPACEINVADERS_PHYSICSENGINE_HPP
 
 
+#include <game-engine/api.hpp>
 #include <memory>
 #include <Box2D/Box2D.h>
 #include <unordered_map>
@@ -17,7 +18,7 @@
 #endif
 namespace GameEngine {
 namespace Internal {
-    class PhysicsEngine : b2ContactListener {
+    class PUBLICAPI PhysicsEngine : b2ContactListener {
 
         struct ColliderCategory {
             uint16 categoryBit = 0;
