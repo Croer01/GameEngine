@@ -159,10 +159,11 @@ gameengine_srcs = files([
   'internal/WritableData.cpp'
 ])
 
-gameengine_lib = library('GameEngine',
+gameengine_lib = shared_library('GameEngine',
   gameengine_srcs,
   include_directories: gameengine_inc,
   dependencies: deps,
   cpp_args : lib_args,
+  gnu_symbol_visibility : 'hidden',
   install: true
 )
