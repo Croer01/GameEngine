@@ -1,21 +1,20 @@
 //
 // Created by adria on 21/01/2019.
 //
-
 #ifndef SPACEINVADERS_API_HPP
 #define SPACEINVADERS_API_HPP
 
-#ifndef _WIN32
-#  ifdef GAMEENGINE_EXPORTS
-#    define PUBLICAPI __attribute__ ((visibility("default")))
-#  else
-#    define PUBLICAPI
-#  endif
-#else //msvc or gcc win32
+#if defined _WIN32 || defined __CYGWIN__
 #  ifdef GAMEENGINE_EXPORTS
 #    define PUBLICAPI __declspec(dllexport)
 #  else
 #    define PUBLICAPI __declspec(dllimport)
+#  endif
+#else
+#  ifdef GAMEENGINE_EXPORTS
+#    define PUBLICAPI __attribute__ ((visibility("default")))
+#  else
+#    define PUBLICAPI
 #  endif
 #endif
 
