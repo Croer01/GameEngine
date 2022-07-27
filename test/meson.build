@@ -10,10 +10,7 @@ foreach t : tests
     exe_name = t + 'Tests'
     test_exe = executable(exe_name,
         exe_name +'.cpp',
-        dependencies: [gtest_dep, deps],
-        include_directories: gameengine_inc,
-        link_with: [gameengine_lib],
-        cpp_args : lib_args
+        dependencies: [gtest_dep, gameengine_dep],
     )
     test(
         t,

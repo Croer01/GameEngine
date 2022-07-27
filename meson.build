@@ -74,8 +74,6 @@ deps = [
 
 gtest_proj = subproject('gtest', version : '1.8.1')
 gtest_dep = [
-  yaml_dep,
-  libsndfile_dep,
   # gtest with main
   gtest_proj.get_variable('gtest_main_dep'),
   gtest_proj.get_variable('gmock_dep')

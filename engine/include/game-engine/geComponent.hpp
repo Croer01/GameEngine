@@ -137,15 +137,16 @@ namespace GameEngine {
         {                                                           \
             auto instance = std::make_shared<CompDataT>();          \
             return instance;                                        \
-        };
+        };                                                          \
+    private:
 
 
     template<typename CompT, typename CompDataT>
     class PUBLICAPI geComponentInstantiable : public geComponent
     {
         COMPONENT_BOILERPLATE(CompT, CompDataT)
+    public:
         virtual ~geComponentInstantiable(){};
-
     };
 }
 #endif //SPACEINVADERS_GECOMPONENT_HPP

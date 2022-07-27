@@ -6,8 +6,9 @@
 
 using namespace GameEngine;
 
-class InitializeCheckComponent : public geComponentInstantiable<InitializeCheckComponent, ComponentData>
+class InitializeCheckComponent : public geComponent
 {
+    COMPONENT_BOILERPLATE(InitializeCheckComponent, ComponentData)
     bool initialized_;
 
     void init() override
@@ -25,8 +26,10 @@ public:
     }
 };
 
-class AddOnInitializeComponent : public geComponentInstantiable<AddOnInitializeComponent, ComponentData>
+class AddOnInitializeComponent : public geComponent
 {
+    COMPONENT_BOILERPLATE(AddOnInitializeComponent, ComponentData)
+
     void init() override
     {
         auto component = std::make_shared<InitializeCheckComponent>();

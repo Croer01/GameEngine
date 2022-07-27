@@ -22,8 +22,9 @@ public:
     }
 };
 
-class TestComponent : public GameEngine::geComponentInstantiable<TestComponent, TestData>
+class TestComponent : public GameEngine::geComponent
 {
+    COMPONENT_BOILERPLATE(TestComponent, TestData)
 };
 
 TEST(Properties, setValueFromPropertySetter)
