@@ -8,6 +8,9 @@
 namespace GameEngine{
 namespace Internal{
 
+    Data::Data() : Data(YAML::Node()){
+    }
+
     Data::Data(const YAML::Node &data) {
         data_ = data;
     }

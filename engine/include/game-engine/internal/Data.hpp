@@ -15,6 +15,7 @@ namespace Internal{
     protected:
         YAML::Node data_;
     public:
+        Data();
         explicit Data(const YAML::Node &data);
         virtual ~Data() {};
 

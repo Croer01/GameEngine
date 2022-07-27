@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-//#include <game-engine/internal/Data.hpp>
+#include <game-engine/internal/Data.hpp>
 #include <game-engine/components/ComponentData.hpp>
 #include <game-engine/geComponent.hpp>
 #include <game-engine/geIO.hpp>
@@ -96,12 +96,9 @@ TEST(Properties, throwExcpetionUsingWrongGetters)
     );
 }
 
-// TODO: Reenable this test after organize all the code to build with meson
-/*
 TEST(Data, writeValuesIntoData)
 {
-    const YAML::Node &node = YAML::Node();
-    const auto &data = std::make_shared<GameEngine::Internal::Data>(node);
+    const auto &data = std::make_shared<GameEngine::Internal::Data>();
     
     GameEngine::geDataWriter writer(data);
 
@@ -112,4 +109,3 @@ TEST(Data, writeValuesIntoData)
     EXPECT_EQ(data->getFloat("float"), 2.5f);
     
 }
-*/
