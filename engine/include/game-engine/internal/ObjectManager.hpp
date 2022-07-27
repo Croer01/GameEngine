@@ -26,7 +26,7 @@ namespace Internal {
     class PUBLICAPI ObjectManager
     {
         Factory<geComponent, ComponentBuilder, std::string> componentFactory_;
-        std::unordered_map<std::string, std::unique_ptr<GameObject>> prototypes_;
+        std::unordered_map<std::string, GameObject> prototypes_;
 
     public:
         ~ObjectManager();

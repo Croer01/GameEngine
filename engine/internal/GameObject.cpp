@@ -18,6 +18,11 @@ namespace GameEngine {
 namespace Internal {
     int GameObject::ID_GENERATOR = 0;
 
+
+    GameObject::GameObject() :
+            GameObject(""){
+    }
+
     GameObject::GameObject(const std::string &prototype) : Observer<GameObjectEvent>(),
             prototype_(prototype),
             id_(ID_GENERATOR++),

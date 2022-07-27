@@ -40,10 +40,9 @@ namespace Internal {
         if (it != prototypes_.end())
             throw std::runtime_error(("prototype " + objectType + " already registered").c_str());
 
-        std::unique_ptr<GameObject> prototype;
-        prototype.reset(new GameObject(objectType));
-        prototype->fromFile(filename, this);
-        prototypes_.insert(std::make_pair(objectType, std::move(prototype)));
+        GameObject prototype(objectType);
+        prototype.fromFile(filename, this);
+        prototypes_[objectType] = std::move(prototype);
     }
 
     std::shared_ptr<GameObject> ObjectManager::createGameObject(const std::string &objectType, Game *game) {
@@ -53,7 +52,7 @@ namespace Internal {
             throw std::runtime_error(("prototype " + objectType + " not found").c_str());
 
 
-        return it->second->Clone(game);
+        return it->second.Clone(game);
     }
 
     ObjectManager::~ObjectManager() {

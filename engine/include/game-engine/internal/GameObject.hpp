@@ -43,6 +43,7 @@ namespace Internal {
 
     public:
 
+        GameObject();
         explicit GameObject(const std::string &prototype);
         virtual ~GameObject();
 
