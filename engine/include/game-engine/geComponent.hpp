@@ -117,27 +117,26 @@ namespace GameEngine {
      * you must implement the methods as this class implements: instantiate, clone and instantiateData.
      * */
     
-    #define COMPONENT_BOILERPLATE(CompT, CompDataT)                 \
-    protected:                                                      \
-        geComponentRef instantiate() const override                 \
-        {                                                           \
-            auto instance = std::make_shared<CompT>();              \
-            return instance;                                        \
-        };                                                          \
-                                                                    \
-        virtual geComponentRef clone() const {                      \
-            geComponentRef cloned = instantiate();                  \
-            cloned->setData(getData()->template clone<CompDataT>());\
-                                                                    \
-            return cloned;                                          \
-        };                                                          \
-                                                                    \
-    public:                                                         \
-        virtual ComponentDataRef instantiateData() const            \
-        {                                                           \
-            auto instance = std::make_shared<CompDataT>();          \
-            return instance;                                        \
-        };                                                          \
+    #define COMPONENT_BOILERPLATE(CompT, CompDataT)                   \
+    protected:                                                        \
+        GameEngine::geComponentRef instantiate() const override       \
+        {                                                             \
+            auto instance = std::make_shared<CompT>();                \
+            return instance;                                          \
+        };                                                            \
+                                                                      \
+        GameEngine::geComponentRef clone() const override {           \
+            GameEngine::geComponentRef cloned = instantiate();        \
+            cloned->setData(getData()->clone<CompDataT>());           \
+            return cloned;                                            \
+        };                                                            \
+                                                                      \
+    public:                                                           \
+        GameEngine::ComponentDataRef instantiateData() const override \
+        {                                                             \
+            auto instance = std::make_shared<CompDataT>();            \
+            return instance;                                          \
+        };                                                            \
     private:
 
 

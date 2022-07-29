@@ -14,6 +14,9 @@ namespace GameEngine
 
 ParticlesPropertiesComponent::ParticlesPropertiesComponent() :
     lifetime_(1.f,1.f), rotation_(0.f, 0.f), graphicsEngine_(nullptr)
+{}
+
+void ParticlesPropertiesComponent::preInit()
 {
     setFilePathPropertyObserver("imageSource", [this](){ updateSprite(); });
     setPropertyObserver<float>("startLifetime", [this](){
@@ -28,10 +31,7 @@ ParticlesPropertiesComponent::ParticlesPropertiesComponent() :
     setPropertyObserver<float>("maxRotation", [this](){
         rotation_ = Range(rotation_.getStart(), getPropertyValue<float>("maxRotation") * (M_PI/180.f));
     });
-}
 
-void ParticlesPropertiesComponent::preInit()
-{
     graphicsEngine_ = gameObject()->game()->graphicsEngine();
     updateSprite();
 }

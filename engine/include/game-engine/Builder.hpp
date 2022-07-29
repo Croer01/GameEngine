@@ -10,43 +10,44 @@
 #include <game-engine/geData.hpp>
 #include <memory>
 #include <game-engine/components/ComponentData.hpp>
+#include <game-engine/geComponent.hpp>
 
 namespace GameEngine {
 
-    class geComponent;
-    typedef std::shared_ptr<geComponent> geComponentRef;
-
-    class PUBLICAPI ComponentBuilder {
-    public:
-        virtual ~ComponentBuilder() = default;
-
-        virtual geComponentRef Create() = 0;
-        virtual geComponentRef Create(const geData &data) = 0;
-        virtual ComponentDataRef createProperties() = 0;
+    class ComponentBuilder;
+    
+    template<typename ComponentType>
+    static ComponentBuilder* CreateComponentBuilder(){
+        auto component = std::make_shared<ComponentType>();
+        component->setData(component->instantiateData());
+        return new ComponentBuilder(component);
     };
 
-    template<typename ComponentType>
-    class PUBLICAPI ComponentTBuilder : public ComponentBuilder {
+    class PUBLICAPI ComponentBuilder {
+        geComponentRef _component;
     public:
-        virtual geComponentRef Create() {
-            const std::shared_ptr<ComponentType> &instance = std::make_shared<ComponentType>();
+        explicit ComponentBuilder(const geComponentRef &component) :
+            _component(component)
+            {};
+
+        geComponentRef Create() {
+            const geComponentRef &instance = _component->clone();
             ComponentDataRef compData = instance->instantiateData();
             instance->setData(compData);
             return instance;
         };
 
-        virtual geComponentRef Create(const geData &data) {
-            const std::shared_ptr<ComponentType> &instance = std::make_shared<ComponentType>();
+        geComponentRef Create(const geData &data) {
+            const geComponentRef &instance = _component->clone();
             ComponentDataRef compData = instance->instantiateData();
             compData->fill(data);
             instance->setData(compData);
             return instance;
         };
 
-        virtual ComponentDataRef createProperties()
+        ComponentDataRef createProperties()
         {
-            const std::shared_ptr<ComponentType> &instance = std::make_shared<ComponentType>();
-            return instance->instantiateData();
+            return _component->instantiateData();
         };
     };
 }
