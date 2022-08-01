@@ -15,7 +15,7 @@
 
 namespace GameEngine {
     template <typename ...ArgsT>
-    class PUBLICAPI Subject {
+    class Subject {
         typedef Observer<ArgsT...> ObserverType;
 
         std::vector<ObserverType *> observers_;

@@ -11,7 +11,7 @@ template <typename... ArgsT>
 class Subject;
 
 template <typename... ArgsT>
-class PUBLICAPI Observer
+class Observer
 {
 public:
     virtual ~Observer()
