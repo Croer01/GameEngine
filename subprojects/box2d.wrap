@@ -3,9 +3,8 @@ directory = box2d-2.4.1
 source_url = https://github.com/erincatto/box2d/archive/v2.4.1/box2d-2.4.1.tar.gz
 source_filename = box2d-2.4.1.tar.gz
 source_hash = d6b4650ff897ee1ead27cf77a5933ea197cbeef6705638dd181adc2e816b23c2
-patch_filename = box2d_2.4.1-2_patch.zip
-patch_url = https://wrapdb.mesonbuild.com/v2/box2d_2.4.1-2/get_patch
-patch_hash = e85c91272b6c51b908e0d9fbf6ed1365fb8490e4ed3ed4a3b14f3cc0d6ac4efb
+# this reference to the directory "subprojects/packagefiles/box2d"
+patch_directory = box2d
 
 [provide]
 box2d = box2d_dep
