@@ -34,7 +34,7 @@ protected:
 protected:
     virtual geComponentRef clone() const;
     void createBackgroundGraphic();
-    void onClick() override;
+    void onUnclick() override;
     void onHoverIn() override;
     void onHoverOut() override;
 

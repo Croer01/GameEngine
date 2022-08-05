@@ -34,13 +34,20 @@ void UIControlComponent::Update(float elapsedTime)
             onHoverOut();
     }
 
-    if(hover_ && inputManager->isMouseButtonDown(MouseButton::LEFT))
+    if(hover_)
     {
-        onClick();
-        if(!focused_)
+        if (inputManager->isMouseButtonDown(MouseButton::LEFT))
         {
-            focused_ = true;
-            onFocusChanged();
+            onClick();
+            if(!focused_)
+            {
+                focused_ = true;
+                onFocusChanged();
+            }
+        }
+        else if (inputManager->isMouseButtonUp(MouseButton::LEFT))
+        {
+            onUnclick();
         }
     }
     //TODO: change this to a Centralized Focus Manager

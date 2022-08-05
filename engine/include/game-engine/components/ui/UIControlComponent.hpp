@@ -32,6 +32,7 @@ public:
 
     protected:
         virtual void onClick() {};
+        virtual void onUnclick() {};
         virtual void onHoverIn() {};
         virtual void onHoverOut() {};
         virtual void onFocusChanged() {};

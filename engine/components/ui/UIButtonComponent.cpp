@@ -88,7 +88,7 @@ void UIButtonComponent::createBackgroundGraphic()
     setTextModelTransform(calculateVirtualScreenPos() + textMargins, 0.f, Vec2D(1, 1));
 }
 
-void UIButtonComponent::onClick()
+void UIButtonComponent::onUnclick()
 {
     if(command_)
         command_->execute();
