@@ -19,9 +19,9 @@ libsndfile_lib = compiler.find_library(
   required: true
 )
 
-# This is to support execution of tests in Windows
-libsndfile_env = environment()
-libsndfile_env.append('PATH', meson.current_source_dir() / 'bin')
+devenv = environment()
+devenv.append('PATH', meson.current_source_dir() / 'bin')
+meson.add_devenv(devenv)
 
 libsndfile_dep = declare_dependency(
   dependencies : libsndfile_lib,

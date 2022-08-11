@@ -40,7 +40,6 @@ libsndfile_env = environment()
 
 if is_windows
   libsndfile_dep = dependency('libsndfile-win64', version : '1.1.0', default_options: ['default_library=shared'])
-  libsndfile_env = subproject('libsndfile-win64').get_variable('libsndfile_env')
 endif
 
 box2d_dep = dependency('box2d', version : '2.4.1')

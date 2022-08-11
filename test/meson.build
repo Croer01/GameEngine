@@ -15,7 +15,6 @@ foreach t : tests
     test(
         t,
         test_exe,
-        env: libsndfile_env,
         protocol: 'gtest',
         workdir: meson.current_build_dir()
     )
