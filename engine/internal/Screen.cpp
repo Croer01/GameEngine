@@ -115,12 +115,11 @@ namespace Internal {
     }
 
     geColor Screen::backgroundColor() const {
-        return background_;
+        return background_.get();
     }
 
     void Screen::backgroundColor(geColor value) {
         background_ = value;
-        glClearColor(background_.r, background_.g, background_.b, 1.f);
     }
 
     int Screen::virtualWidth() const {
@@ -241,7 +240,7 @@ namespace Internal {
 #endif
 
         //Initialize clear color
-        glClearColor(background_.r, background_.g, background_.b, 1.f);
+        glClearColor(background_.get().r, background_.get().g, background_.get().b, 1.f);
 
         CheckGlError();
         CheckSDLError();
@@ -294,6 +293,11 @@ void Screen::update()
 
     if(mainWindow_ && title_.update())
         SDL_SetWindowTitle(mainWindow_.get(), title_.get().c_str());
+
+    if(background_.update())
+    {
+        glClearColor(background_.get().r, background_.get().g, background_.get().b, 1.f);
+    }
 }
 
 Vec2D Screen::transformWindowToScreen(const Vec2D &position)

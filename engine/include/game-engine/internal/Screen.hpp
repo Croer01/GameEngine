@@ -35,7 +35,7 @@ namespace Internal {
         DelayedSetter<int> calculatedHeight_;
 
         DelayedSetter<std::string> title_;
-        geColor background_;
+        DelayedSetter<geColor> background_;
         bool pixelPerfect_;
         bool allowResize_;
 
