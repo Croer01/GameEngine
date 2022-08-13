@@ -105,6 +105,7 @@ gameengine_srcs = files([
   'geAudio.cpp',
   'geComponent.cpp',
   'geEnvironment.cpp',
+  'GlobalData.cpp',
   'geIO.cpp',
   'InputManager.cpp',
   'Random.cpp',

@@ -121,3 +121,25 @@ TEST(Game, titleChange)
     );
     t.join();
 }
+
+TEST(Game, writeGlobalData)
+{
+    GameRef game = Game::createInstance(geEnvironment::createInstance());
+    
+    GlobalData *data = game->getGlobalData();
+
+    EXPECT_EQ(data->hasValue("float"), false);
+    
+    data->setFloat("float",2.5f);
+    EXPECT_EQ(data->hasValue("float"), true);
+    EXPECT_EQ(data->getFloat("float"), 2.5f);
+    
+    EXPECT_ANY_THROW(
+        data->setFloat("float",2.5f);
+    );
+
+    EXPECT_ANY_THROW(
+        data->setString("float","expect this fail");
+    );
+    
+}

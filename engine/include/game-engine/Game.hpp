@@ -64,6 +64,7 @@ public:
     geGameObjectRef findObjectByNameInCurrentScene(const std::string &gameObjectName);
     geCamera *cameraOfCurrentScene() const;
     geDataRef saveCurrentSceneState() const;
+    GlobalData *getGlobalData() const;
     geScreen *screen() const;
     geAudio *audio() const;
     InputManager *input() const;

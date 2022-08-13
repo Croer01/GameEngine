@@ -24,6 +24,7 @@ class PUBLICAPI Environment : public geEnvironment
     std::unique_ptr<ObjectManager> objectManager_;
     std::unique_ptr<SceneManager> sceneManager_;
     MakeCurrentContextCallback makeCurrentContextCallback_;
+    std::unique_ptr<GlobalData> globalData_;
 
     void recursiveDataFilesRegister(const std::filesystem::path &directoryPath);
 public:
@@ -43,6 +44,7 @@ public:
     void setMakeCurrentContextCallback(const MakeCurrentContextCallback &callback) override;
     virtual void addResourcesFromPath(const std::string &dataPath);
     MakeCurrentContextCallback getMakeCurrentContextCallback() const;
+    virtual GlobalData* getGlobalData();
     SceneManager *sceneManager() const;
     ObjectManager *objectManager() const;
 };

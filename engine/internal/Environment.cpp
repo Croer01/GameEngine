@@ -47,6 +47,7 @@ Environment::Environment() : configurationPath_("conf"), dataPath_("data")
     objectManager_->registerComponentBuilder("UIImageComponent", CreateComponentBuilder<UIImageComponent>());
 
     sceneManager_ = std::make_unique<SceneManager>();
+    globalData_ =  std::make_unique<GlobalData>();
 }
 
 void Environment::configurationPath(const std::string &config)
@@ -122,6 +123,10 @@ void Environment::setMakeCurrentContextCallback(const MakeCurrentContextCallback
 MakeCurrentContextCallback Environment::getMakeCurrentContextCallback() const
 {
     return makeCurrentContextCallback_;
+}
+
+GlobalData* Environment::getGlobalData(){
+    return globalData_.get();
 }
 
 void Environment::addResourcesFromPath(const std::string &dataPath)

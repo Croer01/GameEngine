@@ -8,6 +8,7 @@
 #include <game-engine/api.hpp>
 #include <game-engine/components/ComponentData.hpp>
 #include <game-engine/Builder.hpp>
+#include <game-engine/GlobalData.hpp>
 #include <string>
 #include <vector>
 #include <functional>
@@ -40,6 +41,7 @@ public:
     // this automatically configure game instance to render in an image (GL FrameBufferObject)
     // use geGame::getRenderer() to get the gl texture's id
     virtual void setMakeCurrentContextCallback(const MakeCurrentContextCallback &callback) = 0;
+    virtual GlobalData* getGlobalData() = 0;
 };
 }
 

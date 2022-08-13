@@ -304,4 +304,9 @@ geDataRef Game::saveCurrentSceneState() const
     return environment_->sceneManager()->saveCurrentSceneState();
 }
 
+GlobalData *Game::getGlobalData() const
+{
+    return environment_->getGlobalData();
+}
+
 }
