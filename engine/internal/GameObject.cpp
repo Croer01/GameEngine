@@ -133,8 +133,9 @@ namespace Internal {
         //goParent could be null
         if(goParent) {
             auto gameObjectParent = dynamic_cast<GameObject*>(goParent);
+            gameObjectParent->registerObserver(this);
+            gameObjectParent->children_.push_back(shared_from_this());
             parent_ = gameObjectParent->weak_from_this();
-            parent_.lock()->registerObserver(this);
         }
         notify(GameObjectEvent::TransformChanged);
         notify(GameObjectEvent::ActiveChanged);
