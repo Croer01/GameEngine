@@ -35,7 +35,7 @@ namespace Internal {
         std::string error = SDL_GetError();
 
         if (!error.empty()) {
-            std::cerr << "SLD Error : " << error << std::endl;
+            std::cerr << "SDL Error : " << error << std::endl;
 
             if (line != -1)
                 std::cerr << "\nLine : " << line << std::endl;
