@@ -21,7 +21,7 @@ namespace GameEngine {
         auto component = std::make_shared<ComponentType>();
         component->setData(component->instantiateData());
         return new ComponentBuilder(component);
-    };
+    }
 
     class PUBLICAPI ComponentBuilder {
         geComponentRef _component;

@@ -6,8 +6,13 @@
 #define SPACEINVADERS_COLLIDER_HPP
 
 
-#include <Box2D/Box2D.h>
+#if defined _WIN32
+#  include <Box2D/Box2D.h>
+#else
+#  include <box2d/box2d.h>
+#endif
 #include <memory>
+#include <string>
 #include <functional>
 #include <glm/vec3.hpp>
 #include <game-engine/api.hpp>

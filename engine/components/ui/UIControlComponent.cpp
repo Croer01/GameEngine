@@ -5,6 +5,7 @@
 #include <game-engine/InputManager.hpp>
 #include <game-engine/components/ui/UIControlComponent.hpp>
 #include <game-engine/Game.hpp>
+#include <game-engine/internal/graphics/GraphicsEngine.hpp>
 
 namespace GameEngine {
 

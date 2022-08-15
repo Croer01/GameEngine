@@ -5,7 +5,11 @@
 #ifndef SPACEINVADERS_DEBUGVIEW_HPP
 #define SPACEINVADERS_DEBUGVIEW_HPP
 
-#include <Box2D\Box2D.h>
+#if defined _WIN32
+#  include <Box2D/Box2D.h>
+#else
+#  include <box2d/box2d.h>
+#endif
 #include <game-engine/internal/graphics/Shader.hpp>
 #include <game-engine/internal/graphics/Camera.hpp>
 #include <game-engine/internal/Screen.hpp>

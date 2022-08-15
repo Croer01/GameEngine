@@ -6,6 +6,7 @@
 #define GAMEENGINE_CARCOLLIDERCOMPONENT_HPP
 
 #include <game-engine/api.hpp>
+#include <game-engine/geGameObject.hpp>
 #include <game-engine/geComponent.hpp>
 #include <game-engine/InputManager.hpp>
 #include <game-engine/internal/physics/Collider.hpp>

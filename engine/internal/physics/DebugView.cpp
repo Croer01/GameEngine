@@ -7,7 +7,8 @@
 #include <game-engine/Game.hpp>
 #include <game-engine/internal/utils.hpp>
 
-#include <GL\glew.h>
+#include <GL/glew.h>
+
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace GameEngine {

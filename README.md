@@ -72,3 +72,17 @@ cd build-release
 cmake .. -DCMAKE_BUILD_TYPE=Release
 cmake --build .
 ~~~
+
+## Build Meson
+
+install meson and ninja following meson instructions:  
+https://mesonbuild.com/Getting-meson.html
+
+install gl development libraries required by glew on Linux.
+install openal development libraries for Linux. The current meson wrap doesn't support Linux  
+install libsndfile.  This recomended to use the libraries provided by your system package supplier
+install libxi-dev required by sdl2
+eg: for Debian/Ubuntu
+~~~bash
+sudo apt-get install libgl-dev freeglut3-dev libopenal-dev libsndfile1-dev libxi-dev
+~~~

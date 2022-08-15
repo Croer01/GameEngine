@@ -8,9 +8,12 @@
 
 #include <game-engine/api.hpp>
 #include <game-engine/geComponent.hpp>
-#include <game-engine/internal/graphics/GraphicsEngine.hpp>
 
 namespace GameEngine {
+
+namespace Internal {
+    class GraphicsEngine;
+}
 
 class PUBLICAPI UIControlComponentData : public ComponentData
 {

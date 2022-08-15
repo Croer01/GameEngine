@@ -139,7 +139,7 @@ public:
 
     void fill(const geData &data)
     {
-        for(int i = 0; i < properties_.size(); i++)
+        for(auto i = 0; i < properties_.size(); i++)
         {
             auto property = properties_[i];
 

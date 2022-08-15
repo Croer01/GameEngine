@@ -3,7 +3,6 @@
 //
 
 #include <game-engine/components/AudioComponent.hpp>
-#include <game-engine/internal/audio/AudioEngine.hpp>
 #include <game-engine/Game.hpp>
 
 namespace GameEngine {
@@ -44,7 +43,7 @@ void AudioComponent::loadSource(const std::string &filePath)
 {
     if(gameObject() != nullptr)
     {
-        auto game = dynamic_cast<Game*>(gameObject()->game());
+        Game *game = gameObject()->game();
         if(game)
             source_ = game->audioEngine()->getAudio(filePath);
     }

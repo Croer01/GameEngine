@@ -35,11 +35,10 @@ endif
 
 
 
-libsndfile_dep = ''
-libsndfile_env = environment()
-
 if is_windows
   libsndfile_dep = dependency('libsndfile-win64', version : '1.1.0', default_options: ['default_library=shared'])
+else
+  libsndfile_dep = dependency('sndfile', default_options: ['default_library=shared'])
 endif
 
 box2d_dep = dependency('box2d', version : '2.4.1')
@@ -48,7 +47,11 @@ glew_dep = dependency('glew', version : '2.1.0')
 glm_dep = dependency('glm', version : '0.9.9.8')
 libpng_dep = dependency('libpng', version : '1.6.37')
 libjpeg_dep = dependency('libjpeg', version : '2.1.2')
-openal_dep = dependency('openal', version : '1.21.0', default_options: ['default_library=shared'])
+if is_windows
+  openal_dep = dependency('openal', version : '1.21.0', default_options: ['default_library=shared'])
+else
+  openal_dep = dependency('openal', default_options: ['default_library=shared'])
+endif
 sdl2_image_dep = dependency('sdl2_image', version : '2.0.5', default_options: ['default_library=static'])
 sdl2_dep = dependency('sdl2', version : '2.0.18', default_options: ['default_library=static'], static: true)
 utfcpp_dep = dependency('utfcpp', version : '2.3.5', fallback : ['utfcpp' , 'utfcpp_dep'])

@@ -8,7 +8,11 @@
 
 #include <game-engine/api.hpp>
 #include <memory>
-#include <Box2D/Box2D.h>
+#if defined _WIN32
+#  include <Box2D/Box2D.h>
+#else
+#  include <box2d/box2d.h>
+#endif
 #include <unordered_map>
 #include <game-engine/internal/physics/Collider.hpp>
 #ifdef DEBUG

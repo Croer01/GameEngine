@@ -7,7 +7,6 @@
 
 #include <game-engine/api.hpp>
 #include <memory>
-#include <game-engine/geGameObject.hpp>
 #include <game-engine/components/ComponentData.hpp>
 
 #define COMPONENT(x) //the #x component has been registered
@@ -17,6 +16,8 @@ namespace GameEngine {
     class geComponent;
 
     typedef std::shared_ptr<geComponent> geComponentRef;
+
+    class geGameObject;
 
     class PUBLICAPI geComponent {
         GameEngine::geGameObject *gameObject_;

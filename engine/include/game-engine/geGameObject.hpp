@@ -6,17 +6,17 @@
 #define SPACEINVADERS_GEGAMEOBJECT_HPP
 
 #include <game-engine/api.hpp>
+#include <game-engine/events/Subject.hpp>
+#include <game-engine/geComponent.hpp>
 #include <memory>
 #include <vector>
 #include <string>
 #include <stdexcept>
-#include <game-engine/events/Subject.hpp>
 
 namespace GameEngine {
 
-    class geComponent;
-    class UIControlComponent;
     class Game;
+    class UIControlComponent;
 
 enum class GameObjectEvent{
         TransformChanged,
@@ -73,19 +73,18 @@ enum class GameObjectEvent{
 
         template <typename T>
         std::weak_ptr<T> getUIComponent(const std::string &controlId) const {
-            if(!std::is_base_of<UIControlComponent,T>::value)
-                throw std::invalid_argument("the type of the component doesn't inherit from UIControlComponent");
-
             for(auto component : components_){
-                if(auto desiredUIComponent = std::dynamic_pointer_cast<UIControlComponent>(component))
+                if(std::dynamic_pointer_cast<UIControlComponent>(component))
                 {
-                    if(controlId == desiredUIComponent->getPropertyValue<std::string>("id"))
+                    if(controlId == component->getPropertyValue<std::string>("id"))
                     {
                         if (auto desiredComponent = std::dynamic_pointer_cast<T>(component))
                             return desiredComponent;
                     }
                 }
             }
+
+            throw std::invalid_argument("the type of the component doesn't inherit from UIControlComponent");
 
             return std::shared_ptr<T>();
         }
