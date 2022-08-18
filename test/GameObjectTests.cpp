@@ -3,8 +3,15 @@
 #include <game-engine/Game.hpp>
 #include <game-engine/geGameObject.hpp>
 #include <game-engine/components/SpriteComponent.hpp>
+#include <ostream>
 
 using namespace GameEngine;
+namespace GameEngine{
+    std::ostream& operator<<(std::ostream& os, const Vec2D& v) {
+      os.precision(5);
+      return os << "x = " << v.x << ", y = " << v.y;
+    }
+}
 
 class InitializeCheckComponent : public geComponent
 {
@@ -172,4 +179,30 @@ TEST(SpriteComponent, load)
     ASSERT_EQ(gameObject->name(), "loadedFromFile");
     ASSERT_TRUE(component.lock());
     ASSERT_EQ(component.lock()->getFilePathPropertyValue("filePath"),"data/1x1white.png");
+}
+
+TEST(GameObject, transformPositionToLocal)
+{
+    GameRef game = Game::createInstance(geEnvironment::createInstance());
+    geGameObjectRef go = game->createObject("parent");
+    const Vec2D goPos = Vec2D(5, 5);
+    const Vec2D externalPos = Vec2D(2, 2);
+    go->position(goPos);
+
+    ASSERT_EQ(go->position(), goPos);
+    ASSERT_EQ( go->transformToLocalPosition(externalPos), Vec2D(-3,-3) );
+
+    go->rotation(90.f * /*one radian*/0.0174532925);
+    ASSERT_EQ(go->position(), goPos);
+    auto localPos = go->transformToLocalPosition(externalPos);
+    auto expectedPos = Vec2D(-3, 3);
+    ASSERT_FLOAT_EQ(localPos.x, expectedPos.x);
+    ASSERT_FLOAT_EQ(localPos.y, expectedPos.y);
+
+    go->rotation(-90.f * /*one radian*/0.0174532925);
+    ASSERT_EQ(go->position(), goPos);
+    localPos = go->transformToLocalPosition(externalPos);
+    expectedPos = Vec2D(3, -3);
+    ASSERT_FLOAT_EQ(localPos.x, expectedPos.x);
+    ASSERT_FLOAT_EQ(localPos.y, expectedPos.y);
 }

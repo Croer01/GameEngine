@@ -214,6 +214,11 @@ namespace Internal {
         }
     }
 
+    Vec2D GameObject::transformToLocalPosition(const Vec2D &position) const {
+        auto p = glm::inverse(getTransform()) * glm::vec4(position.x, position.y, 0.f, 1.f);
+        return Vec2D(p.x, p.y);
+    }
+
     float GameObject::rotation() const {
         float rotation = rotation_;
         if(auto parent = parent_.lock())
@@ -246,7 +251,7 @@ namespace Internal {
         }
     }
 
-    glm::mat4 GameObject::getTransform() {
+    glm::mat4 GameObject::getTransform() const {
         if(auto parent = parent_.lock())
             return parent->getTransform() * transform_;
 

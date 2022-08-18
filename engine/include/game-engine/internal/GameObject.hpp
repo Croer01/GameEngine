@@ -74,6 +74,8 @@ namespace Internal {
 
         void position(const Vec2D &position) override;
 
+        Vec2D transformToLocalPosition(const Vec2D &position) const override;
+
         float rotation() const override;
 
         void rotation(float rotation) override;
@@ -82,7 +84,7 @@ namespace Internal {
 
         void scale(const Vec2D &scale) override;
 
-        glm::mat4 getTransform();
+        glm::mat4 getTransform() const;
 
         virtual bool active() const;
 
