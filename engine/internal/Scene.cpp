@@ -50,7 +50,9 @@ namespace Internal {
         auto length = gameObjects_.size();
 
         for(auto i=0; i < length; i++){
-            gameObjects_[i]->Update(elapsedTime);
+            // objects with parent will be updated after their parent will process its update
+            if (!gameObjects_[i]->parent())
+                gameObjects_[i]->Update(elapsedTime);
         }
         removeDestroyedObjects();
     }
