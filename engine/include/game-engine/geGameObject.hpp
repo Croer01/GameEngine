@@ -40,6 +40,7 @@ enum class GameObjectEvent{
         virtual Vec2D localPosition() const = 0;
         virtual void position(const Vec2D &position) = 0;
         virtual Vec2D transformToLocalPosition(const Vec2D &position) const = 0;
+        virtual Vec2D transformToWorldPosition(const Vec2D &position) const = 0;
 
         virtual float rotation() const = 0;
         virtual void rotation(float rotation) = 0;

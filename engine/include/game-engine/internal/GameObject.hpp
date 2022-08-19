@@ -75,6 +75,7 @@ namespace Internal {
         void position(const Vec2D &position) override;
 
         Vec2D transformToLocalPosition(const Vec2D &position) const override;
+        Vec2D transformToWorldPosition(const Vec2D &position) const override;
 
         float rotation() const override;
 

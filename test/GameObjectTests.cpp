@@ -206,3 +206,29 @@ TEST(GameObject, transformPositionToLocal)
     ASSERT_FLOAT_EQ(localPos.x, expectedPos.x);
     ASSERT_FLOAT_EQ(localPos.y, expectedPos.y);
 }
+
+TEST(GameObject, transformPositionToWorld)
+{
+    GameRef game = Game::createInstance(geEnvironment::createInstance());
+    geGameObjectRef go = game->createObject("parent");
+    const Vec2D goPos = Vec2D(5, 5);
+    const Vec2D localPos = Vec2D(2, 2);
+    go->position(goPos);
+
+    ASSERT_EQ(go->position(), goPos);
+    ASSERT_EQ( go->transformToWorldPosition(localPos), Vec2D(7, 7) );
+
+    go->rotation(90.f * /*one radian*/0.0174532925);
+    ASSERT_EQ(go->position(), goPos);
+    auto externalPos = go->transformToWorldPosition(localPos);
+    auto expectedPos = Vec2D(3, 7);
+    ASSERT_FLOAT_EQ(externalPos.x, expectedPos.x);
+    ASSERT_FLOAT_EQ(externalPos.y, expectedPos.y);
+
+    go->rotation(-90.f * /*one radian*/0.0174532925);
+    ASSERT_EQ(go->position(), goPos);
+    externalPos = go->transformToWorldPosition(localPos);
+    expectedPos = Vec2D(7, 3);
+    ASSERT_FLOAT_EQ(externalPos.x, expectedPos.x);
+    ASSERT_FLOAT_EQ(externalPos.y, expectedPos.y);
+}

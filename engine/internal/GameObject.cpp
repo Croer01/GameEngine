@@ -219,6 +219,11 @@ namespace Internal {
         return Vec2D(p.x, p.y);
     }
 
+    Vec2D GameObject::transformToWorldPosition(const Vec2D &position) const {
+        auto p = getTransform() * glm::vec4(position.x, position.y, 0.f, 1.f);
+        return Vec2D(p.x, p.y);
+    }
+
     float GameObject::rotation() const {
         float rotation = rotation_;
         if(auto parent = parent_.lock())
