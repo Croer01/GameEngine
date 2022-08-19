@@ -113,8 +113,8 @@ namespace Internal {
         if(it != children_.end())
             return;
 
+        // parent already set the children_ relation
         child->parent(this);
-        children_.push_back(child);
     }
 
     void GameObject::removeChild(const std::shared_ptr<GameObject>& child) {
