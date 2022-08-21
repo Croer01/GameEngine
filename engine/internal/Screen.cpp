@@ -9,6 +9,9 @@
 #include <functional>
 #include <game-engine/internal/Screen.hpp>
 #include <game-engine/internal/utils.hpp>
+#if DEBUG
+#include <cstdio>
+#endif
 
 #define DEFAULT_WINDOW_SIZE 512
 
@@ -197,14 +200,7 @@ namespace Internal {
         glViewport(calculatedX_.get(), calculatedY_.get(), calculatedWidth_.get(), calculatedHeight_.get());
         CheckGlError();
         // Decide GL+GLSL versions
-#if __APPLE__
-        // GL 3.2 Core + GLSL 150
-        glslVersion_ = ShaderVersion::V120;
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG); // Always required on Mac
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
-#elif _WIN32
+#if _WIN32
         // GL 3.0 + GLSL 130
         glslVersion_ = ShaderVersion::V330;
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
@@ -212,12 +208,11 @@ namespace Internal {
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
 #else
-        // GL 2.1 + GLSL 120
-        glslVersion_ = ShaderVersion::V120;
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+        // TODO: review If it's necessary to specify a version or not
+        //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+        //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 #endif
         CheckGlError();
 
@@ -243,17 +238,36 @@ namespace Internal {
         SDL_GL_SetSwapInterval(1);
         CheckSDLError();
 
-        // Init GLEW
-        // Apparently, this is needed for Apple. Thanks to Ross Vander for letting me know <- (original comment)
-#ifndef __APPLE__
         glewExperimental = GL_TRUE;
         glewInit();
         CheckGlError();
-#endif
 
         //Initialize clear color
         glClearColor(background_.get().r, background_.get().g, background_.get().b, 1.f);
         CheckGlError();
+
+        const char *glslVersionChar = (const char *)glGetString( GL_SHADING_LANGUAGE_VERSION );
+        std::string glslVersion(glslVersionChar);
+
+        GLint major, minor; 
+        sscanf((const char*)glGetString(GL_VERSION), "%d.%d", &major, &minor);
+
+#if DEBUG
+        const GLubyte *renderer = glGetString( GL_RENDERER ); 
+        const GLubyte *vendor = glGetString( GL_VENDOR ); 
+        const GLubyte *version = glGetString( GL_VERSION ); 
+
+        printf("[SCREEN] GL Vendor            : %s\n", vendor); 
+        printf("[SCREEN] GL Renderer          : %s\n", renderer); 
+        printf("[SCREEN] GL Version (string)  : %s\n", version); 
+        printf("[SCREEN] GL Version (integer) : %d.%d\n", major, minor); 
+        printf("[SCREEN] GLSL Version         : %s\n", glslVersion);
+#endif
+
+        if( glslVersion == "1.20")
+            glslVersion_ = ShaderVersion::V120;
+        if( glslVersion == "3.30")
+            glslVersion_ = ShaderVersion::V330;
     }
 
     void Screen::initSDLWindow() {
