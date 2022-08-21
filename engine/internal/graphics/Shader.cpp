@@ -7,6 +7,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <game-engine/internal/graphics/Shader.hpp>
 #include <game-engine/internal/utils.hpp>
+
 namespace GameEngine {
 namespace Internal {
     template<typename T>
@@ -69,7 +70,7 @@ template<>
         CheckGlError();
     }
 
-    void Shader::printShaderLog(GLuint shader) {
+    void Shader::printShaderLog(const char *shaderType, GLuint shader) {
         //Make sure name is shader
         if (glIsShader(shader)) {
             //Shader log length
@@ -86,25 +87,67 @@ template<>
             glGetShaderInfoLog(shader, maxLength, &infoLogLength, infoLog);
             if (infoLogLength > 0) {
                 //Print Log
-                printf("%s\n", infoLog);
+                printf("[SHADER] %s info log: %s\n", name_, infoLog);
             }
 
             //Deallocate string
             delete[] infoLog;
         } else {
-            printf("Name %d is not a shader\n", shader);
+            printf("[SHADER] Name %d is not a shader\n", shader);
         }
 
-        throw std::runtime_error("Unable to compile vertex shader " + std::to_string(shader));
+        throw std::runtime_error("Unable to compile " + std::string(shaderType) + " shader " + std::string(name_));
     }
 
+    void Shader::addVertexInput(const std::string &input) {
+        vertexShaderInput_.push_back(input);
+    }
+
+    void Shader::addVertexOutput(const std::string &output) {
+        vertexShaderOutput_.push_back(output);
+    }
+
+    void Shader::writeVertexInput(std::stringstream &stream){
+        std::string inPrefix = "in";
+        if(version_ == ShaderVersion::V120)
+            inPrefix = "attribute";
+        for(auto i = 0; i < vertexShaderInput_.size(); i++)
+        {
+            stream << inPrefix << " " << vertexShaderInput_[i] << ";\n";
+        }
+    }
+    void Shader::writeVertexOutput(std::stringstream &stream){
+        std::string outPrefix = "out";
+        if(version_ == ShaderVersion::V120)
+            outPrefix = "varying";
+        for(auto i = 0; i < vertexShaderOutput_.size(); i++)
+        {
+            stream << outPrefix << " " << vertexShaderOutput_[i] << ";\n";
+        }
+    }
 
     void Shader::buildVertexShader() {
         //Create vertex shader
         vertexShader_ = glCreateShader(GL_VERTEX_SHADER);
 
         //Get vertex source
-        const GLchar *vertexShaderSource[] = {vertexShaderSource_};
+        std::stringstream ss;
+        ss << getShaderVersionDeclaration(version_) << "\n";
+        
+        writeVertexInput(ss);
+        writeVertexOutput(ss);
+
+        if(version_ == ShaderVersion::V120)
+        {
+            // The fragment input should be the same as the vertex output
+            // so we only need to write the output
+            writeFragmentOutput(ss);
+        }
+
+        ss << vertexShaderSource_;
+
+        const std::string &shaderSource = ss.str();
+        const GLchar *vertexShaderSource[] = {shaderSource.data()};
 
         //Set vertex source
         glShaderSource(vertexShader_, 1, vertexShaderSource, NULL);
@@ -116,17 +159,62 @@ template<>
         GLint vShaderCompiled = GL_FALSE;
         glGetShaderiv(vertexShader_, GL_COMPILE_STATUS, &vShaderCompiled);
         if (vShaderCompiled != GL_TRUE) {
-            printShaderLog(vertexShader_);
+            printf("[SHADER] %s\n", shaderSource.c_str());
+            printShaderLog("vertex", vertexShader_);
         }
         CheckGlError();
     }
 
+    void Shader::addFragmentInput(const std::string &input) {
+        fragmentShaderInput_.push_back(input);
+    }
+
+    void Shader::addFragmentOutput(const std::string &output) {
+        fragmentShaderOutput_.push_back(output);
+    }
+
+    void Shader::writeFragmentInput(std::stringstream &stream){
+        std::string inPrefix = "in";
+        if(version_ == ShaderVersion::V120)
+            inPrefix = "attribute";
+        for(auto i = 0; i < fragmentShaderInput_.size(); i++)
+        {
+            stream << inPrefix << " " << fragmentShaderInput_[i] << ";\n";
+        }
+    }
+    void Shader::writeFragmentOutput(std::stringstream &stream){
+        std::string outPrefix = "out";
+        if(version_ == ShaderVersion::V120)
+            outPrefix = "varying";
+        for(auto i = 0; i < fragmentShaderOutput_.size(); i++)
+        {
+            stream << outPrefix << " " << fragmentShaderOutput_[i] << ";\n";
+        }
+    }
+
     void Shader::buildFragmentShader() {
-//Create fragment shader
+        //Create fragment shader
         fragmentShader_ = glCreateShader(GL_FRAGMENT_SHADER);
 
         //Get fragment source
-        const GLchar *fragmentShaderSource[] = {fragmentShaderSource_};
+        std::stringstream ss;
+        ss << getShaderVersionDeclaration(version_) << "\n";
+
+        if(version_ != ShaderVersion::V120)
+        {
+            writeFragmentInput(ss);
+        }
+        writeFragmentOutput(ss);
+
+        if(version_ == ShaderVersion::V120)
+        {
+            writeVertexOutput(ss);
+        }
+
+        ss << fragmentShaderSource_;
+
+        const std::string &shaderSource = ss.str();
+        const GLchar *fragmentShaderSource[] = {shaderSource.data()};
 
         //Set fragment source
         glShaderSource(fragmentShader_, 1, fragmentShaderSource, NULL);
@@ -138,7 +226,8 @@ template<>
         GLint fShaderCompiled = GL_FALSE;
         glGetShaderiv(fragmentShader_, GL_COMPILE_STATUS, &fShaderCompiled);
         if (fShaderCompiled != GL_TRUE) {
-            printShaderLog(fragmentShader_);
+            printf("[SHADER] %s\n", shaderSource.c_str());
+            printShaderLog("fragment", fragmentShader_);
         }
         CheckGlError();
     }
@@ -151,6 +240,13 @@ template<>
         buildFragmentShader();
         //Attach fragment shader to program
         glAttachShader(programId_, fragmentShader_);
+
+        // Set manually the locations layout. This is to simplify the shader implementation
+        // glsl >= 1.4.0 support layout(location = [literal int]) keyword but older not.
+        // solution get from https://stackoverflow.com/a/21355713
+        for(auto i = 0; i < locations_.size(); i++){
+            glBindAttribLocation (programId_, i, locations_[i].c_str());
+        }
 
         //Link program
         glLinkProgram(programId_);
@@ -234,10 +330,19 @@ template<>
     void Shader::setAttribute(Shader::Attributes attribute, GLuint glPointer) {
         attributes[attribute] = glPointer;
     }
+    
+    void Shader::addBindLocation(const std::string &locationName) {
+        locations_.push_back(locationName);
+    }
 
+    Shader::Shader(const char *name, ShaderVersion version) : name_(name),
+                                                              version_(version),
+                                                              mode_(GL_TRIANGLES)
+    {
+    }
 
-    Shader::Shader(const char *name) : name_(name),
-                                       mode_(GL_TRIANGLES){
+    ShaderVersion Shader::getGlslsVersion() const {
+        return version_;
     }
 
     const char *Shader::getName() const {

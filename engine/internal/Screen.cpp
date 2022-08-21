@@ -195,23 +195,31 @@ namespace Internal {
     void Screen::initGlAttributes()
     {
         glViewport(calculatedX_.get(), calculatedY_.get(), calculatedWidth_.get(), calculatedHeight_.get());
-
+        CheckGlError();
         // Decide GL+GLSL versions
 #if __APPLE__
         // GL 3.2 Core + GLSL 150
-        const char* glsl_version = "#version 150";
+        glslVersion_ = ShaderVersion::V120;
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG); // Always required on Mac
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
-#else
+#elif _WIN32
         // GL 3.0 + GLSL 130
-        const char *glsl_version = "#version 130";
+        glslVersion_ = ShaderVersion::V330;
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+#else
+        // GL 2.1 + GLSL 120
+        glslVersion_ = ShaderVersion::V120;
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 #endif
+        CheckGlError();
 
 #if DEBUG
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
@@ -221,6 +229,8 @@ namespace Internal {
         SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
         SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
         SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+        CheckGlError();
+        CheckSDLError();
 
         if(mainWindow_)
         {
@@ -231,19 +241,19 @@ namespace Internal {
         // This makes our buffer swap synchronized with the monitor's vertical refresh
         // Enable vsync
         SDL_GL_SetSwapInterval(1);
+        CheckSDLError();
 
         // Init GLEW
         // Apparently, this is needed for Apple. Thanks to Ross Vander for letting me know <- (original comment)
 #ifndef __APPLE__
         glewExperimental = GL_TRUE;
         glewInit();
+        CheckGlError();
 #endif
 
         //Initialize clear color
         glClearColor(background_.get().r, background_.get().g, background_.get().b, 1.f);
-
         CheckGlError();
-        CheckSDLError();
     }
 
     void Screen::initSDLWindow() {
@@ -311,6 +321,10 @@ Vec2D Screen::transformWindowToScreen(const Vec2D &position)
     );
 
     return normCalcPoint;
+}
+
+ShaderVersion Screen::getGlslVersion() const{
+    return glslVersion_;
 }
 
 }

@@ -14,6 +14,7 @@
 #include <memory>
 #include <game-engine/internal/DelayedSetter.hpp>
 #include <game-engine/events/Subject.hpp>
+#include <game-engine/internal/graphics/ShaderVersion.hpp>
 
 namespace GameEngine {
 namespace Internal {
@@ -40,6 +41,7 @@ namespace Internal {
         bool allowResize_;
 
         // window stuff
+        ShaderVersion glslVersion_;
         std::shared_ptr<SDL_Window> mainWindow_;
         SDL_GLContext mainContext_;
     public:
@@ -74,6 +76,8 @@ namespace Internal {
         SDL_Window *sdlWindow() const;
 
         void update();
+
+        ShaderVersion getGlslVersion() const;
     private:
         void recalculateWindow();
         void initSDLWindow();

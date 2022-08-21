@@ -91,16 +91,19 @@ namespace Internal {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        spriteShader_ = std::make_shared<Shader>("Basic");
-        spriteShader_->setVertexShader(R"EOF(
-        #version 330 core
+        spriteShader_ = std::make_shared<Shader>("Basic", screen_->getGlslVersion());
+        spriteShader_->addBindLocation("aPos");
+        spriteShader_->addBindLocation("aTexCoord");
 
-        layout (location = 0) in vec3 aPos;
-        layout (location = 1) in vec2 aTexCoord;
+        spriteShader_->addVertexInput("vec3 aPos");
+        spriteShader_->addVertexInput("vec2 aTexCoord");
 
+        spriteShader_->addVertexOutput("vec2 TexCoord");
+
+        spriteShader_->setVertexShader(
+        R"EOF(
         uniform vec2 TexOffest;
         uniform vec2 TexCoordScale;
-        out vec2 TexCoord;
 
         uniform mat4 projView;
         uniform mat4 transform;
@@ -110,32 +113,50 @@ namespace Internal {
             TexCoord = TexOffest + aTexCoord * TexCoordScale;
         }
         )EOF");
-        spriteShader_->setFragmentShader(R"EOF(
-        #version 330 core
-        out vec4 FragColor;
+        
+        spriteShader_->addFragmentInput("vec2 TexCoord");
 
-        in vec2 TexCoord;
+        if(spriteShader_->getGlslsVersion() == ShaderVersion::V120)
+        {
+            spriteShader_->setFragmentShader(
+            R"EOF(
+            uniform sampler2D Texture;
+            uniform vec4 Color;
 
-        uniform sampler2D Texture;
-        uniform vec4 Color;
-
-        void main() {
-            vec4 texColor = texture(Texture, TexCoord);
-            FragColor = texColor * Color;
+            void main() {
+                vec4 texColor = texture2D(Texture, TexCoord);
+                gl_FragColor = texColor * Color;
+            }
+            )EOF");
         }
-        )EOF");
+        else
+        {
+            spriteShader_->addFragmentOutput("vec4 FragColor");
+
+            spriteShader_->setFragmentShader(
+            R"EOF(
+            uniform sampler2D Texture;
+            uniform vec4 Color;
+
+            void main() {
+                vec4 texColor = texture(Texture, TexCoord);
+                FragColor = texColor * Color;
+            }
+            )EOF");
+        }
         spriteShader_->build();
         CheckGlError();
 
-        textShader_ = std::make_shared<Shader>("TextShader");
+        textShader_ = std::make_shared<Shader>("TextShader", screen_->getGlslVersion());
+        textShader_->addBindLocation("aPos");
+        textShader_->addBindLocation("aTexCoord");
+
+        textShader_->addVertexInput("vec3 aPos");
+        textShader_->addVertexInput("vec2 aTexCoord");
+
+        textShader_->addVertexOutput("vec2 TexCoord");
+
         textShader_->setVertexShader(R"EOF(
-        #version 330 core
-
-        layout (location = 0) in vec3 aPos;
-        layout (location = 1) in vec2 aTexCoord;
-
-        out vec2 TexCoord;
-
         uniform mat4 projView;
         uniform mat4 transform;
 
@@ -144,21 +165,36 @@ namespace Internal {
             TexCoord = aTexCoord;
         }
         )EOF");
-        textShader_->setFragmentShader(R"EOF(
-        #version 330 core
-        out vec4 FragColor;
 
-        in vec2 TexCoord;
+        textShader_->addFragmentInput("vec2 TexCoord");
 
-        uniform sampler2D Texture;
-        uniform vec4 Color;
+        if( textShader_->getGlslsVersion() == ShaderVersion::V120)
+        {
+            textShader_->setFragmentShader(R"EOF(
+            uniform sampler2D Texture;
+            uniform vec4 Color;
 
-        void main() {
-            // use the red channel to hold letter fill information
-            vec4 sampled = vec4(1.0, 1.0, 1.0, texture(Texture, TexCoord).r);
-            FragColor = Color * sampled;
+            void main() {
+                // use the red channel to hold letter fill information
+                vec4 sampled = vec4(1.0, 1.0, 1.0, texture2D(Texture, TexCoord).r);
+                gl_FragColor = Color * sampled;
+            }
+            )EOF");
         }
-        )EOF");
+        else
+        {
+            textShader_->addFragmentOutput("vec4 FragColor");
+            textShader_->setFragmentShader(R"EOF(
+            uniform sampler2D Texture;
+            uniform vec4 Color;
+
+            void main() {
+                // use the red channel to hold letter fill information
+                vec4 sampled = vec4(1.0, 1.0, 1.0, texture(Texture, TexCoord).r);
+                FragColor = Color * sampled;
+            }
+            )EOF");
+        }
         textShader_->build();
         CheckGlError();
 

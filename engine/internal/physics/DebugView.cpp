@@ -151,30 +151,44 @@ void DebugView::DrawCircleInternal(const b2Vec2 &center, float radius, const b2C
     DebugView::DebugView(Screen *screen)
     {
         screen_ = screen;
-        shader_ = std::make_shared<Shader>("Basic");
+        shader_ = std::make_shared<Shader>("Basic", screen_->getGlslVersion());
+
+        shader_->addBindLocation("aPos");
+        shader_->addVertexInput("vec3 aPos");
+
         shader_->setVertexShader(R"EOF(
-        #version 330 core
-
-        layout (location = 0) in vec3 aPos;
-
         uniform mat4 transform;
 
         void main() {
             gl_Position = transform * vec4(aPos, 1.0);
         }
         )EOF");
-        shader_->setFragmentShader(R"EOF(
-        #version 330 core
-        out vec4 FragColor;
 
-        uniform vec4 Color;
+        if(shader_->getGlslsVersion() == ShaderVersion::V120)
+        {
+            shader_->setFragmentShader(R"EOF(
+            uniform vec4 Color;
 
-        void main() {
-            FragColor = Color;
+            void main() {
+                gl_FragColor = Color;
+            }
+            )EOF");
+            shader_->build();
+            CheckGlError();
         }
-        )EOF");
-        shader_->build();
-        CheckGlError();
+        else
+        {
+            shader_->addFragmentOutput("vec4 FragColor");
+            shader_->setFragmentShader(R"EOF(
+            uniform vec4 Color;
+
+            void main() {
+                FragColor = Color;
+            }
+            )EOF");
+            shader_->build();
+            CheckGlError();
+        }
     }
 
     void DebugView::setCamera(Camera *cam) {
