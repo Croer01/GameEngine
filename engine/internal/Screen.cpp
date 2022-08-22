@@ -197,8 +197,6 @@ namespace Internal {
 
     void Screen::initGlAttributes()
     {
-        glViewport(calculatedX_.get(), calculatedY_.get(), calculatedWidth_.get(), calculatedHeight_.get());
-        CheckGlError();
         // Decide GL+GLSL versions
 #if _WIN32
         // GL 3.0 + GLSL 130
@@ -214,7 +212,6 @@ namespace Internal {
         //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
         //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 #endif
-        CheckGlError();
 
 #if DEBUG
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
@@ -224,7 +221,6 @@ namespace Internal {
         SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
         SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
         SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-        CheckGlError();
         CheckSDLError();
 
         if(mainWindow_)
@@ -240,6 +236,9 @@ namespace Internal {
 
         glewExperimental = GL_TRUE;
         glewInit();
+        CheckGlError();
+
+        glViewport(calculatedX_.get(), calculatedY_.get(), calculatedWidth_.get(), calculatedHeight_.get());
         CheckGlError();
 
         //Initialize clear color
