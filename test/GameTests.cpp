@@ -134,12 +134,11 @@ TEST(Game, writeGlobalData)
     EXPECT_EQ(data->hasValue("float"), true);
     EXPECT_EQ(data->getFloat("float"), 2.5f);
     
-    EXPECT_ANY_THROW(
-        data->setFloat("float",2.5f);
-    );
+    data->setFloat("float",3.5f);
+    EXPECT_EQ(data->hasValue("float"), true);
+    EXPECT_EQ(data->getFloat("float"), 3.5f);
 
     EXPECT_ANY_THROW(
-        data->setString("float","expect this fail");
+        data->getString("notExist");
     );
-    
 }

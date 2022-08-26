@@ -9,7 +9,6 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include <game-engine/FileType.hpp>
 
 namespace GameEngine {
     class geData;
@@ -31,7 +30,7 @@ namespace GameEngine {
         virtual geColor getColor(const std::string &key) const = 0;
     };
 
-    class PUBLICAPI geWritableData : public geData {
+    class PUBLICAPI geWritableData : public virtual geData {
     public:
         virtual ~geWritableData(){};
 

@@ -14,18 +14,13 @@
 namespace GameEngine {
 
     class PUBLICAPI GlobalData : public geWritableData {
-        // This is a poor implementation but I only want to support a few
-        // types, so in the future this may be to revisit.
-        std::map<std::string, std::string> stringData_;
-        std::map<std::string, int> intData_;
-        std::map<std::string, float> floatData_;
-        std::map<std::string, bool> boolData_;
-        std::map<std::string, Vec2D> vec2dData_;
-        std::map<std::string, std::vector<std::string>> stringArrayData_;
-        std::map<std::string, std::vector<Vec2D>> vec2dArrayData_;
-        std::map<std::string, geColor> colorData_;
+        // This is a workarround to be able to build the map behind this
+        // using msvc https://stackoverflow.com/a/59496238/6952678
+        std::unique_ptr<geWritableData> dummy_;
+        std::map<std::string, std::unique_ptr<geWritableData>> data_;
 
-        void checkValueExist(const std::string &key) const;
+        geWritableData *getValue(const std::string &key) const;
+        geWritableData *getOrCreateValue(const std::string &key);
     public:
 
         bool hasValue(const std::string &key) const override;

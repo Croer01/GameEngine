@@ -5,6 +5,7 @@ gameengine_hdrs = [
   'include/game-engine/api.hpp',
   'include/game-engine/Builder.hpp',
   'include/game-engine/Command.hpp',
+  'include/game-engine/GlobalData.hpp',
   'include/game-engine/components/AudioComponent.hpp',
   'include/game-engine/components/CarColliderComponent.hpp',
   'include/game-engine/components/ColliderComponent.hpp',
