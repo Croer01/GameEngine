@@ -59,6 +59,7 @@ gameengine_hdrs = [
   'include/game-engine/internal/graphics/MeshData.hpp',
   'include/game-engine/internal/graphics/Particle.hpp',
   'include/game-engine/internal/graphics/Shader.hpp',
+  'include/game-engine/internal/graphics/ShaderVersion.hpp',
   'include/game-engine/internal/KeyCodeMap.hpp',
   'include/game-engine/internal/ObjectManager.hpp',
   'include/game-engine/internal/physics/Collider.hpp',
