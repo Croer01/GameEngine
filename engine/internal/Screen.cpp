@@ -245,8 +245,7 @@ namespace Internal {
         glClearColor(background_.get().r, background_.get().g, background_.get().b, 1.f);
         CheckGlError();
 
-        const char *glslVersionChar = (const char *)glGetString( GL_SHADING_LANGUAGE_VERSION );
-        std::string glslVersion(glslVersionChar);
+        const char *glslVersion = (const char *)glGetString( GL_SHADING_LANGUAGE_VERSION );
 
         GLint major, minor; 
         sscanf((const char*)glGetString(GL_VERSION), "%d.%d", &major, &minor);
