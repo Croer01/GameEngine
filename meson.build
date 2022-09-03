@@ -40,7 +40,7 @@ if is_windows
 else
   libsndfile_dep = dependency('sndfile', default_options: ['default_library=shared'])
 endif
-
+thread_dep = dependency('threads')
 box2d_dep = dependency('box2d', version : '2.4.1')
 freetype2_dep = dependency('freetype2', version : '24.2.18')# aka v2.12.0
 glew_dep = dependency('glew', version : '2.1.0')
@@ -59,6 +59,7 @@ yaml_dep = dependency('yamlcpp', version : '0.6.3', default_options: ['default_l
 zlib_dep = dependency('zlib', version : '1.2.11')
 
 deps = [
+  thread_dep,
   box2d_dep,
   freetype2_dep,
   glew_dep,
