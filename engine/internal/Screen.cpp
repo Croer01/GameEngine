@@ -245,7 +245,7 @@ namespace Internal {
         glClearColor(background_.get().r, background_.get().g, background_.get().b, 1.f);
         CheckGlError();
 
-        const char *glslVersion = (const char *)glGetString( GL_SHADING_LANGUAGE_VERSION );
+        auto glslVersion = std::string(reinterpret_cast<const char*>(glGetString( GL_SHADING_LANGUAGE_VERSION )));
 
         GLint major, minor; 
         sscanf((const char*)glGetString(GL_VERSION), "%d.%d", &major, &minor);
@@ -259,12 +259,12 @@ namespace Internal {
         printf("[SCREEN] GL Renderer          : %s\n", renderer); 
         printf("[SCREEN] GL Version (string)  : %s\n", version); 
         printf("[SCREEN] GL Version (integer) : %d.%d\n", major, minor); 
-        printf("[SCREEN] GLSL Version         : %s\n", glslVersion);
+        printf("[SCREEN] GLSL Version         : %s\n", glslVersion.c_str());
 #endif
 
         if( glslVersion == "1.20")
             glslVersion_ = ShaderVersion::V120;
-        if( glslVersion == "3.30")
+        else if( glslVersion == "3.30")
             glslVersion_ = ShaderVersion::V330;
     }
 
