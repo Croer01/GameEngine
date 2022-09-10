@@ -112,7 +112,6 @@ namespace Internal {
         {
             deviceHeight_ = value;
             recalculateWindow();
-            recalculateWindow();
             SDL_SetWindowSize(mainWindow_.get(), deviceWidth_, deviceHeight_);
         }
     }
