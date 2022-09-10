@@ -4,6 +4,7 @@
 
 #include <game-engine/internal/graphics/GraphicsEngine.hpp>
 #include <game-engine/internal/graphics/GraphicHolder.hpp>
+#include <game-engine/geGameObject.hpp>
 #include <game-engine/internal/GameObject.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -18,7 +19,8 @@ namespace Internal {
             texScale_(1),
             cellSize_(-1),
             anchor_(glm::vec2(0.f)),
-            tintColor_(glm::vec4(1.f))
+            tintColor_(glm::vec4(1.f)),
+            engine_(nullptr)
             {
     }
 

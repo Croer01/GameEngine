@@ -16,7 +16,7 @@
 namespace GameEngine {
 namespace Internal {
 
-    Scene::Scene(const std::string &filePath) : filePath_(filePath), initialized_(false) {
+    Scene::Scene(const std::string &filePath) : filePath_(filePath), preInitialized_(false), initialized_(false) {
     }
 
     void Scene::init(Game *game) {
@@ -24,14 +24,21 @@ namespace Internal {
         gameObjects_.clear();
         loadFile(game);
 
-        auto size = gameObjects_.size();
-
-        for (auto i = 0; i < size; i++) {
-            gameObjects_[i]->preInit();
+        int index = 0;
+        // Doing loop this way because some objects can be added by GameObjects preInit calls
+        while(index < gameObjects_.size())
+        {
+            gameObjects_[index]->preInit();
+            index++;
         }
+        preInitialized_ = true;
 
-        for (auto i = 0; i < size; i++) {
-            gameObjects_[i]->Init();
+        index = 0;
+        // Doing loop this way because some objects can be added by GameObjects Init calls
+        while(index < gameObjects_.size())
+        {
+            gameObjects_[index]->Init();
+            index++;
         }
         initialized_ = true;
     }
@@ -43,7 +50,9 @@ namespace Internal {
         auto length = gameObjects_.size();
 
         for(auto i=0; i < length; i++){
-            gameObjects_[i]->Update(elapsedTime);
+            // objects with parent will be updated after their parent will process its update
+            if (!gameObjects_[i]->parent())
+                gameObjects_[i]->Update(elapsedTime);
         }
         removeDestroyedObjects();
     }
@@ -83,20 +92,17 @@ namespace Internal {
     }
 
     void Scene::shutDown() {
-        for (auto &gameobject : gameObjects_) {
-            gameobject->destroy();
-        }
         gameObjects_.clear();
         initialized_ = false;
     }
 
     void Scene::addGameObject(const std::shared_ptr<GameObject> &gameObject) {
         gameObjects_.push_back(gameObject);
-        if(initialized_)
-        {
+        if(preInitialized_)
             gameObject->preInit();
+
+        if(initialized_)
             gameObject->Init();
-        }
     }
 
 
@@ -145,7 +151,7 @@ void Scene::removeDestroyedObjects()
     // process all the objects destroyed in this frame
     gameObjects_.erase(std::remove_if(gameObjects_.begin(), gameObjects_.end(),
                                       [](const std::shared_ptr<GameObject>& go) {
-                                          return go->isDestroyed();
+                                          return !go;
                                       }), gameObjects_.end());
 }
 

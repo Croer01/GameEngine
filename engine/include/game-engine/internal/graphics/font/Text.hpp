@@ -44,7 +44,7 @@ namespace Internal {
         int lineHeight;
     };
 
-    class Text {
+    class PUBLICAPI Text {
         TextDef textDef_;
         glm::mat4 modelTransform_;
         bool active_;

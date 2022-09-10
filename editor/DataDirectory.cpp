@@ -20,7 +20,7 @@ std::string DataDirectory::name() const
 
 std::vector<DataDirectoryRef> DataDirectory::getFolders() const
 {
-    return folders_;
+    return subDirectories_;
 }
 
 std::vector<DataFileRef> DataDirectory::getFiles() const
@@ -42,12 +42,12 @@ DataDirectory *DataDirectory::getDirectory(const boost::filesystem::path &filePa
         for (const auto &part : filePath.parent_path())
         {
             std::cout << part.string() << std::endl;
-            auto it = std::find_if(target->folders_.begin(), target->folders_.end(),
+            auto it = std::find_if(target->subDirectories_.begin(), target->subDirectories_.end(),
                                    [part](const DataDirectoryRef &directory)
                                    {
                                        return directory->name() == part.string();
                                    });
-            assert(it != target->folders_.end());
+            assert(it != target->subDirectories_.end());
             target = (*it).get();
         }
     }
@@ -58,7 +58,7 @@ DataDirectory *DataDirectory::getDirectory(const boost::filesystem::path &filePa
 void DataDirectory::addFolder(const DataDirectoryRef &folder)
 {
     DataDirectory *target = getDirectory(folder->getDirectoryPath());
-    target->folders_.push_back(folder);
+    target->subDirectories_.push_back(folder);
 }
 
 void DataDirectory::removeFile(const boost::filesystem::path &filePath)

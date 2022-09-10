@@ -1,0 +1,10 @@
+[wrap-file]
+directory = libsndfile-1.1.0-win64
+source_url = https://github.com/libsndfile/libsndfile/releases/download/1.1.0/libsndfile-1.1.0-win64.zip
+source_filename = libsndfile-1.1.0-win64.zip
+source_hash = b9dc71a36ce2a7f5816c0a30e7cfdafc4b221f772153011b10c780230bdb95fb
+# this reference to the directory "subprojects/packagefiles/libsndfile"
+patch_directory = libsndfile
+
+[provide]
+libsndfile-win64 = libsndfile_dep

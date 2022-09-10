@@ -5,16 +5,28 @@
 #ifndef GAMEDEVWARS_UIPANELCOMPONENT_HPP
 #define GAMEDEVWARS_UIPANELCOMPONENT_HPP
 
+#include <game-engine/api.hpp>
 #include <game-engine/components/ui/UIControlComponent.hpp>
 #include <game-engine/internal/graphics/GraphicHolder.hpp>
 
 namespace GameEngine {
-    class UIPanelComponent : public UIControlComponent
+
+class PUBLICAPI UIPanelComponentData : public UIControlComponentData
+{
+public:
+    UIPanelComponentData() :
+        UIControlComponentData()
+    {
+        createProperty<geColor>("background", geColor(1.f));
+    }
+};
+
+class PUBLICAPI UIPanelComponent : public UIControlComponent
     {
         std::shared_ptr<Internal::GraphicHolder> backgroundGraphic_;
-        geColor background_;
 
         void createBackgroundGraphic();
+        void onUpdateBackground();
     protected:
         geComponentRef instantiate() const override;
         virtual geComponentRef clone() const;
@@ -24,10 +36,7 @@ namespace GameEngine {
         virtual ~UIPanelComponent();
 
         void init() override;
-        PropertySetBase *getProperties() const override;
-
-        void background(const geColor &color);
-        geColor background() const;
+        ComponentDataRef instantiateData() const override;
     };
 
 }

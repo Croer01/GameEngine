@@ -5,14 +5,32 @@
 #ifndef GAMEENGINE_CARCOLLIDERCOMPONENT_HPP
 #define GAMEENGINE_CARCOLLIDERCOMPONENT_HPP
 
+#include <game-engine/api.hpp>
+#include <game-engine/geGameObject.hpp>
 #include <game-engine/geComponent.hpp>
 #include <game-engine/InputManager.hpp>
 #include <game-engine/internal/physics/Collider.hpp>
 #include <game-engine/internal/physics/PhysicsEngine.hpp>
+#include <game-engine/components/ComponentData.hpp>
 
 namespace GameEngine
 {
-class CarColliderComponent : public geComponentInstantiable<CarColliderComponent>, public Observer<GameObjectEvent>
+
+class PUBLICAPI CarColliderComponentData : public ComponentData
+{
+public:
+    CarColliderComponentData()
+    {
+        createProperty<Vec2D>("carSize",Vec2D(1.f, 1.f));
+        createProperty<Vec2D>("tireOffset",Vec2D(1.f, 1.f));
+        createProperty<Vec2D>("tireSize",Vec2D(1.f, 1.f));
+        createProperty<float>("maxForwardSpeed", 200.f);
+        createProperty<float>("maxBackwardSpeed", -40.f);
+        createProperty<float>("maxDriveForce", 500.f);
+    }
+};
+
+class PUBLICAPI CarColliderComponent : public geComponentInstantiable<CarColliderComponent, CarColliderComponentData>, public Observer<GameObjectEvent>
 {
     Internal::PhysicsEngine *physicsEngine_;
     std::vector<std::shared_ptr<Internal::Collider>> tires_;
@@ -33,22 +51,9 @@ public:
     virtual ~CarColliderComponent();
     virtual void init();
     virtual void Update(float elapsedTime);
-    virtual PropertySetBase *getProperties() const;
-    virtual void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args);
+    void onEvent(const Subject<GameObjectEvent> &target, GameObjectEvent event) override;
 
-    float getMaxForwardSpeed() const;
-    void setMaxForwardSpeed(const float &maxForwardSpeed);
-    float getMaxBackwardSpeed() const;
-    void setMaxBackwardSpeed(const float &maxBackwardSpeed);
-    float getMaxDriveForce() const;
-    void setMaxDriveForce(const float &maxDriveForce);
     void applyForceToTire(b2Body *body, int direction) const;
-    Vec2D getCarSize() const;
-    void setCarSize(const Vec2D &carSize);
-    Vec2D getTiresOffset() const;
-    void setTiresOffset(const Vec2D &tiresOffset);
-    Vec2D getTiresSize() const;
-    void setTiresSize(const Vec2D &tiresSize);
 };
 }
 

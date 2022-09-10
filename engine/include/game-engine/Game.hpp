@@ -6,6 +6,7 @@
 #define GAMEENGINE_GAME_HPP
 
 
+#include <game-engine/api.hpp>
 #include <memory>
 #include <game-engine/internal/Screen.hpp>
 #include <game-engine/internal/ObjectManager.hpp>
@@ -25,7 +26,7 @@ namespace GameEngine {
 class Game;
 typedef std::shared_ptr<Game> GameRef;
 
-class Game
+class PUBLICAPI Game
 {
 protected:
     bool running_;
@@ -63,6 +64,7 @@ public:
     geGameObjectRef findObjectByNameInCurrentScene(const std::string &gameObjectName);
     geCamera *cameraOfCurrentScene() const;
     geDataRef saveCurrentSceneState() const;
+    GlobalData *getGlobalData() const;
     geScreen *screen() const;
     geAudio *audio() const;
     InputManager *input() const;
@@ -73,6 +75,7 @@ public:
     Internal::AudioEngine *audioEngine() const;
     Internal::FontManager *fontManager() const;
     Internal::ObjectManager *objectManager() const;
+    Internal::SceneManager *sceneManager() const;
 };
 }
 

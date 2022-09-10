@@ -5,13 +5,14 @@
 #ifndef ZOMBIEWAVE_MESHDATA_HPP
 #define ZOMBIEWAVE_MESHDATA_HPP
 
+#include <game-engine/api.hpp>
 #include <vector>
 #include <game-engine/internal/graphics/Shader.hpp>
 
 namespace GameEngine {
     namespace Internal {
 
-        class MeshData {
+        class PUBLICAPI MeshData {
             std::vector<float> verticesAndUV_;
             std::vector<unsigned int> indices_;
             unsigned int VAO;

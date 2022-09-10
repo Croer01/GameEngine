@@ -5,7 +5,7 @@
 #include <game-engine/Game.hpp>
 #include <iostream>
 #include <game-engine/internal/utils.hpp>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <memory>
 
 using namespace GameEngine::Internal;
@@ -117,6 +117,12 @@ void Game::initPhysics(const std::string &configFilePath) {
 
     void Game::update()
     {
+        SDL_Event event;
+        while (SDL_PollEvent(&event))
+        {
+            inputManager_->addEvent(event);
+        }
+
         assert(initialized_);
         screen_->update();
 
@@ -261,6 +267,11 @@ ObjectManager *Game::objectManager() const
     return environment_->objectManager();
 }
 
+SceneManager *Game::sceneManager() const
+{
+    return environment_->sceneManager();
+}
+
 bool Game::isRunning() const
 {
     return running_;
@@ -291,6 +302,11 @@ void Game::init()
 geDataRef Game::saveCurrentSceneState() const
 {
     return environment_->sceneManager()->saveCurrentSceneState();
+}
+
+GlobalData *Game::getGlobalData() const
+{
+    return environment_->getGlobalData();
 }
 
 }

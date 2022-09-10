@@ -5,7 +5,7 @@
 #ifndef SPACEINVADERS_FONTMANAGER_HPP
 #define SPACEINVADERS_FONTMANAGER_HPP
 
-
+#include <game-engine/api.hpp>
 #include <memory>
 #include <vector>
 #include <game-engine/internal/graphics/font/Font.hpp>
@@ -15,7 +15,7 @@
 
 namespace GameEngine {
 namespace Internal {
-    class FontManager {
+    class PUBLICAPI FontManager {
         FT_Library ftLibrary_;
         std::map<std::string, std::shared_ptr<Font>> fonts_;
     public:

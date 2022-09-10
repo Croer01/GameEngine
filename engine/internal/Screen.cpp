@@ -9,6 +9,9 @@
 #include <functional>
 #include <game-engine/internal/Screen.hpp>
 #include <game-engine/internal/utils.hpp>
+#if DEBUG
+#include <cstdio>
+#endif
 
 #define DEFAULT_WINDOW_SIZE 512
 
@@ -22,6 +25,7 @@ namespace Internal {
 
             target->windowWidth(event->window.data1);
             target->windowHeight(event->window.data2);
+            target->notify(target->virtualWidth(), target->virtualHeight());
         }
         return 0;
     }
@@ -55,6 +59,11 @@ namespace Internal {
             virtualHeight_ = DEFAULT_WINDOW_SIZE;
         }
         recalculateWindow();
+        // Ensure the values set in the constructor are updated before use in the initialization methods
+        calculatedX_.update();
+        calculatedY_.update();
+        calculatedWidth_.update();
+        calculatedHeight_.update();
 
         if(screenConfig["backgroundColor"]){
             YAML::Node backgroundColor = screenConfig["backgroundColor"];
@@ -87,33 +96,44 @@ namespace Internal {
     }
 
     void Screen::windowWidth(int value) {
-        deviceWidth_ = value;
-        recalculateWindow();
+        if(deviceWidth_ != value)
+        {
+            deviceWidth_ = value;
+            recalculateWindow();
+            SDL_SetWindowSize(mainWindow_.get(), deviceWidth_, deviceHeight_);
+        }
     }
     int Screen::windowHeight() const {
         return deviceHeight_;
     }
 
     void Screen::windowHeight(int value) {
-        deviceHeight_ = value;
-        recalculateWindow();
+        if(deviceHeight_ != value)
+        {
+            deviceHeight_ = value;
+            recalculateWindow();
+            SDL_SetWindowSize(mainWindow_.get(), deviceWidth_, deviceHeight_);
+        }
     }
 
     geColor Screen::backgroundColor() const {
-        return background_;
+        return background_.get();
     }
 
     void Screen::backgroundColor(geColor value) {
         background_ = value;
-        glClearColor(background_.r, background_.g, background_.b, 1.f);
     }
 
     int Screen::virtualWidth() const {
         return virtualWidth_;
     }
     void Screen::virtualWidth(int value) {
-        virtualWidth_ = value;
-        recalculateWindow();
+        if(virtualWidth_ != value)
+        {
+            virtualWidth_ = value;
+            recalculateWindow();
+            notify(virtualWidth_, virtualHeight_);
+        }
     }
 
     int Screen::virtualHeight() const {
@@ -121,8 +141,12 @@ namespace Internal {
     }
 
     void Screen::virtualHeight(int value) {
-        virtualHeight_ = value;
-        recalculateWindow();
+        if(virtualHeight_ != value)
+        {
+            virtualHeight_ = value;
+            recalculateWindow();
+            notify(virtualWidth_, virtualHeight_);
+        }
     }
 
     bool Screen::pixelPerfect() const {
@@ -134,19 +158,19 @@ namespace Internal {
     }
 
     int Screen::calculatedX() const {
-        return calculatedX_;
+        return calculatedX_.get();
     }
 
     int Screen::calculatedY() const {
-        return calculatedY_;
+        return calculatedY_.get();
     }
 
     int Screen::calculatedWidth() const {
-        return calculatedWidth_;
+        return calculatedWidth_.get();
     }
 
     int Screen::calculatedHeight() const {
-        return calculatedHeight_;
+        return calculatedHeight_.get();
     }
 
     void Screen::recalculateWindow() {
@@ -154,39 +178,38 @@ namespace Internal {
         float targetAspectRatio = (float) virtualWidth_ / virtualHeight_;
 
         // figure out the largest area that fits in this resolution at the desired aspect ratio
-        calculatedWidth_ = deviceWidth_;
-        calculatedHeight_ = std::lround(calculatedWidth_ / targetAspectRatio + 0.5f);
+        int calculatedWidth = deviceWidth_;
+        int calculatedHeight = std::lround(calculatedWidth / targetAspectRatio + 0.5f);
 
-        if (calculatedHeight_ > deviceHeight_) {
+        if (calculatedHeight > deviceHeight_) {
             //It doesn't fit our height, we must switch to pillarbox then
-            calculatedHeight_ = deviceHeight_;
-            calculatedWidth_ = std::lround(calculatedHeight_ * targetAspectRatio + 0.5f);
+            calculatedHeight = deviceHeight_;
+            calculatedWidth = std::lround(calculatedHeight * targetAspectRatio + 0.5f);
         }
 
         // set up the new viewport centered in the backbuffer
-        calculatedX_ = (deviceWidth_ / 2) - (calculatedWidth_ / 2);
-        calculatedY_ = (deviceHeight_ / 2) - (calculatedHeight_ / 2);
+        calculatedX_ = (deviceWidth_ / 2) - (calculatedWidth / 2);
+        calculatedY_ = (deviceHeight_ / 2) - (calculatedHeight / 2);
+        calculatedWidth_ = calculatedWidth;
+        calculatedHeight_ = calculatedHeight;
     }
 
     void Screen::initGlAttributes()
     {
-        glViewport(calculatedX_, calculatedY_, calculatedWidth_, calculatedHeight_);
-
         // Decide GL+GLSL versions
-#if __APPLE__
-        // GL 3.2 Core + GLSL 150
-        const char* glsl_version = "#version 150";
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG); // Always required on Mac
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
-#else
+#if _WIN32
         // GL 3.0 + GLSL 130
-        const char *glsl_version = "#version 130";
+        glslVersion_ = ShaderVersion::V330;
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+#else
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+        // TODO: review If it's necessary to specify a version or not
+        //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+        //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 #endif
 
 #if DEBUG
@@ -197,6 +220,7 @@ namespace Internal {
         SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
         SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
         SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+        CheckSDLError();
 
         if(mainWindow_)
         {
@@ -207,19 +231,40 @@ namespace Internal {
         // This makes our buffer swap synchronized with the monitor's vertical refresh
         // Enable vsync
         SDL_GL_SetSwapInterval(1);
+        CheckSDLError();
 
-        // Init GLEW
-        // Apparently, this is needed for Apple. Thanks to Ross Vander for letting me know <- (original comment)
-#ifndef __APPLE__
         glewExperimental = GL_TRUE;
         glewInit();
-#endif
+        CheckGlError();
+
+        glViewport(calculatedX_.get(), calculatedY_.get(), calculatedWidth_.get(), calculatedHeight_.get());
+        CheckGlError();
 
         //Initialize clear color
-        glClearColor(background_.r, background_.g, background_.b, 1.f);
-
+        glClearColor(background_.get().r, background_.get().g, background_.get().b, 1.f);
         CheckGlError();
-        CheckSDLError();
+
+        auto glslVersion = std::string(reinterpret_cast<const char*>(glGetString( GL_SHADING_LANGUAGE_VERSION )));
+
+        GLint major, minor; 
+        sscanf((const char*)glGetString(GL_VERSION), "%d.%d", &major, &minor);
+
+#if DEBUG
+        const GLubyte *renderer = glGetString( GL_RENDERER ); 
+        const GLubyte *vendor = glGetString( GL_VENDOR ); 
+        const GLubyte *version = glGetString( GL_VERSION ); 
+
+        printf("[SCREEN] GL Vendor            : %s\n", vendor); 
+        printf("[SCREEN] GL Renderer          : %s\n", renderer); 
+        printf("[SCREEN] GL Version (string)  : %s\n", version); 
+        printf("[SCREEN] GL Version (integer) : %d.%d\n", major, minor); 
+        printf("[SCREEN] GLSL Version         : %s\n", glslVersion.c_str());
+#endif
+
+        if( glslVersion == "1.20")
+            glslVersion_ = ShaderVersion::V120;
+        else if( glslVersion == "3.30")
+            glslVersion_ = ShaderVersion::V330;
     }
 
     void Screen::initSDLWindow() {
@@ -264,31 +309,33 @@ namespace Internal {
 
 void Screen::update()
 {
+    if(calculatedX_.update() || calculatedY_.update() || calculatedHeight_.update() || calculatedWidth_.update())
+        glViewport(calculatedX_.get(), calculatedY_.get(), calculatedWidth_.get(), calculatedHeight_.get());
+
     if(mainWindow_ && title_.update())
         SDL_SetWindowTitle(mainWindow_.get(), title_.get().c_str());
-}
 
-void Screen::setWindowRelativePosition(int x, int y)
-{
-    windowRelativePos_ = Vec2D(x, y);
-}
-
-Vec2D Screen::getWindowRelativePosition()
-{
-    Vec2D screenPos(calculatedX_, calculatedY_);
-    return windowRelativePos_;
+    if(background_.update())
+    {
+        glClearColor(background_.get().r, background_.get().g, background_.get().b, 1.f);
+    }
 }
 
 Vec2D Screen::transformWindowToScreen(const Vec2D &position)
 {
-    Vec2D windowRelativePosition = getWindowRelativePosition();
-    float xScale = (float)virtualWidth_ / deviceWidth_;
-    float yScale = (float)virtualHeight_ / deviceHeight_;
+    Vec2D scale = Vec2D((float)virtualWidth_ / calculatedWidth_.get(),
+                        (float)virtualHeight_ / calculatedHeight_.get()
+                        );
+    Vec2D normCalcPoint = Vec2D(
+        (position.x - calculatedX_.get()) * scale.x,
+        (position.y - calculatedY_.get()) * scale.y
+    );
 
-    Vec2D screenPosition;
-    screenPosition.x = (position.x - windowRelativePosition.x) * xScale;
-    screenPosition.y = (position.y - windowRelativePosition.y) * yScale;
-    return screenPosition;
+    return normCalcPoint;
+}
+
+ShaderVersion Screen::getGlslVersion() const{
+    return glslVersion_;
 }
 
 }

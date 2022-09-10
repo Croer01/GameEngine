@@ -6,6 +6,7 @@
 #define SPACEINVADERS_FONT_HPP
 
 
+#include <game-engine/api.hpp>
 #include <string>
 #include <map>
 #include <GL/glew.h>
@@ -13,7 +14,8 @@
 // FreeType
 #include <ft2build.h>
 #include <memory>
-#include FT_FREETYPE_H"freetype2/freetype/freetype.h"
+#include FT_FREETYPE_H
+
 namespace GameEngine {
 namespace Internal {
     struct TextDef;
@@ -26,7 +28,7 @@ namespace Internal {
         GLuint Advance;
     };
 
-    class Font : public std::enable_shared_from_this<Font> {
+    class PUBLICAPI Font : public std::enable_shared_from_this<Font> {
         std::map<FT_UInt, FontCharacter> characters_;
         int lineSpacing_;
         int pixelHeight_;

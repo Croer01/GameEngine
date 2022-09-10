@@ -7,7 +7,8 @@
 #include <game-engine/Game.hpp>
 #include <game-engine/internal/utils.hpp>
 
-#include <GL\glew.h>
+#include <GL/glew.h>
+
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace GameEngine {
@@ -39,7 +40,7 @@ namespace Internal {
 // We just need to have these to prevent override errors, they don't actually do anything right now
     void DebugView::DrawPolygon(const b2Vec2 *vertices, int32 vertexCount, const b2Color &color) {}
 
-    void DebugView::DrawCircle(const b2Vec2 &center, float32 radius, const b2Color &color)
+    void DebugView::DrawCircle(const b2Vec2 &center, float radius, const b2Color &color)
     {
         beginDraw();
         DrawCircleInternal(center,radius,color);
@@ -47,7 +48,7 @@ namespace Internal {
     }
 
 
-void DebugView::DrawSolidCircle(const b2Vec2 &center, float32 radius, const b2Vec2 &axis, const b2Color &color) {
+void DebugView::DrawSolidCircle(const b2Vec2 &center, float radius, const b2Vec2 &axis, const b2Color &color) {
     beginDraw();
     DrawCircleInternal(center,radius,color);
 
@@ -74,7 +75,7 @@ void DebugView::DrawSolidCircle(const b2Vec2 &center, float32 radius, const b2Ve
     endDraw();
 }
 
-void DebugView::DrawCircleInternal(const b2Vec2 &center, float32 radius, const b2Color &color)
+void DebugView::DrawCircleInternal(const b2Vec2 &center, float radius, const b2Color &color)
     {
         constexpr int circleSubdivisions = 24;
 
@@ -130,6 +131,8 @@ void DebugView::DrawCircleInternal(const b2Vec2 &center, float32 radius, const b
 
     void DebugView::DrawTransform(const b2Transform &xf) {}
 
+	void DebugView::DrawPoint(const b2Vec2& p, float size, const b2Color& color) {}
+
     void DebugView::beginDraw() {
         glm::mat4 transform = glm::ortho<float>(0.0f, static_cast<float>(screen_->virtualWidth()), static_cast<float>(screen_->virtualHeight()), 0.f, 0.f, 1.f) *
                 cam_->getViewMatrix();
@@ -148,30 +151,44 @@ void DebugView::DrawCircleInternal(const b2Vec2 &center, float32 radius, const b
     DebugView::DebugView(Screen *screen)
     {
         screen_ = screen;
-        shader_ = std::make_shared<Shader>("Basic");
+        shader_ = std::make_shared<Shader>("Basic", screen_->getGlslVersion());
+
+        shader_->addBindLocation("aPos");
+        shader_->addVertexInput("vec3 aPos");
+
         shader_->setVertexShader(R"EOF(
-        #version 330 core
-
-        layout (location = 0) in vec3 aPos;
-
         uniform mat4 transform;
 
         void main() {
             gl_Position = transform * vec4(aPos, 1.0);
         }
         )EOF");
-        shader_->setFragmentShader(R"EOF(
-        #version 330 core
-        out vec4 FragColor;
 
-        uniform vec4 Color;
+        if(shader_->getGlslsVersion() == ShaderVersion::V120)
+        {
+            shader_->setFragmentShader(R"EOF(
+            uniform vec4 Color;
 
-        void main() {
-            FragColor = Color;
+            void main() {
+                gl_FragColor = Color;
+            }
+            )EOF");
+            shader_->build();
+            CheckGlError();
         }
-        )EOF");
-        shader_->build();
-        CheckGlError();
+        else
+        {
+            shader_->addFragmentOutput("vec4 FragColor");
+            shader_->setFragmentShader(R"EOF(
+            uniform vec4 Color;
+
+            void main() {
+                FragColor = Color;
+            }
+            )EOF");
+            shader_->build();
+            CheckGlError();
+        }
     }
 
     void DebugView::setCamera(Camera *cam) {

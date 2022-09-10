@@ -6,10 +6,14 @@
 #define GAMEENGINE_OBJECTMANAGER_HPP
 
 
-#include <game-engine/internal/Factory.hpp>
+#include <game-engine/api.hpp>
 #include <game-engine/geComponent.hpp>
 #include <game-engine/Builder.hpp>
+#include <game-engine/internal/GameObject.hpp>
+#include <game-engine/internal/Factory.hpp>
 #include <memory>
+#include <string>
+#include <unordered_map>
 
 namespace GameEngine {
 
@@ -19,10 +23,10 @@ namespace Internal {
 
     class GameObject;
 
-    class ObjectManager
+    class PUBLICAPI ObjectManager
     {
         Factory<geComponent, ComponentBuilder, std::string> componentFactory_;
-        std::unordered_map<std::string, std::unique_ptr<GameObject>> prototypes_;
+        std::unordered_map<std::string, GameObject> prototypes_;
 
     public:
         ~ObjectManager();
@@ -31,7 +35,7 @@ namespace Internal {
 
         geComponentRef createComponent(const std::string &idType);
         geComponentRef createComponent(const std::string &idType, const YAML::Node &data);
-        std::shared_ptr<PropertySetBase> createProperties(const std::string &idType);
+        ComponentDataRef createProperties(const std::string &idType);
 
         void registerPrototype(const std::string &objectType, const std::string &filename);
 

@@ -5,11 +5,12 @@
 #ifndef SPACEINVADERS_KEYCODEMAP_HPP
 #define SPACEINVADERS_KEYCODEMAP_HPP
 
-#include <SDL2/SDL_keycode.h>
+#include <game-engine/api.hpp>
+#include <SDL_keycode.h>
 
 namespace GameEngine {
     namespace Internal {
-        class KeyMap {
+        class PUBLICAPI KeyMap {
             std::map<SDL_Keycode, KeyCode> map;
         public:
             KeyMap();

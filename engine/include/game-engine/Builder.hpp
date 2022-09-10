@@ -6,45 +6,48 @@
 #define SPACEINVADERS_BUILDER_HPP
 
 
+#include <game-engine/api.hpp>
 #include <game-engine/geData.hpp>
 #include <memory>
-#include <game-engine/properties/PropertySet.hpp>
+#include <game-engine/components/ComponentData.hpp>
+#include <game-engine/geComponent.hpp>
 
 namespace GameEngine {
 
-    class geComponent;
-    typedef std::shared_ptr<geComponent> geComponentRef;
-
-    class ComponentBuilder {
-    public:
-        virtual ~ComponentBuilder() = default;
-
-        virtual geComponentRef Create() = 0;
-        virtual geComponentRef Create(const geData &data) = 0;
-        virtual std::shared_ptr<PropertySetBase> createProperties() = 0;
-    };
-
+    class ComponentBuilder;
+    
     template<typename ComponentType>
-    class ComponentTBuilder : public ComponentBuilder {
+    static ComponentBuilder* CreateComponentBuilder(){
+        auto component = std::make_shared<ComponentType>();
+        component->setData(component->instantiateData());
+        return new ComponentBuilder(component);
+    }
+
+    class PUBLICAPI ComponentBuilder {
+        geComponentRef _component;
     public:
-        virtual geComponentRef Create() {
-            const std::shared_ptr<ComponentType> &instance = std::make_shared<ComponentType>();
-            PropertySetBase* properties = instance->getProperties();
-            properties->resetValuesToDefault(instance);
+        explicit ComponentBuilder(const geComponentRef &component) :
+            _component(component)
+            {};
+
+        geComponentRef Create() {
+            const geComponentRef &instance = _component->clone();
+            ComponentDataRef compData = instance->instantiateData();
+            instance->setData(compData);
             return instance;
         };
 
-        virtual geComponentRef Create(const geData &data) {
-            const std::shared_ptr<ComponentType> &instance = std::make_shared<ComponentType>();
-            instance->copyProperties<ComponentType>(data);
+        geComponentRef Create(const geData &data) {
+            const geComponentRef &instance = _component->clone();
+            ComponentDataRef compData = instance->instantiateData();
+            compData->fill(data);
+            instance->setData(compData);
             return instance;
         };
 
-        virtual std::shared_ptr<PropertySetBase> createProperties()
+        ComponentDataRef createProperties()
         {
-            const std::shared_ptr<ComponentType> &instance = std::make_shared<ComponentType>();
-            PropertySetBase* properties = instance->getProperties();
-            return std::shared_ptr<PropertySetBase>(properties);
+            return _component->instantiateData();
         };
     };
 }

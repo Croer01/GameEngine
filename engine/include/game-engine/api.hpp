@@ -1,18 +1,26 @@
 //
 // Created by adria on 21/01/2019.
 //
-
 #ifndef SPACEINVADERS_API_HPP
 #define SPACEINVADERS_API_HPP
 
-#ifdef WIN32
-#  define PUBLICAPI __declspec( dllexport )
+#if defined _WIN32 || defined __CYGWIN__
+#  ifdef GAMEENGINE_EXPORTS
+#    define PUBLICAPI __declspec(dllexport)
+#  else
+#    define PUBLICAPI __declspec(dllimport)
+#  endif
 #else
-#  define PUBLICAPI
+#  ifdef GAMEENGINE_EXPORTS
+#    define PUBLICAPI __attribute__ ((visibility("default")))
+#  else
+#    define PUBLICAPI
+#  endif
 #endif
 
+
+
 #include <cmath>
-#include <cassert>
 
 namespace GameEngine {
 
@@ -126,7 +134,7 @@ struct PUBLICAPI geColor{
     float g;
     float b;
     geColor() : r(0),g(0),b(0){};
-    geColor(float greyValue) : r(greyValue),g(greyValue),b(greyValue){};
+    explicit geColor(float greyValue) : r(greyValue),g(greyValue),b(greyValue){};
     geColor(float rValue, float gValue, float bValue) : r(rValue),g(gValue),b(bValue){};
 };
 

@@ -18,6 +18,11 @@ namespace GameEngine {
 namespace Internal {
     int GameObject::ID_GENERATOR = 0;
 
+
+    GameObject::GameObject() :
+            GameObject(""){
+    }
+
     GameObject::GameObject(const std::string &prototype) : Observer<GameObjectEvent>(),
             prototype_(prototype),
             id_(ID_GENERATOR++),
@@ -27,7 +32,6 @@ namespace Internal {
             position_(0.f, 0.f),
             rotation_(0.f),
             scale_(1.f,1.f),
-            destroyed_(false),
             initializating_(false),
             preInitializating_(false),
             game_(nullptr){
@@ -109,40 +113,41 @@ namespace Internal {
         if(it != children_.end())
             return;
 
-        child->parent(shared_from_this());
-        children_.push_back(child);
+        // parent already set the children_ relation
+        child->parent(this);
     }
 
-void GameObject::removeChild(const std::shared_ptr<GameObject>& child) {
-    auto it = std::find(children_.begin(),children_.end(),child);
-    if(it != children_.end())
-    {
-        unregisterObserver(it->get());
-        children_.erase(it);
+    void GameObject::removeChild(const std::shared_ptr<GameObject>& child) {
+        auto it = std::find(children_.begin(),children_.end(),child);
+        if(it != children_.end())
+        {
+            unregisterObserver(it->get());
+            children_.erase(it);
+        }
     }
-}
-
-void GameObject::parent(const geGameObjectRef &goParent) {
+    
+    void GameObject::parent(geGameObject *goParent) {
         if(auto parent = parent_.lock())
             parent->removeChild(shared_from_this());
         parent_.reset();
         //goParent could be null
         if(goParent) {
-            parent_ = std::dynamic_pointer_cast<GameObject>(goParent);
-            parent_.lock()->registerObserver(this);
+            auto gameObjectParent = dynamic_cast<GameObject*>(goParent);
+            gameObjectParent->registerObserver(this);
+            gameObjectParent->children_.push_back(shared_from_this());
+            parent_ = gameObjectParent->weak_from_this();
         }
         notify(GameObjectEvent::TransformChanged);
         notify(GameObjectEvent::ActiveChanged);
     }
 
-    std::weak_ptr<geGameObject> GameObject::parent() const
+    geGameObject *GameObject::parent() const
     {
-        return parent_;
+        auto parent = parent_.lock();
+        return parent ? parent.get() : nullptr;
     }
 
     GameObject::~GameObject(){
-        if(!destroyed_)
-            std::cerr << "You are trying to destroy a GameObject that still alive in current Scene" << std::endl;
         for (auto &component : components_) {
             component->gameObject(nullptr);
         }
@@ -209,6 +214,16 @@ void GameObject::parent(const geGameObjectRef &goParent) {
         }
     }
 
+    Vec2D GameObject::transformToLocalPosition(const Vec2D &position) const {
+        auto p = glm::inverse(getTransform()) * glm::vec4(position.x, position.y, 0.f, 1.f);
+        return Vec2D(p.x, p.y);
+    }
+
+    Vec2D GameObject::transformToWorldPosition(const Vec2D &position) const {
+        auto p = getTransform() * glm::vec4(position.x, position.y, 0.f, 1.f);
+        return Vec2D(p.x, p.y);
+    }
+
     float GameObject::rotation() const {
         float rotation = rotation_;
         if(auto parent = parent_.lock())
@@ -241,7 +256,7 @@ void GameObject::parent(const geGameObjectRef &goParent) {
         }
     }
 
-    glm::mat4 GameObject::getTransform() {
+    glm::mat4 GameObject::getTransform() const {
         if(auto parent = parent_.lock())
             return parent->getTransform() * transform_;
 
@@ -309,7 +324,7 @@ void GameObject::parent(const geGameObjectRef &goParent) {
         }
     }
 
-    void GameObject::onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) {
+    void GameObject::onEvent(const Subject<GameObjectEvent> &target, GameObjectEvent event) {
         // Recompute the local transform to apply correctly the changes from parent
         if(event == GameObjectEvent::TransformChanged)
             computeTransform();
@@ -336,14 +351,6 @@ GameEngine::geGameObjectRef GameObject::findChildByName(const std::string &name)
     Game *GameObject::game() const
     {
         return dynamic_cast<Game*>(game_);
-    }
-
-    bool GameObject::isDestroyed() const {
-        return destroyed_;
-    }
-
-    void GameObject::destroy() {
-        destroyed_ = true;
     }
 
 void GameObject::game(Game *value)

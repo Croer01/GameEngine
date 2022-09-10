@@ -3,11 +3,19 @@
 #include <game-engine/Game.hpp>
 #include <game-engine/geGameObject.hpp>
 #include <game-engine/components/SpriteComponent.hpp>
+#include <ostream>
 
 using namespace GameEngine;
+namespace GameEngine{
+    std::ostream& operator<<(std::ostream& os, const Vec2D& v) {
+      os.precision(5);
+      return os << "x = " << v.x << ", y = " << v.y;
+    }
+}
 
-class InitializeCheckComponent : public geComponentInstantiable<InitializeCheckComponent>
+class InitializeCheckComponent : public geComponent
 {
+    COMPONENT_BOILERPLATE(InitializeCheckComponent, ComponentData)
     bool initialized_;
 
     void init() override
@@ -23,25 +31,16 @@ public:
     {
         return initialized_;
     }
-
-    PropertySetBase *getProperties() const override
-    {
-        return nullptr;
-    }
 };
 
-class AddOnInitializeComponent : public geComponentInstantiable<AddOnInitializeComponent>
+class AddOnInitializeComponent : public geComponent
 {
+    COMPONENT_BOILERPLATE(AddOnInitializeComponent, ComponentData)
+
     void init() override
     {
         auto component = std::make_shared<InitializeCheckComponent>();
         gameObject()->addComponent(component);
-    }
-
-public:
-    PropertySetBase *getProperties() const override
-    {
-        return nullptr;
     }
 };
 
@@ -80,7 +79,7 @@ TEST(GameObject, positionChangedByParent)
     ASSERT_EQ(parent->position(), parentPos);
     ASSERT_EQ(child->position(), childPos);
 
-    child->parent(parent);
+    child->parent(parent.get());
     ASSERT_EQ(parent->position(), parentPos);
     ASSERT_EQ(child->position(), parentPos + childPos);
 
@@ -103,7 +102,7 @@ TEST(GameObject, rotationChangedByParent)
     ASSERT_EQ(parent->rotation(), parentRot);
     ASSERT_EQ(child->rotation(), childRot);
 
-    child->parent(parent);
+    child->parent(parent.get());
     ASSERT_EQ(parent->rotation(), parentRot);
     ASSERT_EQ(child->rotation(), parentRot + childRot);
 
@@ -126,7 +125,7 @@ TEST(GameObject, scaleChangedByParent)
     ASSERT_EQ(parent->scale(), parentScale);
     ASSERT_EQ(child->scale(), childScale);
 
-    child->parent(parent);
+    child->parent(parent.get());
     ASSERT_EQ(parent->scale(), parentScale);
     ASSERT_EQ(child->scale(), parentScale * childScale);
 
@@ -140,7 +139,7 @@ TEST(GameObject, loadGameObject)
     const std::string &prototype = "ObjectLoaded";
 
     geEnvironmentRef environment = geEnvironment::createInstance();
-    environment->addPrototype(prototype, "goLoadTest.yaml");
+    environment->addPrototype(prototype, "goLoadTest.prototype");
 
     GameRef game = Game::createInstance(environment);
 
@@ -171,7 +170,7 @@ TEST(SpriteComponent, load)
     const std::string &prototype = "ObjectWithSpriteLoaded";
 
     geEnvironmentRef environment = geEnvironment::createInstance();
-    environment->addPrototype(prototype, "spriteComponentLoadTest.yaml");
+    environment->addPrototype(prototype, "spriteComponentLoadTest.prototype");
 
     GameRef game = Game::createInstance(environment);
 
@@ -179,5 +178,57 @@ TEST(SpriteComponent, load)
     const std::weak_ptr<SpriteComponent> &component = gameObject->getComponent<SpriteComponent>();
     ASSERT_EQ(gameObject->name(), "loadedFromFile");
     ASSERT_TRUE(component.lock());
-    ASSERT_EQ(component.lock()->filepath(),"data/1x1white.png");
+    ASSERT_EQ(component.lock()->getFilePathPropertyValue("filePath"),"data/1x1white.png");
+}
+
+TEST(GameObject, transformPositionToLocal)
+{
+    GameRef game = Game::createInstance(geEnvironment::createInstance());
+    geGameObjectRef go = game->createObject("parent");
+    const Vec2D goPos = Vec2D(5, 5);
+    const Vec2D externalPos = Vec2D(2, 2);
+    go->position(goPos);
+
+    ASSERT_EQ(go->position(), goPos);
+    ASSERT_EQ( go->transformToLocalPosition(externalPos), Vec2D(-3,-3) );
+
+    go->rotation(90.f * /*one radian*/0.0174532925);
+    ASSERT_EQ(go->position(), goPos);
+    auto localPos = go->transformToLocalPosition(externalPos);
+    auto expectedPos = Vec2D(-3, 3);
+    ASSERT_FLOAT_EQ(localPos.x, expectedPos.x);
+    ASSERT_FLOAT_EQ(localPos.y, expectedPos.y);
+
+    go->rotation(-90.f * /*one radian*/0.0174532925);
+    ASSERT_EQ(go->position(), goPos);
+    localPos = go->transformToLocalPosition(externalPos);
+    expectedPos = Vec2D(3, -3);
+    ASSERT_FLOAT_EQ(localPos.x, expectedPos.x);
+    ASSERT_FLOAT_EQ(localPos.y, expectedPos.y);
+}
+
+TEST(GameObject, transformPositionToWorld)
+{
+    GameRef game = Game::createInstance(geEnvironment::createInstance());
+    geGameObjectRef go = game->createObject("parent");
+    const Vec2D goPos = Vec2D(5, 5);
+    const Vec2D localPos = Vec2D(2, 2);
+    go->position(goPos);
+
+    ASSERT_EQ(go->position(), goPos);
+    ASSERT_EQ( go->transformToWorldPosition(localPos), Vec2D(7, 7) );
+
+    go->rotation(90.f * /*one radian*/0.0174532925);
+    ASSERT_EQ(go->position(), goPos);
+    auto externalPos = go->transformToWorldPosition(localPos);
+    auto expectedPos = Vec2D(3, 7);
+    ASSERT_FLOAT_EQ(externalPos.x, expectedPos.x);
+    ASSERT_FLOAT_EQ(externalPos.y, expectedPos.y);
+
+    go->rotation(-90.f * /*one radian*/0.0174532925);
+    ASSERT_EQ(go->position(), goPos);
+    externalPos = go->transformToWorldPosition(localPos);
+    expectedPos = Vec2D(7, 3);
+    ASSERT_FLOAT_EQ(externalPos.x, expectedPos.x);
+    ASSERT_FLOAT_EQ(externalPos.y, expectedPos.y);
 }

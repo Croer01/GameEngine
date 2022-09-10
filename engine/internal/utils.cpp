@@ -6,8 +6,8 @@
 #include <string>
 #include <GL/glew.h>
 #include <iostream>
-#include <SDL2/SDL_error.h>
-#include <AL/al.h>
+#include <SDL_error.h>
+#include <al.h>
 #include <sstream>
 #include <game-engine/internal/utils.hpp>
 
@@ -35,7 +35,7 @@ namespace Internal {
         std::string error = SDL_GetError();
 
         if (!error.empty()) {
-            std::cerr << "SLD Error : " << error << std::endl;
+            std::cerr << "SDL Error : " << error << std::endl;
 
             if (line != -1)
                 std::cerr << "\nLine : " << line << std::endl;

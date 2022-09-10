@@ -8,20 +8,16 @@
 
 namespace GameEngine {
 void UIImageComponent::init() {
+    setFilePathPropertyObserver("filePath", [this](){ updateGraphicRef(); });
+    setPropertyObserver<geColor>("tint", [this](){ updateTint(); });
+    setEnumPropertyObserver("anchor", [this](){ updateAnchor(); });
+
     updateGraphicRef();
 }
 
 UIImageComponent::~UIImageComponent() {
     if(graphic_)
         graphicsEngine()->unregisterGraphic(graphic_);
-}
-
-void UIImageComponent::filepath(const std::string &path) {
-    filePath_ = path;
-}
-
-std::string UIImageComponent::filepath() const {
-    return filePath_;
 }
 
 void UIImageComponent::updateGraphicRef() {
@@ -31,82 +27,38 @@ void UIImageComponent::updateGraphicRef() {
     if(graphic_)
         graphicsEngine()->unregisterGraphic(graphic_);
 
-    if(filePath_.empty()){
+    std::string filePath = getFilePathPropertyValue("filePath");
+    if(filePath.empty()){
         graphicLoaded_.reset();
         graphic_.reset();
     } else {
-        graphicLoaded_ = std::make_shared<Internal::GraphicSprite>(filePath_);
+        graphicLoaded_ = std::make_shared<Internal::GraphicSprite>(filePath);
         graphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
         graphicsEngine()->unregisterGraphic(graphic_);
-        graphic_->setTintColor(color_);
-        anchor(anchor_);
+        updateTint();
+        updateAnchor();
         Vec2D calculatedUIScale = calculateVirtualScreenSize();
         Vec2D scale(calculatedUIScale.x / graphicLoaded_->getWidth(), calculatedUIScale.y / graphicLoaded_->getHeight());
         graphic_->setModelTransform(calculateVirtualScreenPos(), 0.f, scale);
-        graphic_->setActive(visible());
+        onVisibleChanged();
     }
 }
 
-std::string UIImageComponent::anchor() const {
-    return anchor_;
-}
-
-void UIImageComponent::anchor(const std::string &anchor) {
+void UIImageComponent::updateAnchor() {
     if(graphic_)
-        graphic_->setAnchor(Internal::parseStringToGraphicAnchor(anchor));
-
-    anchor_ = anchor;
+    {
+        std::string anchor = getEnumPropertyValue("anchor");
+        GameEngine::Internal::GraphicAnchor graphicAnchor = Internal::parseStringToGraphicAnchor(anchor);
+        graphic_->setAnchor(graphicAnchor);
+    }
 }
 
-void UIImageComponent::color(const geColor &value)
+void UIImageComponent::updateTint()
 {
-    color_ = value;
-    if(graphic_)
-        graphic_->setTintColor(color_);
-}
-
-geColor UIImageComponent::color() const
-{
-    return color_;
-}
-PropertySetBase *UIImageComponent::getProperties() const
-{
-    PropertySetBase *base = UIControlComponent::getProperties();
-    auto *properties = new PropertySet<UIImageComponent>(base);
-
-    properties->add(new PropertyFilePath<UIImageComponent>(
-            "filePath",
-            &UIImageComponent::filepath,
-            &UIImageComponent::filepath,
-            "",
-            FileType::IMAGE,
-            true));
-
-    properties->add(new Property<UIImageComponent, geColor>(
-            "tint",
-            &UIImageComponent::color,
-            &UIImageComponent::color,
-            geColor(1.f)));
-
-    properties->add(new PropertyEnum<UIImageComponent>(
-            "anchor",
-            &UIImageComponent::anchor,
-            &UIImageComponent::anchor,
-            "TOP_LEFT",
-            {
-                    "TOP_LEFT",
-                    "TOP_CENTER",
-                    "TOP_RIGHT",
-                    "MIDDLE_LEFT",
-                    "MIDDLE_CENTER",
-                    "MIDDLE_RIGHT",
-                    "BOTTOM_LEFT",
-                    "BOTTOM_CENTER",
-                    "BOTTOM_RIGHT"
-            }));
-
-    return properties;
-
+    if(graphic_){
+        geColor tint = getPropertyValue<geColor>("tint");
+        graphic_->setTintColor(tint);
+    }
 }
 
 geComponentRef UIImageComponent::instantiate() const
@@ -116,19 +68,24 @@ geComponentRef UIImageComponent::instantiate() const
 
 void UIImageComponent::onVisibleChanged()
 {
+    UIControlComponent::onVisibleChanged();
     if(graphic_)
-        graphic_->setActive(visible());
+    {
+        bool visible = getPropertyValue<bool>("visible");
+        graphic_->setActive(visible);
+    }
 }
 
 geComponentRef UIImageComponent::clone() const
 {
     geComponentRef cloned = instantiate();
-    auto compCloned = std::dynamic_pointer_cast<UIImageComponent>(cloned);
-    auto other = shared_from_this();
-    auto thisRef = std::dynamic_pointer_cast<const UIImageComponent>(other);
-    compCloned->copyProperties<UIImageComponent>(thisRef);
-
+    cloned->setData(getData()->template clone<UIImageComponentData>());
     return cloned;
+}
+
+ComponentDataRef UIImageComponent::instantiateData() const
+{
+    return std::make_shared<UIImageComponentData>();
 }
 
 }

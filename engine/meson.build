@@ -1,0 +1,172 @@
+
+gameengine_inc = include_directories('include')
+
+gameengine_hdrs = [
+  'include/game-engine/api.hpp',
+  'include/game-engine/Builder.hpp',
+  'include/game-engine/Command.hpp',
+  'include/game-engine/GlobalData.hpp',
+  'include/game-engine/components/AudioComponent.hpp',
+  'include/game-engine/components/CarColliderComponent.hpp',
+  'include/game-engine/components/ColliderComponent.hpp',
+  'include/game-engine/components/ComponentData.hpp',
+  'include/game-engine/components/GeometryComponent.hpp',
+  'include/game-engine/components/ParticleEmitterComponent.hpp',
+  'include/game-engine/components/ParticlesPropertiesComponent.hpp',
+  'include/game-engine/components/SpawnerComponent.hpp',
+  'include/game-engine/components/SpriteAnimatedComponent.hpp',
+  'include/game-engine/components/SpriteComponent.hpp',
+  'include/game-engine/components/TextComponent.hpp',
+  'include/game-engine/components/ui/UIButtonComponent.hpp',
+  'include/game-engine/components/ui/UIControlComponent.hpp',
+  'include/game-engine/components/ui/UIImageComponent.hpp',
+  'include/game-engine/components/ui/UIPanelComponent.hpp',
+  'include/game-engine/components/ui/UITextComponent.hpp',
+  'include/game-engine/components/ui/UITextInputComponent.hpp',
+  'include/game-engine/events/Observer.hpp',
+  'include/game-engine/events/Subject.hpp',
+  'include/game-engine/FileType.hpp',
+  'include/game-engine/FiniteStateMachine.hpp',
+  'include/game-engine/Game.hpp',
+  'include/game-engine/geAudio.hpp',
+  'include/game-engine/geCamera.hpp',
+  'include/game-engine/geComponent.hpp',
+  'include/game-engine/geData.hpp',
+  'include/game-engine/geEnvironment.hpp',
+  'include/game-engine/geGameObject.hpp',
+  'include/game-engine/geIO.hpp',
+  'include/game-engine/geScreen.hpp',
+  'include/game-engine/InputManager.hpp',
+  'include/game-engine/internal/audio/AudioBuffer.hpp',
+  'include/game-engine/internal/audio/AudioEngine.hpp',
+  'include/game-engine/internal/audio/AudioSource.hpp',
+  'include/game-engine/internal/Data.hpp',
+  'include/game-engine/internal/DelayedSetter.hpp',
+  'include/game-engine/internal/Environment.hpp',
+  'include/game-engine/internal/Factory.hpp',
+  'include/game-engine/internal/GameObject.hpp',
+  'include/game-engine/internal/graphics/Camera.hpp',
+  'include/game-engine/internal/graphics/FBO.hpp',
+  'include/game-engine/internal/graphics/font/Font.hpp',
+  'include/game-engine/internal/graphics/font/FontManager.hpp',
+  'include/game-engine/internal/graphics/font/ProggyClean.hpp',
+  'include/game-engine/internal/graphics/font/Text.hpp',
+  'include/game-engine/internal/graphics/Graphic.hpp',
+  'include/game-engine/internal/graphics/GraphicGeometry.hpp',
+  'include/game-engine/internal/graphics/GraphicHolder.hpp',
+  'include/game-engine/internal/graphics/GraphicsEngine.hpp',
+  'include/game-engine/internal/graphics/GraphicSprite.hpp',
+  'include/game-engine/internal/graphics/MeshData.hpp',
+  'include/game-engine/internal/graphics/Particle.hpp',
+  'include/game-engine/internal/graphics/Shader.hpp',
+  'include/game-engine/internal/graphics/ShaderVersion.hpp',
+  'include/game-engine/internal/KeyCodeMap.hpp',
+  'include/game-engine/internal/ObjectManager.hpp',
+  'include/game-engine/internal/physics/Collider.hpp',
+  'include/game-engine/internal/physics/DebugView.hpp',
+  'include/game-engine/internal/physics/PhysicsEngine.hpp',
+  'include/game-engine/internal/Scene.hpp',
+  'include/game-engine/internal/SceneManager.hpp',
+  'include/game-engine/internal/Screen.hpp',
+  'include/game-engine/internal/TimeManager.hpp',
+  'include/game-engine/internal/utils.hpp',
+  'include/game-engine/internal/WritableData.hpp',
+  'include/game-engine/internal/yamlConverters.hpp',
+  'include/game-engine/KeyCodes.hpp',
+  'include/game-engine/pathfinding/Agent.hpp',
+  'include/game-engine/pathfinding/AStarPathfinding.hpp',
+  'include/game-engine/pathfinding/Cell.hpp',
+  'include/game-engine/pathfinding/Path.hpp',
+  'include/game-engine/properties/Property.hpp',
+  'include/game-engine/Random.hpp',
+  'include/game-engine/Range.hpp'
+]
+
+# Workaround from https://github.com/mesonbuild/meson/issues/14
+# This probablye will be changed by install_headers when this PR will be integrated:
+# https://github.com/mesonbuild/meson/pull/10299
+foreach file : gameengine_hdrs
+    file_path = file.split('/')
+
+    # Extract folder
+    folder_path = []
+    foreach path : file_path
+        if path != file_path[-1] and path != file_path[0]
+            folder_path += path
+        endif
+    endforeach
+
+    folder = join_paths(folder_path)
+    install_headers(file, subdir: folder)
+endforeach
+
+
+
+gameengine_srcs = files([
+  'Game.cpp',
+  'geAudio.cpp',
+  'geComponent.cpp',
+  'geEnvironment.cpp',
+  'GlobalData.cpp',
+  'geIO.cpp',
+  'InputManager.cpp',
+  'Random.cpp',
+  'Range.cpp',
+  'components/AudioComponent.cpp',
+  'components/CarColliderComponent.cpp',
+  'components/ColliderComponent.cpp',
+  'components/GeometryComponent.cpp',
+  'components/ParticleEmitterComponent.cpp',
+  'components/ParticlesPropertiesComponent.cpp',
+  'components/SpawnerComponent.cpp',
+  'components/SpriteAnimatedComponent.cpp',
+  'components/SpriteComponent.cpp',
+  'components/TextComponent.cpp',
+  'components/ui/UIButtonComponent.cpp',
+  'components/ui/UIControlComponent.cpp',
+  'components/ui/UIImageComponent.cpp',
+  'components/ui/UIPanelComponent.cpp',
+  'components/ui/UITextComponent.cpp',
+  'components/ui/UITextInputComponent.cpp',
+  'internal/audio/AudioBuffer.cpp',
+  'internal/audio/AudioEngine.cpp',
+  'internal/audio/AudioSource.cpp',
+  'internal/Data.cpp',
+  'internal/Environment.cpp',
+  'internal/GameObject.cpp',
+  'internal/graphics/Camera.cpp',
+  'internal/graphics/FBO.cpp',
+  'internal/graphics/font/Font.cpp',
+  'internal/graphics/font/FontManager.cpp',
+  'internal/graphics/font/Text.cpp',
+  'internal/graphics/GraphicGeometry.cpp',
+  'internal/graphics/GraphicHolder.cpp',
+  'internal/graphics/GraphicsEngine.cpp',
+  'internal/graphics/GraphicSprite.cpp',
+  'internal/graphics/MeshData.cpp',
+  'internal/graphics/Particle.cpp',
+  'internal/graphics/Shader.cpp',
+  'internal/ObjectManager.cpp',
+  'internal/pathfinding/Agent.cpp',
+  'internal/pathfinding/AStarPathfinding.cpp',
+  'internal/pathfinding/Cell.cpp',
+  'internal/pathfinding/Path.cpp',
+  'internal/physics/Collider.cpp',
+  'internal/physics/DebugView.cpp',
+  'internal/physics/PhysicsEngine.cpp',
+  'internal/Scene.cpp',
+  'internal/SceneManager.cpp',
+  'internal/Screen.cpp',
+  'internal/TimeManager.cpp',
+  'internal/utils.cpp',
+  'internal/WritableData.cpp'
+])
+
+gameengine_lib = shared_library('GameEngine',
+  gameengine_srcs,
+  include_directories: gameengine_inc,
+  dependencies: deps,
+  cpp_args : lib_args,
+  gnu_symbol_visibility : 'hidden',
+  install: true
+)

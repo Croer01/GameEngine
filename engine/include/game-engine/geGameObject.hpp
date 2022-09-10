@@ -6,16 +6,17 @@
 #define SPACEINVADERS_GEGAMEOBJECT_HPP
 
 #include <game-engine/api.hpp>
+#include <game-engine/events/Subject.hpp>
+#include <game-engine/geComponent.hpp>
 #include <memory>
 #include <vector>
 #include <string>
-#include <game-engine/events/Subject.hpp>
+#include <stdexcept>
 
 namespace GameEngine {
 
-    class geComponent;
-    class UIControlComponent;
     class Game;
+    class UIControlComponent;
 
 enum class GameObjectEvent{
         TransformChanged,
@@ -38,6 +39,8 @@ enum class GameObjectEvent{
         virtual Vec2D position() const = 0;
         virtual Vec2D localPosition() const = 0;
         virtual void position(const Vec2D &position) = 0;
+        virtual Vec2D transformToLocalPosition(const Vec2D &position) const = 0;
+        virtual Vec2D transformToWorldPosition(const Vec2D &position) const = 0;
 
         virtual float rotation() const = 0;
         virtual void rotation(float rotation) = 0;
@@ -48,8 +51,8 @@ enum class GameObjectEvent{
         virtual bool active() const = 0;
         virtual void active(bool isActive) = 0;
 
-        virtual void parent(const geGameObjectRef &gameObject) = 0;
-        virtual std::weak_ptr<geGameObject> parent() const = 0;
+        virtual void parent(geGameObject *gameObject) = 0;
+        virtual geGameObject *parent() const = 0;
 
         virtual void addComponent(const std::shared_ptr<geComponent> &component) = 0;
 
@@ -57,24 +60,33 @@ enum class GameObjectEvent{
 
         virtual Game *game() const = 0;
 
-        virtual bool isDestroyed() const = 0;
-        virtual void destroy() = 0;
+        std::vector<std::weak_ptr<geComponent>> getAllComponents() const
+        {
+            std::vector<std::weak_ptr<geComponent>> allComponents;
+            allComponents.reserve(components_.size());
+
+            for(const auto& comp : components_)
+            {
+                allComponents.emplace_back(comp);
+            }
+
+            return allComponents;
+        }
 
         template <typename T>
         std::weak_ptr<T> getUIComponent(const std::string &controlId) const {
-            if(!std::is_base_of<UIControlComponent,T>::value)
-                throw std::invalid_argument("the type of the component doesn't inherit from UIControlComponent");
-
             for(auto component : components_){
-                if(auto desiredUIComponent = std::dynamic_pointer_cast<UIControlComponent>(component))
+                if(std::dynamic_pointer_cast<UIControlComponent>(component))
                 {
-                    if(controlId == desiredUIComponent->id())
+                    if(controlId == component->getPropertyValue<std::string>("id"))
                     {
                         if (auto desiredComponent = std::dynamic_pointer_cast<T>(component))
                             return desiredComponent;
                     }
                 }
             }
+
+            throw std::invalid_argument("the type of the component doesn't inherit from UIControlComponent");
 
             return std::shared_ptr<T>();
         }
@@ -96,9 +108,7 @@ enum class GameObjectEvent{
         }
     protected:
         std::vector<std::shared_ptr<geComponent>> components_;
-    private:
-    virtual void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) = 0;
-    };
 
+    };
 }
 #endif //SPACEINVADERS_GEGAMEOBJECT_HPP

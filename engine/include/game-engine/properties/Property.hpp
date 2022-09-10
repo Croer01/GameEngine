@@ -2,15 +2,17 @@
 // Created by adria on 02/02/2019.
 //
 
-#ifndef SPACEINVADERS_PROPERTY_HPP
-#define SPACEINVADERS_PROPERTY_HPP
+#ifndef GAMEENGINE_PROPERTY_HPP
+#define GAMEENGINE_PROPERTY_HPP
 
 #include <game-engine/api.hpp>
 #include <string>
 #include <vector>
 #include <memory>
 #include <stdexcept>
+#include <cassert>
 #include <game-engine/FileType.hpp>
+#include <game-engine/events/Subject.hpp>
 
 namespace GameEngine {
 
@@ -108,65 +110,64 @@ public:
     };
 
     virtual void getDefault(void *defaultValue) const = 0;
+
+    virtual void resetValueToDefault() = 0;
 };
 
-template<typename Class>
-class PUBLICAPI PropertyTBase : public PropertyBase
+class PUBLICAPI PropertyObserver : public Observer<>
 {
+    std::function<void()> callback_;
+    Subject<> *target_;
 public:
-    explicit PropertyTBase(const std::string &name) : PropertyBase(name, false)
-    {};
+    explicit PropertyObserver(Subject<> *property, std::function<void()> callback)
+        : target_(property), callback_(std::move(callback))
+    {
+        assert(target_);
+        assert(callback_);
+        target_->registerObserver(this);
+    }
 
-    PropertyTBase(const std::string &name, bool required) : PropertyBase(name, required)
-    {};
-
-    virtual ~PropertyTBase()
-    {};
-
-    virtual void copy(const std::shared_ptr<const Class> &original, const std::shared_ptr<Class> &target) const = 0;
-
-    virtual void getDefault(void *defaultValue) const = 0;
-
-    virtual void resetValueToDefault(const std::shared_ptr<Class> &target) = 0;
-};
-
-template<typename Class, typename MemberType>
-class PUBLICAPI Property : public PropertyTBase<Class>
-{
-public:
-    typedef MemberType (Class::*Getter)() const;
-    typedef void (Class::*Setter)(const MemberType &);
+    ~PropertyObserver() override
+    {
+        if(target_!= nullptr)
+            target_->unregisterObserver(this);
+    }
 private:
-    Getter getter_;
-    Setter setter_;
+    void onEvent(const Subject<> &target) override
+    {
+        assert(callback_);
+        callback_();
+    }
+};
+
+template<typename MemberType>
+class PUBLICAPI Property : public PropertyBase, public Subject<>
+{
+    std::unique_ptr<MemberType> value_;
     MemberType default_;
+    std::unique_ptr<PropertyObserver> observer_;
 public:
-    Property(const std::string &name, Getter getter, Setter setter, MemberType defaultValue) :
-        Property(name, getter, setter, defaultValue, false)
+    Property(const std::string &name, MemberType defaultValue) :
+        Property(name, defaultValue, false)
     {
     };
 
-    Property(const std::string &name, Getter getter, Setter setter, MemberType defaultValue, bool required) :
-        PropertyTBase<Class>(name, required),
-        getter_(getter),
-        setter_(setter)
+    Property(const std::string &name, MemberType defaultValue, bool required) :
+        PropertyBase(name, required)
     {
         default_ = defaultValue;
         type_ = PropertyTypeDeductive<MemberType>::type;
+        resetValueToDefault();
     };
 
     virtual ~Property()
     {
-        getter_ = nullptr;
-        setter_ = nullptr;
+        value_.reset();
     };
 
-    virtual MemberType get(const Class *target) const
+    virtual MemberType& get() const
     {
-        if (getter_ == nullptr)
-            throw std::runtime_error("There is not a getter registered to use in property " + this->name_);
-
-        return (target->*getter_)();
+        return *value_.get();
     };
 
     MemberType defaultValue() const
@@ -174,53 +175,47 @@ public:
         return default_;
     };
 
-    virtual void set(Class *target, MemberType value) const
+    virtual void set(MemberType value)
     {
-        if (setter_ == nullptr)
-            throw std::runtime_error("There is not a setter registered to use in property " + this->name_);
-        (target->*setter_)(value);
+        value_ = std::make_unique<MemberType>(value);
+        notify();
     };
 
-    virtual void copy(const std::shared_ptr<const Class> &original, const std::shared_ptr<Class> &target) const
+    void copyFrom(const Property<MemberType> &original)
     {
-        set(target.get(), get(original.get()));
+        set(original.get());
     }
 
     virtual void getDefault(void *defaultValue) const
     {
-        MemberType *defaultValueConverted = static_cast<MemberType*>(defaultValue);
+        auto defaultValueConverted = static_cast<MemberType*>(defaultValue);
         *defaultValueConverted = default_;
     }
 
-    virtual void resetValueToDefault(const std::shared_ptr<Class> &target)
+    virtual void resetValueToDefault()
     {
-       set(target.get(), default_);
+        set(default_);
+    }
+
+    void registerObserver(const std::function<void()> &observer)
+    {
+        observer_ = std::make_unique<PropertyObserver>(this, observer);
     }
 };
 
-
-class PUBLICAPI PropertyFilePathBase
-{
-public:
-    virtual ~PropertyFilePathBase() {};
-    virtual FileType getFileType() const = 0;
-};
-
-
-template<typename Class>
-class PUBLICAPI PropertyFilePath : public Property<Class, std::string>, public PropertyFilePathBase
+class PUBLICAPI PropertyFilePath : public Property<std::string>
 {
     FileType fileType_;
 public:
-    PropertyFilePath(const std::string &name, typename Property<Class, std::string>::Getter getter, typename Property<Class, std::string>::Setter setter, std::string defaultValue, const FileType &fileType) :
-            Property(name, getter, setter, defaultValue),
+    PropertyFilePath(const std::string &name, std::string defaultValue, const FileType &fileType) :
+            Property<std::string>(name, defaultValue),
             fileType_(fileType)
     {
         type_ = PropertyTypes::FILEPATH;
     };
 
-    PropertyFilePath(const std::string &name, typename Property<Class, std::string>::Getter getter, typename Property<Class, std::string>::Setter setter, std::string defaultValue, const FileType &fileType, bool required) :
-            Property(name, getter, setter, defaultValue, required),
+    PropertyFilePath(const std::string &name, std::string defaultValue, const FileType &fileType, bool required) :
+            Property<std::string>(name, defaultValue, required),
             fileType_(fileType)
     {
         type_ = PropertyTypes::FILEPATH;
@@ -228,32 +223,24 @@ public:
 
     virtual ~PropertyFilePath() {};
 
-    virtual FileType getFileType() const {
+    FileType getFileType() const {
         return fileType_;
     }
 };
 
-class PUBLICAPI PropertyEnumBase
-{
-public:
-    virtual ~PropertyEnumBase() {};
-    virtual std::vector<std::string> getAllowedValues() const = 0;
-};
-
-template<typename Class>
-class PUBLICAPI PropertyEnum : public Property<Class, std::string>, public PropertyEnumBase
+class PUBLICAPI PropertyEnum : public Property<std::string>
 {
     std::vector<std::string> allowedValues_;
 public:
-    PropertyEnum(const std::string &name, typename Property<Class, std::string>::Getter getter, typename Property<Class, std::string>::Setter setter, std::string defaultValue, const std::vector<std::string> &allowedValues) :
-            Property(name, getter, setter, defaultValue),
+    PropertyEnum(const std::string &name, std::string defaultValue, const std::vector<std::string> &allowedValues) :
+            Property<std::string>(name, defaultValue),
             allowedValues_(allowedValues)
     {
         type_ = PropertyTypes::ENUM;
     };
 
-    PropertyEnum(const std::string &name, typename Property<Class, std::string>::Getter getter, typename Property<Class, std::string>::Setter setter, std::string defaultValue, const std::vector<std::string> &allowedValues, bool required) :
-            Property(name, getter, setter, defaultValue, required),
+    PropertyEnum(const std::string &name, std::string defaultValue, const std::vector<std::string> &allowedValues, bool required) :
+            Property<std::string>(name, defaultValue, required),
             allowedValues_(allowedValues)
     {
         type_ = PropertyTypes::ENUM;
@@ -261,19 +248,19 @@ public:
 
     virtual ~PropertyEnum() {};
 
-    virtual std::vector<std::string> getAllowedValues() const {
+    std::vector<std::string> getAllowedValues() const {
         return allowedValues_;
     }
 
-    void set(Class *target, std::string value) const override
+    void set(std::string value) override
     {
         auto it = std::find(allowedValues_.begin(), allowedValues_.end(), value);
         if(it == allowedValues_.end())
             throw std::invalid_argument("value " + value + " is not allowed in property " + name_);
 
-        Property::set(target, value);
+        Property<std::string>::set(value);
     }
 };
 }
 
-#endif //SPACEINVADERS_PROPERTY_HPP
+#endif //GAMEENGINE_PROPERTY_HPP

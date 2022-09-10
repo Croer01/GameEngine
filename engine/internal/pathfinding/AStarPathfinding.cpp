@@ -4,10 +4,9 @@
 
 #include <stdexcept>
 #include <cassert>
-#include <game-engine/internal/pathfinding/AStarPathfinding.hpp>
+#include <game-engine/pathfinding/AStarPathfinding.hpp>
 
 namespace GameEngine {
-namespace Internal {
 
 AStarPathfinding::AStarPathfinding(int width, int height) :
     width_(width), height_(height)
@@ -153,14 +152,12 @@ void AStarPathfinding::addAgent(const AgentRef &agent)
     agents_.push_back(agent);
 }
 
-void AStarPathfinding::onEvent(const Subject<AgentEvents> &target, const AgentEvents &event, void *args)
+void AStarPathfinding::onEvent(const Subject<AgentEvents, const Vec2D &> &target, AgentEvents event, const Vec2D &prevPos)
 {
     const Agent &agent = dynamic_cast<const Agent &>(target);
-    Vec2D prevPos = *(Vec2D*)args;
 
     grid_[prevPos.y][prevPos.x]->blocked = false;
     grid_[agent.getPosition().y][agent.getPosition().x]->blocked = true;
 }
 
-}
 }

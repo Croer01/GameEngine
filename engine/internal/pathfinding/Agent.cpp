@@ -2,19 +2,24 @@
 // Created by adria on 22/04/2020.
 //
 
-#include <game-engine/internal/pathfinding/Agent.hpp>
+#include <game-engine/pathfinding/Agent.hpp>
 
-void GameEngine::Internal::Agent::setPosition(const GameEngine::Vec2D &position)
+namespace GameEngine
 {
-if(position_ != position)
+
+void Agent::setPosition(const GameEngine::Vec2D &position)
 {
-    Vec2D prevPosition = position_;
-    position_ = position;
-    notify(AgentEvents::MOVING, &prevPosition);
-}
+    if(position_ != position)
+    {
+        Vec2D prevPosition = position_;
+        position_ = position;
+        notify(AgentEvents::MOVING, prevPosition);
+    }
 }
 
-GameEngine::Vec2D GameEngine::Internal::Agent::getPosition() const
+GameEngine::Vec2D Agent::getPosition() const
 {
     return position_;
+}
+
 }

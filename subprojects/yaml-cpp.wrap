@@ -1,0 +1,10 @@
+[wrap-file]
+directory = yaml-cpp-yaml-cpp-0.6.3
+source_url = https://github.com/jbeder/yaml-cpp/archive/refs/tags/yaml-cpp-0.6.3.zip
+source_filename = yaml-cpp-0.6.3.zip
+source_hash = 7c0ddc08a99655508ae110ba48726c67e4a10b290c214aed866ce4bbcbe3e84c
+# this reference to the directory "subprojects/packagefiles/yaml-cpp"
+patch_directory = yaml-cpp
+
+[provide]
+yamlcpp = yamlcpp_dep

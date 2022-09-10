@@ -13,8 +13,9 @@ namespace GameEngine
 
 void UIPanelComponent::init()
 {
+    setPropertyObserver<geColor>("background",[this](){ onUpdateBackground(); });
     createBackgroundGraphic();
-    backgroundGraphic_->setTintColor(background_);
+    onUpdateBackground();
 }
 void UIPanelComponent::createBackgroundGraphic()
 {
@@ -32,25 +33,22 @@ void UIPanelComponent::createBackgroundGraphic()
     backgroundGraphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
     backgroundGraphic_->setModelTransform(calculateVirtualScreenPos(), 0.f, calculateVirtualScreenSize());
     graphicsEngine()->registerGraphic(backgroundGraphic_);
-    backgroundGraphic_->setActive(visible());
+    onVisibleChanged();
 }
 
-void UIPanelComponent::background(const geColor &color)
+void UIPanelComponent::onUpdateBackground()
 {
-    background_ = color;
     if(backgroundGraphic_)
-        backgroundGraphic_->setTintColor(background_);
-}
-
-geColor UIPanelComponent::background() const
-{
-    return background_;
+        backgroundGraphic_->setTintColor(getPropertyValue<geColor>("background"));
 }
 
 void UIPanelComponent::onVisibleChanged()
 {
+    UIControlComponent::onVisibleChanged();
     if(backgroundGraphic_)
-        backgroundGraphic_->setActive(visible());
+    {
+        backgroundGraphic_->setActive(getPropertyValue<bool>("visible"));
+    }
 }
 
 UIPanelComponent::~UIPanelComponent()
@@ -67,26 +65,13 @@ geComponentRef UIPanelComponent::instantiate() const
 geComponentRef UIPanelComponent::clone() const
 {
     geComponentRef cloned = instantiate();
-    auto compCloned = std::dynamic_pointer_cast<UIPanelComponent>(cloned);
-    auto other = shared_from_this();
-    auto thisRef = std::dynamic_pointer_cast<const UIPanelComponent>(other);
-    compCloned->copyProperties<UIPanelComponent>(thisRef);
-
+    cloned->setData(getData()->template clone<UIPanelComponentData>());
     return cloned;
 }
 
-PropertySetBase *UIPanelComponent::getProperties() const
+ComponentDataRef UIPanelComponent::instantiateData() const
 {
-    PropertySetBase *base = UIControlComponent::getProperties();
-    auto *properties = new PropertySet<UIPanelComponent>(base);
-
-    properties->add(new Property<UIPanelComponent, geColor>(
-            "background",
-            &UIPanelComponent::background,
-            &UIPanelComponent::background,
-            geColor(1.f)
-    ));
-
-    return properties;
+    return std::make_shared<UIPanelComponentData>();
 }
+
 }

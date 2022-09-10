@@ -32,22 +32,58 @@ namespace {
 }
 
     void ColliderComponent::init() {
+
+        setPropertyObserver<Vec2D>("extends", [this](){ updateColliderSize(); });
+        setEnumPropertyObserver("colliderShape", [this](){
+            if(collider_)
+                collider_->setShape(stringToColliderShape(getEnumPropertyValue("colliderShape")));
+        });
+        setEnumPropertyObserver("colliderType", [this](){
+            if(collider_)
+                collider_->setType(stringToColliderType(getEnumPropertyValue("colliderType")));
+            typeChanged_ = true;
+        });
+        setPropertyObserver<std::string>("category", [this](){
+            if(collider_)
+                collider_->setCategory(getPropertyValue<std::string>("category"));
+        });
+        setPropertyObserver<bool>("isSensor", [this](){
+            if(collider_)
+                collider_->setSensor(getPropertyValue<bool>("isSensor"));
+        });
+        setPropertyObserver<float>("gravityScale", [this](){
+            if(collider_)
+                collider_->setGravityScale(getPropertyValue<float>("gravityScale"));
+        });
+        setPropertyObserver<float>("mass", [this](){
+            if(collider_)
+                collider_->setMass(getPropertyValue<float>("mass"));
+        });
+        setPropertyObserver<bool>("fixedRotation", [this](){
+            if(collider_)
+                collider_->setFixedRotation(getPropertyValue<bool>("fixedRotation"));
+        });
+
+
         physicsEngine_ = gameObject()->game()->physicsEngine();
         if(auto sprite = gameObject()->getComponent<SpriteComponent>().lock()) {
             size_ = GameEngine::Vec2D(sprite->getWidth(), sprite->getHeight());
-            glm::vec2 offset = Internal::parseGraphicAnchorToVec2D(Internal::parseStringToGraphicAnchor(sprite->anchor()));
+            std::string anchor = sprite->getPropertyValue<std::string>("anchor");
+            glm::vec2 offset = Internal::parseGraphicAnchorToVec2D(Internal::parseStringToGraphicAnchor(anchor));
             offsetFromRender_ = Vec2D(offset.x, offset.y) * size_;
         }
 
         if(auto spriteAnimated = gameObject()->getComponent<SpriteAnimatedComponent>().lock()){
             size_ = GameEngine::Vec2D(spriteAnimated->getWidth(), spriteAnimated->getHeight());
-            glm::vec2 offset = Internal::parseGraphicAnchorToVec2D(Internal::parseStringToGraphicAnchor(spriteAnimated->anchor()));
+            std::string anchor = spriteAnimated->getPropertyValue<std::string>("anchor");
+            glm::vec2 offset = Internal::parseGraphicAnchorToVec2D(Internal::parseStringToGraphicAnchor(anchor));
             offsetFromRender_ = Vec2D(offset.x, offset.y) * size_;
         }
 
         if(auto geometry = gameObject()->getComponent<GeometryComponent>().lock()){
             size_ = GameEngine::Vec2D(geometry->getWidth(), geometry->getHeight());
-            glm::vec2 offset = Internal::parseGraphicAnchorToVec2D(Internal::parseStringToGraphicAnchor(geometry->anchor()));
+            std::string anchor = geometry->getPropertyValue<std::string>("anchor");
+            glm::vec2 offset = Internal::parseGraphicAnchorToVec2D(Internal::parseStringToGraphicAnchor(anchor));
             offsetFromRender_ = Vec2D(offset.x, offset.y) * size_;
         }
 
@@ -71,7 +107,7 @@ namespace {
         {
             Vec2D position = collider_->getPosition();
             float rotation = collider_->getRotation();
-            if(auto parent = gameObject()->parent().lock())
+            if(auto parent = gameObject()->parent())
             {
                 position -= parent->position();
                 rotation -= parent->rotation();
@@ -98,7 +134,7 @@ namespace {
         onSensorExitCallback_ = callback;
     }
 
-void ColliderComponent::onEvent(const Subject<Internal::ColliderEvent> &target, const Internal::ColliderEvent &event, void *args) {
+void ColliderComponent::onEvent(const Subject<Internal::ColliderEvent, Internal::Collider*> &target, Internal::ColliderEvent event, Internal::Collider *args) {
         auto *collider = static_cast<Internal::Collider *>(args);
         if(auto component = collider->getComponent().lock())
         {
@@ -113,7 +149,7 @@ void ColliderComponent::onEvent(const Subject<Internal::ColliderEvent> &target, 
         }
     }
 
-    void ColliderComponent::onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) {
+    void ColliderComponent::onEvent(const Subject<GameObjectEvent> &target, GameObjectEvent event) {
         if(event == GameObjectEvent::PositionChanged){
             collider_->setPosition(convertWorldToPhysicsPos(gameObject()->position()));
         }
@@ -156,7 +192,7 @@ void ColliderComponent::onEvent(const Subject<Internal::ColliderEvent> &target, 
     }
 
     Vec2D ColliderComponent::convertWorldToPhysicsPos(const Vec2D &worldPos) const {
-        Vec2D result = worldPos + offset_ - offsetFromRender_;
+        Vec2D result = worldPos + getPropertyValue<Vec2D>("offset") - offsetFromRender_;
 
         Vec2D scale = gameObject()? gameObject()->scale() : Vec2D(1.f, 1.f);
         result += (size_ * scale) / 2.f;
@@ -165,7 +201,7 @@ void ColliderComponent::onEvent(const Subject<Internal::ColliderEvent> &target, 
     }
 
     Vec2D ColliderComponent::convertPhysicsToWorldPos(const Vec2D &physicsPos) const {
-        Vec2D result = physicsPos - offset_ + offsetFromRender_;
+        Vec2D result = physicsPos - getPropertyValue<Vec2D>("offset") + offsetFromRender_;
 
         Vec2D scale = gameObject()? gameObject()->scale() : Vec2D(1.f, 1.f);
         result -= (size_ * scale) / 2.f;
@@ -180,53 +216,6 @@ void ColliderComponent::onEvent(const Subject<Internal::ColliderEvent> &target, 
             newGameObject->registerObserver(this);
     }
 
-    void ColliderComponent::extends(const Vec2D &extends) {
-        extends_ = extends;
-        updateColliderSize();
-    }
-
-    Vec2D ColliderComponent::extends() const {
-        return extends_;
-    }
-
-    void ColliderComponent::offset(const Vec2D &offsetValue) {
-        offset_ = offsetValue;
-    }
-
-    Vec2D ColliderComponent::offset() const {
-        return offset_;
-    }
-    void ColliderComponent::shape(const std::string &colliderShape) {
-        colliderShape_ = colliderShape;
-        if(collider_)
-            collider_->setShape(stringToColliderShape(colliderShape));
-    }
-
-    std::string ColliderComponent::shape() const {
-        return colliderShape_;
-    }
-
-    void ColliderComponent::type(const std::string &colliderType) {
-        colliderType_ = colliderType;
-        if(collider_)
-            collider_->setType(stringToColliderType(colliderType));
-        typeChanged_ = true;
-    }
-
-    std::string ColliderComponent::type() const {
-        return colliderType_;
-    }
-
-    void ColliderComponent::category(const std::string &colliderCategory) {
-        if(collider_)
-            collider_->setCategory(colliderCategory);
-        colliderCategory_ = colliderCategory;
-    }
-
-    std::string ColliderComponent::category() const {
-        return colliderCategory_;
-    }
-
     void ColliderComponent::updateColliderRef() {
         if(physicsEngine_ == nullptr)
             return;
@@ -235,14 +224,14 @@ void ColliderComponent::onEvent(const Subject<Internal::ColliderEvent> &target, 
             physicsEngine_->unregisterCollider(collider_);
 
         collider_ = std::make_shared<Internal::Collider>();
-        collider_->setShape(stringToColliderShape(colliderShape_));
-        collider_->setType(stringToColliderType(colliderType_));
-        collider_->setCategory(colliderCategory_);
-        collider_->setSensor(isSensor_);
-        collider_->setGravityScale(gravityScale_);
-        collider_->setMass(mass_);
-        collider_->setFixedRotation(fixedRotation_);
-        collider_->setComponent(std::dynamic_pointer_cast<ColliderComponent>(shared_from_this()));
+        collider_->setShape(stringToColliderShape(getEnumPropertyValue("colliderShape")));
+        collider_->setType(stringToColliderType(getEnumPropertyValue("colliderType")));
+        collider_->setCategory(getPropertyValue<std::string>("category"));
+        collider_->setSensor(getPropertyValue<bool>("isSensor"));
+        collider_->setGravityScale(getPropertyValue<float>("gravityScale"));
+        collider_->setMass(getPropertyValue<float>("mass"));
+        collider_->setFixedRotation(getPropertyValue<bool>("fixedRotation"));
+        collider_->setComponent(shared_from_this());
 
         physicsEngine_->registerCollider(collider_);
         collider_->setPosition(convertWorldToPhysicsPos(gameObject()->position()));
@@ -250,133 +239,20 @@ void ColliderComponent::onEvent(const Subject<Internal::ColliderEvent> &target, 
 
         collider_->registerObserver(this);
 
-        extends(extends_);
+        updateColliderSize();
     }
-
-PropertySetBase *ColliderComponent::getProperties() const
-{
-    auto *properties = new PropertySet<ColliderComponent>();
-
-    properties->add(new Property<ColliderComponent, Vec2D>(
-            "extends",
-            &ColliderComponent::extends,
-            &ColliderComponent::extends,
-            Vec2D()));
-    properties->add(new Property<ColliderComponent, Vec2D>(
-            "offset",
-            &ColliderComponent::offset,
-            &ColliderComponent::offset,
-            Vec2D()));
-
-    // Collider configuration
-    properties->add(new PropertyEnum<ColliderComponent>(
-            "colliderShape",
-            &ColliderComponent::shape,
-            &ColliderComponent::shape,
-            "Box",
-            {
-                    "Box",
-                    "Circle"
-            }));
-    properties->add(new PropertyEnum<ColliderComponent>(
-            "colliderType",
-            &ColliderComponent::type,
-            &ColliderComponent::type,
-            "Static",
-            {
-                    "Static",
-                    "Dynamic",
-                    "Kinematic"
-            }));
-    properties->add(new Property<ColliderComponent, std::string>(
-            "category",
-            &ColliderComponent::category,
-            &ColliderComponent::category,
-            ""));
-    properties->add(new Property<ColliderComponent, bool>(
-            "isSensor",
-            &ColliderComponent::isSensor,
-            &ColliderComponent::isSensor,
-            false,
-            false));
-    properties->add(new Property<ColliderComponent, float>(
-            "gravityScale",
-            &ColliderComponent::gravityScale,
-            &ColliderComponent::gravityScale,
-            1.f,
-            false));
-    properties->add(new Property<ColliderComponent, float>(
-        "mass",
-        &ColliderComponent::mass,
-        &ColliderComponent::mass,
-        1.f,
-        false));
-    properties->add(new Property<ColliderComponent, bool>(
-        "fixedRotation",
-        &ColliderComponent::fixedRotation,
-        &ColliderComponent::fixedRotation,
-        true,
-        false));
-
-    return properties;
-}
-
-bool ColliderComponent::isSensor() const
-{
-    return isSensor_;
-}
-void ColliderComponent::isSensor(const bool &value)
-{
-    isSensor_ = value;
-    if(collider_)
-        collider_->setSensor(isSensor_);
-}
-
-float ColliderComponent::gravityScale() const
-{
-    return gravityScale_;
-}
-
-void ColliderComponent::gravityScale(const float &value)
-{
-    gravityScale_ = value;
-    if(collider_)
-        collider_->setGravityScale(gravityScale_);
-}
-
-float ColliderComponent::mass() const
-{
-    return mass_;
-}
-
-void ColliderComponent::mass(const float &value)
-{
-    mass_ = value;
-    if(collider_)
-        collider_->setMass(mass_);
-}
-
-bool ColliderComponent::fixedRotation() const
-{
-    return fixedRotation_;
-}
-void ColliderComponent::fixedRotation(const bool &value)
-{
-    fixedRotation_ = value;
-    if(collider_)
-        collider_->setFixedRotation(fixedRotation_);
-}
 
 void ColliderComponent::updateColliderSize()
 {
     if(collider_)
     {
+        const Vec2D &extends = getPropertyValue<Vec2D>("extends");
         Vec2D scale = gameObject()? gameObject()->scale() : Vec2D(1.f, 1.f);
 
-        if(extends_.x == 0 && extends_.y == 0){
+        if(extends.x == 0 && extends.y == 0){
             collider_->setSize(std::abs(scale.x * size_.x)/2.f, std::abs(scale.y * size_.y)/2.f);
         }else
-            collider_->setSize(scale.x * extends_.x/2.f, scale.y * extends_.y/2.f);
+            collider_->setSize(scale.x * extends.x/2.f, scale.y * extends.y/2.f);
     }
 }
 }

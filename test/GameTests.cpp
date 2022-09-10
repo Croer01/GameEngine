@@ -34,10 +34,10 @@ TEST(Game, renderSprite)
 
     geEnvironmentRef environment = geEnvironment::createInstance();
 
-    environment->addScene("testScene","testScene.yaml");
+    environment->addScene("testScene","testScene.scene");
     environment->firstScene("testScene");
 
-    environment->addPrototype(prototype, "spriteComponentLoadTest.yaml");
+    environment->addPrototype(prototype, "spriteComponentLoadTest.prototype");
 
     GameRef game = Game::createInstance(environment);
 
@@ -68,9 +68,9 @@ TEST(Game, playSound)
     const std::string &prototype = "ObjectTest";
 
     geEnvironmentRef environment = geEnvironment::createInstance();
-    environment->addScene("testScene","testScene.yaml");
+    environment->addScene("testScene","testScene.scene");
     environment->firstScene("testScene");
-    environment->addPrototype(prototype, "audioComponentLoadTest.yaml");
+    environment->addPrototype(prototype, "audioComponentLoadTest.prototype");
 
     GameRef game = Game::createInstance(environment);
 
@@ -108,7 +108,7 @@ TEST(Game, titleChange)
         auto screen = dynamic_cast<Internal::Screen*>(game->screen());
         screen->title(newTitle);
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
-        ASSERT_EQ(SDL_GetWindowTitle(screen->sdlWindow()), newTitle);
+        ASSERT_EQ(screen->title(), newTitle);
         game->shutdown();
     });
     EXPECT_NO_THROW(
@@ -120,4 +120,25 @@ TEST(Game, titleChange)
         }
     );
     t.join();
+}
+
+TEST(Game, writeGlobalData)
+{
+    GameRef game = Game::createInstance(geEnvironment::createInstance());
+    
+    GlobalData *data = game->getGlobalData();
+
+    EXPECT_EQ(data->hasValue("float"), false);
+    
+    data->setFloat("float",2.5f);
+    EXPECT_EQ(data->hasValue("float"), true);
+    EXPECT_EQ(data->getFloat("float"), 2.5f);
+    
+    data->setFloat("float",3.5f);
+    EXPECT_EQ(data->hasValue("float"), true);
+    EXPECT_EQ(data->getFloat("float"), 3.5f);
+
+    EXPECT_ANY_THROW(
+        data->getString("notExist");
+    );
 }

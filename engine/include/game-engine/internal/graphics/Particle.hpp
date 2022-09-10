@@ -5,6 +5,7 @@
 #ifndef GAMEENGINE_PARTICLE_HPP
 #define GAMEENGINE_PARTICLE_HPP
 
+#include <game-engine/api.hpp>
 #include <game-engine/Range.hpp>
 #include <game-engine/internal/graphics/GraphicHolder.hpp>
 
@@ -14,7 +15,7 @@ namespace Internal{
 class Particle;
 typedef std::shared_ptr<Particle> ParticleRef;
 
-class Particle
+class PUBLICAPI Particle
 {
     Vec2D position_;
     float size_;

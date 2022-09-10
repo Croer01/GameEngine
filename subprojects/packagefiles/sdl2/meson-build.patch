@@ -1,0 +1,11 @@
+--- a/meson.build
++++ b/meson.build
+@@ -237,6 +237,7 @@
+   cdata.set('SDL_VIDEO_DRIVER_X11_XINPUT2_SUPPORTS_MULTITOUCH', 1)
+   cdata.set('SDL_VIDEO_DRIVER_X11_SUPPORTS_GENERIC_EVENTS', 1)
+   cdata.set('SDL_VIDEO_DRIVER_X11_HAS_XKBKEYCODETOKEYSYM', 1)
++  cdata.set('SDL_VIDEO_OPENGL', 1)
+   if cdata.get('HAVE_SYS_INOTIFY_H') == 1
+     cdata.set('HAVE_INOTIFY', 1)
+   endif
+

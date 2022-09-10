@@ -79,13 +79,13 @@ void PhysicsEngine::init(float timeStep, Screen *screen) {
         Collider *colliderA = nullptr;
         Collider *colliderB = nullptr;
 
-        void *userData = contact->GetFixtureA()->GetBody()->GetUserData();
+        uintptr_t userData = contact->GetFixtureA()->GetBody()->GetUserData().pointer;
         if (userData)
-            colliderA = static_cast<Collider *>(userData);
+            colliderA = reinterpret_cast<Collider *>(userData);
 
-        userData = contact->GetFixtureB()->GetBody()->GetUserData();
+        userData = contact->GetFixtureB()->GetBody()->GetUserData().pointer;
         if (userData)
-            colliderB = static_cast<Collider *>(userData);
+            colliderB = reinterpret_cast<Collider *>(userData);
 
         if (colliderA && colliderB) {
             if(contact->GetFixtureA()->IsSensor())
@@ -109,13 +109,13 @@ void PhysicsEngine::EndContact(b2Contact *contact)
     Collider *colliderA = nullptr;
     Collider *colliderB = nullptr;
 
-    void *userData = contact->GetFixtureA()->GetBody()->GetUserData();
+    uintptr_t userData = contact->GetFixtureA()->GetBody()->GetUserData().pointer;
     if (userData)
-        colliderA = static_cast<Collider *>(userData);
+        colliderA = reinterpret_cast<Collider *>(userData);
 
-    userData = contact->GetFixtureB()->GetBody()->GetUserData();
+    userData = contact->GetFixtureB()->GetBody()->GetUserData().pointer;
     if (userData)
-        colliderB = static_cast<Collider *>(userData);
+        colliderB = reinterpret_cast<Collider *>(userData);
 
     if (colliderA && colliderB) {
         if(contact->GetFixtureA()->IsSensor())
@@ -137,7 +137,7 @@ void PhysicsEngine::EndContact(b2Contact *contact)
 #ifdef DEBUG
 void PhysicsEngine::drawDebug(Camera *cam) {
     debugView_->setCamera(cam);
-    world_->DrawDebugData();
+    world_->DebugDraw();
 }
 #endif
 

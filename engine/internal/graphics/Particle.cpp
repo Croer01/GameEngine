@@ -15,7 +15,7 @@ Particle::Particle(GraphicsEngine *graphicEngine, const std::shared_ptr<Internal
     speed_(Range(0.f,1.f)),
     scale_(Range(1.f,1.f)),
     opacity_(Range(1.f,1.f)),
-    color_(ColorRange({0.f}, {0.f})),
+    color_(ColorRange(geColor(0.f), geColor(0.f))),
     lifetimeAccumulator_(0.f),
     graphicEngine_(graphicEngine),
     direction_(Vec2D(0.f, -1.f))

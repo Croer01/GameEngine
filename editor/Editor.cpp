@@ -1461,6 +1461,11 @@ void Editor::starGame(bool update)
             });
             env->configurationPath(project_->folderPath_ + "/conf");
 
+            for(const auto& entry : componentsRegistered_)
+            {
+                env->registerComponent(entry.first, entry.second);
+            }
+
             env->addResourcesFromPath(project_->dataPath_.string());
 
             env->firstScene(sceneData_->name_);

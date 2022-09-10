@@ -6,6 +6,7 @@
 #define SPACEINVADERS_GAMEOBJECT_HPP
 
 
+#include <game-engine/api.hpp>
 #include <string>
 #include <vector>
 #include <memory>
@@ -20,7 +21,7 @@ namespace Internal {
 
     class ObjectManager;
 
-    class GameObject : public geGameObject, private Observer<GameObjectEvent>, public std::enable_shared_from_this<GameObject> {
+    class PUBLICAPI GameObject : public geGameObject, private Observer<GameObjectEvent>, public std::enable_shared_from_this<GameObject> {
         static int ID_GENERATOR;
         int id_;
         bool active_;
@@ -34,7 +35,6 @@ namespace Internal {
         Vec2D scale_;
         std::weak_ptr<GameObject> parent_;
         glm::mat4 transform_;
-        bool destroyed_;
         bool initializating_;
         bool preInitializating_;
         Game *game_;
@@ -43,6 +43,7 @@ namespace Internal {
 
     public:
 
+        GameObject();
         explicit GameObject(const std::string &prototype);
         virtual ~GameObject();
 
@@ -65,13 +66,16 @@ namespace Internal {
 
         std::shared_ptr<GameObject> Clone(Game *game) const;
 
-        void parent(const geGameObjectRef &parent) override;
-        virtual std::weak_ptr<geGameObject> parent() const;
+        void parent(geGameObject *parent) override;
+        virtual geGameObject *parent() const;
 
         virtual Vec2D localPosition() const;
         Vec2D position() const override;
 
         void position(const Vec2D &position) override;
+
+        Vec2D transformToLocalPosition(const Vec2D &position) const override;
+        Vec2D transformToWorldPosition(const Vec2D &position) const override;
 
         float rotation() const override;
 
@@ -81,7 +85,7 @@ namespace Internal {
 
         void scale(const Vec2D &scale) override;
 
-        glm::mat4 getTransform();
+        glm::mat4 getTransform() const;
 
         virtual bool active() const;
 
@@ -93,11 +97,8 @@ namespace Internal {
         virtual Game *game() const;
         void game(Game *value);
 
-        virtual bool isDestroyed() const;
-        virtual void destroy();
-
     private:
-        void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
+        void onEvent(const Subject<GameObjectEvent> &target, GameObjectEvent args) override;
 
         void computeTransform();
     };

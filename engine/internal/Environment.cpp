@@ -17,7 +17,7 @@
 #include <game-engine/internal/Environment.hpp>
 #include <game-engine/components/CarColliderComponent.hpp>
 
-namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 
 namespace GameEngine
 {
@@ -28,25 +28,26 @@ Environment::Environment() : configurationPath_("conf"), dataPath_("data")
 {
     objectManager_ = std::make_unique<ObjectManager>();
     //Register the engine's default components
-    objectManager_->registerComponentBuilder("SpriteComponent", new ComponentTBuilder<SpriteComponent>());
-    objectManager_->registerComponentBuilder("GeometryComponent", new ComponentTBuilder<GeometryComponent>());
-    objectManager_->registerComponentBuilder("SpriteAnimatedComponent", new ComponentTBuilder<SpriteAnimatedComponent>());
-    objectManager_->registerComponentBuilder("ColliderComponent", new ComponentTBuilder<ColliderComponent>());
-    objectManager_->registerComponentBuilder("TextComponent", new ComponentTBuilder<TextComponent>());
-    objectManager_->registerComponentBuilder("AudioComponent", new ComponentTBuilder<AudioComponent>());
-    objectManager_->registerComponentBuilder("ParticleEmitterComponent", new ComponentTBuilder<ParticleEmitterComponent>());
-    objectManager_->registerComponentBuilder("ParticlesPropertiesComponent", new ComponentTBuilder<ParticlesPropertiesComponent>());
-    objectManager_->registerComponentBuilder("SpawnerComponent", new ComponentTBuilder<SpawnerComponent>());
-    objectManager_->registerComponentBuilder("CarColliderComponent", new ComponentTBuilder<CarColliderComponent>());
+    objectManager_->registerComponentBuilder("SpriteComponent", CreateComponentBuilder<SpriteComponent>());
+    objectManager_->registerComponentBuilder("GeometryComponent", CreateComponentBuilder<GeometryComponent>());
+    objectManager_->registerComponentBuilder("SpriteAnimatedComponent", CreateComponentBuilder<SpriteAnimatedComponent>());
+    objectManager_->registerComponentBuilder("ColliderComponent", CreateComponentBuilder<ColliderComponent>());
+    objectManager_->registerComponentBuilder("TextComponent", CreateComponentBuilder<TextComponent>());
+    objectManager_->registerComponentBuilder("AudioComponent", CreateComponentBuilder<AudioComponent>());
+    objectManager_->registerComponentBuilder("ParticleEmitterComponent", CreateComponentBuilder<ParticleEmitterComponent>());
+    objectManager_->registerComponentBuilder("ParticlesPropertiesComponent", CreateComponentBuilder<ParticlesPropertiesComponent>());
+    objectManager_->registerComponentBuilder("SpawnerComponent", CreateComponentBuilder<SpawnerComponent>());
+    objectManager_->registerComponentBuilder("CarColliderComponent", CreateComponentBuilder<CarColliderComponent>());
 
     //GUI Components
-    objectManager_->registerComponentBuilder("UIButtonComponent", new ComponentTBuilder<UIButtonComponent>());
-    objectManager_->registerComponentBuilder("UITextComponent", new ComponentTBuilder<UITextComponent>());
-    objectManager_->registerComponentBuilder("UITextInputComponent", new ComponentTBuilder<UITextInputComponent>());
-    objectManager_->registerComponentBuilder("UIPanelComponent", new ComponentTBuilder<UIPanelComponent>());
-    objectManager_->registerComponentBuilder("UIImageComponent", new ComponentTBuilder<UIImageComponent>());
+    objectManager_->registerComponentBuilder("UIButtonComponent", CreateComponentBuilder<UIButtonComponent>());
+    objectManager_->registerComponentBuilder("UITextComponent", CreateComponentBuilder<UITextComponent>());
+    objectManager_->registerComponentBuilder("UITextInputComponent", CreateComponentBuilder<UITextInputComponent>());
+    objectManager_->registerComponentBuilder("UIPanelComponent", CreateComponentBuilder<UIPanelComponent>());
+    objectManager_->registerComponentBuilder("UIImageComponent", CreateComponentBuilder<UIImageComponent>());
 
     sceneManager_ = std::make_unique<SceneManager>();
+    globalData_ =  std::make_unique<GlobalData>();
 }
 
 void Environment::configurationPath(const std::string &config)
@@ -99,7 +100,7 @@ std::vector<std::string> Environment::getRegisteredPropertiesIds() const
     return objectManager_->getComponentIds();
 }
 
-std::shared_ptr<PropertySetBase> Environment::getProperties(const std::string &id) const
+ComponentDataRef Environment::getProperties(const std::string &id) const
 {
     return objectManager_->createProperties(id);
 }
@@ -124,13 +125,17 @@ MakeCurrentContextCallback Environment::getMakeCurrentContextCallback() const
     return makeCurrentContextCallback_;
 }
 
+GlobalData* Environment::getGlobalData(){
+    return globalData_.get();
+}
+
 void Environment::addResourcesFromPath(const std::string &dataPath)
 {
-    const boost::filesystem::path &directoryPath = fs::path(dataPath);
+    const fs::path &directoryPath = fs::path(dataPath);
     recursiveDataFilesRegister(directoryPath);
 }
 
-void Environment::recursiveDataFilesRegister(const boost::filesystem::path &directoryPath)
+void Environment::recursiveDataFilesRegister(const std::filesystem::path &directoryPath)
 {
     if(fs::exists(directoryPath) && fs::is_directory(directoryPath))
     {

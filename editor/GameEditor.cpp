@@ -14,7 +14,7 @@ GameEditor::GameEditor(const std::shared_ptr<GameEngine::Internal::Environment> 
 {
     selectedObject_ = nullptr;
     dirty_ = false;
-    environment->registerComponent("GameEditorComponent", new GameEngine::ComponentTBuilder<GameEditorComponent>());
+    environment->registerComponent("GameEditorComponent", CreateComponentBuilder<GameEditorComponent>());
 }
 
 GameEngine::geGameObjectRef GameEditor::createFromPrototype(const std::string &prototype)

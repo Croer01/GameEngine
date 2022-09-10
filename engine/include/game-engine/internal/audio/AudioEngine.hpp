@@ -6,16 +6,17 @@
 #define SPACEINVADERS_AUDIOENGINE_HPP
 
 
+#include <game-engine/api.hpp>
 #include <game-engine/internal/audio/AudioSource.hpp>
-#include <AL/al.h>
-#include <AL/alc.h>
+#include <al.h>
+#include <alc.h>
 #include <memory>
 #include <map>
 #include <game-engine/geAudio.hpp>
 
 namespace GameEngine {
 namespace Internal {
-    class AudioEngine : public geAudio {
+    class PUBLICAPI AudioEngine : public geAudio {
         ALCcontext *context_;
         ALCdevice *device_;
         std::map<std::string, std::shared_ptr<AudioBuffer>> buffers_;

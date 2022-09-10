@@ -2,7 +2,7 @@
 // Created by adria on 18/04/2020.
 //
 
-#include <SDL2/SDL_timer.h>
+#include <SDL_timer.h>
 #include <game-engine/internal/TimeManager.hpp>
 #include <game-engine/components/ui/UITextComponent.hpp>
 
@@ -25,9 +25,10 @@ void TimeManager::createFpsCounter(Game *game)
 {
     goFpsCounter_ = std::make_unique<GameObject>("FPS Counter");
     fpsCounter_ = std::make_shared<UITextComponent>();
-    fpsCounter_->id("fps");
-    fpsCounter_->fontSize(10);
-    fpsCounter_->visible(true);
+    fpsCounter_->setData(fpsCounter_->instantiateData());
+    fpsCounter_->setPropertyValue<std::string>("id", "fps");
+    fpsCounter_->setPropertyValue<int>("fontSize", 10);
+    fpsCounter_->setPropertyValue<bool>("visible", true);
     goFpsCounter_->addComponent(fpsCounter_);
     goFpsCounter_->game(game);
     goFpsCounter_->preInit();
@@ -60,7 +61,7 @@ void TimeManager::calculateTime()
 
     std::stringstream ss;
     ss << "fps: " << (1.0f / fpsFixedAcumulator_) << " (" << (1.0f / fpsAcumulator_) << ")";
-    fpsCounter_->text(ss.str());
+    fpsCounter_->setPropertyValue<std::string>("text", ss.str());
 //    goFpsCounter_->Update(elapsedTime_);
 }
 float TimeManager::getElapsedTime() const

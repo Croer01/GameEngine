@@ -22,6 +22,7 @@ ObjectDataRef ProjectFileDataProvider::getObjectData(const DataFile &file)
     {
         try
         {
+            env_->
             YAML::Node prototypeNode = YAML::LoadFile(filepath);
             prototype = std::make_shared<ObjectData>(prototypeNode.as<ObjectData>());
             objectsLoadedCache_[filepath] = prototype;

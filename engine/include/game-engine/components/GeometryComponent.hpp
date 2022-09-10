@@ -11,18 +11,42 @@
 #include <game-engine/geGameObject.hpp>
 #include <game-engine/internal/graphics/GraphicGeometry.hpp>
 #include <game-engine/internal/graphics/GraphicHolder.hpp>
+#include <game-engine/components/ComponentData.hpp>
 
 namespace GameEngine {
-    class PUBLICAPI GeometryComponent : public geComponentInstantiable<GeometryComponent>, public Observer<GameObjectEvent> {
+class PUBLICAPI GeometryColliderComponentData : public ComponentData
+{
+public:
+    GeometryColliderComponentData()
+    {
+        createProperty<std::vector<Vec2D>>("path", {}, true);
+        createProperty<bool>("visible",true);
+        createPropertyEnum("anchor", "TOP_LEFT", {
+            "TOP_LEFT",
+            "TOP_CENTER",
+            "TOP_RIGHT",
+            "MIDDLE_LEFT",
+            "MIDDLE_CENTER",
+            "MIDDLE_RIGHT",
+            "BOTTOM_LEFT",
+            "BOTTOM_CENTER",
+            "BOTTOM_RIGHT"
+        });
+        createProperty<geColor>("tint",geColor(1.f));
+        createProperty<bool>("fill", true);
+    }
+};
+
+    class PUBLICAPI GeometryComponent : public geComponentInstantiable<GeometryComponent, GeometryColliderComponentData>, public Observer<GameObjectEvent> {
         std::shared_ptr<Internal::GraphicGeometry> graphicLoaded_;
         std::shared_ptr<Internal::GraphicHolder> graphic_;
         Internal::GraphicsEngine *graphicsEngine_;
-        std::vector<Vec2D> path_;
-        std::string anchor_;
-        geColor color_;
-        bool visible_;
-        bool fill_;
+
         void updateGraphicRef();
+        void updateVisible();
+        void updateTint();
+        void updateFill();
+        void updateAnchor();
 
     protected:
         void
@@ -30,8 +54,6 @@ namespace GameEngine {
 
     public:
         virtual ~GeometryComponent();
-
-        PropertySetBase *getProperties() const override;
 
         virtual void preInit();
 
@@ -41,24 +63,7 @@ namespace GameEngine {
 
         int getHeight() const;
 
-        void visible(const bool &visible);
-
-        bool visible() const;
-
-        void fill(const bool &value);
-
-        bool fill() const;
-
-        void path (const std::vector<Vec2D> &pathArray);
-        std::vector<Vec2D> path () const;
-
-        void anchor(const std::string &anchor);
-        std::string anchor() const;
-
-        void color(const geColor &value);
-        geColor color() const;
-
-        void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
+        void onEvent(const Subject<GameObjectEvent> &target, GameObjectEvent event) override;
     };
 }
 

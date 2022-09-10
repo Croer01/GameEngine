@@ -17,7 +17,7 @@ typedef std::shared_ptr<DataDirectory> DataDirectoryRef;
 class DataDirectory
 {
     boost::filesystem::path directoryPath_;
-    std::vector<DataDirectoryRef> folders_;
+    std::vector<DataDirectoryRef> subDirectories_;
     std::vector<DataFileRef> files_;
     DataDirectory *getDirectory(const boost::filesystem::path &directory);
 

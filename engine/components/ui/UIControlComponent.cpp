@@ -5,37 +5,19 @@
 #include <game-engine/InputManager.hpp>
 #include <game-engine/components/ui/UIControlComponent.hpp>
 #include <game-engine/Game.hpp>
+#include <game-engine/internal/graphics/GraphicsEngine.hpp>
 
 namespace GameEngine {
 
 void UIControlComponent::preInit()
 {
     graphicsEngine_ = gameObject()->game()->graphicsEngine();
-}
-
-void UIControlComponent::screenPos(const Vec2D &pos)
-{
-    screenPos_ = pos;
-}
-
-Vec2D UIControlComponent::screenPos() const
-{
-    return screenPos_;
-}
-
-void UIControlComponent::screenSize(const Vec2D &size)
-{
-    screenSize_ = size;
-}
-
-Vec2D UIControlComponent::screenSize() const
-{
-    return screenSize_;
+    setPropertyObserver<bool>("visible",[this](){ onVisibleChanged(); });
 }
 
 void UIControlComponent::Update(float elapsedTime)
 {
-    if(!visible_)
+    if(!getPropertyValue<bool>("visible"))
         return;
 
     InputManager *inputManager = gameObject()->game()->input();
@@ -53,13 +35,20 @@ void UIControlComponent::Update(float elapsedTime)
             onHoverOut();
     }
 
-    if(hover_ && inputManager->isMouseButtonDown(MouseButton::LEFT))
+    if(hover_)
     {
-        onClick();
-        if(!focused_)
+        if (inputManager->isMouseButtonDown(MouseButton::LEFT))
         {
-            focused_ = true;
-            onFocusChanged();
+            onClick();
+            if(!focused_)
+            {
+                focused_ = true;
+                onFocusChanged();
+            }
+        }
+        else if (inputManager->isMouseButtonUp(MouseButton::LEFT))
+        {
+            onUnclick();
         }
     }
     //TODO: change this to a Centralized Focus Manager
@@ -78,68 +67,10 @@ bool UIControlComponent::isFocused() const
     return focused_;
 }
 
-PropertySetBase *UIControlComponent::getProperties() const
-{
-    auto *properties = new PropertySet<UIControlComponent>();
-
-    properties->add(new Property<UIControlComponent, std::string>(
-            "id",
-            &UIControlComponent::id,
-            &UIControlComponent::id,
-            "",
-            true
-    ));
-
-    properties->add(new Property<UIControlComponent, Vec2D>(
-            "screenPos",
-            &UIControlComponent::screenPos,
-            &UIControlComponent::screenPos,
-            Vec2D(),
-            true
-    ));
-
-    properties->add(new Property<UIControlComponent, Vec2D>(
-            "screenSize",
-            &UIControlComponent::screenSize,
-            &UIControlComponent::screenSize,
-            Vec2D(),
-            true
-    ));
-    properties->add(new Property<UIControlComponent, bool>(
-            "visible",
-            &UIControlComponent::visible,
-            &UIControlComponent::visible,
-            true,
-            false
-    ));
-    return properties;
-}
-
-void UIControlComponent::id(const std::string &value)
-{
-    id_ = value;
-}
-
-std::string UIControlComponent::id() const
-{
-    return id_;
-}
-
-bool UIControlComponent::visible() const
-{
-    return visible_;
-}
-
-void UIControlComponent::visible(const bool &value)
-{
-    visible_ = value;
-    onVisibleChanged();
-}
-
 Vec2D UIControlComponent::calculateVirtualScreenPos() const
 {
     geScreen *screen = gameObject()->game()->screen();
-    Vec2D position = screenPos();
+    Vec2D position = getPropertyValue<Vec2D>("screenPos");
     position.x *= static_cast<float>(screen->virtualWidth());
     position.y *= static_cast<float>(screen->virtualHeight());
     return position;
@@ -148,7 +79,7 @@ Vec2D UIControlComponent::calculateVirtualScreenPos() const
 Vec2D UIControlComponent::calculateVirtualScreenSize() const
 {
     geScreen *screen = gameObject()->game()->screen();
-    Vec2D size = screenSize();
+    Vec2D size = getPropertyValue<Vec2D>("screenSize");
     size.x *= static_cast<float>(screen->virtualWidth());
     size.y *= static_cast<float>(screen->virtualHeight());
     return size;

@@ -9,7 +9,7 @@ GameEngine::Internal::WritableData::WritableData() : Data(YAML::Node())
 {
 }
 
-void GameEngine::Internal::WritableData::setString(const std::string &key, std::string value)
+void GameEngine::Internal::WritableData::setString(const std::string &key,const std::string &value)
 {
     data_[key] = value;
 }
@@ -29,22 +29,22 @@ void GameEngine::Internal::WritableData::setBool(const std::string &key, bool va
     data_[key] = value;
 }
 
-void GameEngine::Internal::WritableData::setVec2D(const std::string &key, GameEngine::Vec2D value)
+void GameEngine::Internal::WritableData::setVec2D(const std::string &key, const GameEngine::Vec2D &value)
 {
     data_[key] = value;
 }
 
-void GameEngine::Internal::WritableData::setArrayString(const std::string &key, std::vector<std::string> value)
+void GameEngine::Internal::WritableData::setArrayString(const std::string &key, const std::vector<std::string> &value)
 {
     data_[key] = value;
 }
 
-void GameEngine::Internal::WritableData::setArrayVec2D(const std::string &key, std::vector<Vec2D> value)
+void GameEngine::Internal::WritableData::setArrayVec2D(const std::string &key, const std::vector<Vec2D> &value)
 {
     data_[key] = value;
 }
 
-void GameEngine::Internal::WritableData::setColor(const std::string &key, GameEngine::geColor value)
+void GameEngine::Internal::WritableData::setColor(const std::string &key, const GameEngine::geColor &value)
 {
     data_[key] = value;
 }

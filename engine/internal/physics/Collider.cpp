@@ -17,7 +17,7 @@ namespace Internal {
 
     b2BodyDef *Collider::getBodyDef() const {
         b2BodyDef *bodyDef = new b2BodyDef();
-        bodyDef->userData = (void *) this;
+        bodyDef->userData.pointer = reinterpret_cast<uintptr_t>(this);
         bodyDef->fixedRotation = fixedRotation_.get();
         bodyDef->gravityScale = gravityScale_;
         // this is to avoid sensor colliders won't detect collisions if they are statics or they don't move
@@ -95,19 +95,19 @@ namespace Internal {
     }
 
 void Collider::doBeginCollision(Collider *other) {
-        notify(ColliderEvent::BeginCollider, (void *) other);
+        notify(ColliderEvent::BeginCollider, other);
     }
 
     void Collider::doBeginSensor(Collider *other) {
-        notify(ColliderEvent::BeginSensor, (void *) other);
+        notify(ColliderEvent::BeginSensor, other);
     }
 
     void Collider::doEndCollision(Collider *other) {
-        notify(ColliderEvent::EndCollider, (void *) other);
+        notify(ColliderEvent::EndCollider, other);
     }
 
     void Collider::doEndSensor(Collider *other) {
-        notify(ColliderEvent::EndSensor, (void *) other);
+        notify(ColliderEvent::EndSensor, other);
     }
 
     void Collider::setComponent(const std::shared_ptr<ColliderComponent> &component) {
@@ -169,7 +169,7 @@ void Collider::updateInSafeMode() {
             body_->SetTransform(body_->GetPosition(), rotation_.get());
 
         if (active_.update())
-            body_->SetActive(active_.get());
+            body_->SetEnabled(active_.get());
 
         if (colliderType_.update()) {
             if(body_)

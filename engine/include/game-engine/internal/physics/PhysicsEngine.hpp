@@ -6,8 +6,13 @@
 #define SPACEINVADERS_PHYSICSENGINE_HPP
 
 
+#include <game-engine/api.hpp>
 #include <memory>
-#include <Box2D/Box2D.h>
+#if defined _WIN32
+#  include <Box2D/Box2D.h>
+#else
+#  include <box2d/box2d.h>
+#endif
 #include <unordered_map>
 #include <game-engine/internal/physics/Collider.hpp>
 #ifdef DEBUG
@@ -17,7 +22,7 @@
 #endif
 namespace GameEngine {
 namespace Internal {
-    class PhysicsEngine : b2ContactListener {
+    class PUBLICAPI PhysicsEngine : b2ContactListener {
 
         struct ColliderCategory {
             uint16 categoryBit = 0;

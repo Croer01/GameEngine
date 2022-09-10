@@ -6,7 +6,9 @@
 #define SPACEINVADERS_GEENVIRONMENT_HPP
 
 #include <game-engine/api.hpp>
+#include <game-engine/components/ComponentData.hpp>
 #include <game-engine/Builder.hpp>
+#include <game-engine/GlobalData.hpp>
 #include <string>
 #include <vector>
 #include <functional>
@@ -25,7 +27,7 @@ public:
     virtual ~geEnvironment() = 0;
     static geEnvironmentRef createInstance();
     virtual void registerComponent(const std::string &idType, ComponentBuilder *builder) = 0;
-    virtual std::shared_ptr<PropertySetBase> getProperties(const std::string &id) const = 0;
+    virtual ComponentDataRef getProperties(const std::string &id) const = 0;
     virtual std::vector<std::string> getRegisteredPropertiesIds() const = 0;
     virtual void configurationPath(const std::string &config) = 0;
     virtual std::string configurationPath() const = 0;
@@ -39,6 +41,7 @@ public:
     // this automatically configure game instance to render in an image (GL FrameBufferObject)
     // use geGame::getRenderer() to get the gl texture's id
     virtual void setMakeCurrentContextCallback(const MakeCurrentContextCallback &callback) = 0;
+    virtual GlobalData* getGlobalData() = 0;
 };
 }
 

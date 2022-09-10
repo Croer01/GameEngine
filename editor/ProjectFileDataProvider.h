@@ -14,6 +14,7 @@ class ProjectFileDataProvider
     std::map<std::string, ObjectDataRef> objectsLoadedCache_;
     std::map<std::string, SceneDataRef> scenesLoadedCache_;
     ProjectDataRef project_;
+    std::shared_ptr<GameEngine::geEnvironment> env_;
 public:
     ObjectDataRef getObjectData(const DataFile &file);
     SceneDataRef getSceneData(const DataFile &file);

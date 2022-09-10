@@ -6,41 +6,46 @@
 #define SPACEINVADERS_TEXTCOMPONENT_HPP
 
 
+#include <game-engine/api.hpp>
 #include <game-engine/geComponent.hpp>
 #include <game-engine/geGameObject.hpp>
 #include <game-engine/events/Observer.hpp>
 #include <game-engine/internal/graphics/font/Text.hpp>
+#include <game-engine/components/ComponentData.hpp>
 
 namespace GameEngine {
-class PUBLICAPI TextComponent : public geComponentInstantiable<TextComponent>, public Observer<GameObjectEvent> {
+
+class PUBLICAPI TextComponentData : public ComponentData
+{
+public:
+    TextComponentData()
+    {
+        createProperty<std::string>("font", "", true);
+        createProperty<int>("fontSize", 0);
+        createProperty<std::string>("text", "");
+    }
+};
+
+class PUBLICAPI TextComponent : public geComponentInstantiable<TextComponent, TextComponentData>, public Observer<GameObjectEvent> {
         Internal::TextParameters textParams_;
         std::shared_ptr<Internal::Text> textGraphic_;
         Internal::GraphicsEngine *graphicsEngine_;
         bool visible_;
 
         void updateTextTransform();
+        void updateFont();
+        void updateFontSize();
+        void updateText();
 
-        void updateTextRef();
+    void updateTextRef();
 
     public:
         virtual ~TextComponent();
 
-        PropertySetBase *getProperties() const override;
-
         void preInit() override;
         void init() override;
 
-        void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
-
-        //Text public API
-        int fontSize() const;
-        void fontSize(const int &size);
-
-        std::string font() const;
-        void font(const std::string &fontName);
-
-        void text(const std::string &text);
-        std::string text() const;
+        void onEvent(const Subject<GameObjectEvent> &target, GameObjectEvent event) override;
 
         void setVisible(bool visible);
 

@@ -1,9 +1,8 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
-#include <game-engine/internal/pathfinding/AStarPathfinding.hpp>
+#include <game-engine/pathfinding/AStarPathfinding.hpp>
 
 using namespace GameEngine;
-using namespace GameEngine::Internal;
 using namespace ::testing;
 
 // All test use a 5x5 grid to simplify

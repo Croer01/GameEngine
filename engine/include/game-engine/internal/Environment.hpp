@@ -5,8 +5,9 @@
 #ifndef GAMEENGINE_ENVIRONMENT_HPP
 #define GAMEENGINE_ENVIRONMENT_HPP
 
+#include <game-engine/api.hpp>
+#include <filesystem>
 #include <game-engine/geEnvironment.hpp>
-#include <boost/filesystem.hpp>
 #include <game-engine/internal/ObjectManager.hpp>
 #include <game-engine/internal/SceneManager.hpp>
 
@@ -15,7 +16,7 @@ namespace GameEngine
 namespace Internal
 {
 
-class Environment : public geEnvironment
+class PUBLICAPI Environment : public geEnvironment
 {
     std::string configurationPath_;
     std::string dataPath_;
@@ -23,13 +24,14 @@ class Environment : public geEnvironment
     std::unique_ptr<ObjectManager> objectManager_;
     std::unique_ptr<SceneManager> sceneManager_;
     MakeCurrentContextCallback makeCurrentContextCallback_;
+    std::unique_ptr<GlobalData> globalData_;
 
-    void recursiveDataFilesRegister(const boost::filesystem::path &directoryPath);
+    void recursiveDataFilesRegister(const std::filesystem::path &directoryPath);
 public:
     Environment();
     virtual ~Environment(){};
     virtual void registerComponent(const std::string &idType, ComponentBuilder *builder);
-    virtual std::shared_ptr<PropertySetBase> getProperties(const std::string &id) const;
+    virtual ComponentDataRef getProperties(const std::string &id) const;
     virtual std::vector<std::string> getRegisteredPropertiesIds() const;
     virtual void configurationPath(const std::string &config);
     virtual void dataPath(const std::string &data);
@@ -42,6 +44,7 @@ public:
     void setMakeCurrentContextCallback(const MakeCurrentContextCallback &callback) override;
     virtual void addResourcesFromPath(const std::string &dataPath);
     MakeCurrentContextCallback getMakeCurrentContextCallback() const;
+    virtual GlobalData* getGlobalData();
     SceneManager *sceneManager() const;
     ObjectManager *objectManager() const;
 };

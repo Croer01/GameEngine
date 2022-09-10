@@ -5,38 +5,39 @@
 #ifndef SPACEINVADERS_AUDIOCOMPONENT_HPP
 #define SPACEINVADERS_AUDIOCOMPONENT_HPP
 
-
+#include <game-engine/api.hpp>
 #include <game-engine/geComponent.hpp>
 #include <game-engine/internal/audio/AudioSource.hpp>
+#include <game-engine/components/ComponentData.hpp>
 
-namespace GameEngine {
-    class PUBLICAPI AudioComponent : public geComponentInstantiable<AudioComponent> {
-        std::string filePath_;
+namespace GameEngine
+{
+class PUBLICAPI AudioComponentData : public ComponentData
+{
+public:
+    AudioComponentData()
+    {
+        createProperty<std::string>("filePath","", true);
+        createProperty<bool>("playOnInit", false);
+        createProperty<bool>("loopOnInit", false);
+    }
+};
+
+    class PUBLICAPI AudioComponent : public geComponentInstantiable<AudioComponent, AudioComponentData> {
         std::shared_ptr<Internal::AudioSource> source_;
-        bool playOnInit_;
-        bool loopOnInit_;
+
+        void loadSource(const std::string &filePath);
     public:
         void init() override;
-        virtual PropertySetBase *getProperties() const;
 
         //AudioComponent public API
         void play();
 
         bool isPlaying();
 
-        void playOnInit(const bool &play);
-        bool playOnInit() const;
-        void loopOnInit(const bool &loop);
-        bool loopOnInit() const;
-
         void stop();
 
         void setLooping(bool loop);
-
-        void loadSource();
-
-        void filepath(const std::string &path);
-        std::string filepath() const;
     };
 }
 

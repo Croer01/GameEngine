@@ -32,7 +32,7 @@ namespace Internal {
 
     glm::vec2 parseGraphicAnchorToVec2D(GameEngine::Internal::GraphicAnchor anchor);
 
-    class GraphicHolder {
+    class PUBLICAPI GraphicHolder {
         bool active_;
         std::shared_ptr<Graphic> graphic_;
         glm::mat4 modelTransform_;

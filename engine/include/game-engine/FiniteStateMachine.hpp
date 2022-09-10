@@ -11,7 +11,7 @@ template<typename T>
 class FiniteStateMachine;
 
 template<typename T>
-class MachineState
+class PUBLICAPI MachineState
 {
 public:
     virtual void enter(FiniteStateMachine<T> *fsm) = 0;
@@ -23,7 +23,7 @@ public:
 };
 
 template<typename T>
-class FiniteStateMachine
+class PUBLICAPI FiniteStateMachine
 {
     T *target_;
     MachineState<T> *currentState_;

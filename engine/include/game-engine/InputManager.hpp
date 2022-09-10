@@ -11,7 +11,7 @@
 #include <game-engine/KeyCodes.hpp>
 #include <game-engine/events/Subject.hpp>
 #include <memory>
-#include <SDL2/SDL_events.h>
+#include <SDL_events.h>
 
 namespace GameEngine {
 
@@ -25,11 +25,11 @@ enum class InputTextSubjectEvent
 
 class InputTextSubject;
 typedef std::shared_ptr<InputTextSubject> InputTextSubjectRef;
-class InputTextSubject : public Subject<InputTextSubjectEvent>
+class PUBLICAPI InputTextSubject : public Subject<InputTextSubjectEvent, const char *>
 {
 
 };
-class InputManager
+class PUBLICAPI InputManager
 {
     enum class InputState
     {
@@ -44,7 +44,9 @@ class InputManager
     geScreen *screen_;
 
     void reset();
-    void processEvent(SDL_Event event);
+
+    // return true if this event loop must be ignored
+    bool processEvent(SDL_Event event);
 
 public:
     explicit InputManager(geScreen *screen);

@@ -6,26 +6,52 @@
 #define SPACEINVADERS_SPRITECOMPONENT_HPP
 
 
+#include <game-engine/api.hpp>
 #include <game-engine/geComponent.hpp>
 #include <game-engine/geGameObject.hpp>
 #include <game-engine/events/Observer.hpp>
 #include <game-engine/internal/graphics/Graphic.hpp>
 #include <game-engine/internal/graphics/GraphicHolder.hpp>
+#include <game-engine/components/ComponentData.hpp>
 
 namespace GameEngine {
 
+class PUBLICAPI SpriteComponentData : public ComponentData
+{
+public:
+    SpriteComponentData()
+    {
+        createPropertyFilePath("filePath", "",FileType::IMAGE, true);
+        createProperty<geColor>("tint", geColor(1.f));
+        createProperty<bool>("visible", true);
+        createProperty<Vec2D>("displacement", Vec2D());
+        createProperty<bool>("repeat", false);
+        createPropertyEnum("anchor", "TOP_LEFT", {
+            "TOP_LEFT",
+            "TOP_CENTER",
+            "TOP_RIGHT",
+            "MIDDLE_LEFT",
+            "MIDDLE_CENTER",
+            "MIDDLE_RIGHT",
+            "BOTTOM_LEFT",
+            "BOTTOM_CENTER",
+            "BOTTOM_RIGHT"
+        });
+    }
+};
+
     class PUBLICAPI SpriteComponent
-            : public geComponentInstantiable<SpriteComponent>, public Observer<GameObjectEvent> {
+            : public geComponentInstantiable<SpriteComponent, SpriteComponentData>, public Observer<GameObjectEvent> {
         std::shared_ptr<Internal::Graphic> graphicLoaded_;
         std::shared_ptr<Internal::GraphicHolder> graphic_;
-        bool visible_;
-        std::string filePath_;
-        std::string anchor_;
-        Vec2D displacement_;
 
         Internal::GraphicsEngine *graphicsEngine_;
 
         void updateGraphicRef();
+        void updateVisible();
+        void updateTint();
+        void updateAnchor();
+        void updateDisplacement();
 
     protected:
         void onGameObjectChange(GameEngine::geGameObject *oldGameObject, GameEngine::geGameObject *newGameObject) override;
@@ -33,30 +59,13 @@ namespace GameEngine {
     public:
         virtual ~SpriteComponent();
 
-        PropertySetBase *getProperties() const override;
-
         virtual void preInit();
 
         int getWidth() const;
 
         int getHeight() const;
 
-        void setVisible(const bool &visible);
-
-        bool isVisible() const;
-
-        void onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) override;
-
-        void filepath(const std::string &path);
-
-        std::string filepath() const;
-
-        void anchor(const std::string &anchor);
-
-        std::string anchor() const;
-
-        void displacement(const Vec2D &value);
-        Vec2D displacement() const;
+        void onEvent(const Subject<GameObjectEvent> &target, GameObjectEvent event) override;
     };
 }
 

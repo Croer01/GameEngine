@@ -10,10 +10,19 @@ namespace GameEngine {
     void GeometryComponent::preInit()
     {
         graphicsEngine_ = gameObject()->game()->graphicsEngine();
-        updateGraphicRef();
+        //TODO: implement Layers or improve how to register sprites to not have this
+        // "unordered" graphic issues
+
+        // updateGraphicRef();
     }
 
     void GeometryComponent::init() {
+        setPropertyObserver<bool>("visible",[this](){ updateVisible(); });
+        setPropertyObserver<std::vector<Vec2D>>("path", [this](){ updateGraphicRef(); });
+        setEnumPropertyObserver("anchor", [this](){ updateAnchor(); });
+        setPropertyObserver<geColor>("tint", [this](){ updateTint(); });
+        setPropertyObserver<bool>("fill", [this](){ updateFill(); });
+
         //TODO: implement Layers or improve how to register sprites
         updateGraphicRef();
         // the preInit ensure that the graphic is already created at this point
@@ -27,17 +36,21 @@ namespace GameEngine {
         if (graphic_)
             graphicsEngine_->unregisterGraphic(graphic_);
 
-        if(path_.empty()){
+
+        auto path = getPropertyValue<std::vector<Vec2D>>("path");
+
+        if(path.empty()){
             graphicLoaded_.reset();
             graphic_.reset();
         } else {
-            graphicLoaded_ = std::make_shared<Internal::GraphicGeometry>(path_);
+            graphicLoaded_ = graphicsEngine_->loadGeometry(path);
             graphic_ = std::make_shared<Internal::GraphicHolder>(graphicLoaded_);
             graphicsEngine_->registerGraphic(graphic_);
-            visible(visible_);
-            anchor(anchor_);
-            color(color_);
-            fill(fill_);
+
+            updateVisible();
+            updateAnchor();
+            updateTint();
+            updateFill();
             graphic_->setModelTransform(gameObject());
         }
     }
@@ -61,11 +74,12 @@ namespace GameEngine {
         return graphicLoaded_->getHeight();
     }
 
-    void GeometryComponent::onEvent(const Subject<GameObjectEvent> &target, const GameObjectEvent &event, void *args) {
+    void GeometryComponent::onEvent(const Subject<GameObjectEvent> &target, GameObjectEvent event) {
         if (event == GameObjectEvent::TransformChanged) {
             graphic_->setModelTransform(gameObject());
         } else if (event == GameObjectEvent::ActiveChanged) {
-            graphic_->setActive(gameObject()->active() && visible_);
+            bool visible = getPropertyValue<bool>("visible");
+            graphic_->setActive(gameObject()->active() && visible);
         }
     }
 
@@ -74,129 +88,38 @@ namespace GameEngine {
             graphicsEngine_->unregisterGraphic(graphic_);
     }
 
-    void GeometryComponent::visible(const bool &visible) {
-        visible_ = visible;
-        if(graphic_)
-            graphic_->setActive(gameObject() && gameObject()->active() && visible_);
+    void GeometryComponent::updateVisible()
+    {
+        if(graphic_){
+            bool visible = getPropertyValue<bool>("visible");
+            graphic_->setActive(gameObject() && gameObject()->active() && visible);
+        }
     }
 
-    bool GeometryComponent::visible() const {
-        return visible_;
+    void GeometryComponent::updateTint()
+    {
+        if(graphic_){
+            geColor tint = getPropertyValue<geColor>("tint");
+            graphic_->setTintColor(tint);
+        }
     }
 
-    void GeometryComponent::path(const std::vector<Vec2D> &pathArray) {
-        path_ = pathArray;
-        updateGraphicRef();
+    void GeometryComponent::updateFill()
+    {
+        if(graphic_){
+            bool fill = getPropertyValue<bool>("fill");
+            graphicLoaded_->drawFillGeometry(fill);
+        }
     }
 
-    std::vector<Vec2D> GeometryComponent::path() const {
-        return path_;
-    }
-
-    std::string GeometryComponent::anchor() const {
-        return anchor_;
-    }
-
-    void GeometryComponent::anchor(const std::string &anchor) {
-
-        GameEngine::Internal::GraphicAnchor graphicAnchor;
-
-        if(anchor == "TOP_LEFT")
-            graphicAnchor = GameEngine::Internal::GraphicAnchor::TOP_LEFT;
-        else if(anchor == "TOP_CENTER")
-            graphicAnchor = GameEngine::Internal::GraphicAnchor::TOP_CENTER;
-        else if(anchor == "TOP_RIGHT")
-            graphicAnchor = GameEngine::Internal::GraphicAnchor::TOP_RIGHT;
-        else if(anchor == "MIDDLE_LEFT")
-            graphicAnchor = GameEngine::Internal::GraphicAnchor::MIDDLE_LEFT;
-        else if(anchor == "MIDDLE_CENTER")
-            graphicAnchor = GameEngine::Internal::GraphicAnchor::MIDDLE_CENTER;
-        else if(anchor == "MIDDLE_RIGHT")
-            graphicAnchor = GameEngine::Internal::GraphicAnchor::MIDDLE_RIGHT;
-        else if(anchor == "BOTTOM_LEFT")
-            graphicAnchor = GameEngine::Internal::GraphicAnchor::BOTTOM_LEFT;
-        else if(anchor == "BOTTOM_CENTER")
-            graphicAnchor = GameEngine::Internal::GraphicAnchor::BOTTOM_CENTER;
-        else if(anchor == "BOTTOM_RIGHT")
-            graphicAnchor = GameEngine::Internal::GraphicAnchor::BOTTOM_RIGHT;
-        else
-            graphicAnchor = GameEngine::Internal::GraphicAnchor::TOP_LEFT;
-
-        if(graphic_)
-            graphic_->setAnchor(graphicAnchor);
-
-        anchor_ = anchor;
-    }
-
-PropertySetBase *GeometryComponent::getProperties() const
-{
-    auto *properties = new PropertySet<GeometryComponent>();
-
-    properties->add(new Property<GeometryComponent, std::vector<Vec2D>>(
-            "path",
-            &GeometryComponent::path,
-            &GeometryComponent::path,
-            {},
-            true));
-    properties->add(new Property<GeometryComponent, bool>(
-            "visible",
-            &GeometryComponent::visible,
-            &GeometryComponent::visible,
-            true));
-
-    properties->add(new PropertyEnum<GeometryComponent>(
-            "anchor",
-            &GeometryComponent::anchor,
-            &GeometryComponent::anchor,
-            "TOP_LEFT",
-            {
-                    "TOP_LEFT",
-                    "TOP_CENTER",
-                    "TOP_RIGHT",
-                    "MIDDLE_LEFT",
-                    "MIDDLE_CENTER",
-                    "MIDDLE_RIGHT",
-                    "BOTTOM_LEFT",
-                    "BOTTOM_CENTER",
-                    "BOTTOM_RIGHT"
-            }));
-
-    properties->add(new Property<GeometryComponent, geColor>(
-            "tint",
-            &GeometryComponent::color,
-            &GeometryComponent::color,
-            geColor(1.f)));
-
-    properties->add(new Property<GeometryComponent, bool>(
-        "fill",
-        &GeometryComponent::fill,
-        &GeometryComponent::fill,
-        true));
-
-    return properties;
-
-}
-
-void GeometryComponent::color(const geColor &value)
-{
-    color_ = value;
+void GeometryComponent::updateAnchor() {
     if(graphic_)
-        graphic_->setTintColor(color_);
+    {
+        std::string anchor = getEnumPropertyValue("anchor");
+        GameEngine::Internal::GraphicAnchor graphicAnchor = Internal::parseStringToGraphicAnchor(anchor);
+        graphic_->setAnchor(graphicAnchor);
+    }
 }
 
-geColor GeometryComponent::color() const
-{
-    return color_;
-}
-
-void GeometryComponent::fill(const bool &value) {
-    fill_ = value;
-    if(graphic_)
-        graphicLoaded_->drawFillGeometry(value);
-}
-
-bool GeometryComponent::fill() const {
-    return fill_;
-}
 }
 

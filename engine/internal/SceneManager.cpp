@@ -9,6 +9,10 @@
 namespace GameEngine {
 namespace Internal {
     void SceneManager::registerScene(const std::string &name, const std::string &filename) {
+        static std::string extension = ".scene";
+        if(filename.substr(filename.length() - extension.length()) != extension)
+            throw std::invalid_argument("filename must have " + extension + " extension");
+
         auto it = scenes_.find(name);
 
         if (it != scenes_.end())

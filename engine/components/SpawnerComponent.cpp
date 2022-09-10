@@ -16,47 +16,6 @@ void SpawnerComponent::init()
     }
 }
 
-PropertySetBase *SpawnerComponent::getProperties() const
-{
-    auto *properties = new PropertySet<SpawnerComponent>();
-
-    properties->add(new Property<SpawnerComponent, std::string>(
-        "targetName",
-        &SpawnerComponent::targetName,
-        &SpawnerComponent::targetName,
-        "",
-        true));
-
-    properties->add(new Property<SpawnerComponent, int>(
-        "startSize",
-        &SpawnerComponent::startSize,
-        &SpawnerComponent::startSize,
-        0,
-        true));
-
-    return properties;
-}
-
-std::string SpawnerComponent::targetName() const
-{
-    return targetName_;
-}
-
-void SpawnerComponent::targetName(const std::string &name)
-{
-    targetName_ = name;
-}
-
-int SpawnerComponent::startSize() const
-{
-    return startSize_;
-}
-
-void SpawnerComponent::startSize(const int &size)
-{
-    startSize_ = size;
-}
-
 geGameObjectRef SpawnerComponent::getNext() const
 {
     geGameObjectRef instance;

@@ -31,15 +31,18 @@ namespace Internal {
     }
 
     void ObjectManager::registerPrototype(const std::string &objectType, const std::string &filename) {
+        static std::string extension = ".prototype";
+        if(filename.substr(filename.length() - extension.length()) != extension)
+            throw std::invalid_argument("filename must have " + extension + " extension");
+
         auto it = prototypes_.find(objectType);
 
         if (it != prototypes_.end())
             throw std::runtime_error(("prototype " + objectType + " already registered").c_str());
 
-        std::unique_ptr<GameObject> prototype;
-        prototype.reset(new GameObject(objectType));
-        prototype->fromFile(filename, this);
-        prototypes_.insert(std::make_pair(objectType, std::move(prototype)));
+        GameObject prototype(objectType);
+        prototype.fromFile(filename, this);
+        prototypes_[objectType] = std::move(prototype);
     }
 
     std::shared_ptr<GameObject> ObjectManager::createGameObject(const std::string &objectType, Game *game) {
@@ -49,7 +52,7 @@ namespace Internal {
             throw std::runtime_error(("prototype " + objectType + " not found").c_str());
 
 
-        return it->second->Clone(game);
+        return it->second.Clone(game);
     }
 
     ObjectManager::~ObjectManager() {
@@ -62,7 +65,7 @@ std::vector<std::string> ObjectManager::getComponentIds() const
     return componentFactory_.getIds();
 }
 
-std::shared_ptr<PropertySetBase> ObjectManager::createProperties(const std::string &idType)
+ComponentDataRef ObjectManager::createProperties(const std::string &idType)
 {
     return componentFactory_.createProperties(idType);
 }
