@@ -21,11 +21,15 @@ namespace Internal {
         Screen *target = static_cast<Screen*>(data);
 
         if (event->type == SDL_WINDOWEVENT &&
-            event->window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
-
-            target->windowWidth(event->window.data1);
-            target->windowHeight(event->window.data2);
-            target->notify(target->virtualWidth(), target->virtualHeight());
+            event->window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
+        {
+            SDL_Window *window = SDL_GetWindowFromID(event->window.windowID);
+            if (window == target->sdlWindow())
+            {
+                target->windowWidth(event->window.data1);
+                target->windowHeight(event->window.data2);
+                target->notify(target->virtualWidth(), target->virtualHeight());
+            }
         }
         return 0;
     }
