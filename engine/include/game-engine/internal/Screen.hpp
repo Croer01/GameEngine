@@ -78,11 +78,16 @@ namespace Internal {
         void update();
 
         ShaderVersion getGlslVersion() const;
+
+        // This two are the same as the regular windowWidth and windowHeight setters
+        // but avoid call the SDL window's resize event to prevent infinite event loop
+        // due the implementation of Linux that uses Xorg backend
+        void setWindowWidthFromSDLWindow(int value);
+        void setWindowHeightFromSDLWindow(int value);
     private:
         void recalculateWindow();
         void initSDLWindow();
         void initGlAttributes();
-
     };
 }
 }

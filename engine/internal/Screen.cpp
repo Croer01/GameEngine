@@ -26,8 +26,8 @@ namespace Internal {
             SDL_Window *window = SDL_GetWindowFromID(event->window.windowID);
             if (window == target->sdlWindow())
             {
-                target->windowWidth(event->window.data1);
-                target->windowHeight(event->window.data2);
+                target->setWindowWidthFromSDLWindow(event->window.data1);
+                target->setWindowHeightFromSDLWindow(event->window.data2);
                 target->notify(target->virtualWidth(), target->virtualHeight());
             }
         }
@@ -107,6 +107,15 @@ namespace Internal {
             SDL_SetWindowSize(mainWindow_.get(), deviceWidth_, deviceHeight_);
         }
     }
+
+    void Screen::setWindowWidthFromSDLWindow(int value) {
+        if(deviceWidth_ != value)
+        {
+            deviceWidth_ = value;
+            recalculateWindow();
+        }
+    }
+
     int Screen::windowHeight() const {
         return deviceHeight_;
     }
@@ -117,6 +126,14 @@ namespace Internal {
             deviceHeight_ = value;
             recalculateWindow();
             SDL_SetWindowSize(mainWindow_.get(), deviceWidth_, deviceHeight_);
+        }
+    }
+
+    void Screen::setWindowHeightFromSDLWindow(int value) {
+        if(deviceHeight_ != value)
+        {
+            deviceHeight_ = value;
+            recalculateWindow();
         }
     }
 
