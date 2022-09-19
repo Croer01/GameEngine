@@ -45,6 +45,7 @@ public:
     virtual void addResourcesFromPath(const std::string &dataPath);
     MakeCurrentContextCallback getMakeCurrentContextCallback() const;
     virtual GlobalData* getGlobalData();
+    std::string getAbsoluteDataPath() const;
     SceneManager *sceneManager() const;
     ObjectManager *objectManager() const;
 };

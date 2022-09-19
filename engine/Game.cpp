@@ -44,7 +44,7 @@ namespace GameEngine {
 
         audioEngine_ = std::make_unique<AudioEngine>();
         audioEngine_->init();
-        fontManager_ = std::make_unique<FontManager>();
+        fontManager_ = std::make_unique<FontManager>(environment_->getAbsoluteDataPath());
         inputManager_ = std::make_unique<InputManager>(screen_.get());
 
         timeManager_ = std::make_unique<TimeManager>(this);

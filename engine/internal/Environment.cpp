@@ -17,12 +17,35 @@
 #include <game-engine/internal/Environment.hpp>
 #include <game-engine/components/CarColliderComponent.hpp>
 
+#if defined(_WIN32)
+    #include <windows.h>
+#endif
+
 namespace fs = std::filesystem;
 
 namespace GameEngine
 {
 namespace Internal
 {
+// Get the path of the game executable.
+// Code based on https://gist.github.com/Jacob-Tate/7b326a086cf3f9d46e32315841101109
+std::string getGameAbsolutePath()
+{
+    fs::path exePath;
+    #if defined(_MSC_VER)
+        wchar_t path[FILENAME_MAX] = { 0 };
+        GetModuleFileNameW(nullptr, path, FILENAME_MAX);
+        exePath = std::filesystem::path(path);
+    #else
+        exePath = std::filesystem::canonical("/proc/self/exe");
+    #endif
+
+    return exePath.parent_path().string() + "/";
+}
+
+std::string Environment::getAbsoluteDataPath() const{
+    return getGameAbsolutePath() + dataPath_ + "/";
+}
 
 Environment::Environment() : configurationPath_("conf"), dataPath_("data")
 {
@@ -82,12 +105,12 @@ std::string Environment::firstScene() const
 
 void Environment::addPrototype(const std::string &name, const std::string &filePath)
 {
-    objectManager_->registerPrototype(name, dataPath_ + "/" + filePath);
+    objectManager_->registerPrototype(name, getGameAbsolutePath() + dataPath_ + "/" + filePath);
 }
 
 void Environment::addScene(const std::string &name, const std::string &filePath)
 {
-    sceneManager_->registerScene(name, dataPath_ + "/" + filePath);
+    sceneManager_->registerScene(name, getGameAbsolutePath() + dataPath_ + "/" + filePath);
 }
 
 void Environment::registerComponent(const std::string &idType, ComponentBuilder *builder)
@@ -131,7 +154,7 @@ GlobalData* Environment::getGlobalData(){
 
 void Environment::addResourcesFromPath(const std::string &dataPath)
 {
-    const fs::path &directoryPath = fs::path(dataPath);
+    const fs::path &directoryPath = fs::path(getGameAbsolutePath() + dataPath);
     recursiveDataFilesRegister(directoryPath);
 }
 

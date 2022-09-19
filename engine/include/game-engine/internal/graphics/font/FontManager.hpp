@@ -18,8 +18,9 @@ namespace Internal {
     class PUBLICAPI FontManager {
         FT_Library ftLibrary_;
         std::map<std::string, std::shared_ptr<Font>> fonts_;
+        std::string dataPath_;
     public:
-        FontManager();
+        explicit FontManager(const std::string &dataPath);
 
         ~FontManager();
 

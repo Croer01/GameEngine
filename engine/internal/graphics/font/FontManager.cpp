@@ -3,11 +3,12 @@
 //
 
 #include <stdexcept>
+#include <filesystem>
 #include <game-engine/internal/graphics/font/FontManager.hpp>
 
 namespace GameEngine {
 namespace Internal {
-    FontManager::FontManager() {
+    FontManager::FontManager(const std::string &dataPath) : dataPath_(dataPath) {
         // All functions return a value different than 0 whenever an error occurred
         if (FT_Init_FreeType(&ftLibrary_))
             throw std::runtime_error("ERROR::FREETYPE: Could not init FreeType Library");
@@ -20,7 +21,9 @@ namespace Internal {
         if (it != fonts_.end())
             return it->second;
 
-        std::shared_ptr<Font> font = std::make_shared<Font>(ftLibrary_, fontPath, static_cast<unsigned int>(pixelsSize));
+        std::filesystem::path fullPath(dataPath_);
+        fullPath.append(fontPath).make_preferred();
+        std::shared_ptr<Font> font = std::make_shared<Font>(ftLibrary_, fullPath.string(), static_cast<unsigned int>(pixelsSize));
 
         fonts_.insert(std::pair<std::string, std::shared_ptr<Font>>(fontName, font));
 
