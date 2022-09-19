@@ -92,6 +92,8 @@ gameengine_dep = declare_dependency(
 
 subdir('test')
 
+subdir('editorV2')
+
 # Make this library usable from the system's
 # package manager.
 #install_headers('gameengine.hpp', subdir : 'GameEngine')
